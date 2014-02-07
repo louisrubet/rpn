@@ -27,7 +27,7 @@ erase effacer toute la stack
  * HP-28s commands
  *
  * STACK
- *  DROP*, SWAP*, ROLL, DUP*, OVER, DUP2*, DROP2*, ROT*, LIST->, ROLLD, PICK, DUPN, DROPN, DEPTH*, ->LIST
+ *  DROP*, SWAP*, ROLL, DUP*, OVER, DUP2*, DROP2*, ROT*, LIST->, ROLLD, PICK*, DUPN, DROPN, DEPTH*, ->LIST
  * 
  * STORE
  *  STO*, RCL*, PURGE*, STO+, STO-, STO*, STO/, SNEG, SINV, SCONJ
@@ -67,7 +67,7 @@ erase effacer toute la stack
  *  PI*(+), SIN*, ASIN*, COS*, ACOS*, TAN*, ATAN*, P→R, R→P, R→C, C→R, ARG, →HMS, HMS→, HMS+, HMS-, *D→R, *R→D
  * 
  * LOGS
- *  LOG, ALOG, LN, EXP, LNP1, EXPM, SINH, ASINH, COSH, ACOSH, TANH, ATANH
+ *  LOG*, ALOG*, LN*, EXP*, LNP1, EXPM, SINH*, ASINH*, COSH*, ACOSH*, TANH*, ATANH*
  * 
  * SOLV
  *  STEQ, RCEQ, ISOL, QUAD, SHOW, ROOT,

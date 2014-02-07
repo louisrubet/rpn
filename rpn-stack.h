@@ -45,6 +45,21 @@ void dup2(void)
 	_stack->push_obj_from_local(0);
 }
 
+void pick(void)
+{
+	MIN_ARGUMENTS(1);
+	unsigned int to_pick = (unsigned int)getf();
+
+	// treat stack depth errors
+	if ((to_pick == 0) || (to_pick > _stack->size()))
+	{
+		ERR_CONTEXT(ret_missing_operand);
+		return;
+	}
+	_stack->copy_obj_to_local(to_pick - 1, 0);
+	_stack->push_obj_from_local(0);
+}
+
 void rot(void)
 {
     MIN_ARGUMENTS(3);
