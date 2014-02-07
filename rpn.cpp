@@ -138,7 +138,7 @@ public:
 	branch_fn_t _fn;	
 	// args used by cmd_branch cmds
 	int arg1, arg2, arg3;
-	floating_t farg1, farg2, farg3;
+	floating_t farg1, farg2;
 	bool arg_bool;
 };
 

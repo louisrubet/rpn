@@ -222,11 +222,14 @@ public:
 	{
 		if (num>=0 && num<(int)_map.size())
 		{
+			struct local_var* blob;
 			map<string, struct local_var*>::iterator i=_map.begin();
+
 			//TODO moche moche moche
 			for(int j=0;j<num;j++)
 				i++;
-			struct local_var* blob = (struct local_var*)i->second;
+
+			blob = (struct local_var*)i->second;
 			assert(blob != NULL);
 
 			name = i->first;
@@ -241,15 +244,15 @@ public:
 
 	bool erase(const string name)
 	{
-		struct local_var* blob = _map[name];
-		if (blob != NULL)
+		
+		map<string, struct local_var*>::iterator i = _map.find(name);
+		if (i != _map.end())
 		{
-			free(blob);
-			_map.erase(_map.find(name));
+			free(i->second);
+			_map.erase(i->first);
 			return true;
 		}
-		else
-			return false;
+		return false;
 	}
 
 	unsigned int size() { return _map.size(); }

@@ -38,6 +38,7 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "rot", &program::rot, "rotate 3 first stack entries" },
 	{ cmd_keyword, "dup", &program::dup, "duplicate first stack entry" },
 	{ cmd_keyword, "dup2", &program::dup2, "duplicate 2 first stack entries" },
+	{ cmd_keyword, "pick", &program::pick, "push a copy of  the given stack level onto the stack" },
 	{ cmd_keyword, "depth", &program::depth, "give stack depth" },
 
 	//BRANCH
