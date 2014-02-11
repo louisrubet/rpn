@@ -62,7 +62,7 @@ void pick(void)
 
 void rot(void)
 {
-    MIN_ARGUMENTS(3);
+	MIN_ARGUMENTS(3);
 	_stack->copy_obj_to_local(0, 0);
 	_stack->copy_obj_to_local(1, 1);
 	_stack->copy_obj_to_local(2, 2);
@@ -76,6 +76,6 @@ void rot(void)
 
 void depth(void)
 {
-    number num((floating_t)_stack->size());
+	number num((floating_t)_stack->size());
 	_stack->push_back(&num, sizeof(number), cmd_number);
 }
