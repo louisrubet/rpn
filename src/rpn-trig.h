@@ -4,7 +4,7 @@
 //
 void pi(void)
 {
-    putf(M_PI);
+	putf(M_PI);
 }
 
 void d2r(void)
