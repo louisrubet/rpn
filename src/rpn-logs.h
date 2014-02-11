@@ -4,7 +4,7 @@
 //
 void rpn_e(void)
 {
-    putf(M_E);
+	putf(M_E);
 }
 
 void rpn_log()

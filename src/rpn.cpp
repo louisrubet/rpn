@@ -50,8 +50,8 @@ typedef enum {
 	ret_internal,
 	ret_deadly,
 	ret_good_bye,
-    ret_not_impl,
-    ret_nop,
+	ret_not_impl,
+	ret_nop,
 	ret_syntax,
 	ret_max
 } ret_value;
@@ -148,10 +148,10 @@ public:
 	program() { }
 
 	// run this program
-    ret_value run(stack& stk, heap& hp)
+	ret_value run(stack& stk, heap& hp)
 	{
 		bool go_out = false;
-        ret_value ret = ret_ok;
+		ret_value ret = ret_ok;
 		cmd_type_t type;
 
 		_stack = &stk;
@@ -165,7 +165,7 @@ public:
 			return ret;
 
 		// iterate commands
-        for(int i = 0; (go_out==false) && (i<(int)size());)
+		for(int i = 0; (go_out==false) && (i<(int)size());)
 		{
 			type = (cmd_type_t)seq_type(i);
 
@@ -438,28 +438,28 @@ public:
 	}
 
 	// keywords declaration
-    struct keyword_t
-    {
+	struct keyword_t
+	{
 		cmd_type_t type;
-        string name;
-        program_fn_t fn;
-        string comment;
-    };
+		string name;
+		program_fn_t fn;
+		string comment;
+	};
     static keyword_t program::_keywords[100];
 
-    ret_value get_fn(const string& fn_name, program_fn_t& fn, cmd_type_t& type)
-    {
+	ret_value get_fn(const string& fn_name, program_fn_t& fn, cmd_type_t& type)
+	{
 		for(int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
 		{
-            if ((_keywords[i].name.size()>0) && (fn_name == _keywords[i].name))
-            {
+			if ((_keywords[i].name.size()>0) && (fn_name == _keywords[i].name))
+			{
 				fn = _keywords[i].fn;
 				type = _keywords[i].type;
 				return ret_ok;
 			}
 		}
-        return ret_unknown_err;
-    }
+	return ret_unknown_err;
+	}
 
 	// interactive entry and decoding
 	static ret_value entry(program& prog)
@@ -615,9 +615,9 @@ private:
 		floating_t a = ((number*)_stack->back())->_value;
 		_stack->pop_back();
 		return a;
-    }
+	}
 
-    void putf(floating_t value)
+	void putf(floating_t value)
 	{
 		/* warning, caller must check object type before */
 		_stack->push_back(&number(value), sizeof(number), cmd_number);
@@ -629,9 +629,9 @@ private:
 		string a = ((symbol*)_stack->back())->_name;
 		_stack->pop_back();
 		return a;
-    }
+	}
 
-    void putn(string& a)
+	void putn(string& a)
 	{
 		/* warning, caller must check object type before */
 		_stack->push_back(&symbol(a), sizeof(symbol), cmd_symbol);
@@ -645,12 +645,12 @@ private:
 private:
 	// carefull : some of these macros modify program flow
 	#define ERR_CONTEXT(err) do { _err = (err); _err_context = __FUNCTION__; } while(0)
-    #define MIN_ARGUMENTS(num) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return; } } while(0)
-    #define MIN_ARGUMENTS_RET(num, ret) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return (ret); } } while(0)
-    #define ARG_IS_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
-    #define ARG_IS_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
+	#define MIN_ARGUMENTS(num) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return; } } while(0)
+	#define MIN_ARGUMENTS_RET(num, ret) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return (ret); } } while(0)
+	#define ARG_IS_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
+	#define ARG_IS_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
 
-    // keywords implementation
+	// keywords implementation
 	#include "rpn-general.h"
 	#include "rpn-algebra.h"
 	#include "rpn-test.h"
@@ -669,14 +669,14 @@ private:
 //
 int _tmain(int argc, _TCHAR* argv[])
 {
-    heap hp;
+	heap hp;
 	stack st;
 
 	//
 	cout << setprecision(16);
 
 	//
-    for (;;)
+	for (;;)
 	{
 		program prog;
 		if (program::entry(prog) == ret_good_bye)
