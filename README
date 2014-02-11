@@ -10,17 +10,12 @@ Following objects are managed: scalars , symbols, strings, programs.
 TBD: C99 long double floating point data type (128 ? 80 bits ?)
      is used for scalars.
 
-/////////////////////////////////////////////////////////////////////////////
+========================================================================
 Other standard files:
+  README
+  TODO
 
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named rpn.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
+========================================================================
 Other notes:
 
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+========================================================================
