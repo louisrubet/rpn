@@ -18,7 +18,7 @@ void verbose()
 
 void help()
 {
-    for(int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
+    for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
 		if (_keywords[i].comment.size() != 0)
 		cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
 	cout<<endl;

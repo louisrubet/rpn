@@ -27,6 +27,7 @@
 #define _TCHAR char
 #define _tmain main
 #endif
+#include <math.h>
 
 #include <iostream>
 #include <iomanip>
@@ -107,10 +108,7 @@ class symbol : public object
 {
 public:
 	symbol(string& name, cmd_type_t type = cmd_symbol) : object(type), _name(name),_auto_eval(false) { }
-	virtual void show(ostream& stream = cout)
-	{
-		stream << "'" << _name << "'";
-	}
+	virtual void show(ostream& stream = cout) { stream << "'" << _name << "'"; }
 	string _name;
 	bool _auto_eval;
 };
@@ -120,10 +118,7 @@ class keyword : public symbol
 public:
 	keyword(program_fn_t fn, string& name, cmd_type_t type = cmd_keyword) : symbol(name, type) { _fn = fn; }
 	program_fn_t _fn;
-	virtual void show(ostream& stream = cout)
-	{
-		stream << _name;
-	}
+	virtual void show(ostream& stream = cout) { stream << _name; }
 };
 
 class branch : public keyword
@@ -140,6 +135,15 @@ public:
 	int arg1, arg2, arg3;
 	floating_t farg1, farg2;
 	bool arg_bool;
+};
+
+struct if_layout_t
+{
+    if_layout_t():index_then(-1),index_else(-1),index_end(-1) { }
+    int index_if;
+    int index_then;
+    int index_else;
+    int index_end;
 };
 
 class program : public stack
@@ -239,17 +243,8 @@ public:
 
 	ret_value preprocess(void)
 	{
-		struct if_layout_t
-		{
-			if_layout_t():index_then(-1),index_else(-1),index_end(-1) { }
-			int index_if;
-			int index_then;
-			int index_else;
-			int index_end;
-		};
-
 		// for if-then-else-end
-		vector<if_layout_t> vlayout;
+		vector<struct if_layout_t> vlayout;
 		int layout_index=-1;// TODO remplaçable par vlayout.size()-1
 		//for start-end-step
 		vector<int> vstartindex;
@@ -432,7 +427,7 @@ public:
 		return show_error(err, context_string);
 	}
 
-	static void show_syntax_error(char* context)
+	static void show_syntax_error(const char* context)
 	{
 		cerr<<"syntax error: "<<context<<endl;
 	}
@@ -445,11 +440,11 @@ public:
 		program_fn_t fn;
 		string comment;
 	};
-    static keyword_t program::_keywords[100];
+    static keyword_t _keywords[100];
 
 	ret_value get_fn(const string& fn_name, program_fn_t& fn, cmd_type_t& type)
 	{
-		for(int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
+		for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
 		{
 			if ((_keywords[i].name.size()>0) && (fn_name == _keywords[i].name))
 			{
@@ -488,7 +483,7 @@ public:
 
 		do
 		{
-			floating_t num;
+			floating_t val;
 			istringstream isub;
 			string sub;
 
@@ -496,11 +491,12 @@ public:
 			isub.str(sub);
 
 			// check whether it is a number
-			isub >> num;
+			isub >> val;
 			if ( (!isub.fail()) && (!isub.bad()) )
 			{
 				// found a number
-				prog.push_back(&number(num), sizeof(number), cmd_number);
+				number num(val);
+                prog.push_back(&num, sizeof(number), cmd_number);
 				if (isub.good())
 				{
 					// plus another command without space
@@ -512,9 +508,15 @@ public:
 					else
 					{
 						if (type == cmd_keyword)
-							prog.push_back(&keyword(fn, sub), sizeof(keyword), cmd_keyword);
+                        {
+							keyword key(fn, sub);
+                            prog.push_back(&key, sizeof(keyword), cmd_keyword);
+                        }
 						else if (type == cmd_branch)
-							prog.push_back(&branch((branch_fn_t)fn, sub), sizeof(branch), cmd_branch);
+                        {
+							branch bra((branch_fn_t)fn, sub);
+                            prog.push_back(&bra, sizeof(branch), cmd_branch);
+                        }
 					}
 				}
 			}
@@ -528,7 +530,11 @@ public:
 					{
 						// syntax should be 'symbol'
 						if (sub.substr(sub.size()-1, 1) == "'")
-							prog.push_back(&symbol(sub.substr(1, sub.size()-2)), sizeof(symbol), cmd_symbol);
+                        {
+                            string s=sub.substr(1, sub.size()-2);
+                            symbol sym(s);
+                            prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+                        }
 						// or 'symbol without ending ' only if last entry
 						else
 						{
@@ -542,9 +548,17 @@ public:
 							}
 							while(c != '\'');
 							if (stream.eof())
-								prog.push_back(&symbol(sub.substr(1, sub.size()-1)), sizeof(symbol), cmd_symbol);
+                            {
+                                string s = sub.substr(1, sub.size()-1);
+                                symbol sym(s);
+								prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+                            }
 							else
-								prog.push_back(&symbol(sub.substr(1, sub.size()-2)), sizeof(symbol), cmd_symbol);
+                            {
+                                string s = sub.substr(1, sub.size()-2);
+								symbol sym(s);
+                                prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+                            }
 						}
 					}
 					else
@@ -555,9 +569,15 @@ public:
 						if (prog.get_fn(sub, fn, type) == ret_ok)
 						{
 							if (type == cmd_keyword)
-								prog.push_back(&keyword(fn, sub), sizeof(keyword), cmd_keyword);
+                            {
+								keyword key(fn, sub);
+                                prog.push_back(&key, sizeof(keyword), cmd_keyword);
+                            }
 							else if (type == cmd_branch)
-								prog.push_back(&branch((branch_fn_t)fn, sub), sizeof(branch), cmd_branch);								
+                            {
+								branch bra((branch_fn_t)fn, sub);
+                                prog.push_back(&bra, sizeof(branch), cmd_branch);								
+                            }
 						}
 						else
 						{
@@ -620,7 +640,8 @@ private:
 	void putf(floating_t value)
 	{
 		/* warning, caller must check object type before */
-		_stack->push_back(&number(value), sizeof(number), cmd_number);
+		number num(value);
+        _stack->push_back(&num, sizeof(number), cmd_number);
 	}
 
 	string getn()
@@ -634,7 +655,8 @@ private:
 	void putn(string& a)
 	{
 		/* warning, caller must check object type before */
-		_stack->push_back(&symbol(a), sizeof(symbol), cmd_symbol);
+		symbol sym(a);
+        _stack->push_back(&sym, sizeof(symbol), cmd_symbol);
 	}
 
 	int stack_size()
