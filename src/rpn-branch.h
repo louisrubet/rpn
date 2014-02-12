@@ -1,3 +1,4 @@
+
 //
 int rpn_if(branch& myobj)
 {
@@ -69,7 +70,8 @@ int rpn_for(branch& myobj)
 	myobj.farg1 = getf();
 	
 	// store symbol with first value
-	_heap->add(sym->_name, &number(myobj.farg1), sizeof(number), cmd_number);
+    number num(myobj.farg1);
+	_heap->add(sym->_name, &num, sizeof(number), cmd_number);
 
 	return myobj.arg1 + 1;
 }

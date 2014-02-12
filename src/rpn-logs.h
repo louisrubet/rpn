@@ -1,5 +1,4 @@
 #define _USE_MATH_DEFINES
-#include <math.h>
 
 //
 void rpn_e(void)
