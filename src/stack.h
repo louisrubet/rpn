@@ -1,6 +1,8 @@
 #ifndef __stack_h__
 #define __stack_h__
 
+#include <string.h>
+
 #include <assert.h>
 #include <vector>
 #include <map>

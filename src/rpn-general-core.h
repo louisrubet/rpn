@@ -1,7 +1,7 @@
 void program::test()
 {
 	const string test_filename = "test.txt";
-	ifstream test_file(test_filename);
+	ifstream test_file(test_filename.c_str());
 	if (test_file.is_open())
 	{
 		const string stack_size("-> stack size should be ");
@@ -38,7 +38,7 @@ void program::test()
 
 				isub.str(entry.substr(stack_size.size()));
 				isub>>size;
-				if (stk.size() != size)
+				if (size != (int)stk.size())
 				{
 					cout<<endl<<endl<<test_title<<endl<<entry<<endl<<"FAIL, ";
 					cout<<"real stack size is "<<stk.size()<<endl;
