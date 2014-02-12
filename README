@@ -5,10 +5,80 @@
 This project plans to create a clone of HP-28S calculator language,
 including at least stack, store, branch, test, trig and logs commands.
 
-Following objects are managed: scalars , symbols, strings, programs.
+Following objects are managed: scalars, symbols, strings, programs.
 
 TBD: C99 long double floating point data type (128 ? 80 bits ?)
      is used for scalars.
+
+========================================================================
+Here are HP28s commands.
+Managed commands are tagged with (*).
+New command are tagged with (+).
+
+DBG
+ verbose(*)(+)
+
+STACK
+ drop(*), swap(*), roll, dup(*), over, dup2(*), drop2(*), rot(*),
+ list->, rolld, pick(*), dupn, dropn, depth(*), ->list
+
+STORE
+ sto(*), rcl(*), purge(*), sto+, sto-, sto*, sto/, sneg, sinv, sconj,
+ erase(*)(+), vars(*)(+)
+
+MEMORY
+ mem, menu, order, path, home, crdir, vars, clusr
+
+ALGEBRA
+ neg(*)(+), colct, expan, size, form, obsub, exsub, taylr, isol, quad,
+ show, obget, exget
+
+STAT
+ ∑dat, ∑par, ∑+, ∑-, n∑, cl∑, sto∑, rcl∑, tot, mean, sdev, var, max∑,
+ min∑, col∑, corr, cov, lr, predev, utpc, utpf, utpn, utpt, comb, perm
+
+PRINT
+ pr1, prst, prvar, prlcd, cr, trac, prstc, prusr, prmd
+
+CONTRL
+ sst, halt, abort, kill, wait, key, bepp,  cllcd,  disp,  clmf, errn,
+ errm
+
+BRANCH
+ if(*), iferr, then(*), else(*), end(*), start(*), for(*), next(*),
+ step(*), ift, ifte, do, until, end, while, repeat, end
+ 
+TEST
+ !=(*), >(*), >=(*), <(*), <=(*), sf, cf, fs?, fc?, fs?c, fc?c, and, or,
+ xor, not, same, ==(*), stof, rclf, type
+ 
+CATALOG
+ next, prev, scan, use, fetch, quit
+ 
+UNITS
+ convert
+
+CURSOR
+ ins, del, ← → ↑ ↓, std, fix, sci, eng, deg, rad, cmd, undo, last, ml,
+ rdx, prmd
+
+TRIG
+ pi(*)(+), sin(*), asin(*), cos(*), acos(*), tan(*), atan(*), p→r, r→p,
+ r→c, c→r, arg, →hms, hms→, hms+, hms-, (*)d→r, (*)r→d
+
+LOGS
+ log(*), alog(*), ln(*), exp(*), lnp1, expm, sinh(*), asinh(*), cosh(*),
+ acosh(*), tanh(*), atanh(*)
+
+SOLV
+ steq, rceq, isol, quad, show, root,
+
+PLOT
+ ppar, steq, rceq, pmin, pmax, indep, draw, res, axes, centr, *w, *h,
+ sto∑, rcl∑, col∑, scl∑, drw∑, cllcd, digtiz
+
+CUSTOM
+ menu, custom
 
 ========================================================================
 Other standard files:
