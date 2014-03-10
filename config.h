@@ -11,10 +11,7 @@
 #define PACKAGE_STRING "rpn 0.0"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "helloworld_cc"
-
-/* Define to the home page for this package. */
-#define PACKAGE_URL "http://hello.example.com/"
+#define PACKAGE_TARNAME "rpn"
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.0"

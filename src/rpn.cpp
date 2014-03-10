@@ -1,24 +1,24 @@
 /*
  * rpn.cpp
- * 
+ *
  * Copyright 2013  <louis@rubet.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
- * 
- * 
+ *
+ *
  */
 #include <stdlib.h>
 #ifdef WIN32
@@ -107,9 +107,13 @@ public:
 class symbol : public object
 {
 public:
-	symbol(string& name, cmd_type_t type = cmd_symbol) : object(type), _name(name),_auto_eval(false) { }
-	virtual void show(ostream& stream = cout) { stream << "'" << _name << "'"; }
-	string _name;
+	symbol(string& name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
+	{
+	    _name = new string;
+	    *_name = name;
+	}
+	virtual void show(ostream& stream = cout) { stream << "'" << *_name << "'"; }
+	string* _name;
 	bool _auto_eval;
 };
 
@@ -118,7 +122,7 @@ class keyword : public symbol
 public:
 	keyword(program_fn_t fn, string& name, cmd_type_t type = cmd_keyword) : symbol(name, type) { _fn = fn; }
 	program_fn_t _fn;
-	virtual void show(ostream& stream = cout) { stream << _name; }
+	virtual void show(ostream& stream = cout) { stream << *_name; }
 };
 
 class branch : public keyword
@@ -130,7 +134,7 @@ public:
 		_fn = fn;
 	}
 	// branch function
-	branch_fn_t _fn;	
+	branch_fn_t _fn;
 	// args used by cmd_branch cmds
 	int arg1, arg2, arg3;
 	floating_t farg1, farg2;
@@ -253,11 +257,11 @@ public:
 		// analyse start-{next, step} branches
 		for(int i=0; i<(int)size(); i++)
 		{
-			int type = seq_type(i);			
+			int type = seq_type(i);
 			if (type == cmd_keyword)
 			{
 				keyword* k = (keyword*)seq_obj(i);
-				if(k->_name.compare("end") == 0)
+				if(k->_name->compare("end") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -277,7 +281,7 @@ public:
 					}
 					((branch*)seq_obj(i))->arg1 = next;//fill branch1
 					if (vlayout[layout_index].index_else != -1)
-						//fill 'end' branch of 'else'						
+						//fill 'end' branch of 'else'
 						((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
 					else
 						//fill 'end' branch of 'then'
@@ -288,14 +292,14 @@ public:
 			else if (type == cmd_branch)
 			{
 				branch* k = (branch*)seq_obj(i);
-				if (k->_name.compare("if") == 0)
+				if (k->_name->compare("if") == 0)
 				{
 					if_layout_t layout;
 					layout.index_if = i;
 					vlayout.push_back(layout);
 					layout_index++;
 				}
-				else if(k->_name.compare("then") == 0)
+				else if(k->_name->compare("then") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -320,11 +324,11 @@ public:
 						show_syntax_error("duplicate then");
 						return ret_syntax;
 					}
-					vlayout[layout_index].index_then = i;					
+					vlayout[layout_index].index_then = i;
 					k->arg1 = next;
 					k->arg3 = vlayout[layout_index].index_if;
 				}
-				else if(k->_name.compare("else") == 0)
+				else if(k->_name->compare("else") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -360,16 +364,16 @@ public:
 					k->arg3 = vlayout[layout_index].index_if;
 					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
 				}
-				else if(k->_name.compare("start") == 0)
+				else if(k->_name->compare("start") == 0)
 				{
 					vstartindex.push_back(i);
 				}
-				else if(k->_name.compare("for") == 0)
+				else if(k->_name->compare("for") == 0)
 				{
 					vstartindex.push_back(i);
 					k->arg1 = i + 1;// arg1 points on symbol variable
 				}
-				else if(k->_name.compare("next") == 0)
+				else if(k->_name->compare("next") == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -380,7 +384,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-				else if(k->_name.compare("step") == 0)
+				else if(k->_name->compare("step") == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -420,7 +424,7 @@ public:
 				return ret_ok;
 		}
 	}
-	
+
 	static ret_value show_error(ret_value err, char* context)
 	{
 		string context_string(context);
@@ -564,7 +568,7 @@ public:
 					else
 					{
 						program_fn_t fn;
-						cmd_type_t type;					
+						cmd_type_t type;
 						// could be a command
 						if (prog.get_fn(sub, fn, type) == ret_ok)
 						{
@@ -576,7 +580,7 @@ public:
 							else if (type == cmd_branch)
                             {
 								branch bra((branch_fn_t)fn, sub);
-                                prog.push_back(&bra, sizeof(branch), cmd_branch);								
+                                prog.push_back(&bra, sizeof(branch), cmd_branch);
                             }
 						}
 						else
@@ -647,9 +651,9 @@ private:
 	string getn()
 	{
 		/* warning, caller must check object type before */
-		string a = ((symbol*)_stack->back())->_name;
+		string* a = ((symbol*)_stack->back())->_name;
 		_stack->pop_back();
-		return a;
+		return *a;
 	}
 
 	void putn(string& a)
