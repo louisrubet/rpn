@@ -20,7 +20,7 @@ void rcl(void)
 	if (_heap->get(getn(), obj, size, type))
 		_stack->push_back(obj, size, type);
 	else
-		ERR_CONTEXT(ret_unknown_variable);		
+		ERR_CONTEXT(ret_unknown_variable);
 }
 
 // carefull : this is not a langage command
@@ -31,7 +31,7 @@ void auto_rcl(symbol* symb)
 		void* obj;
 		unsigned int size;
 		int type;
-		if (_heap->get(symb->_name, obj, size, type))
+		if (_heap->get(*symb->_name, obj, size, type))
 			_stack->push_back(obj, size, type);
 		else
 			_stack->push_back(symb, sizeof(symbol), cmd_symbol);
@@ -46,7 +46,7 @@ void purge(void)
 	ARG_IS_OF_TYPE(0, cmd_symbol);
 
 	if (!_heap->erase(getn()))
-		ERR_CONTEXT(ret_unknown_variable);		
+		ERR_CONTEXT(ret_unknown_variable);
 }
 
 void vars(void)
