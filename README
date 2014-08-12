@@ -11,9 +11,10 @@ TBD: C99 long double floating point data type (128 ? 80 bits ?)
      is used for scalars.
 
 ========================================================================
-Here are HP28s commands.
-Managed commands are tagged with (*).
-New command are tagged with (+).
+Here is a list of HP28s reserved words.
+Some new commands are added. They are tagged with (+).
+
+Already implemented commands are tagged with (*).
 
 DBG
  verbose(*)(+)
