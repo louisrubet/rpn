@@ -18,6 +18,9 @@ void verbose()
 
 void help()
 {
+	cout<<"rpn - HP28S reverse polish notation language simulator"<<endl;
+	cout<<"syntax: rpn [command]"<<endl;
+	cout<<"with optional command = list of commands"<<endl;
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
 		if (_keywords[i].comment.size() != 0)
 		cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
