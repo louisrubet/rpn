@@ -697,24 +697,54 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	heap hp;
 	stack st;
+	int ret = 0;
 
 	//
 	cout << setprecision(16);
 
-	//
-	for (;;)
+	// run with interactive prompt
+	if (argc == 1)
 	{
-		program prog;
-		if (program::entry(prog) == ret_good_bye)
-			break;
-		else
+		//
+		for (;;)
 		{
-			if (prog.run(st, hp) == ret_good_bye)
+			// make program from interactive entry
+			program prog;
+			if (program::entry(prog) == ret_good_bye)
 				break;
 			else
-				program::show_stack(st);
+			{
+				// run it
+				if (prog.run(st, hp) == ret_good_bye)
+					break;
+				else
+					program::show_stack(st);
+			}
+		}
+	}
+	// run with cmd line arguments
+	else
+	{
+		program prog;
+		string entry;
+		int i;
+
+		// entry
+		for (i=1; i<argc; i++)
+		{
+			entry += argv[i];
+			entry += ' ';
+		}
+
+		// make program
+		ret = program::parse(entry, prog);
+		if (ret == ret_ok)
+		{
+			// run it
+			ret = prog.run(st, hp);
+			program::show_stack(st);
 		}
 	}
 
-	return 0;
+	return ret;
 }
