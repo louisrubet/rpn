@@ -4,14 +4,14 @@
 general:
 
 entry:
-- parse en entier la ligne de commande puis si pas de pb de syntaxe entrer
-- entrée sur plusieurs lignes
+- gestion des flèches haut/bas
+- autocompletion avec tab
+- alt-R + recherche
+- entrée interactive sur plusieurs lignes
 - entrée d'une variable sans '' = rcl
-- rpn <"commande entière">
 - entrée de commande shell avec $commande shell, résultat dans une chaîne (?)
 
 commands:
 print
 alias
-alt-R + recherche ?
 date / time
