@@ -39,7 +39,7 @@ using namespace std;
 #include "stack.h"
 
 static const char CURSOR[] = "> ";
-static const char SHOW_STACK_SEPARATOR[] = ":\t";
+static const string g_show_stack_separator = ":\t";
 static int g_verbose = 0;
 
 typedef enum {
@@ -608,7 +608,7 @@ public:
 		return ret;
 	}
 
-	static void show_stack(stack& st)
+	static void show_stack(stack& st, const string& separator = g_show_stack_separator)
 	{
 		if (st.size() == 1)
 		{
@@ -617,9 +617,11 @@ public:
 		}
 		else
 		{
+			bool show_sep = (! separator.empty());
 			for (int i = st.size()-1; i>=0; i--)
 			{
-				cout<<i+1<<SHOW_STACK_SEPARATOR;
+				if (show_sep)
+					cout<<i+1<<separator;
 				((object*)st[i])->show();
 				cout<<endl;
 			}
@@ -729,7 +731,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		string entry;
 		int i;
 
-		// entry
+		// make one string from entry
 		for (i=1; i<argc; i++)
 		{
 			entry += argv[i];
@@ -740,9 +742,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		ret = program::parse(entry, prog);
 		if (ret == ret_ok)
 		{
+			string separator = "";
+
 			// run it
 			ret = prog.run(st, hp);
-			program::show_stack(st);
+			program::show_stack(st, separator);
 		}
 	}
 
