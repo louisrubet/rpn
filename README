@@ -9,7 +9,7 @@ Following objects are managed: scalars, symbols, strings, programs.
 
 Notes:
 - Under Linux x86_64, floating representation is 128-bit quadruple
-  precision format. Thus precision is much better than HP28S
+  precision format. Thus precision is much better than HP28S.
 
 ========================================================================
 Here is a list of HP28s reserved words.
@@ -61,7 +61,7 @@ UNITS
  convert
 
 CURSOR (called MODE in program)
- ins, del, ← → ↑ ↓, std, fix, sci, eng, deg, rad, cmd, undo, last, ml,
+ ins, del, ← → ↑ ↓, std(*), fix(*), sci(*), eng, deg, rad, cmd, undo, last, ml,
  rdx, prmd
 
 TRIG
