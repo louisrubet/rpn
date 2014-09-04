@@ -59,6 +59,12 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "purge", &program::purge, "delete a variable. ex: 'name' purge" },
 	{ cmd_keyword, "vars", &program::vars, "list all variables" },
 
+	//MODE
+	{ cmd_undef, "", NULL, "\nMODE"},
+	{ cmd_keyword, "std", &program::std, "standard floating numbers representation" },
+	{ cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
+	{ cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
+
 	//TRIG
 	{ cmd_undef, "", NULL, "\nTRIG"},
 	{ cmd_keyword, "pi", &program::pi, "PI constant" },

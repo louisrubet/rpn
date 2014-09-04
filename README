@@ -7,8 +7,9 @@ including at least stack, store, branch, test, trig and logs commands.
 
 Following objects are managed: scalars, symbols, strings, programs.
 
-TBD: C99 long double floating point data type (128 ? 80 bits ?)
-     is used for scalars.
+Notes:
+- Under Linux x86_64, floating representation is 128-bit quadruple
+  precision format. Thus precision is much better than HP28S
 
 ========================================================================
 Here is a list of HP28s reserved words.
@@ -59,7 +60,7 @@ CATALOG
 UNITS
  convert
 
-CURSOR
+CURSOR (called MODE in program)
  ins, del, ← → ↑ ↓, std, fix, sci, eng, deg, rad, cmd, undo, last, ml,
  rdx, prmd
 

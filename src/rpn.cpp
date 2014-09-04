@@ -38,6 +38,8 @@ using namespace std;
 
 #include "stack.h"
 
+#define FLOATING_DEFAULT_PRECISION 12
+
 static const char CURSOR[] = "> ";
 static const string g_show_stack_separator = ":\t";
 static int g_verbose = 0;
@@ -681,6 +683,7 @@ private:
 	// keywords implementation
 	#include "rpn-general.h"
 	#include "rpn-algebra.h"
+	#include "rpn-mode.h"
 	#include "rpn-test.h"
 	#include "rpn-stack.h"
 	#include "rpn-branch.h"
@@ -701,8 +704,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	stack st;
 	int ret = 0;
 
-	//
-	cout << setprecision(16);
+	//default precision
+	cout << setprecision(FLOATING_DEFAULT_PRECISION);
 
 	// run with interactive prompt
 	if (argc == 1)
