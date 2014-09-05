@@ -16,6 +16,19 @@ drop
 drop2
 -> stack size should be 0
 
+# test drop error
+drop
+-> error should be 2
+
+# test drop2 error
+drop2
+-> error should be 2
+
+# test drop2 error
+1 drop2
+-> error should be 2
+drop
+
 # test symbol entry 1
 1 '2'
 -> stack size should be 2
@@ -79,7 +92,89 @@ drop2 drop2
 erase
 -> stack size should be 0
 
-## 2 ## BRANCH
+## 2 ## TEST
+# and
+and
+-> error should be 2
+1 and
+-> error should be 2
+drop
+
+0 0 and
+-> stack size should be 1
+-> stack should be 0
+drop
+
+1 0 and
+-> stack size should be 1
+-> stack should be 0
+drop
+
+0 1 and
+-> stack size should be 1
+-> stack should be 0
+drop
+
+1 1 and
+-> stack size should be 1
+-> stack should be 1
+drop
+
+# or
+or
+-> error should be 2
+1 or
+-> error should be 2
+drop
+
+0 0 or
+-> stack size should be 1
+-> stack should be 0
+drop
+
+0 1 or
+-> stack size should be 1
+-> stack should be 1
+drop
+
+1 0 or
+-> stack size should be 1
+-> stack should be 1
+drop
+
+1 1 or
+-> stack size should be 1
+-> stack should be 1
+drop
+
+# xor
+xor
+-> error should be 2
+1 xor
+-> error should be 2
+drop
+
+0 0 xor
+-> stack size should be 1
+-> stack should be 0
+drop
+
+0 1 xor
+-> stack size should be 1
+-> stack should be 1
+drop
+
+1 0 xor
+-> stack size should be 1
+-> stack should be 1
+drop
+
+1 1 xor
+-> stack size should be 1
+-> stack should be 0
+drop
+
+## 3 ## BRANCH
 # if-then-else-end test 1
 1 if then 'ok' end
 -> stack size should be 1
@@ -204,7 +299,7 @@ drop2 drop
 -> stack should be 22, 12, 21, 11
 drop2 drop2
 
-## 3 ##  STORE
+## 4 ##  STORE
 # sto test 1
 1 'a' sto
 -> stack size should be 0
