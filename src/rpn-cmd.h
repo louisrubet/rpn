@@ -31,6 +31,11 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "<=", &program::inf_eq, "binary operator <=" },
 	{ cmd_keyword, "!=", &program::diff, "binary operator != (different)" },
 	{ cmd_keyword, "==", &program::eq , "binary operator == (equal)" },
+	{ cmd_keyword, "and", &program::test_and , "boolean operator and" },
+	{ cmd_keyword, "or", &program::test_or , "boolean operator or" },
+	{ cmd_keyword, "xor", &program::test_xor , "boolean operator xor" },
+	{ cmd_keyword, "not", &program::test_not , "boolean operator not" },
+	{ cmd_keyword, "same", &program::same , "boolean operator same (equal)" },
 
 	//STACK
 	{ cmd_undef, "", NULL, "\nSTACK"},
