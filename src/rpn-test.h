@@ -83,3 +83,46 @@ void eq(void)
 		putf(0);
 	}
 }
+
+void test_and(void)
+{
+	MIN_ARGUMENTS(2);
+	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_IS_OF_TYPE(1, cmd_number);
+
+	putf((getf() != 0) && (getf() != 0));
+}
+
+void test_or(void)
+{
+	MIN_ARGUMENTS(2);
+	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_IS_OF_TYPE(1, cmd_number);
+
+	putf((getf() != 0) || (getf() != 0));
+}
+
+void test_xor(void)
+{
+	MIN_ARGUMENTS(2);
+	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_IS_OF_TYPE(1, cmd_number);
+
+	floating_t first = getf();
+	floating_t second = getf();
+	putf(((first == 0) && (second != 0)) || ((first != 0) && (second == 0)));
+}
+
+void test_not(void)
+{
+	MIN_ARGUMENTS(1);
+	ARG_IS_OF_TYPE(0, cmd_number);
+
+	floating_t first = getf();
+	putf((first == 0) ? 1 : 0);
+}
+
+void same(void)
+{
+	eq();
+}
