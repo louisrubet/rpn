@@ -38,11 +38,10 @@ using namespace std;
 
 #include "stack.h"
 
-#define FLOATING_DEFAULT_PRECISION 12
-
 static const char CURSOR[] = "> ";
 static const string g_show_stack_separator = ":\t";
 static int g_verbose = 0;
+static int g_default_precision = 20;
 
 typedef enum {
 	ret_ok,
@@ -683,7 +682,6 @@ private:
 	// keywords implementation
 	#include "rpn-general.h"
 	#include "rpn-algebra.h"
-	#include "rpn-mode.h"
 	#include "rpn-test.h"
 	#include "rpn-stack.h"
 	#include "rpn-branch.h"
@@ -698,14 +696,21 @@ private:
 #include "rpn-general-core.h"
 
 //
+static void apply_default(void)
+{
+	//default precision
+	cout << setprecision(g_default_precision);
+}
+
+//
 int _tmain(int argc, _TCHAR* argv[])
 {
 	heap hp;
 	stack st;
 	int ret = 0;
 
-	//default precision
-	cout << setprecision(FLOATING_DEFAULT_PRECISION);
+	// apply default configuration
+	apply_default();
 
 	// run with interactive prompt
 	if (argc == 1)

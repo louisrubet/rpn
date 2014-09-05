@@ -17,8 +17,8 @@ Some new commands are added. They are tagged with (+).
 
 Already implemented commands are tagged with (*).
 
-DBG
- verbose(*)(+)
+GENERAL (some are 'CURSOR' commands)
+ verbose(*)(+), std(*), fix(*), sci(*)
 
 STACK
  drop(*), swap(*), roll, dup(*), over, dup2(*), drop2(*), rot(*),
@@ -60,8 +60,8 @@ CATALOG
 UNITS
  convert
 
-CURSOR (called MODE in program)
- ins, del, ← → ↑ ↓, std(*), fix(*), sci(*), eng, deg, rad, cmd, undo, last, ml,
+CURSOR (some of these functions can be found in GENERAL)
+ ins, del, ← → ↑ ↓, std, fix, sci, eng, deg, rad, cmd, undo, last, ml,
  rdx, prmd
 
 TRIG

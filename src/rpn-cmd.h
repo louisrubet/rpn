@@ -9,8 +9,11 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "q", &program::good_bye, "" },
     { cmd_keyword, "quit", &program::good_bye, "(or q or exit) quit software" },
     { cmd_keyword, "exit", &program::good_bye, "" },
-    { cmd_keyword, "verbose", &program::verbose, "set verbosity, from 0 (not verbose) to > 0" },
     { cmd_keyword, "test", &program::test, "" }, //not seen by user
+    { cmd_keyword, "verbose", &program::verbose, "set verbosity, from 0 (not verbose) to > 0" },
+	{ cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
+	{ cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
+	{ cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
 
 	//ALGEBRA
 	{ cmd_undef, "", NULL, "\nALGEBRA"},
@@ -58,12 +61,6 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "rcl", &program::rcl, "recall a variable. ex: 'name' rcl" },
 	{ cmd_keyword, "purge", &program::purge, "delete a variable. ex: 'name' purge" },
 	{ cmd_keyword, "vars", &program::vars, "list all variables" },
-
-	//MODE
-	{ cmd_undef, "", NULL, "\nMODE"},
-	{ cmd_keyword, "std", &program::std, "standard floating numbers representation" },
-	{ cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
-	{ cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
 
 	//TRIG
 	{ cmd_undef, "", NULL, "\nTRIG"},

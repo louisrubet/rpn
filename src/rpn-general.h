@@ -30,3 +30,30 @@ void help()
 }
 
 void test();
+
+void std()
+{
+	if (stack_size()>=1)
+	{
+		ARG_IS_OF_TYPE(0, cmd_number);
+		g_default_precision = (int)getf();
+	}
+	cout.precision(g_default_precision);
+	cout.unsetf(ios_base::floatfield);
+}
+
+void fix()
+{
+	MIN_ARGUMENTS(1);
+	ARG_IS_OF_TYPE(0, cmd_number);
+
+	cout << setprecision((int)getf()) << fixed;
+}
+
+void sci()
+{
+	MIN_ARGUMENTS(1);
+	ARG_IS_OF_TYPE(0, cmd_number);
+
+	cout << setprecision((int)getf()) << scientific;
+}
