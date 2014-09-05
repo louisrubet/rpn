@@ -179,7 +179,7 @@ public:
 			type = (cmd_type_t)seq_type(i);
 
 			//
-			if (g_verbose >= 1)
+			if (g_verbose >= 2)
 			{
 				cout << "(" << i << ") ";
 				((object*)seq_obj(i))->show();
@@ -458,8 +458,10 @@ public:
 				return ret_ok;
 			}
 		}
-	return ret_unknown_err;
+		return ret_unknown_err;
 	}
+
+	ret_value get_err(void)	{ return _err; }
 
 	// interactive entry and decoding
 	static ret_value entry(program& prog)
@@ -693,7 +695,7 @@ private:
 //keywords declaration
 #include "rpn-cmd.h"
 
-#include "rpn-general-core.h"
+#include "rpn-test-core.h"
 
 //
 static void apply_default(void)
