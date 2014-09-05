@@ -15,3 +15,6 @@ commands:
 print
 alias
 date / time
+
+tests:
+and, or, xor, not, same
