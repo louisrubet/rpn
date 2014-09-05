@@ -24,7 +24,7 @@ void program::test()
 		// redirect cerr
 		cerr_old_buffer = cerr.rdbuf(cerr_buffer.rdbuf());
 
-		while (!test_file.eof())
+		while ((!failed) && (!test_file.eof()))
 		{
 			getline(test_file, entry);
 			if (entry.substr(0,2)=="##")
