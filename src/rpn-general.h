@@ -25,8 +25,17 @@ void help()
 		if (_keywords[i].comment.size() != 0)
 		cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
 	cout<<endl;
-	cout<<"Current verbosity is "<<g_verbose<<endl<<endl;
-	cout<<endl;
+	cout<<"Current verbosity is "<<g_verbose<<endl;
+	cout<<"Current float mode is ";
+	switch(g_float_mode)
+	{
+		case mode_std: cout << "'std'"; break;
+		case mode_fix: cout << "'fix'"; break;
+		case mode_sci: cout << "'sci'"; break;
+		default: cout << "unknown"; break;
+	}
+	cout<<endl<<"Current float precision is "<<g_current_precision<<endl;
+	cout<<endl<<endl;
 }
 
 void test();
@@ -38,7 +47,10 @@ void std()
 		ARG_IS_OF_TYPE(0, cmd_number);
 		g_default_precision = (int)getf();
 	}
-	cout.precision(g_default_precision);
+	g_current_precision = g_default_precision;
+	g_float_mode = mode_std;
+
+	cout.precision(g_current_precision);
 	cout.unsetf(ios_base::floatfield);
 }
 
@@ -47,7 +59,10 @@ void fix()
 	MIN_ARGUMENTS(1);
 	ARG_IS_OF_TYPE(0, cmd_number);
 
-	cout << setprecision((int)getf()) << fixed;
+	g_current_precision = (int)getf();
+	g_float_mode = mode_fix;
+
+	cout << setprecision(g_current_precision) << fixed;
 }
 
 void sci()
@@ -55,5 +70,8 @@ void sci()
 	MIN_ARGUMENTS(1);
 	ARG_IS_OF_TYPE(0, cmd_number);
 
-	cout << setprecision((int)getf()) << scientific;
+	g_current_precision = (int)getf();
+	g_float_mode = mode_sci;
+
+	cout << setprecision(g_current_precision) << scientific;
 }
