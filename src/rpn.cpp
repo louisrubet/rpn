@@ -38,10 +38,22 @@ using namespace std;
 
 #include "stack.h"
 
+//TODO faut-il que ces variables soient globales ?
 static const char CURSOR[] = "> ";
 static const string g_show_stack_separator = ":\t";
+
 static int g_verbose = 0;
+
 static int g_default_precision = 20;
+static int g_current_precision = g_default_precision;
+
+typedef enum {
+	mode_std,
+	mode_fix,
+	mode_sci
+} float_mode;
+static float_mode g_default_float_mode = mode_std;
+static float_mode g_float_mode = g_default_float_mode;
 
 typedef enum {
 	ret_ok,
@@ -702,6 +714,7 @@ static void apply_default(void)
 {
 	//default precision
 	cout << setprecision(g_default_precision);
+	g_float_mode = g_default_float_mode;
 }
 
 //
