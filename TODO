@@ -3,6 +3,9 @@
  */
 general:
 - décodage des commandes avec un map<char*, obj*> (plus rapide !!)
+- la grande idée: dissocier la stack data d'une stack de commande.
+Plus d'interprétation. On fabrique un programme
+pseudo-compilé
 
 entry:
 - gestion des flèches haut/bas
