@@ -2,6 +2,7 @@
  * TODO en plus des commands hp28s
  */
 general:
+- décodage des commandes avec un map<char*, obj*> (plus rapide !!)
 
 entry:
 - gestion des flèches haut/bas
@@ -11,7 +12,8 @@ entry:
 - entrée d'une variable sans '' = rcl
 - entrée de commande shell avec $commande shell, résultat dans une chaîne (?)
 
-commands:
-print
-alias
-date / time
+new commands:
+- print
+- alias
+- date / time
+- conversions entre bases, binaire<->ascii
