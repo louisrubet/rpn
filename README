@@ -52,8 +52,8 @@ BRANCH
  step(*), ift, ifte, do, until, end, while, repeat, end
  
 TEST
- !=(*), >(*), >=(*), <(*), <=(*), sf, cf, fs?, fc?, fs?c, fc?c, and, or,
- xor, not, same, ==(*), stof, rclf, type
+ !=(*), >(*), >=(*), <(*), <=(*), sf, cf, fs?, fc?, fs?c, fc?c, and(*),
+ or(*), xor(*), not(*), same(*), ==(*), stof, rclf, type
  
 CATALOG
  next, prev, scan, use, fetch, quit
