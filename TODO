@@ -1,13 +1,10 @@
 /*
- * TODO en plus des commands hp28s
+ * TODO
  */
-general:
-- décodage des commandes avec un map<char*, obj*> (plus rapide !!)
-- la grande idée: dissocier la stack data d'une stack de commande.
-Plus d'interprétation. On fabrique un programme
-pseudo-compilé
+Windows
+- passer en Unicode ou décider
 
-entry:
+Entry:
 - gestion des flèches haut/bas
 - autocompletion avec tab
 - alt-R + recherche
@@ -15,8 +12,13 @@ entry:
 - entrée d'une variable sans '' = rcl
 - entrée de commande shell avec $commande shell, résultat dans une chaîne (?)
 
-new commands:
+En plus des commands hp28s:
 - print
 - alias
 - date / time
 - conversions entre bases, binaire<->ascii
+
+Prospective (étudier):
+- la grande idée: dissocier la stack data d'une stack de commande.
+Plus d'interprétation. On fabrique un programme pseudo-compilé.
+- décodage des commandes avec un map<char*, obj*> (plus rapide !!)
