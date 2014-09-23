@@ -292,7 +292,6 @@ public:
 						show_syntax_error("duplicate end");
 						return ret_syntax;
 					}
-					((branch*)seq_obj(i))->arg1 = next;//fill branch1
 					if (vlayout[layout_index].index_else != -1)
 						//fill 'end' branch of 'else'
 						((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
@@ -527,15 +526,9 @@ public:
 					else
 					{
 						if (type == cmd_keyword)
-                        {
-							keyword key(fn, sub);
-                            prog.push_back(&key, sizeof(keyword), cmd_keyword);
-                        }
+                            prog.push_back(new keyword(fn, sub), sizeof(keyword), cmd_keyword);
 						else if (type == cmd_branch)
-                        {
-							branch bra((branch_fn_t)fn, sub);
-                            prog.push_back(&bra, sizeof(branch), cmd_branch);
-                        }
+                            prog.push_back(new branch((branch_fn_t)fn, sub), sizeof(branch), cmd_branch);
 					}
 				}
 			}
@@ -551,8 +544,7 @@ public:
 						if (sub.substr(sub.size()-1, 1) == "'")
                         {
                             string s=sub.substr(1, sub.size()-2);
-                            symbol sym(s);
-                            prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+                            prog.push_back(new symbol(s), sizeof(symbol), cmd_symbol);
                         }
 						// or 'symbol without ending ' only if last entry
 						else
@@ -569,14 +561,12 @@ public:
 							if (stream.eof())
                             {
                                 string s = sub.substr(1, sub.size()-1);
-                                symbol sym(s);
-								prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+								prog.push_back(new symbol(s), sizeof(symbol), cmd_symbol);
                             }
 							else
                             {
                                 string s = sub.substr(1, sub.size()-2);
-								symbol sym(s);
-                                prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+                                prog.push_back(new symbol(s), sizeof(symbol), cmd_symbol);
                             }
 						}
 					}
@@ -589,21 +579,19 @@ public:
 						{
 							if (type == cmd_keyword)
                             {
-								keyword key(fn, sub);
-                                prog.push_back(&key, sizeof(keyword), cmd_keyword);
+                                prog.push_back(new keyword(fn, sub), sizeof(keyword), cmd_keyword);
                             }
 							else if (type == cmd_branch)
                             {
-								branch bra((branch_fn_t)fn, sub);
-                                prog.push_back(&bra, sizeof(branch), cmd_branch);
+                                prog.push_back(new branch((branch_fn_t)fn, sub), sizeof(branch), cmd_branch);
                             }
 						}
 						else
 						{
 							// no, so it is counted as an auto-evaluated symbol
-							symbol sym(sub);
-							sym._auto_eval = true;
-							prog.push_back(&sym, sizeof(symbol), cmd_symbol);
+							symbol* sym=new symbol(sub);
+							sym->_auto_eval = true;
+							prog.push_back(sym, sizeof(symbol), cmd_symbol);
 						}
 					}
 				}
