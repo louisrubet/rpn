@@ -1,3 +1,5 @@
+void test();
+
 //
 void nop()
 {
@@ -18,7 +20,11 @@ void verbose()
 
 void help()
 {
-	cout<<"rpn - HP28S reverse polish notation language simulator"<<endl;
+	cout<<endl;
+	rpn_uname();
+	cout<<endl;
+
+	cout<<"HP28S Reverse Polish Notation language simulator"<<endl;
 	cout<<"syntax: rpn [command]"<<endl;
 	cout<<"with optional command = list of commands"<<endl;
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
@@ -37,8 +43,6 @@ void help()
 	cout<<endl<<"Current float precision is "<<g_current_precision<<endl;
 	cout<<endl<<endl;
 }
-
-void test();
 
 void std()
 {
@@ -74,4 +78,14 @@ void sci()
 	g_float_mode = mode_sci;
 
 	cout << setprecision(g_current_precision) << scientific;
+}
+
+void rpn_version()
+{
+	cout << version << endl;
+}
+
+void rpn_uname()
+{
+	cout << uname << endl;
 }
