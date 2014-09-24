@@ -14,6 +14,8 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
 	{ cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
 	{ cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
+	{ cmd_keyword, "version", &program::rpn_version, "show rpn version" },
+	{ cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
 
 	//ALGEBRA
 	{ cmd_undef, "", NULL, "\nALGEBRA"},

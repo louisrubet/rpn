@@ -42,11 +42,18 @@ using namespace std;
 static const char CURSOR[] = "> ";
 static const string g_show_stack_separator = ":\t";
 
+//
 static int g_verbose = 0;
 
+//
 static int g_default_precision = 20;
 static int g_current_precision = g_default_precision;
 
+//
+static const char version[] = "1.0";
+static const char uname[] = "rpn v1.0, (c) 2013 <louis@rubet.fr>";
+
+//
 typedef enum {
 	mode_std,
 	mode_fix,
