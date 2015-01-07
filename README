@@ -19,7 +19,8 @@ Some new commands are added. They are tagged with (+).
 Already implemented commands are tagged with (*).
 
 GENERAL OPERATIONS
- +(*), -(*), neg(*), *(*), /(*), inv(+), %, %CH, ^, sqrt(+), sq(+)
+ +(*), -(*), neg(*), *(*), /(*), inv(*)(+), %(*), %CH(*), ^(*),
+ sqrt(*)(+), sq(*)(+)
 
 GENERAL (some are 'CURSOR' commands)
  verbose(*)(+), std(*), fix(*), sci(*), version(*)(+), uname(*)(+)
