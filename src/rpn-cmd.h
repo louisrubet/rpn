@@ -24,6 +24,12 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "neg", &program::neg , "unary operator - (negation)" },
 	{ cmd_keyword, "*", &program::mul, "binary operator *" },
 	{ cmd_keyword, "/", &program::div, "binary operator /" },
+	{ cmd_keyword, "inv", &program::inv, "unarity operator inverse (1/)" },
+	{ cmd_keyword, "%", &program::purcent, "binary operator purcent" },
+	{ cmd_keyword, "%CH", &program::purcentCH, "binary operator inverse purcent" },
+	{ cmd_keyword, "^", &program::power, "binary operator power" },
+	{ cmd_keyword, "sqrt", &program::squareroot, "unarity operator square root" },
+	{ cmd_keyword, "sq", &program::square, "unarity operator square" },
 
 	//TEST
 	{ cmd_undef, "", NULL, "\nTEST"},
