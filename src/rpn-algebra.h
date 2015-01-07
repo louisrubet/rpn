@@ -1,5 +1,3 @@
-//TODO please do like in rpn-trig.h:
-// ex: ((number*)_stack->get_obj(0))->_value = tan(((number*)_stack->get_obj(0))->_value);
 void plus()
 {
 	MIN_ARGUMENTS(2);
@@ -87,7 +85,6 @@ void power()
 	putf(powl(getf(), first));
 }
 
-//TODO 2 2 sqrt sq - does not zero !!
 void squareroot()
 {
 	MIN_ARGUMENTS(1);

@@ -1,6 +1,21 @@
 /*
  * TODO
  */
+
+* NOW
+*****
+- tests
+	- pouvoir lancer le test avec un fichier txt donné en argument
+- tests des fonctions algébriques générales (en particulier inv, sqrt ..)
+- 2 2 sqrt sq - ne donne pas 0
+- partout où c'est possible: faire comme dans rpn-trig.h: ex:
+ ((number*)_stack->get_obj(0))->_value = tan(((number*)_stack->get_obj(0))->_value);
+ au lieu de 
+ putf(tan(getf()));
+- entrée de commande shell avec $commande shell, résultat: 1 ligne stdout entre '', 1 ligne resultat
+
+* Prospective
+*************
 Windows
 - passer en Unicode ou décider
 
@@ -10,7 +25,6 @@ Entry:
 - alt-R + recherche
 - entrée interactive sur plusieurs lignes
 - entrée d'une variable sans '' = rcl
-- entrée de commande shell avec $commande shell, résultat dans une chaîne (?)
 
 En plus des commands hp28s:
 - print
@@ -18,7 +32,7 @@ En plus des commands hp28s:
 - date / time
 - conversions entre bases, binaire<->ascii
 
-Prospective (étudier):
+Etudier:
 - la grande idée: dissocier la stack data d'une stack de commande.
-Plus d'interprétation. On fabrique un programme pseudo-compilé.
+ Plus d'interprétation. On fabrique un programme pseudo-compilé.
 - décodage des commandes avec un map<char*, obj*> (plus rapide !!)
