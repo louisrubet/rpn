@@ -33,14 +33,23 @@ void help()
 	cout<<endl;
 	cout<<"Current verbosity is "<<g_verbose<<endl;
 	cout<<"Current float mode is ";
-	switch(g_float_mode)
+	switch(number::s_mode)
 	{
-		case mode_std: cout << "'std'"; break;
-		case mode_fix: cout << "'fix'"; break;
-		case mode_sci: cout << "'sci'"; break;
+		case number::std: cout << "'std'"; break;
+		case number::fix: cout << "'fix'"; break;
+		case number::sci: cout << "'sci'"; break;
 		default: cout << "unknown"; break;
 	}
-	cout<<endl<<"Current float precision is "<<g_current_precision<<endl;
+	cout<<endl<<"Current float precision is "<<number::s_current_precision<<endl;
+	cout<<"Current binary mode is ";
+	switch(binary::s_mode)
+	{
+		case binary::dec: cout << "'dec'"; break;
+		case binary::hex: cout << "'hex'"; break;
+		case binary::oct: cout << "'oct'"; break;
+		case binary::bin: cout << "'bin'"; break;
+		default: cout << "unknown"; break;
+	}
 	cout<<endl<<endl;
 }
 
@@ -49,12 +58,12 @@ void std()
 	if (stack_size()>=1)
 	{
 		ARG_IS_OF_TYPE(0, cmd_number);
-		g_default_precision = (int)getf();
+		number::s_default_precision = (int)getf();
 	}
-	g_current_precision = g_default_precision;
-	g_float_mode = mode_std;
+	number::s_current_precision = number::s_default_precision;
+	number::s_mode = number::std;
 
-	cout.precision(g_current_precision);
+	cout.precision(number::s_current_precision);
 	cout.unsetf(ios_base::floatfield);
 }
 
@@ -63,10 +72,10 @@ void fix()
 	MIN_ARGUMENTS(1);
 	ARG_IS_OF_TYPE(0, cmd_number);
 
-	g_current_precision = (int)getf();
-	g_float_mode = mode_fix;
+	number::s_current_precision = (int)getf();
+	number::s_mode = number::fix;
 
-	cout << setprecision(g_current_precision) << fixed;
+	cout << setprecision(number::s_current_precision) << fixed;
 }
 
 void sci()
@@ -74,10 +83,10 @@ void sci()
 	MIN_ARGUMENTS(1);
 	ARG_IS_OF_TYPE(0, cmd_number);
 
-	g_current_precision = (int)getf();
-	g_float_mode = mode_sci;
+	number::s_current_precision = (int)getf();
+	number::s_mode = number::sci;
 
-	cout << setprecision(g_current_precision) << scientific;
+	cout << setprecision(number::s_current_precision) << scientific;
 }
 
 void rpn_version()

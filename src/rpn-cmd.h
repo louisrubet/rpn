@@ -31,6 +31,13 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "sqrt", &program::squareroot, "unarity operator square root" },
 	{ cmd_keyword, "sq", &program::square, "unarity operator square" },
 
+	//BINARY
+	{ cmd_undef, "", NULL, "\nBINARY"},
+	{ cmd_keyword, "dec", &program::dec, "decimal representation for binaries" },
+	{ cmd_keyword, "hex", &program::hex, "hexadecimal representation for binaries" },
+	{ cmd_keyword, "oct", &program::oct, "octal representation for binaries" },
+	{ cmd_keyword, "bin", &program::bin, "binary representation for binaries" },
+
 	//TEST
 	{ cmd_undef, "", NULL, "\nTEST"},
 	{ cmd_keyword, ">", &program::sup, "binary operator >" },
