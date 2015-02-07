@@ -34,6 +34,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+//#include <regex>
 using namespace std;
 
 #include "stack.h"
@@ -46,21 +47,8 @@ static const string g_show_stack_separator = ":\t";
 static int g_verbose = 0;
 
 //
-static int g_default_precision = 20;
-static int g_current_precision = g_default_precision;
-
-//
 static const char version[] = "1.0";
 static const char uname[] = "rpn v1.0, (c) 2013 <louis@rubet.fr>";
-
-//
-typedef enum {
-	mode_std,
-	mode_fix,
-	mode_sci
-} float_mode;
-static float_mode g_default_float_mode = mode_std;
-static float_mode g_float_mode = g_default_float_mode;
 
 typedef enum {
 	ret_ok,
@@ -85,6 +73,7 @@ const char* ret_value_string[ret_max] = {
 typedef enum {
 	cmd_undef,
 	cmd_number,/* floating value to put in stack */
+	cmd_binary,/* binary (integer) value to put in stack */
 	cmd_symbol,/* symbol value to put in stack */
 	cmd_keyword,/* langage keyword */
 	cmd_branch,/* langage branch keyword */
@@ -92,11 +81,12 @@ typedef enum {
 } cmd_type_t;
 
 const char* cmd_type_string[cmd_max] = {
-	"undef", "number", "symbol", "keyword", "keyword"
+	"undef", "number", "binary", "symbol", "keyword", "keyword"
 };
 
 //
 typedef long double floating_t;
+typedef long long integer_t;
 class program;
 class object;
 class branch;
@@ -122,7 +112,68 @@ public:
 	number(floating_t value) : object(cmd_number) { _value = value; }
 	virtual void show(ostream& stream = cout) { stream << _value; }
 	floating_t _value;
+
+	// representation mode
+	typedef enum {
+		std,
+		fix,
+		sci
+	} mode_enum;
+	static mode_enum s_default_mode;
+	static mode_enum s_mode;
+	
+	// precision
+	static int s_default_precision;
+	static int s_current_precision;
 };
+number::mode_enum number::s_default_mode = number::std;
+number::mode_enum number::s_mode = number::s_default_mode;
+int number::s_default_precision = 20;
+int number::s_current_precision = number::s_default_precision;
+
+class binary : public object
+{
+public:
+	binary(integer_t value) : object(cmd_binary) { _value = value; }
+	
+	virtual void show(ostream& stream = cout)
+	{
+		cout << "# ";
+		switch(s_mode)
+		{
+			case dec: cout<<std::right<<std::setw(8)<<std::dec<<_value<<" d"; break;
+			case hex: cout<<std::right<<std::setw(8)<<std::hex<<_value<<" h"; break;
+			case oct: cout<<std::right<<std::setw(8)<<std::oct<<_value<<" o"; break;
+			case bin:
+			{
+				string mybin;
+				for (int i = (int)(log((floating_t)_value) / log(2.)); i>=0; i--)
+				{
+					if (_value & (1 << i))
+						mybin+='1';
+					else
+						mybin+='0';
+				}
+				cout<<std::right<<std::setw(16)<<std::oct<<mybin<<" b";
+			}
+			break;
+		}
+	}
+	
+	integer_t _value;
+	
+	// representation mode
+	typedef enum {
+		dec,
+		hex,
+		oct,
+		bin,
+	} binary_enum;
+	static binary_enum s_default_mode;
+	static binary_enum s_mode;
+};
+binary::binary_enum binary::s_default_mode = binary::dec;
+binary::binary_enum binary::s_mode = binary::s_default_mode;
 
 class symbol : public object
 {
@@ -206,7 +257,7 @@ public:
 			}
 
 			// not a command, but a stack entry, manage it
-			if (type == cmd_number)
+			if ((type == cmd_number) || (type == cmd_binary))
 			{
 				stk.push_back(seq_obj(i), seq_len(i), type);
 				i++;
@@ -691,6 +742,7 @@ private:
 	// keywords implementation
 	#include "rpn-general.h"
 	#include "rpn-algebra.h"
+	#include "rpn-binary.h"
 	#include "rpn-test.h"
 	#include "rpn-stack.h"
 	#include "rpn-branch.h"
@@ -708,8 +760,11 @@ private:
 static void apply_default(void)
 {
 	//default precision
-	cout << setprecision(g_default_precision);
-	g_float_mode = g_default_float_mode;
+	cout << setprecision(number::s_default_precision);
+	number::s_mode = number::s_default_mode;
+
+	//default binary mode
+	binary::s_mode = binary::s_default_mode;
 }
 
 //
