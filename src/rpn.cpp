@@ -62,12 +62,13 @@ typedef enum {
 	ret_not_impl,
 	ret_nop,
 	ret_syntax,
+	ret_div_by_zero,
 	ret_max
 } ret_value;
 
 const char* ret_value_string[ret_max] = {
 	"ok", "unknown command", "missing operand", "bad operand type", "unknown variable", "internal error, aborting",
-	"deadly", "goodbye", "not implemented", "no operation", "syntax"
+	"deadly", "goodbye", "not implemented", "no operation", "syntax", "division by zero"
 };
 
 typedef enum {
@@ -142,8 +143,8 @@ public:
 		switch(s_mode)
 		{
 			case dec: cout<<std::right<<std::setw(8)<<std::dec<<_value<<" d"; break;
-			case hex: cout<<std::right<<std::setw(8)<<std::hex<<_value<<" h"; break;
-			case oct: cout<<std::right<<std::setw(8)<<std::oct<<_value<<" o"; break;
+			case hex: cout<<std::right<<std::setw(16)<<std::hex<<_value<<" h"; break;
+			case oct: cout<<std::right<<std::setw(16)<<std::oct<<_value<<" o"; break;
 			case bin:
 			{
 				string mybin;
@@ -154,7 +155,7 @@ public:
 					else
 						mybin+='0';
 				}
-				cout<<std::right<<std::setw(16)<<std::oct<<mybin<<" b";
+				cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
 			}
 			break;
 		}
@@ -601,6 +602,21 @@ private:
         _stack->push_back(&num, sizeof(number), cmd_number);
 	}
 
+	integer_t getb()
+	{
+		/* warning, caller must check object type before */
+		integer_t a = ((binary*)_stack->back())->_value;
+		_stack->pop_back();
+		return a;
+	}
+
+	void putb(integer_t value)
+	{
+		/* warning, caller must check object type before */
+		binary num(value);
+        _stack->push_back(&num, sizeof(binary), cmd_binary);
+	}
+
 	string getn()
 	{
 		/* warning, caller must check object type before */
@@ -626,8 +642,9 @@ private:
 	#define ERR_CONTEXT(err) do { _err = (err); _err_context = __FUNCTION__; } while(0)
 	#define MIN_ARGUMENTS(num) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return; } } while(0)
 	#define MIN_ARGUMENTS_RET(num, ret) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return (ret); } } while(0)
-	#define ARG_IS_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
-	#define ARG_IS_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
+	#define ARG_MUST_BE_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
+	#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
+	#define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
 
 	// keywords implementation
 	#include "rpn-general.h"

@@ -40,6 +40,10 @@ ALGEBRA
  neg(*)(+), colct, expan, size, form, obsub, exsub, taylr, isol, quad,
  show, obget, exget
 
+BINARY
+ dec(*), hex(*), oct(*), bin(*), stws, rcws, rl, rr, rlb, rrb, r->b(*),
+ b->r(*), sl, sr, slb, srb, asr, and, or, xor, not
+
 STAT
  ∑dat, ∑par, ∑+, ∑-, n∑, cl∑, sto∑, rcl∑, tot, mean, sdev, var, max∑,
  min∑, col∑, corr, cov, lr, predev, utpc, utpf, utpn, utpt, comb, perm

@@ -4,7 +4,7 @@ int rpn_if(branch& myobj)
 {
 	// myobj.arg1 = 'if' condition evaluation value
 	MIN_ARGUMENTS_RET(1, -1);
-	ARG_IS_OF_TYPE_RET(0, cmd_number, -1);
+	ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
 	myobj.arg1 = ((getf() != 0) ? 1 : 0);
 	return -1;
 }
@@ -45,8 +45,8 @@ void rpn_end(void)
 int rpn_start(branch& myobj)
 {
 	MIN_ARGUMENTS_RET(2, 1);
-	ARG_IS_OF_TYPE_RET(0, cmd_number, -1);
-	ARG_IS_OF_TYPE_RET(1, cmd_number, -1);
+	ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
+	ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
 
 	// farg1 = first value of start command
 	// farg2 = last value of start command
@@ -58,8 +58,8 @@ int rpn_start(branch& myobj)
 int rpn_for(branch& myobj)
 {
 	MIN_ARGUMENTS_RET(2, 1);
-	ARG_IS_OF_TYPE_RET(0, cmd_number, -1);
-	ARG_IS_OF_TYPE_RET(1, cmd_number, -1);
+	ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
+	ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
 
 	symbol* sym = ((symbol*)seq_obj(myobj.arg1));
 
