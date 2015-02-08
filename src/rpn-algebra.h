@@ -1,54 +1,110 @@
 void plus()
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
 
-	putf(getf() + getf());
+	// float
+	if (IS_ARG_TYPE(0, cmd_number))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_number);
+		//TODO really too slow
+		putf(getf() + getf());
+	}
+	// binary
+	else if (IS_ARG_TYPE(0, cmd_binary))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_binary);
+		//TODO really too slow
+		putb(getb() + getb());
+	}
 }
 
 void minus()
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
 
-	floating_t first = getf();
-	putf(getf() - first);
+	// float
+	if (IS_ARG_TYPE(0, cmd_number))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_number);
+		//TODO really too slow
+		floating_t first = getf();
+		putf(getf() - first);
+	}
+	// binary
+	else if (IS_ARG_TYPE(0, cmd_binary))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_binary);
+		//TODO really too slow
+		integer_t first = getb();
+		putb(getb() - first);
+	}
 }
 
 void mul()
 {
-	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
-
-	putf(getf() * getf());
+	// float
+	if (IS_ARG_TYPE(0, cmd_number))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_number);
+		//TODO really too slow
+		putf(getf() * getf());
+	}
+	// binary
+	else if (IS_ARG_TYPE(0, cmd_binary))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_binary);
+		//TODO really too slow
+		putb(getb() * getb());
+	}
 }
 
 void div()
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
 
-	// arithmetic faults are managed by c++
-	floating_t first = getf();
-	putf(getf() / first);
+	// float
+	if (IS_ARG_TYPE(0, cmd_number))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_number);
+		//TODO really too slow
+
+		floating_t first = getf();
+		// arithmetic faults are managed by c++
+		putf(getf() / first);
+	}
+	// binary
+	else if (IS_ARG_TYPE(0, cmd_binary))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_binary);
+		if (((binary*)_stack->get_obj(0))->_value == 0)
+		{
+			ERR_CONTEXT(ret_div_by_zero);
+		}
+		else
+		{
+			//TODO really too slow
+			integer_t first = getb();
+			putb(getb() / first);
+		}
+	}
 }
 
 void neg()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
 
-	putf(-getf());
+	// float
+	if (IS_ARG_TYPE(0, cmd_number))
+		putf(-getf());
+	// binary
+	else if (IS_ARG_TYPE(0, cmd_binary))
+		putb(-getb());
 }
 
 void inv()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
 	// arithmetic faults are managed by c++
 	putf(1 / getf());
@@ -57,8 +113,8 @@ void inv()
 void purcent()
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	putf((getf() * getf()) / 100);
 }
@@ -66,8 +122,8 @@ void purcent()
 void purcentCH()
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	// arithmetic faults are managed by c++
 	floating_t first = getf();
@@ -77,8 +133,8 @@ void purcentCH()
 void power()
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	// arithmetic faults are managed by c++
 	floating_t first = getf();
@@ -88,7 +144,7 @@ void power()
 void squareroot()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
 	// arithmetic faults are managed by c++
 	putf(sqrtl(getf()));
@@ -97,7 +153,7 @@ void squareroot()
 void square()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
 	floating_t first = getf();
 	putf(first * first);

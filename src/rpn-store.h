@@ -2,7 +2,7 @@
 void sto(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_symbol);
+	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
 	string name = getn();
 	_heap->add(name, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
@@ -12,7 +12,7 @@ void sto(void)
 void rcl(void)
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_symbol);
+	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
 	void* obj;
 	unsigned int size;
@@ -43,7 +43,7 @@ void auto_rcl(symbol* symb)
 void purge(void)
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_symbol);
+	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
 	if (!_heap->erase(getn()))
 		ERR_CONTEXT(ret_unknown_variable);
