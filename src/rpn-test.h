@@ -1,8 +1,8 @@
 void sup(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	putf(getf() > first);
@@ -11,8 +11,8 @@ void sup(void)
 void sup_eq(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	putf(getf() >= first);
@@ -21,8 +21,8 @@ void sup_eq(void)
 void inf(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	putf(getf() < first);
@@ -31,8 +31,8 @@ void inf(void)
 void inf_eq(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	putf(getf() <= first);
@@ -41,8 +41,8 @@ void inf_eq(void)
 void diff(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	putf(getf() != first);
@@ -87,8 +87,8 @@ void eq(void)
 void test_and(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	floating_t second = getf();
@@ -98,8 +98,8 @@ void test_and(void)
 void test_or(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	floating_t second = getf();
@@ -109,8 +109,8 @@ void test_or(void)
 void test_xor(void)
 {
 	MIN_ARGUMENTS(2);
-	ARG_IS_OF_TYPE(0, cmd_number);
-	ARG_IS_OF_TYPE(1, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
 	floating_t first = getf();
 	floating_t second = getf();
@@ -120,7 +120,7 @@ void test_xor(void)
 void test_not(void)
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
 	floating_t first = getf();
 	putf((first == 0) ? 1 : 0);

@@ -14,7 +14,7 @@ void good_bye()
 void verbose()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 	g_verbose = (int)getf();
 }
 
@@ -57,7 +57,7 @@ void std()
 {
 	if (stack_size()>=1)
 	{
-		ARG_IS_OF_TYPE(0, cmd_number);
+		ARG_MUST_BE_OF_TYPE(0, cmd_number);
 		number::s_default_precision = (int)getf();
 	}
 	number::s_current_precision = number::s_default_precision;
@@ -70,7 +70,7 @@ void std()
 void fix()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
 	number::s_current_precision = (int)getf();
 	number::s_mode = number::fix;
@@ -81,7 +81,7 @@ void fix()
 void sci()
 {
 	MIN_ARGUMENTS(1);
-	ARG_IS_OF_TYPE(0, cmd_number);
+	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
 	number::s_current_precision = (int)getf();
 	number::s_mode = number::sci;

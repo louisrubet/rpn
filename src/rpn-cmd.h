@@ -37,6 +37,8 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "hex", &program::hex, "hexadecimal representation for binaries" },
 	{ cmd_keyword, "oct", &program::oct, "octal representation for binaries" },
 	{ cmd_keyword, "bin", &program::bin, "binary representation for binaries" },
+	{ cmd_keyword, "r->b", &program::rtob, "real to binary" },
+	{ cmd_keyword, "b->r", &program::btor, "binary to real" },
 
 	//TEST
 	{ cmd_undef, "", NULL, "\nTEST"},
