@@ -40,15 +40,15 @@ using namespace std;
 #include "stack.h"
 
 //TODO faut-il que ces variables soient globales ?
-static const char CURSOR[] = "> ";
+static const char g_cursor[] = "> ";
 static const string g_show_stack_separator = ":\t";
+static const int g_max_commands = 100;
 
 //
 static int g_verbose = 0;
 
 //
-static const char version[] = "1.0";
-static const char uname[] = "rpn v1.0, (c) 2013 <louis@rubet.fr>";
+#include "version.h"
 
 typedef enum {
 	ret_ok,
@@ -179,6 +179,11 @@ class symbol : public object
 {
 public:
 	symbol(string& name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
+	{
+	    _name = new string;
+	    *_name = name;
+	}
+	symbol(const char* name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
 	{
 	    _name = new string;
 	    *_name = name;
@@ -514,9 +519,9 @@ public:
 		program_fn_t fn;
 		string comment;
 	};
-    static keyword_t _keywords[100];
+    static keyword_t _keywords[g_max_commands];
 
-	ret_value get_fn(const string& fn_name, program_fn_t& fn, cmd_type_t& type)
+	static ret_value get_fn(const string& fn_name, program_fn_t& fn, cmd_type_t& type)
 	{
 		for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
 		{
@@ -539,7 +544,7 @@ public:
 		string entry;
 
 		// show cursor
-		cout<<CURSOR;
+		cout<<g_cursor;
 
 		// get user line
 		getline(cin, entry);
@@ -552,122 +557,7 @@ public:
 		return ret;
 	}
 
-	static ret_value parse(const string& entry, program& prog)
-	{
-		ret_value ret = ret_ok;
-		istringstream stream(entry);
-
-		do
-		{
-			floating_t val;
-			istringstream isub;
-			string sub;
-
-			stream >> sub;
-			isub.str(sub);
-
-			// check whether it is a number
-			isub >> val;
-			if ( (!isub.fail()) && (!isub.bad()) )
-			{
-				// found a number
-				number num(val);
-                prog.push_back(&num, sizeof(number), cmd_number);
-				if (isub.good())
-				{
-					// plus another command without space
-					program_fn_t fn;
-					cmd_type_t type;
-					isub >> sub;
-					if (prog.get_fn(sub, fn, type) != ret_ok)
-						program::show_error(ret_unknown_err, sub);
-					else
-					{
-						if (type == cmd_keyword)
-                            prog.push_back(new keyword(fn, sub), sizeof(keyword), cmd_keyword);
-						else if (type == cmd_branch)
-                            prog.push_back(new branch((branch_fn_t)fn, sub), sizeof(branch), cmd_branch);
-					}
-				}
-			}
-			else
-			{
-				if (sub.size()>0)
-				{
-					// not a number ?
-					// could be a symbol
-					if (sub.substr(0,1) == "'")
-					{
-						// syntax should be 'symbol'
-						if (sub.substr(sub.size()-1, 1) == "'")
-                        {
-                            string s=sub.substr(1, sub.size()-2);
-                            prog.push_back(new symbol(s), sizeof(symbol), cmd_symbol);
-                        }
-						// or 'symbol without ending ' only if last entry
-						else
-						{
-							char c;
-							do
-							{
-								stream.get(c);
-								if (stream.eof())
-									break;
-								sub += c;
-							}
-							while(c != '\'');
-							if (stream.eof())
-                            {
-                                string s = sub.substr(1, sub.size()-1);
-								prog.push_back(new symbol(s), sizeof(symbol), cmd_symbol);
-                            }
-							else
-                            {
-                                string s = sub.substr(1, sub.size()-2);
-                                prog.push_back(new symbol(s), sizeof(symbol), cmd_symbol);
-                            }
-						}
-					}
-					else
-					{
-						program_fn_t fn;
-						cmd_type_t type;
-						// could be a command
-						if (prog.get_fn(sub, fn, type) == ret_ok)
-						{
-							if (type == cmd_keyword)
-                            {
-                                prog.push_back(new keyword(fn, sub), sizeof(keyword), cmd_keyword);
-                            }
-							else if (type == cmd_branch)
-                            {
-                                prog.push_back(new branch((branch_fn_t)fn, sub), sizeof(branch), cmd_branch);
-                            }
-						}
-						else
-						{
-							// no, so it is counted as an auto-evaluated symbol
-							symbol* sym=new symbol(sub);
-							sym->_auto_eval = true;
-							prog.push_back(sym, sizeof(symbol), cmd_symbol);
-						}
-					}
-				}
-			}
-		}
-		while (!stream.eof());
-
-		// particular : check 'for' command is followed by a symbol, with auto-evaluated syntax (i.e. without ')
-		//TODO
-		/*
-		for(int i = 0; i < (int)prog.size(); i++)
-		{
-			if ((prog.seq_type(i) == cmd_branch) && ())
-		}
-		*/
-
-		return ret;
-	}
+#include "parse.h"
 
 	static void show_stack(stack& st, const string& separator = g_show_stack_separator)
 	{
