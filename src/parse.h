@@ -265,3 +265,31 @@ static ret_value parse(const string& entry, program& prog)
 
     return ret;
 }
+
+static ret_value parse_line(const string& entry, program& prog)
+{
+    vector<string> entries;
+    ret_value ret = ret_ok;
+    cmd_type_t type;
+    unsigned int obj_size;
+    object* obj;
+
+    //1. cut global entry string into shorter strings
+    if (_cut(entry, entries))
+    {
+        //2. make an object from each entry, and add it to the program
+        for (vector<string>::iterator it = entries.begin(); it != entries.end(); it++)
+        {
+            if(_obj_from_string((*it), obj, obj_size, type))
+            {
+                prog.push_back(obj, obj_size, type);
+            }
+            else
+            {
+                // no syntax error for now, an unknown obj form is considered as a symbol
+            }
+        }
+    }
+
+    return ret;
+}
