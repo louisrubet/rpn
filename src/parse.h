@@ -266,30 +266,89 @@ static ret_value parse(const string& entry, program& prog)
     return ret;
 }
 
-static ret_value parse_line(const string& entry, program& prog)
+// interactive entry and decoding
+static ret_value entry(program& prog)
 {
-    vector<string> entries;
-    ret_value ret = ret_ok;
-    cmd_type_t type;
-    unsigned int obj_size;
-    object* obj;
+    char *buf;
+    ret_value ret;
 
-    //1. cut global entry string into shorter strings
-    if (_cut(entry, entries))
+    // declare completion fn
+    rl_attempted_completion_function = entry_completion;
+
+    // get user entry
+    buf = readline(prompt);
+    if (buf != NULL)
     {
-        //2. make an object from each entry, and add it to the program
-        for (vector<string>::iterator it = entries.begin(); it != entries.end(); it++)
-        {
-            if(_obj_from_string((*it), obj, obj_size, type))
-            {
-                prog.push_back(obj, obj_size, type);
-            }
-            else
-            {
-                // no syntax error for now, an unknown obj form is considered as a symbol
-            }
-        }
-    }
+        string entry = buf;
 
-    return ret;
+        //enable auto-complete
+        rl_bind_key('\t',rl_complete);
+
+        // parse it
+        ret = parse(entry, prog);
+
+        // keep history
+        if (buf[0]!=0)
+            add_history(buf);
+    }
+    else
+        ret = ret_internal;
+
+    free(buf);
+}
+
+static char** entry_completion(const char* text, int start, int end)
+{
+    char** matches;
+ 
+    matches = (char**)NULL;
+ 
+    if (start == 0)
+        matches = rl_completion_matches((char*)text, &entry_completion_generator);
+    else
+        rl_bind_key('\t',rl_abort);
+ 
+    return matches;
+}
+
+static char* entry_completion_generator(const char* text, int state)
+{
+    static int list_index, len, too_far;
+    char* name;
+ 
+    if (!state)
+    {
+        list_index = 0;
+        too_far = 0;
+        len = strlen(text);
+    }
+ 
+    while(too_far == 0)
+    {        
+        if (_keywords[list_index].fn == NULL)
+        {
+            if (_keywords[list_index].comment.size() == 0)
+                too_far = 1;
+            break;
+        }
+
+        list_index++;
+
+        // mpo ! ne pas stocker c_str
+        name = (char*)_keywords[list_index].name.c_str();
+        if (strncmp(name, text, len) == 0)
+            return entry_completion_dupstr(name);
+    }
+ 
+    /* If no names matched, then return NULL. */
+    return NULL;
+ 
+}
+
+static char* entry_completion_dupstr(char* s)
+{
+    char* r = (char*)malloc((strlen(s)+1));
+    if (r != NULL)
+        strcpy(r, s);
+    return r;
 }

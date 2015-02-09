@@ -29,12 +29,16 @@
 #endif
 #include <math.h>
 
+extern "C" {
+#include <readline/readline.h>
+#include <readline/history.h>
+}
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <sstream>
 #include <fstream>
-//#include <regex>
 using namespace std;
 
 #include "stack.h"
@@ -537,26 +541,6 @@ public:
 	}
 
 	ret_value get_err(void)	{ return _err; }
-
-	// interactive entry and decoding
-	static ret_value entry(program& prog)
-	{
-		ret_value ret;
-		string entry;
-
-		// show cursor
-		cout<<g_cursor;
-
-		// get user line
-		getline(cin, entry);
-		if (cin.good())
-			// parse it
-			ret = parse(entry, prog);
-		else
-			ret = ret_internal;
-
-		return ret;
-	}
 
 #include "parse.h"
 
