@@ -19,18 +19,10 @@
 Windows
 - passer en Unicode ou décider
 
-Entry:
-- gestion des flèches haut/bas
-- autocompletion avec tab
-- alt-R + recherche
-- entrée interactive sur plusieurs lignes
-- entrée d'une variable sans '' = rcl
-
 En plus des commands hp28s:
 - print
 - alias
-- date / time
-- conversions entre bases, binaire<->ascii
+- type date, fonctions date / time
 
 Etudier:
 - la grande idée: dissocier la stack data d'une stack de commande.

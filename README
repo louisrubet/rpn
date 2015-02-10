@@ -5,12 +5,11 @@
 This project plans to create a clone of HP-28S calculator language,
 including at least stack, store, branch, test, trig and logs commands.
 
-Following objects are managed: scalars, symbols
+Following objects are managed: scalars, symbols, binaries
 
 Notes:
 - Under Linux x86_64, floating representation is 128-bit (quadruple
-  precision format). Thus precision (49 digits) is much better than
-  HP28S.
+  precision format). Thus precision is much better than HP28S.
 
 ========================================================================
 Here is a list of HP28s reserved words.
