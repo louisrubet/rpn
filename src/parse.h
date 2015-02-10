@@ -78,7 +78,7 @@ static bool get_keyword(const string& entry, object*& obj, unsigned int& obj_siz
     bool ret = false;
 
     // could be a command
-    if (get_fn(entry, fn, type) == ret_ok)
+    if (get_fn(entry.c_str(), fn, type) == ret_ok)
     {
         if (type == cmd_keyword)
         {
@@ -299,14 +299,10 @@ static ret_value entry(program& prog)
 
 static char** entry_completion(const char* text, int start, int end)
 {
-    char** matches;
- 
-    matches = (char**)NULL;
+    char** matches = NULL;
  
     if (start == 0)
         matches = rl_completion_matches((char*)text, &entry_completion_generator);
-    else
-        rl_bind_key('\t',rl_abort);
  
     return matches;
 }
@@ -314,9 +310,8 @@ static char** entry_completion(const char* text, int start, int end)
 static char* entry_completion_generator(const char* text, int state)
 {
     static int list_index, len, too_far;
-    char* name;
  
-    if (!state)
+    if (state == 0)
     {
         list_index = 0;
         too_far = 0;
@@ -324,20 +319,20 @@ static char* entry_completion_generator(const char* text, int state)
     }
  
     while(too_far == 0)
-    {        
-        if (_keywords[list_index].fn == NULL)
+    {
+        list_index++;
+        if (_keywords[list_index].fn != NULL)
         {
+            // compare list entry with text, return if match
+            if (strncmp(_keywords[list_index].name, text, len) == 0)
+                return entry_completion_dupstr(_keywords[list_index].name);
+        }
+        else
+        {
+            // fn=NULL and size=0 = last entry in list -> go out
             if (_keywords[list_index].comment.size() == 0)
                 too_far = 1;
-            break;
         }
-
-        list_index++;
-
-        // mpo ! ne pas stocker c_str
-        name = (char*)_keywords[list_index].name.c_str();
-        if (strncmp(name, text, len) == 0)
-            return entry_completion_dupstr(name);
     }
  
     /* If no names matched, then return NULL. */
