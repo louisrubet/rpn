@@ -520,17 +520,18 @@ public:
 	struct keyword_t
 	{
 		cmd_type_t type;
-		string name;
+		char name[24];
 		program_fn_t fn;
 		string comment;
 	};
     static keyword_t _keywords[g_max_commands];
 
-	static ret_value get_fn(const string& fn_name, program_fn_t& fn, cmd_type_t& type)
+	static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
 	{
 		for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
 		{
-			if ((_keywords[i].name.size()>0) && (fn_name == _keywords[i].name))
+			if ((strnlen(_keywords[i].name, sizeof(_keywords[i].name))>0)
+				&& (strncmp(fn_name, _keywords[i].name, sizeof(_keywords[i].name)) == 0))
 			{
 				fn = _keywords[i].fn;
 				type = _keywords[i].type;
