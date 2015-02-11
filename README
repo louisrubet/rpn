@@ -40,8 +40,9 @@ ALGEBRA
  show, obget, exget
 
 BINARY
- dec(*), hex(*), oct(*), bin(*), stws, rcws, rl, rr, rlb, rrb, r->b(*),
- b->r(*), sl, sr, slb, srb, asr, and, or, xor, not
+ +(*), -(*), *(*), /(*), dec(*), hex(*), oct(*), bin(*), stws, rcws,
+ rl, rr, rlb, rrb, r->b(*), b->r(*), sl, sr, slb, srb, asr, and, or,
+ xor, not
 
 STAT
  ∑dat, ∑par, ∑+, ∑-, n∑, cl∑, sto∑, rcl∑, tot, mean, sdev, var, max∑,
@@ -49,6 +50,9 @@ STAT
 
 PRINT
  pr1, prst, prvar, prlcd, cr, trac, prstc, prusr, prmd
+
+STRING
+ +(*), ->str, str->, chr, num, ->lcd, lcd->, pos, sub, size, disp
 
 CONTRL
  sst, halt, abort, kill, wait, key, bepp,  cllcd,  disp,  clmf, errn,
