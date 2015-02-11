@@ -79,6 +79,7 @@ typedef enum {
 	cmd_undef,
 	cmd_number,/* floating value to put in stack */
 	cmd_binary,/* binary (integer) value to put in stack */
+	cmd_string,/* string value to put in stack */
 	cmd_symbol,/* symbol value to put in stack */
 	cmd_keyword,/* langage keyword */
 	cmd_branch,/* langage branch keyword */
@@ -180,18 +181,31 @@ public:
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
+class ostring : public object
+{
+public:
+	ostring(string& name, cmd_type_t type = cmd_string) : object(type)
+	{
+	    _name = new string(name);
+	}
+	ostring(const char* name, cmd_type_t type = cmd_string) : object(type)
+	{
+	    _name = new string(name);
+	}
+	virtual void show(ostream& stream = cout) { stream << "\"" << *_name << "\""; }
+	string* _name;
+};
+
 class symbol : public object
 {
 public:
 	symbol(string& name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
 	{
-	    _name = new string;
-	    *_name = name;
+	    _name = new string(name);
 	}
 	symbol(const char* name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
 	{
-	    _name = new string;
-	    *_name = name;
+	    _name = new string(name);
 	}
 	virtual void show(ostream& stream = cout) { stream << "'" << *_name << "'"; }
 	string* _name;
@@ -267,7 +281,7 @@ public:
 			}
 
 			// not a command, but a stack entry, manage it
-			if ((type == cmd_number) || (type == cmd_binary))
+			if ((type == cmd_number) || (type == cmd_binary) || (type == cmd_string))
 			{
 				stk.push_back(seq_obj(i), seq_len(i), type);
 				i++;
