@@ -651,6 +651,7 @@ private:
 	#include "rpn-binary.h"
 	#include "rpn-test.h"
 	#include "rpn-stack.h"
+	#include "rpn-string.h"
 	#include "rpn-branch.h"
 	#include "rpn-store.h"
 	#include "rpn-trig.h"
