@@ -24,7 +24,7 @@ static bool _cut(const string& entry, vector<string>& entries)
                 entries.push_back(tmp);
                 tmp.clear();
                 break;
-#if 0
+
             //string
             case '"':
                 //push prec entry if exists
@@ -45,7 +45,7 @@ static bool _cut(const string& entry, vector<string>& entries)
                 entries.push_back(tmp);
                 tmp.clear();
                 break;
-#endif
+
             //other
             default:
                 if (entry.at(i)!=' ' && entry.at(i)!='\t')
@@ -105,6 +105,19 @@ static bool get_symbol(const string& entry, object*& obj)
     {
         int last = entry[len-1]=='\''?(len-2):(len-1);
         obj = new symbol(entry.substr(1, last).c_str());
+        ret = true;
+    }
+    return ret;
+}
+
+static bool get_string(const string& entry, object*& obj)
+{
+    bool ret = false;
+    int len = entry.size();
+    if (len>1 && entry[0]=='\"')
+    {
+        int last = entry[len-1]=='\"'?(len-2):(len-1);
+        obj = new ostring(entry.substr(1, last).c_str());
         ret = true;
     }
     return ret;
@@ -221,6 +234,12 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
         obj_size = sizeof(symbol);
         ret = true;
     }
+    else if (get_string(entry, obj))
+    {
+        type = cmd_string;
+        obj_size = sizeof(ostring);
+        ret = true;
+    }
     else if (get_keyword(entry, obj, obj_size, type))
     {
         ret = true;
@@ -236,6 +255,57 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
     }
 
     return ret;
+}
+
+static char** entry_completion(const char* text, int start, int end)
+{
+    char** matches = NULL;
+ 
+    if (start == 0)
+        matches = rl_completion_matches((char*)text, &entry_completion_generator);
+
+    return matches;
+}
+
+static char* entry_completion_generator(const char* text, int state)
+{
+    static int list_index, len, too_far;
+ 
+    if (state == 0)
+    {
+        list_index = 0;
+        too_far = 0;
+        len = strlen(text);
+    }
+ 
+    while(too_far == 0)
+    {
+        list_index++;
+        if (_keywords[list_index].fn != NULL)
+        {
+            // compare list entry with text, return if match
+            if (strncmp(_keywords[list_index].name, text, len) == 0)
+                return entry_completion_dupstr(_keywords[list_index].name);
+        }
+        else
+        {
+            // fn=NULL and size=0 = last entry in list -> go out
+            if (_keywords[list_index].comment.size() == 0)
+                too_far = 1;
+        }
+    }
+ 
+    /* If no names matched, then return NULL. */
+    return NULL;
+ 
+}
+
+static char* entry_completion_dupstr(char* s)
+{
+    char* r = (char*)malloc((strlen(s)+1));
+    if (r != NULL)
+        strcpy(r, s);
+    return r;
 }
 
 static ret_value parse(const string& entry, program& prog)
@@ -282,7 +352,7 @@ static ret_value entry(program& prog)
         string entry = buf;
 
         //enable auto-complete
-        rl_bind_key('\t',rl_complete);
+        rl_bind_key('\t', rl_complete);
 
         // parse it
         ret = parse(entry, prog);
@@ -295,55 +365,4 @@ static ret_value entry(program& prog)
         ret = ret_internal;
 
     free(buf);
-}
-
-static char** entry_completion(const char* text, int start, int end)
-{
-    char** matches = NULL;
- 
-    if (start == 0)
-        matches = rl_completion_matches((char*)text, &entry_completion_generator);
- 
-    return matches;
-}
-
-static char* entry_completion_generator(const char* text, int state)
-{
-    static int list_index, len, too_far;
- 
-    if (state == 0)
-    {
-        list_index = 0;
-        too_far = 0;
-        len = strlen(text);
-    }
- 
-    while(too_far == 0)
-    {
-        list_index++;
-        if (_keywords[list_index].fn != NULL)
-        {
-            // compare list entry with text, return if match
-            if (strncmp(_keywords[list_index].name, text, len) == 0)
-                return entry_completion_dupstr(_keywords[list_index].name);
-        }
-        else
-        {
-            // fn=NULL and size=0 = last entry in list -> go out
-            if (_keywords[list_index].comment.size() == 0)
-                too_far = 1;
-        }
-    }
- 
-    /* If no names matched, then return NULL. */
-    return NULL;
- 
-}
-
-static char* entry_completion_dupstr(char* s)
-{
-    char* r = (char*)malloc((strlen(s)+1));
-    if (r != NULL)
-        strcpy(r, s);
-    return r;
 }
