@@ -16,6 +16,14 @@ void plus()
 		//TODO really too slow
 		putb(getb() + getb());
 	}
+	// string
+	else if (IS_ARG_TYPE(0, cmd_string))
+	{
+		ARG_MUST_BE_OF_TYPE(1, cmd_string);
+		string& second = *((ostring*)_stack->back())->_name;
+		_stack->pop_back();
+		*((ostring*)_stack->back())->_name += second;
+	}
 }
 
 void minus()

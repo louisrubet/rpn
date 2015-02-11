@@ -66,6 +66,11 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "pick", &program::pick, "push a copy of  the given stack level onto the stack" },
 	{ cmd_keyword, "depth", &program::depth, "give stack depth" },
 
+	//STRING
+	{ cmd_undef, "", NULL, "\nSTRING"},
+	{ cmd_keyword, "->str", &program::instr, "convert an object into a string" },
+	{ cmd_keyword, "str->", &program::strout, "convert a string into an object" },
+
 	//BRANCH
 	{ cmd_undef, "", NULL, "\nBRANCH"},
 	{ cmd_branch, "if", (program_fn_t)&program::rpn_if, "<test-instructions>" },
