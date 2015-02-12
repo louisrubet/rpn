@@ -52,6 +52,7 @@ static const int g_max_commands = 100;
 static int g_verbose = 0;
 
 //
+#include "escape.h"
 #include "version.h"
 
 typedef enum {
