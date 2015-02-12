@@ -257,16 +257,6 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
     return ret;
 }
 
-static char** entry_completion(const char* text, int start, int end)
-{
-    char** matches = NULL;
- 
-    if (start == 0)
-        matches = rl_completion_matches((char*)text, &entry_completion_generator);
-
-    return matches;
-}
-
 static char* entry_completion_generator(const char* text, int state)
 {
     static int list_index, len, too_far;
@@ -296,7 +286,7 @@ static char* entry_completion_generator(const char* text, int state)
     }
  
     /* If no names matched, then return NULL. */
-    return NULL;
+    return (char*)NULL;
  
 }
 
@@ -342,17 +332,14 @@ static ret_value entry(program& prog)
     char *buf;
     ret_value ret;
 
-    // declare completion fn
-    rl_attempted_completion_function = entry_completion;
+    // declare completion fn (bound to '\t' by default)
+    rl_completion_entry_function = entry_completion_generator;
 
     // get user entry
     buf = readline(prompt);
     if (buf != NULL)
     {
-        string entry = buf;
-
-        //enable auto-complete
-        rl_bind_key('\t', rl_complete);
+        string entry(buf);
 
         // parse it
         ret = parse(entry, prog);
