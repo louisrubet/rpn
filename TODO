@@ -1,30 +1,5 @@
 /*
  * TODO
  */
-
-* NOW
-*****
-- tests
-	- pouvoir lancer le test avec un fichier txt donné en argument
-- tests des fonctions algébriques générales (en particulier inv, sqrt ..)
-- 2 2 sqrt sq - ne donne pas 0
-- partout où c'est possible: faire comme dans rpn-trig.h: ex:
- ((number*)_stack->get_obj(0))->_value = tan(((number*)_stack->get_obj(0))->_value);
- au lieu de 
- putf(tan(getf()));
-- entrée de commande shell avec $commande shell, résultat: 1 ligne stdout entre '', 1 ligne resultat
-
-* Prospective
-*************
-Windows
-- passer en Unicode ou décider
-
-En plus des commands hp28s:
-- print
-- alias
-- type date, fonctions date / time
-
-Etudier:
-- la grande idée: dissocier la stack data d'une stack de commande.
- Plus d'interprétation. On fabrique un programme pseudo-compilé.
-- décodage des commandes avec un map<char*, obj*> (plus rapide !!)
+TODO list not used anymore.
+Please see issues at https://github.com/louis-/rpn/issues
