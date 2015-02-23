@@ -33,5 +33,5 @@ void btor()
 	MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_binary);
 
-	putf((float_t)((binary*)_stack->back())->_value);
+	putf((floating_t)getb());
 }
