@@ -24,14 +24,19 @@ void help()
 	rpn_uname();
 	cout<<endl;
 
-	cout<<"HP28S Reverse Polish Notation language simulator"<<endl;
-	cout<<"syntax: rpn [command]"<<endl;
-	cout<<"with optional command = list of commands"<<endl;
+	// syntax
+	for (int i = 0; syntax[i] != NULL; i++)
+		cout<<syntax[i]<<endl;
+
+    // keywords
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
 		if (_keywords[i].comment.size() != 0)
-		cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
+			cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
 	cout<<endl;
+
+	// different modes
 	cout<<"Current verbosity is "<<g_verbose<<endl;
+
 	cout<<"Current float mode is ";
 	switch(number::s_mode)
 	{
@@ -40,7 +45,9 @@ void help()
 		case number::sci: cout << "'sci'"; break;
 		default: cout << "unknown"; break;
 	}
+
 	cout<<endl<<"Current float precision is "<<number::s_current_precision<<endl;
+
 	cout<<"Current binary mode is ";
 	switch(binary::s_mode)
 	{
