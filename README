@@ -15,6 +15,12 @@ Binaries are 64-bits longwords format (long long int).
 
 An interactive editor with autocompletion is provided (readline-based).
 
+Language extensions will soon be included:
+- file objects and functions,
+- date and time objects and functions,
+- shell-calling objects with return code, stdout and stderr treatment,
+- loading and saving stack, variables, programs from / to filesystem
+
 ========================================================================
 Here is a list of HP28s reserved words.
 
@@ -35,7 +41,7 @@ STACK
 
 STORE
  sto(*), rcl(*), purge(*), sto+, sto-, sto*, sto/, sneg, sinv, sconj,
- erase(*)(+), vars(*)(+), load_vars(+), save_vars(+)
+ erase(*)(+), vars(*)(+), include(+), load_vars(+), save_vars(+)
 
 PROGRAM(+)
  eval(*), load_prog(+), save_prog(+)
