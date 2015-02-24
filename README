@@ -19,18 +19,22 @@ Already implemented commands are tagged with (*).
 
 GENERAL OPERATIONS
  +(*), -(*), neg(*), *(*), /(*), inv(*)(+), %(*), %CH(*), ^(*),
- sqrt(*)(+), sq(*)(+)
+ sqrt(*)(+), sq(*)(+), test(*)(+)
 
 GENERAL (some are 'CURSOR' commands)
  verbose(*)(+), std(*), fix(*), sci(*), version(*)(+), uname(*)(+)
 
 STACK
  drop(*), swap(*), roll, dup(*), over, dup2(*), drop2(*), rot(*),
- list->, rolld, pick(*), dupn, dropn, depth(*), ->list
+ list->, rolld, pick(*), dupn, dropn, depth(*), ->list, load_stack(+),
+ save_stack(+)
 
 STORE
  sto(*), rcl(*), purge(*), sto+, sto-, sto*, sto/, sneg, sinv, sconj,
- erase(*)(+), vars(*)(+)
+ erase(*)(+), vars(*)(+), load_vars(+), save_vars(+)
+
+PROGRAM(+)
+ eval(*), load_prog(+), save_prog(+)
 
 MEMORY
  mem, menu, order, path, home, crdir, vars, clusr
