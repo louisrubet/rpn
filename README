@@ -1,11 +1,15 @@
 ========================================================================
-    rpn28s Project Overview
+    Reverse Polish Notation language
+    Inspired by Hewlett-Packard RPL language
+    HP28S user manual is provided as a reference
 ========================================================================
 
-This project plans to create a clone of HP-28S calculator language,
-including at least stack, store, branch, test, trig and logs commands.
+This project plans to create a clone of HP RPN calculator language,
+including at least stack, store, branch, test, trig and logs commands
+of HP28S RPL implementation.
 
-Following objects are managed: scalars, symbols, binaries
+Following objects are managed: scalars, symbols, binaries, strings,
+ programs.
 
 Notes:
 - Under Linux x86_64, floating representation is 128-bit (quadruple
