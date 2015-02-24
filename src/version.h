@@ -1,6 +1,6 @@
 // version and soft name
-static const char version[] = "1.3-beta";
-static const char uname[] = "rpn v1.3-beta, (c) 2015 <louis@rubet.fr>";
+static const char version[] = "1.3";
+static const char uname[] = "rpn v1.3, (c) 2015 <louis@rubet.fr>";
 
 // syntax
 static const char* syntax[] = {
