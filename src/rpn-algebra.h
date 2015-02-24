@@ -24,6 +24,8 @@ void plus()
 		_stack->pop_back();
 		*((ostring*)_stack->back())->_value += second;
 	}
+	else
+		ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void minus()
@@ -46,6 +48,8 @@ void minus()
 		integer_t first = getb();
 		putb(getb() - first);
 	}
+	else
+		ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void mul()
@@ -64,6 +68,8 @@ void mul()
 		//TODO really too slow
 		putb(getb() * getb());
 	}
+	else
+		ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void div()
@@ -95,6 +101,8 @@ void div()
 			putb(getb() / first);
 		}
 	}
+	else
+		ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void neg()
@@ -107,6 +115,8 @@ void neg()
 	// binary
 	else if (IS_ARG_TYPE(0, cmd_binary))
 		putb(-getb());
+	else
+		ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void inv()
