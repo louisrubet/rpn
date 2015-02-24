@@ -31,7 +31,7 @@ void auto_rcl(symbol* symb)
 		void* obj;
 		unsigned int size;
 		int type;
-		if (_heap->get(*symb->_name, obj, size, type))
+		if (_heap->get(*symb->_value, obj, size, type))
 			_stack->push_back(obj, size, type);
 		else
 			_stack->push_back(symb, sizeof(symbol), cmd_symbol);
