@@ -46,7 +46,7 @@ using namespace std;
 //TODO faut-il que ces variables soient globales ?
 static const char g_cursor[] = "> ";
 static const string g_show_stack_separator = ":\t";
-static const int g_max_commands = 100;
+static const int g_max_commands = 128;
 
 //
 static int g_verbose = 0;
@@ -82,13 +82,14 @@ typedef enum {
 	cmd_binary,/* binary (integer) value to put in stack */
 	cmd_string,/* string value to put in stack */
 	cmd_symbol,/* symbol value to put in stack */
+	cmd_program,/* program */
 	cmd_keyword,/* langage keyword */
 	cmd_branch,/* langage branch keyword */
 	cmd_max
 } cmd_type_t;
 
 const char* cmd_type_string[cmd_max] = {
-	"undef", "number", "binary", "symbol", "keyword", "keyword"
+	"undef", "number", "binary", "symbol", "program", "keyword", "keyword"
 };
 
 //
@@ -185,46 +186,54 @@ binary::binary_enum binary::s_mode = binary::s_default_mode;
 class ostring : public object
 {
 public:
-	ostring(string& name, cmd_type_t type = cmd_string) : object(type)
+	ostring(string& value, cmd_type_t type = cmd_string) : object(type)
 	{
-	    _name = new string(name);
+	    _value = new string(value);
 	}
-	ostring(const char* name, cmd_type_t type = cmd_string) : object(type)
+	ostring(const char* value, cmd_type_t type = cmd_string) : object(type)
 	{
-	    _name = new string(name);
+	    _value = new string(value);
 	}
-	virtual void show(ostream& stream = cout) { stream << "\"" << *_name << "\""; }
-	string* _name;
+	virtual void show(ostream& stream = cout) { stream << "\"" << *_value << "\""; }
+	string* _value;
+};
+
+class oprogram : public ostring
+{
+public:
+	oprogram(string& value, cmd_type_t type = cmd_program) : ostring(value, type) { }
+	oprogram(const char* value, cmd_type_t type = cmd_program) : ostring(value, type) { }
+	virtual void show(ostream& stream = cout) { stream << "<< " << *_value << " >>"; }
 };
 
 class symbol : public object
 {
 public:
-	symbol(string& name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
+	symbol(string& value, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
 	{
-	    _name = new string(name);
+	    _value = new string(value);
 	}
-	symbol(const char* name, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
+	symbol(const char* value, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
 	{
-	    _name = new string(name);
+	    _value = new string(value);
 	}
-	virtual void show(ostream& stream = cout) { stream << "'" << *_name << "'"; }
-	string* _name;
+	virtual void show(ostream& stream = cout) { stream << "'" << *_value << "'"; }
+	string* _value;
 	bool _auto_eval;
 };
 
 class keyword : public symbol
 {
 public:
-	keyword(program_fn_t fn, string& name, cmd_type_t type = cmd_keyword) : symbol(name, type) { _fn = fn; }
+	keyword(program_fn_t fn, string& value, cmd_type_t type = cmd_keyword) : symbol(value, type) { _fn = fn; }
 	program_fn_t _fn;
-	virtual void show(ostream& stream = cout) { stream << *_name; }
+	virtual void show(ostream& stream = cout) { stream << *_value; }
 };
 
 class branch : public keyword
 {
 public:
-	branch(branch_fn_t fn, string& name) : keyword(NULL, name, cmd_branch), arg1(-1), arg2(-1), arg3(-1), arg_bool(false)
+	branch(branch_fn_t fn, string& value) : keyword(NULL, value, cmd_branch), arg1(-1), arg2(-1), arg3(-1), arg_bool(false)
 	{
 		_type = cmd_branch;
 		_fn = fn;
@@ -281,15 +290,8 @@ public:
 				cout << endl;
 			}
 
-			// not a command, but a stack entry, manage it
-			if ((type == cmd_number) || (type == cmd_binary) || (type == cmd_string))
-			{
-				stk.push_back(seq_obj(i), seq_len(i), type);
-				i++;
-			}
-
 			// could be an auto-evaluated symbol
-			else if (type == cmd_symbol)
+			if (type == cmd_symbol)
 			{
 				auto_rcl((symbol*)seq_obj(i));
 				i++;
@@ -337,6 +339,13 @@ public:
 				else
 					i = tmp;
 			}
+
+			// not a command, but a stack entry, manage it
+			else
+			{
+				stk.push_back(seq_obj(i), seq_len(i), type);
+				i++;
+			}
 		}
 		return ret;
 	}
@@ -357,7 +366,7 @@ public:
 			if (type == cmd_keyword)
 			{
 				keyword* k = (keyword*)seq_obj(i);
-				if(k->_name->compare("end") == 0)
+				if(k->_value->compare("end") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -387,14 +396,14 @@ public:
 			else if (type == cmd_branch)
 			{
 				branch* k = (branch*)seq_obj(i);
-				if (k->_name->compare("if") == 0)
+				if (k->_value->compare("if") == 0)
 				{
 					if_layout_t layout;
 					layout.index_if = i;
 					vlayout.push_back(layout);
 					layout_index++;
 				}
-				else if(k->_name->compare("then") == 0)
+				else if(k->_value->compare("then") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -423,7 +432,7 @@ public:
 					k->arg1 = next;
 					k->arg3 = vlayout[layout_index].index_if;
 				}
-				else if(k->_name->compare("else") == 0)
+				else if(k->_value->compare("else") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -459,16 +468,16 @@ public:
 					k->arg3 = vlayout[layout_index].index_if;
 					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
 				}
-				else if(k->_name->compare("start") == 0)
+				else if(k->_value->compare("start") == 0)
 				{
 					vstartindex.push_back(i);
 				}
-				else if(k->_name->compare("for") == 0)
+				else if(k->_value->compare("for") == 0)
 				{
 					vstartindex.push_back(i);
 					k->arg1 = i + 1;// arg1 points on symbol variable
 				}
-				else if(k->_name->compare("next") == 0)
+				else if(k->_value->compare("next") == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -479,7 +488,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-				else if(k->_name->compare("step") == 0)
+				else if(k->_value->compare("step") == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -620,7 +629,7 @@ private:
 	string getn()
 	{
 		/* warning, caller must check object type before */
-		string* a = ((symbol*)_stack->back())->_name;
+		string* a = ((symbol*)_stack->back())->_value;
 		_stack->pop_back();
 		return *a;
 	}
@@ -655,6 +664,7 @@ private:
 	#include "rpn-string.h"
 	#include "rpn-branch.h"
 	#include "rpn-store.h"
+	#include "rpn-program.h"
 	#include "rpn-trig.h"
 	#include "rpn-logs.h"
 };

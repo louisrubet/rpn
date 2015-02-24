@@ -19,7 +19,7 @@ void strout()
 	MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-	string& entry = *((ostring*)_stack->back())->_name;
+	string& entry = *((ostring*)_stack->back())->_value;
 	_stack->pop_back();
 
 	program prog;

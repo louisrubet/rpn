@@ -89,6 +89,10 @@ program::keyword_t program::_keywords[] =
 	{ cmd_keyword, "purge", &program::purge, "delete a variable. ex: 'name' purge" },
 	{ cmd_keyword, "vars", &program::vars, "list all variables" },
 
+	//PROGRAM
+	{ cmd_undef, "", NULL, "\nPROGRAM"},
+	{ cmd_keyword, "eval", &program::eval, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval" },
+
 	//TRIG
 	{ cmd_undef, "", NULL, "\nTRIG"},
 	{ cmd_keyword, "pi", &program::pi, "PI constant" },

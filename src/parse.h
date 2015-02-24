@@ -46,6 +46,41 @@ static bool _cut(const string& entry, vector<string>& entries)
                 tmp.clear();
                 break;
 
+            //program
+            case '<':
+                //push prec entry if exists
+                if (tmp.size()>0)
+                {
+                    entries.push_back(tmp);
+                    tmp.clear();
+                }
+                if (i<(entry.size()-1) && entry.at(i+1)=='<')
+                {
+                    //get expression
+                    i+=2;
+                    tmp = "<<";
+                    while(i<entry.size())
+                    {
+                        if (i<(entry.size()-1) && entry.at(i) == '>' && entry.at(i+1) == '>')
+                        {
+                            tmp += ">>";
+                            i+=2;
+                            break;
+                        }
+                        else
+                            tmp+=entry.at(i);
+                        i++;
+                    }
+                    entries.push_back(tmp);
+                    tmp.clear();
+                }
+                else
+                {
+                    // reinject < which is not a program begin
+                    tmp = "<";
+                }
+                break;
+
             //other
             default:
                 if (entry.at(i)!=' ' && entry.at(i)!='\t')
@@ -68,7 +103,6 @@ static bool _cut(const string& entry, vector<string>& entries)
         entries.push_back(tmp);
         tmp.clear();
     }
-
     return entries.size()>0;
 }
 
@@ -118,6 +152,23 @@ static bool get_string(const string& entry, object*& obj)
     {
         int last = entry[len-1]=='\"'?(len-2):(len-1);
         obj = new ostring(entry.substr(1, last).c_str());
+        ret = true;
+    }
+    return ret;
+}
+
+static bool get_program(const string& entry, object*& obj)
+{
+    bool ret = false;
+    int len = entry.size();
+    if (len>=2 && entry[0]=='<' && entry[1]=='<')
+    {
+        int last;
+        if (len>=4 && entry[len-1]=='>' && entry[len-2]=='>')
+            last = len-4;
+        else
+            last = len-2;
+        obj = new oprogram(entry.substr(2, last).c_str());
         ret = true;
     }
     return ret;
@@ -238,6 +289,12 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
     {
         type = cmd_string;
         obj_size = sizeof(ostring);
+        ret = true;
+    }
+    else if (get_program(entry, obj))
+    {
+        type = cmd_program;
+        obj_size = sizeof(oprogram);
         ret = true;
     }
     else if (get_keyword(entry, obj, obj_size, type))
