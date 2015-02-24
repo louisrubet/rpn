@@ -11,6 +11,8 @@ of HP28S RPL implementation.
 Following objects are managed: scalars, symbols, binaries, strings,
  programs.
 
+An interactive editor with autocompletion is provided (readline-based).
+
 ========================================================================
 Here is a list of HP28s reserved words.
 
