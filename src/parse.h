@@ -54,26 +54,60 @@ static bool _cut(const string& entry, vector<string>& entries)
                     entries.push_back(tmp);
                     tmp.clear();
                 }
-                if (i<(entry.size()-1) && entry.at(i+1)=='<')
+
+                if (entry.substr(i, 2) == "<<")
                 {
-                    //get expression
+                    int up = 1;
+
+                    // found a program begin
                     i+=2;
-                    tmp = "<<";
+                    tmp="<< ";
                     // trim leading spaces
                     while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
-                        i++;                    
-                    //get the rest
+                        i++;
+
                     while(i<entry.size())
                     {
-                        tmp+=entry.at(i);
-                        i++;
+                        if (entry.substr(i, 2) == "<<")
+                        {
+                            up++;
+                            i+=2;
+                            tmp+=" << ";
+                            // trim leading spaces
+                            while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
+                                i++;
+                        }
+                        else if (entry.substr(i, 2) == ">>")
+                        {
+                            up--;
+                            i+=2;
+                            tmp+=" >>";
+                            // trim trailing spaces
+                            while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
+                                i++;
+                            // found end
+                            if (up == 0)
+                                break;
+                        }
+                        else
+                        {
+                            tmp+=entry[i];
+                            i++;
+                        }
                     }
-                    entries.push_back(tmp);
-                    tmp.clear();
+                    while((up--)>0)
+                    {
+                        tmp += " >>";
+                    }
+                    if (tmp.size()>0)
+                    {
+                        entries.push_back(tmp);
+                        tmp.clear();
+                    }
                 }
                 else
                 {
-                    // reinject < which is not a program begin
+                    // reinject '<'' which is not a prog begin
                     tmp = "<";
                 }
                 break;
