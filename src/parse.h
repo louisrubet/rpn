@@ -59,16 +59,13 @@ static bool _cut(const string& entry, vector<string>& entries)
                     //get expression
                     i+=2;
                     tmp = "<<";
+                    // trim leading spaces
+                    while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
+                        i++;                    
+                    //get the rest
                     while(i<entry.size())
                     {
-                        if (i<(entry.size()-1) && entry.at(i) == '>' && entry.at(i+1) == '>')
-                        {
-                            tmp += ">>";
-                            i+=2;
-                            break;
-                        }
-                        else
-                            tmp+=entry.at(i);
+                        tmp+=entry.at(i);
                         i++;
                     }
                     entries.push_back(tmp);
