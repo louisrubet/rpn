@@ -10,6 +10,8 @@ of HP28S RPL implementation.
 
 Following objects are managed: scalars, symbols, binaries, strings,
  programs.
+Scalar are in 128-bit quadruple precision format (long double).
+Binaries are 64-bits longwords format (long long int).
 
 An interactive editor with autocompletion is provided (readline-based).
 
