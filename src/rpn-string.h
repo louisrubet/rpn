@@ -25,10 +25,9 @@ void strout()
 	program prog;
 
 	// make program from string in stack level 1
-	if (prog.parse(entry, *this) == ret_good_bye)
+	if (program::parse(entry, prog) == ret_ok)
 	{
-		//stack st;
 		// run it
-		//prog.run(st, *_heap);
+		prog.run(*_stack, *_heap);
 	}
 }
