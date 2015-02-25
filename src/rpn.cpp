@@ -270,7 +270,7 @@ public:
 		_stack = &stk;
 		_heap = &hp;
 		_err = ret_ok;
-		_err_context = "";
+        _err_context = "";
 
 		// branches for 'if'
 		ret = preprocess();
@@ -318,7 +318,7 @@ public:
 						go_out = true;
 
 						// error: show it
-						if (show_error(_err, _err_context) == ret_deadly)
+                        if (show_error(_err, _err_context) == ret_deadly)
 						{
 							// pb showing error -> go out software
 							ret = ret_good_bye;
@@ -354,8 +354,8 @@ public:
 	{
 		// for if-then-else-end
 		vector<struct if_layout_t> vlayout;
-		int layout_index=-1;// TODO remplaçable par vlayout.size()-1
-		//for start-end-step
+        int layout_index=-1;// TODO remplacable par vlayout.size()-1
+        // for start-end-step
 		vector<int> vstartindex;
 
 		// analyse if-then-else-end branches
@@ -366,7 +366,7 @@ public:
 			if (type == cmd_keyword)
 			{
 				keyword* k = (keyword*)seq_obj(i);
-				if(k->_value->compare("end") == 0)
+                if (k->_value->compare("end") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -403,7 +403,7 @@ public:
 					vlayout.push_back(layout);
 					layout_index++;
 				}
-				else if(k->_value->compare("then") == 0)
+                else if (k->_value->compare("then") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -432,7 +432,7 @@ public:
 					k->arg1 = next;
 					k->arg3 = vlayout[layout_index].index_if;
 				}
-				else if(k->_value->compare("else") == 0)
+                else if (k->_value->compare("else") == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -468,11 +468,11 @@ public:
 					k->arg3 = vlayout[layout_index].index_if;
 					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
 				}
-				else if(k->_value->compare("start") == 0)
+                else if (k->_value->compare("start") == 0)
 				{
 					vstartindex.push_back(i);
 				}
-				else if(k->_value->compare("for") == 0)
+                else if (k->_value->compare("for") == 0)
 				{
 					vstartindex.push_back(i);
 					k->arg1 = i + 1;// arg1 points on symbol variable
@@ -488,7 +488,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-				else if(k->_value->compare("step") == 0)
+                else if (k->_value->compare("step") == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -499,6 +499,10 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
+                else if (k->_value->compare("->") == 0)
+                {
+                    k->arg1 = i;// arg1 is '->' command index in program
+                }
 			}
 		}
 		if (layout_index >= 0)

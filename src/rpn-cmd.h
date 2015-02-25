@@ -92,6 +92,7 @@ program::keyword_t program::_keywords[] =
 	//PROGRAM
 	{ cmd_undef, "", NULL, "\nPROGRAM"},
 	{ cmd_keyword, "eval", &program::eval, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval" },
+    { cmd_branch, "->", (program_fn_t)&program::inprog, "load program local variables. ex: << -> n m << 0 n m for i i + next >> >>" },
 
 	//TRIG
 	{ cmd_undef, "", NULL, "\nTRIG"},
