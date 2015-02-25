@@ -111,14 +111,14 @@ class object
 public:
 	cmd_type_t _type;// object type
 	object(cmd_type_t type = cmd_undef):_type(type) { }
-	virtual void show(ostream& stream = cout) { }
+
+    void show(ostream& stream = cout);
 };
 
 class number : public object
 {
 public:
 	number(floating_t value) : object(cmd_number) { _value = value; }
-	virtual void show(ostream& stream = cout) { stream << _value; }
 	floating_t _value;
 
 	// representation mode
@@ -142,32 +142,7 @@ int number::s_current_precision = number::s_default_precision;
 class binary : public object
 {
 public:
-	binary(integer_t value) : object(cmd_binary) { _value = value; }
-	
-	virtual void show(ostream& stream = cout)
-	{
-		cout << "# ";
-		switch(s_mode)
-		{
-			case dec: cout<<std::right<<std::setw(8)<<std::dec<<_value<<" d"; break;
-			case hex: cout<<std::right<<std::setw(16)<<std::hex<<_value<<" h"; break;
-			case oct: cout<<std::right<<std::setw(16)<<std::oct<<_value<<" o"; break;
-			case bin:
-			{
-				string mybin;
-				for (int i = (int)(log((floating_t)_value) / log(2.)); i>=0; i--)
-				{
-					if (_value & (1 << i))
-						mybin+='1';
-					else
-						mybin+='0';
-				}
-				cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-			}
-			break;
-		}
-	}
-	
+	binary(integer_t value) : object(cmd_binary) { _value = value; }	
 	integer_t _value;
 	
 	// representation mode
@@ -194,7 +169,6 @@ public:
 	{
 	    _value = new string(value);
 	}
-	virtual void show(ostream& stream = cout) { stream << "\"" << *_value << "\""; }
 	string* _value;
 };
 
@@ -203,22 +177,13 @@ class oprogram : public ostring
 public:
 	oprogram(string& value, cmd_type_t type = cmd_program) : ostring(value, type) { }
 	oprogram(const char* value, cmd_type_t type = cmd_program) : ostring(value, type) { }
-	virtual void show(ostream& stream = cout) { stream << "<< " << *_value << " >>"; }
 };
 
-class symbol : public object
+class symbol : public ostring
 {
 public:
-	symbol(string& value, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
-	{
-	    _value = new string(value);
-	}
-	symbol(const char* value, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
-	{
-	    _value = new string(value);
-	}
-	virtual void show(ostream& stream = cout) { stream << "'" << *_value << "'"; }
-	string* _value;
+    symbol(string& value, cmd_type_t type = cmd_symbol) : ostring(value, type), _auto_eval(false) { }
+    symbol(const char* value, cmd_type_t type = cmd_symbol) : ostring(value, type), _auto_eval(false) { }
 	bool _auto_eval;
 };
 
@@ -227,7 +192,6 @@ class keyword : public symbol
 public:
 	keyword(program_fn_t fn, string& value, cmd_type_t type = cmd_keyword) : symbol(value, type) { _fn = fn; }
 	program_fn_t _fn;
-	virtual void show(ostream& stream = cout) { stream << *_value; }
 };
 
 class branch : public keyword
@@ -245,6 +209,56 @@ public:
 	floating_t farg1, farg2;
 	bool arg_bool;
 };
+
+void object::show(ostream& stream)
+{
+    switch(_type)
+    {
+    case cmd_number:
+        stream << ((number*)this)->_value;
+        break;
+    case cmd_binary:
+        {
+            cout << "# ";
+            switch(((binary*)this)->s_mode)
+            {
+                case binary::dec: cout<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
+                case binary::hex: cout<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
+                case binary::oct: cout<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
+                case binary::bin:
+                {
+                    string mybin;
+                    for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
+                    {
+                        if (((binary*)this)->_value & (1 << i))
+                            mybin+='1';
+                        else
+                            mybin+='0';
+                    }
+                    cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
+                }
+                break;
+            }
+        }
+        break;
+    case cmd_string:
+        stream << "\"" << *((ostring*)this)->_value << "\"";
+        break;
+    case cmd_program:
+        stream << "<< " << *((oprogram*)this)->_value << " >>";
+        break;
+    case cmd_symbol:
+        stream << "'" << *((symbol*)this)->_value << "'";
+        break;
+    case cmd_keyword:
+    case cmd_branch:
+        stream << *((keyword*)this)->_value;
+        break;
+    default:
+        stream << "< unknown object representation >";
+        break;
+    }
+}
 
 struct if_layout_t
 {
@@ -699,7 +713,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// apply default configuration
 	apply_default();
 
-	// run with interactive prompt
+    // run with interactive prompt
 	if (argc == 1)
 	{
 		//
