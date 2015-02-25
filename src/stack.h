@@ -37,7 +37,7 @@ public:
 	{
 		if (_current + size > _base + _total_size)
 		{
-			//TODO gérer les pbs de mémoire
+            //TODO gerer les pbs de memoire
 			_total_size += ALLOC_BLOB;
 			_base = (char*)realloc(_base, _total_size);
 		}
@@ -183,13 +183,13 @@ public:
 		struct local_var* blob = _map[name];
 		if (blob == NULL)
 		{
-			//TODO gérer les pbs de mémoire
+            //TODO gerer les pbs de memoire
 			blob = (struct local_var*)malloc(size + sizeof(local_var));
 			_map[name] = blob;
 		}
 		else if (size != blob->length)
 		{
-			//TODO gérer les pbs de mémoire
+            //TODO gerer les pbs de memoire
 			blob = (struct local_var*)realloc(blob, size + sizeof(local_var));
 			_map[name] = blob;
 		}
@@ -246,7 +246,6 @@ public:
 
 	bool erase(const string name)
 	{
-		
 		map<string, struct local_var*>::iterator i = _map.find(name);
 		if (i != _map.end())
 		{
