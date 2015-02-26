@@ -4,7 +4,7 @@ void sto(void)
 	MIN_ARGUMENTS(2);
 	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-	string name = getn();
+    string name(getn());
 	_heap->add(name, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
 	_stack->pop_back();
 }
@@ -18,7 +18,7 @@ void rcl(void)
 	void* obj;
 	unsigned int size;
 	int type;
-	string& variable = *((symbol*)_stack->back())->_value;
+    string variable(((symbol*)_stack->back())->_value);
 	if (_heap->get(variable, obj, size, type))
 	{
 		_stack->pop_back();
@@ -36,7 +36,7 @@ void auto_rcl(symbol* symb)
 		void* obj;
 		unsigned int size;
 		int type;
-		if (_heap->get(*symb->_value, obj, size, type))
+        if (_heap->get(string(symb->_value), obj, size, type))
 			_stack->push_back(obj, size, type);
 		else
 			_stack->push_back(symb, sizeof(symbol), cmd_symbol);
@@ -50,7 +50,7 @@ void purge(void)
 	MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-	if (!_heap->erase(getn()))
+    if (!_heap->erase(string(getn())))
 		ERR_CONTEXT(ret_unknown_variable);
 }
 

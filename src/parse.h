@@ -1,15 +1,42 @@
-static bool _cut(const string& entry, vector<string>& entries)
+// keywords declaration
+struct keyword_t
+{
+    cmd_type_t type;
+    char name[24];
+    program_fn_t fn;
+    string comment;
+};
+static keyword_t _keywords[g_max_commands];
+
+static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
+{
+    for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
+    {
+        if ((strnlen(_keywords[i].name, sizeof(_keywords[i].name))>0)
+            && (strncmp(fn_name, _keywords[i].name, sizeof(_keywords[i].name)) == 0))
+        {
+            fn = _keywords[i].fn;
+            type = _keywords[i].type;
+            return ret_ok;
+        }
+    }
+    return ret_unknown_err;
+}
+
+static bool _cut(const char* entry, vector<string>& entries)
 {
     string tmp;
+    //TODO borner
+    int len = strlen(entry);
 
-    for (int i=0; i<entry.size(); i++)
+    for (int i=0; i < len; i++)
     {
-        switch(entry.at(i))
+        switch(entry[i])
         {
             //symbol
             case '\'':
                 //push prec entry if exists
-                if (tmp.size()>0)
+                if (tmp.size() > 0)
                 {
                     entries.push_back(tmp);
                     tmp.clear();
@@ -17,10 +44,10 @@ static bool _cut(const string& entry, vector<string>& entries)
                 //get symbol
                 tmp='\'';
                 i++;
-                while((i<entry.size()) && (isalnum(entry.at(i)) || entry.at(i)=='_'))
-                    tmp+=entry.at(i++);
-                if ((i<entry.size()) && entry.at(i)=='\'')
-                    tmp+='\'';
+                while((i < len) && (isalnum(entry[i]) || entry[i]=='_'))
+                    tmp += entry[i++];
+                if ((i < len) && entry[i] == '\'')
+                    tmp += '\'';
                 entries.push_back(tmp);
                 tmp.clear();
                 break;
@@ -28,7 +55,7 @@ static bool _cut(const string& entry, vector<string>& entries)
             //string
             case '"':
                 //push prec entry if exists
-                if (tmp.size()>0)
+                if (tmp.size() > 0)
                 {
                     entries.push_back(tmp);
                     tmp.clear();
@@ -36,10 +63,10 @@ static bool _cut(const string& entry, vector<string>& entries)
                 //get expression
                 tmp='"';
                 i++;
-                while(i<entry.size() && entry.at(i)>=' ')
+                while(i < len && entry[i] >= ' ')
                 {
-                    tmp+=entry.at(i);
-                    if (entry.at(i++) == '"')
+                    tmp += entry[i];
+                    if (entry[i++] == '"')
                         break;
                 }
                 entries.push_back(tmp);
@@ -55,35 +82,37 @@ static bool _cut(const string& entry, vector<string>& entries)
                     tmp.clear();
                 }
 
-                if (entry.substr(i, 2) == "<<")
+                if (strncmp(&entry[i], "<<", 2) == 0)
                 {
                     int up = 1;
 
                     // found a program begin
-                    i+=2;
-                    tmp="<< ";
+                    i += 2;
+                    tmp = "<< ";
+
                     // trim leading spaces
-                    while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
+                    while (i < len && (entry[i]==' ' || entry[i]=='\t'))
                         i++;
 
-                    while(i<entry.size())
+                    while(i < len)
                     {
-                        if (entry.substr(i, 2) == "<<")
+                        if (strncmp(&entry[i], "<<", 2) == 0)
                         {
                             up++;
-                            i+=2;
-                            tmp+=" << ";
+                            i += 2;
+                            tmp += " << ";
                             // trim leading spaces
-                            while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
+                            while (i < len && (entry[i] == ' ' || entry[i] == '\t'))
                                 i++;
                         }
-                        else if (entry.substr(i, 2) == ">>")
+                        else if (strncmp(&entry[i], ">>", 2) == 0)
                         {
                             up--;
-                            i+=2;
-                            tmp+=" >>";
+                            i += 2;
+                            tmp += " >>";
+
                             // trim trailing spaces
-                            while (i<entry.size() && (entry.at(i)==' ' || entry.at(i)=='\t'))
+                            while (i < len && (entry[i] == ' ' || entry[i] == '\t'))
                                 i++;
                             // found end
                             if (up == 0)
@@ -91,7 +120,7 @@ static bool _cut(const string& entry, vector<string>& entries)
                         }
                         else
                         {
-                            tmp+=entry[i];
+                            tmp += entry[i];
                             i++;
                         }
                     }
@@ -114,9 +143,9 @@ static bool _cut(const string& entry, vector<string>& entries)
 
             //other
             default:
-                if (entry.at(i)!=' ' && entry.at(i)!='\t')
+                if (entry[i] != ' ' && entry[i] != '\t')
                 {
-                    tmp+=entry.at(i);
+                    tmp += entry[i];
                 }
                 else
                 {
@@ -147,14 +176,18 @@ static bool get_keyword(const string& entry, object*& obj, unsigned int& obj_siz
     {
         if (type == cmd_keyword)
         {
-            obj = new keyword(fn, (string&)entry);
-            obj_size = sizeof(keyword);
+            // allocate keyword object
+            obj_size = sizeof(keyword) + entry.size();
+            obj = (object*)malloc(obj_size);
+            ((keyword*)obj)->set(fn, entry.c_str(), entry.size());
             ret = true;
         }
         else if (type == cmd_branch)
         {
-            obj = new branch((branch_fn_t)fn, (string&)entry);
-            obj_size = sizeof(branch);
+            // allocate branch object
+            obj_size = sizeof(branch) + entry.size();
+            obj = (object*)malloc(obj_size);
+            ((branch*)obj)->set((branch_fn_t)fn, entry.c_str(), entry.size());
             ret = true;
         }
     }
@@ -162,44 +195,79 @@ static bool get_keyword(const string& entry, object*& obj, unsigned int& obj_siz
     return ret;
 }
 
-static bool get_symbol(const string& entry, object*& obj)
+static bool get_symbol(const string& entry, object*& obj, unsigned int& obj_len)
 {
     bool ret = false;
-    int len = entry.size();
-    if (len>1 && entry[0]=='\'')
+    int entry_len = entry.size();
+    if (entry_len>1 && entry[0]=='\'')
     {
-        int last = entry[len-1]=='\''?(len-2):(len-1);
-        obj = new symbol(entry.substr(1, last).c_str());
+        int naked_entry_len;
+
+        // entry length without prefix / postfix
+        naked_entry_len = entry[entry_len-1]=='\''?(entry_len-3):(entry_len-2);
+
+        // total object length
+        obj_len = sizeof(symbol) + naked_entry_len;
+
+        // allocate object
+        obj = (object*)malloc(obj_len);
+
+        // set it
+        ((symbol*)obj)->set(&entry[1], naked_entry_len);
+
         ret = true;
     }
     return ret;
 }
 
-static bool get_string(const string& entry, object*& obj)
+static bool get_string(const string& entry, object*& obj, unsigned int& obj_len)
 {
     bool ret = false;
-    int len = entry.size();
-    if (len>1 && entry[0]=='\"')
+    int entry_len = entry.size();
+    if (entry_len>1 && entry[0]=='"')
     {
-        int last = entry[len-1]=='\"'?(len-2):(len-1);
-        obj = new ostring(entry.substr(1, last).c_str());
+        int naked_entry_len;
+
+        // entry length without prefix / postfix
+        naked_entry_len = entry[entry_len-1]=='"'?(entry_len-3):(entry_len-2);
+
+        // total object length
+        obj_len = sizeof(ostring) + naked_entry_len;
+
+        // allocate object
+        obj = (object*)malloc(obj_len);
+
+        // set it
+        ((ostring*)obj)->set(&entry[1], naked_entry_len);
+
         ret = true;
     }
     return ret;
 }
 
-static bool get_program(const string& entry, object*& obj)
+static bool get_program(const string& entry, object*& obj, unsigned int& obj_len)
 {
     bool ret = false;
-    int len = entry.size();
-    if (len>=2 && entry[0]=='<' && entry[1]=='<')
+    int entry_len = entry.size();
+    if (entry_len>=2 && entry[0]=='<' && entry[1]=='<')
     {
-        int last;
-        if (len>=4 && entry[len-1]=='>' && entry[len-2]=='>')
-            last = len-4;
+        int naked_entry_len;
+
+        // entry length without prefix / postfix
+        if (entry_len>=4 && entry[entry_len-1]=='>' && entry[entry_len-2]=='>')
+            naked_entry_len = entry_len-4;
         else
-            last = len-2;
-        obj = new oprogram(entry.substr(2, last).c_str());
+            naked_entry_len = entry_len-2;
+
+        // total object length
+        obj_len = sizeof(oprogram) + naked_entry_len;
+
+        // allocate object
+        obj = (object*)malloc(obj_len);
+
+        // set it
+        ((oprogram*)obj)->set(&entry[2], naked_entry_len);
+
         ret = true;
     }
     return ret;
@@ -208,15 +276,17 @@ static bool get_program(const string& entry, object*& obj)
 // care: not threadsafe
 static bool get_float(const string& entry, object*& obj)
 {
-    static number new_number(0);
+    static number new_number;
+    floating_t val;
     stringstream token;
     bool ret = false;
 
     token<<entry;
-    token>>new_number._value;
+    token>>val;
 
     if ( (!token.fail()) && (!token.bad()) )
     {
+        new_number.set(val);
         obj = &new_number;
         ret = true;
     }
@@ -227,9 +297,10 @@ static bool get_float(const string& entry, object*& obj)
 // care: not threadsafe
 static bool get_binary(const string& entry, object*& obj)
 {
-    static binary new_binary(0);
+    static binary new_binary;
     integer_t val;
     bool ret = false;
+
     if ((entry.size() >= 2) && (entry[0] == '#'))
     {
         stringstream token;
@@ -255,9 +326,10 @@ static bool get_binary(const string& entry, object*& obj)
                 break;
         }
 
-        token>>new_binary._value;
+        token>>val;
         if(syntax && !token.fail())
         {
+            new_binary.set(val);
             obj = &new_binary;
             ret = true;
         }
@@ -266,8 +338,10 @@ static bool get_binary(const string& entry, object*& obj)
     return ret;
 }
 
+// care: not threadsafe
 static bool get_binary_bin(const string& entry, object*& obj)
 {
+    static binary new_binary;
     integer_t val;
     int len = entry.size();
     bool ret = false;
@@ -284,7 +358,8 @@ static bool get_binary_bin(const string& entry, object*& obj)
                 exponent/=2;
             }
         }
-        obj = new binary(val);
+        new_binary.set(val);
+        obj = &new_binary;
         ret = true;
     }
 
@@ -313,19 +388,17 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
         obj_size = sizeof(binary);
         ret = true;
     }
-    else if (get_symbol(entry, obj))
+    else if (get_symbol(entry, obj, obj_size))
     {
         type = cmd_symbol;
-        obj_size = sizeof(symbol);
         ret = true;
     }
-    else if (get_string(entry, obj))
+    else if (get_string(entry, obj, obj_size))
     {
         type = cmd_string;
-        obj_size = sizeof(ostring);
         ret = true;
     }
-    else if (get_program(entry, obj))
+    else if (get_program(entry, obj, obj_size))
     {
         type = cmd_program;
         obj_size = sizeof(oprogram);
@@ -338,14 +411,29 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
     else
     {
         // nothing, considered as an auto-evaluated symbol
-        obj = new symbol((string&)entry);
+        (void)get_symbol(entry, obj, obj_size);
         ((symbol*)obj)->_auto_eval = true;
-        obj_size = sizeof(symbol);
         type = cmd_symbol;
         ret = true;
     }
 
     return ret;
+}
+
+static void _delete_obj_from_string(object* obj)
+{
+    if (obj != NULL)
+    {
+        switch (obj->_type)
+        {
+        case cmd_number:
+        case cmd_binary:
+            break;
+        default:
+            free(obj);
+            break;
+        }
+    }
 }
 
 static char* entry_completion_generator(const char* text, int state)
@@ -389,7 +477,7 @@ static char* entry_completion_dupstr(char* s)
     return r;
 }
 
-static ret_value parse(const string& entry, program& prog)
+static ret_value parse(const char* entry, program& prog)
 {
     vector<string> entries;
     ret_value ret = ret_ok;
@@ -406,6 +494,7 @@ static ret_value parse(const string& entry, program& prog)
             if(_obj_from_string((*it), obj, obj_size, type))
             {
                 prog.push_back(obj, obj_size, type);
+                _delete_obj_from_string(obj);
             }
             else
             {
@@ -420,7 +509,7 @@ static ret_value parse(const string& entry, program& prog)
 // interactive entry and decoding
 static ret_value entry(program& prog)
 {
-    char *buf;
+    char* buf;
     ret_value ret;
 
     // declare completion fn (bound to '\t' by default)
@@ -430,10 +519,8 @@ static ret_value entry(program& prog)
     buf = readline(prompt);
     if (buf != NULL)
     {
-        string entry(buf);
-
         // parse it
-        ret = parse(entry, prog);
+        ret = parse(buf, prog);
 
         // keep history
         if (buf[0]!=0)
