@@ -63,11 +63,14 @@ void eq(void)
 			putf(getf() == first);
 		}
 		break;
+        //TODO
+#if 0
 		case cmd_symbol:
 		{
 			string first = getn();
 			putf(getn() == first);
 		}
+#endif
 		break;
 		default:
 			_stack->pop_back();

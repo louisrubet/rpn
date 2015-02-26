@@ -2,6 +2,8 @@ void instr()
 {
 	MIN_ARGUMENTS(1);
 
+    //TODO
+#if 0
 	// stringify only if not already a string
 	if (_stack->get_type(0) != cmd_string)
 	{
@@ -12,11 +14,14 @@ void instr()
 		ostring* str = new ostring(out.str().c_str());
 	    _stack->push_back(str, sizeof(ostring), cmd_string);
 	}
+#endif
 }
 
 void strout()
 {
-	MIN_ARGUMENTS(1);
+    //TODO
+#if 0
+    MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
 	string& entry = *((ostring*)_stack->back())->_value;
@@ -30,4 +35,5 @@ void strout()
 		// run it
 		prog.run(*_stack, *_heap);
 	}
+#endif
 }
