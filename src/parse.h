@@ -205,26 +205,29 @@ static bool get_program(const string& entry, object*& obj)
     return ret;
 }
 
+// care: not threadsafe
 static bool get_float(const string& entry, object*& obj)
 {
+    static number new_number(0);
     stringstream token;
-    floating_t val;
     bool ret = false;
 
     token<<entry;
-    token>>val;
+    token>>new_number._value;
 
     if ( (!token.fail()) && (!token.bad()) )
     {
-        obj = new number(val);
+        obj = &new_number;
         ret = true;
     }
 
     return ret;
 }
 
+// care: not threadsafe
 static bool get_binary(const string& entry, object*& obj)
 {
+    static binary new_binary(0);
     integer_t val;
     bool ret = false;
     if ((entry.size() >= 2) && (entry[0] == '#'))
@@ -252,10 +255,10 @@ static bool get_binary(const string& entry, object*& obj)
                 break;
         }
 
-        token>>val;
+        token>>new_binary._value;
         if(syntax && !token.fail())
         {
-            obj = new binary(val);
+            obj = &new_binary;
             ret = true;
         }
     }
