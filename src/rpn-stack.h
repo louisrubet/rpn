@@ -76,6 +76,7 @@ void rot(void)
 
 void depth(void)
 {
-	number num((floating_t)_stack->size());
+    number num;
+    num.set((floating_t)_stack->size());
 	_stack->push_back(&num, sizeof(number), cmd_number);
 }

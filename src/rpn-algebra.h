@@ -16,7 +16,9 @@ void plus()
 		//TODO really too slow
 		putb(getb() + getb());
 	}
-	// string
+    //TODO
+#if 0
+    // string
 	else if (IS_ARG_TYPE(0, cmd_string))
 	{
 		ARG_MUST_BE_OF_TYPE(1, cmd_string);
@@ -24,6 +26,7 @@ void plus()
 		_stack->pop_back();
 		*((ostring*)_stack->back())->_value += second;
 	}
+#endif
 	else
 		ERR_CONTEXT(ret_bad_operand_type);
 }

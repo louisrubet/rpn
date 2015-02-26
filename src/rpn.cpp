@@ -106,22 +106,27 @@ typedef union
 typedef int (program::*branch_fn_t)(branch&);
 
 //
-class object
+struct object
 {
-public:
-	cmd_type_t _type;// object type
-	object(cmd_type_t type = cmd_undef):_type(type) { }
+    // object type
+    cmd_type_t _type;
 
+    //
     void show(ostream& stream = cout);
 };
 
-class number : public object
+struct number : public object
 {
-public:
-	number(floating_t value) : object(cmd_number) { _value = value; }
 	floating_t _value;
 
-	// representation mode
+    //
+    void set(floating_t value)
+    {
+        _type = cmd_number;
+        _value = value;
+    }
+
+    // representation mode
 	typedef enum {
 		std,
 		fix,
@@ -139,12 +144,17 @@ number::mode_enum number::s_mode = number::s_default_mode;
 int number::s_default_precision = 20;
 int number::s_current_precision = number::s_default_precision;
 
-class binary : public object
+struct binary : public object
 {
-public:
-	binary(integer_t value) : object(cmd_binary) { _value = value; }	
 	integer_t _value;
 	
+    //
+    void set(integer_t value)
+    {
+        _type = cmd_binary;
+        _value = value;
+    }
+
 	// representation mode
 	typedef enum {
 		dec,
@@ -158,12 +168,12 @@ public:
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
-class ostring : public object
+struct ostring : public object
 {
-public:
-    ostring(cmd_type_t type = cmd_string) : object(type), len(0) { }
+    //
     void set(const char* value, unsigned int len)
     {
+        _type = cmd_string;
         if (value != NULL)
         {
             (void)memcpy(_value, value, len);
@@ -174,44 +184,109 @@ public:
             len = 0;
     }
 
+    //
     unsigned int _len;
-    char _value[];
+    char _value[0];
 };
 
-class oprogram : public ostring
+struct oprogram : public object
 {
-public:
-    oprogram(cmd_type_t type = cmd_program) : ostring(type) { }
+    //
+    void set(const char* value, unsigned int len)
+    {
+        _type = cmd_program;
+        if (value != NULL)
+        {
+            (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+
+    //
+    unsigned int _len;
+    char _value[0];
 };
 
-class symbol : public ostring
+struct symbol : public object
 {
-public:
-    symbol(cmd_type_t type = cmd_symbol) : ostring(type), _auto_eval(false) { }
-	bool _auto_eval;
+    //
+    void set(const char* value, unsigned int len)
+    {
+        _type = cmd_symbol;
+        _auto_eval = false;
+        if (value != NULL)
+        {
+            (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+
+    //
+    bool _auto_eval;
+    unsigned int _len;
+    char _value[0];
 };
 
-class keyword : public symbol
+struct keyword : public object
 {
-public:
-    keyword(program_fn_t fn, cmd_type_t type = cmd_keyword) : symbol(type) { _fn = fn; }
-	program_fn_t _fn;
+    //
+    void set(program_fn_t fn, const char* value, unsigned int len)
+    {
+        _type = cmd_keyword;
+        _fn = fn;
+        if (value != NULL)
+        {
+            (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+
+    //
+    program_fn_t _fn;
+    unsigned int _len;
+    char _value[0];
 };
 
-class branch : public keyword
+struct branch : public object
 {
-public:
-    branch(branch_fn_t fn) : keyword(NULL, cmd_branch), arg1(-1), arg2(-1), arg3(-1), arg_bool(false)
-	{
-		_type = cmd_branch;
-		_fn = fn;
-	}
-	// branch function
-	branch_fn_t _fn;
-	// args used by cmd_branch cmds
-	int arg1, arg2, arg3;
-	floating_t farg1, farg2;
-	bool arg_bool;
+    //
+    void set(branch_fn_t fn, const char* value, unsigned int len)
+    {
+        _type = cmd_branch;
+        _fn = fn;
+        arg1 = -1;
+        arg2 = -1;
+        arg3 = -1;
+        farg1 = 0;
+        farg2 = 0;
+        arg_bool = 0;
+        if (value != NULL)
+        {
+            (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+
+    // branch function
+    branch_fn_t _fn;
+    // args used by cmd_branch cmds
+    int arg1, arg2, arg3;
+    floating_t farg1, farg2;
+    bool arg_bool;
+    unsigned int _len;
+    char _value[0];
 };
 
 void object::show(ostream& stream)
@@ -368,7 +443,23 @@ public:
 		return ret;
 	}
 
-	ret_value preprocess(void)
+    bool compare_keyword(keyword* k, const char* str_to_compare, int len)
+    {
+        if (k->_len >= len)
+            return strncmp(k->_value, str_to_compare, len) == 0;
+        else
+            return false;
+    }
+
+    bool compare_branch(branch* b, const char* str_to_compare, int len)
+    {
+        if (b->_len >= len)
+            return strncmp(b->_value, str_to_compare, len) == 0;
+        else
+            return false;
+    }
+
+    ret_value preprocess(void)
 	{
 		// for if-then-else-end
 		vector<struct if_layout_t> vlayout;
@@ -384,7 +475,7 @@ public:
 			if (type == cmd_keyword)
 			{
 				keyword* k = (keyword*)seq_obj(i);
-                if (strncmp(k->_value, "end", 3) == 0)
+                if (compare_keyword(k, "end", 3))
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -414,14 +505,14 @@ public:
 			else if (type == cmd_branch)
 			{
 				branch* k = (branch*)seq_obj(i);
-                if (strncmp(k->_value, "if", 2) == 0)
+                if (compare_branch(k, "if", 2))
 				{
 					if_layout_t layout;
 					layout.index_if = i;
 					vlayout.push_back(layout);
 					layout_index++;
 				}
-                else if (strncmp(k->_value, "then", 4) == 0)
+                else if (compare_branch(k, "then", 4))
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -450,7 +541,7 @@ public:
 					k->arg1 = next;
 					k->arg3 = vlayout[layout_index].index_if;
 				}
-                else if (strncmp(k->_value, "else", 4) == 0)
+                else if (compare_branch(k, "else", 4))
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -486,16 +577,16 @@ public:
 					k->arg3 = vlayout[layout_index].index_if;
 					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
 				}
-                else if (strncmp(k->_value, "start", 5) == 0)
+                else if (compare_branch(k, "start", 5))
 				{
 					vstartindex.push_back(i);
 				}
-                else if (strncmp(k->_value, "for", 3) == 0)
+                else if (compare_branch(k, "for", 3))
 				{
 					vstartindex.push_back(i);
 					k->arg1 = i + 1;// arg1 points on symbol variable
 				}
-                else if(strncmp(k->_value, "next", 4) == 0)
+                else if(compare_branch(k, "next", 4))
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -506,7 +597,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-                else if (strncmp(k->_value, "step", 4) == 0)
+                else if (compare_branch(k, "step", 4))
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -517,7 +608,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-                else if (strncmp(k->_value, "->", 2) == 0)
+                else if (compare_branch(k, "->", 2))
                 {
                     k->arg1 = i;// arg1 is '->' command index in program
                 }
@@ -562,31 +653,6 @@ public:
 		cerr<<"syntax error: "<<context<<endl;
 	}
 
-	// keywords declaration
-	struct keyword_t
-	{
-		cmd_type_t type;
-		char name[24];
-		program_fn_t fn;
-		string comment;
-	};
-    static keyword_t _keywords[g_max_commands];
-
-	static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
-	{
-		for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
-		{
-			if ((strnlen(_keywords[i].name, sizeof(_keywords[i].name))>0)
-				&& (strncmp(fn_name, _keywords[i].name, sizeof(_keywords[i].name)) == 0))
-			{
-				fn = _keywords[i].fn;
-				type = _keywords[i].type;
-				return ret_ok;
-			}
-		}
-		return ret_unknown_err;
-	}
-
 	ret_value get_err(void)	{ return _err; }
 
 #include "parse.h"
@@ -629,7 +695,8 @@ private:
 	void putf(floating_t value)
 	{
 		/* warning, caller must check object type before */
-		number num(value);
+        number num;
+        num.set(value);
         _stack->push_back(&num, sizeof(number), cmd_number);
 	}
 
@@ -644,11 +711,21 @@ private:
 	void putb(integer_t value)
 	{
 		/* warning, caller must check object type before */
-		binary num(value);
+        binary num;
+        num.set(value);
         _stack->push_back(&num, sizeof(binary), cmd_binary);
 	}
 
-	int stack_size()
+    // care: return value must be used before pushing something else in stack
+    char* getn()
+    {
+        /* warning, caller must check object type before */
+        char* a = ((ostring*)_stack->back())->_value;
+        _stack->pop_back();
+        return a;
+    }
+
+    int stack_size()
 	{
 		return _stack->size();
 	}
@@ -737,7 +814,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 		// make program
-		ret = program::parse(entry, prog);
+        ret = program::parse(entry.c_str(), prog);
 		if (ret == ret_ok)
 		{
 			string separator = "";
