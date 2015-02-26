@@ -111,14 +111,14 @@ class object
 public:
 	cmd_type_t _type;// object type
 	object(cmd_type_t type = cmd_undef):_type(type) { }
-	virtual void show(ostream& stream = cout) { }
+
+    void show(ostream& stream = cout);
 };
 
 class number : public object
 {
 public:
 	number(floating_t value) : object(cmd_number) { _value = value; }
-	virtual void show(ostream& stream = cout) { stream << _value; }
 	floating_t _value;
 
 	// representation mode
@@ -142,32 +142,7 @@ int number::s_current_precision = number::s_default_precision;
 class binary : public object
 {
 public:
-	binary(integer_t value) : object(cmd_binary) { _value = value; }
-	
-	virtual void show(ostream& stream = cout)
-	{
-		cout << "# ";
-		switch(s_mode)
-		{
-			case dec: cout<<std::right<<std::setw(8)<<std::dec<<_value<<" d"; break;
-			case hex: cout<<std::right<<std::setw(16)<<std::hex<<_value<<" h"; break;
-			case oct: cout<<std::right<<std::setw(16)<<std::oct<<_value<<" o"; break;
-			case bin:
-			{
-				string mybin;
-				for (int i = (int)(log((floating_t)_value) / log(2.)); i>=0; i--)
-				{
-					if (_value & (1 << i))
-						mybin+='1';
-					else
-						mybin+='0';
-				}
-				cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-			}
-			break;
-		}
-	}
-	
+	binary(integer_t value) : object(cmd_binary) { _value = value; }	
 	integer_t _value;
 	
 	// representation mode
@@ -186,54 +161,47 @@ binary::binary_enum binary::s_mode = binary::s_default_mode;
 class ostring : public object
 {
 public:
-	ostring(string& value, cmd_type_t type = cmd_string) : object(type)
-	{
-	    _value = new string(value);
-	}
-	ostring(const char* value, cmd_type_t type = cmd_string) : object(type)
-	{
-	    _value = new string(value);
-	}
-	virtual void show(ostream& stream = cout) { stream << "\"" << *_value << "\""; }
-	string* _value;
+    ostring(cmd_type_t type = cmd_string) : object(type), len(0) { }
+    void set(const char* value, unsigned int len)
+    {
+        if (value != NULL)
+        {
+            (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+
+    unsigned int _len;
+    char _value[];
 };
 
 class oprogram : public ostring
 {
 public:
-	oprogram(string& value, cmd_type_t type = cmd_program) : ostring(value, type) { }
-	oprogram(const char* value, cmd_type_t type = cmd_program) : ostring(value, type) { }
-	virtual void show(ostream& stream = cout) { stream << "<< " << *_value << " >>"; }
+    oprogram(cmd_type_t type = cmd_program) : ostring(type) { }
 };
 
-class symbol : public object
+class symbol : public ostring
 {
 public:
-	symbol(string& value, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
-	{
-	    _value = new string(value);
-	}
-	symbol(const char* value, cmd_type_t type = cmd_symbol) : object(type), _auto_eval(false)
-	{
-	    _value = new string(value);
-	}
-	virtual void show(ostream& stream = cout) { stream << "'" << *_value << "'"; }
-	string* _value;
+    symbol(cmd_type_t type = cmd_symbol) : ostring(type), _auto_eval(false) { }
 	bool _auto_eval;
 };
 
 class keyword : public symbol
 {
 public:
-	keyword(program_fn_t fn, string& value, cmd_type_t type = cmd_keyword) : symbol(value, type) { _fn = fn; }
+    keyword(program_fn_t fn, cmd_type_t type = cmd_keyword) : symbol(type) { _fn = fn; }
 	program_fn_t _fn;
-	virtual void show(ostream& stream = cout) { stream << *_value; }
 };
 
 class branch : public keyword
 {
 public:
-	branch(branch_fn_t fn, string& value) : keyword(NULL, value, cmd_branch), arg1(-1), arg2(-1), arg3(-1), arg_bool(false)
+    branch(branch_fn_t fn) : keyword(NULL, cmd_branch), arg1(-1), arg2(-1), arg3(-1), arg_bool(false)
 	{
 		_type = cmd_branch;
 		_fn = fn;
@@ -245,6 +213,56 @@ public:
 	floating_t farg1, farg2;
 	bool arg_bool;
 };
+
+void object::show(ostream& stream)
+{
+    switch(_type)
+    {
+    case cmd_number:
+        stream << ((number*)this)->_value;
+        break;
+    case cmd_binary:
+        {
+            cout << "# ";
+            switch(((binary*)this)->s_mode)
+            {
+                case binary::dec: cout<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
+                case binary::hex: cout<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
+                case binary::oct: cout<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
+                case binary::bin:
+                {
+                    string mybin;
+                    for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
+                    {
+                        if (((binary*)this)->_value & (1 << i))
+                            mybin+='1';
+                        else
+                            mybin+='0';
+                    }
+                    cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
+                }
+                break;
+            }
+        }
+        break;
+    case cmd_string:
+        stream << "\"" << *((ostring*)this)->_value << "\"";
+        break;
+    case cmd_program:
+        stream << "<< " << *((oprogram*)this)->_value << " >>";
+        break;
+    case cmd_symbol:
+        stream << "'" << *((symbol*)this)->_value << "'";
+        break;
+    case cmd_keyword:
+    case cmd_branch:
+        stream << *((keyword*)this)->_value;
+        break;
+    default:
+        stream << "< unknown object representation >";
+        break;
+    }
+}
 
 struct if_layout_t
 {
@@ -366,7 +384,7 @@ public:
 			if (type == cmd_keyword)
 			{
 				keyword* k = (keyword*)seq_obj(i);
-                if (k->_value->compare("end") == 0)
+                if (strncmp(k->_value, "end", 3) == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -396,14 +414,14 @@ public:
 			else if (type == cmd_branch)
 			{
 				branch* k = (branch*)seq_obj(i);
-				if (k->_value->compare("if") == 0)
+                if (strncmp(k->_value, "if", 2) == 0)
 				{
 					if_layout_t layout;
 					layout.index_if = i;
 					vlayout.push_back(layout);
 					layout_index++;
 				}
-                else if (k->_value->compare("then") == 0)
+                else if (strncmp(k->_value, "then", 4) == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -432,7 +450,7 @@ public:
 					k->arg1 = next;
 					k->arg3 = vlayout[layout_index].index_if;
 				}
-                else if (k->_value->compare("else") == 0)
+                else if (strncmp(k->_value, "else", 4) == 0)
 				{
 					int next = i + 1;
 					if (next >= (int)size())
@@ -468,16 +486,16 @@ public:
 					k->arg3 = vlayout[layout_index].index_if;
 					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
 				}
-                else if (k->_value->compare("start") == 0)
+                else if (strncmp(k->_value, "start", 5) == 0)
 				{
 					vstartindex.push_back(i);
 				}
-                else if (k->_value->compare("for") == 0)
+                else if (strncmp(k->_value, "for", 3) == 0)
 				{
 					vstartindex.push_back(i);
 					k->arg1 = i + 1;// arg1 points on symbol variable
 				}
-				else if(k->_value->compare("next") == 0)
+                else if(strncmp(k->_value, "next", 4) == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -488,7 +506,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-                else if (k->_value->compare("step") == 0)
+                else if (strncmp(k->_value, "step", 4) == 0)
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -499,7 +517,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-                else if (k->_value->compare("->") == 0)
+                else if (strncmp(k->_value, "->", 2) == 0)
                 {
                     k->arg1 = i;// arg1 is '->' command index in program
                 }
@@ -630,21 +648,6 @@ private:
         _stack->push_back(&num, sizeof(binary), cmd_binary);
 	}
 
-	string getn()
-	{
-		/* warning, caller must check object type before */
-		string* a = ((symbol*)_stack->back())->_value;
-		_stack->pop_back();
-		return *a;
-	}
-
-	void putn(string& a)
-	{
-		/* warning, caller must check object type before */
-		symbol sym(a);
-        _stack->push_back(&sym, sizeof(symbol), cmd_symbol);
-	}
-
 	int stack_size()
 	{
 		return _stack->size();
@@ -699,7 +702,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// apply default configuration
 	apply_default();
 
-	// run with interactive prompt
+    // run with interactive prompt
 	if (argc == 1)
 	{
 		//
