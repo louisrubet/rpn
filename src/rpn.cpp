@@ -176,7 +176,8 @@ struct ostring : public object
         _type = cmd_string;
         if (value != NULL)
         {
-            (void)memcpy(_value, value, len);
+            if (len>0)
+                (void)memcpy(_value, value, len);
             _value[len] = 0;
             _len = len;
         }
@@ -197,7 +198,8 @@ struct oprogram : public object
         _type = cmd_program;
         if (value != NULL)
         {
-            (void)memcpy(_value, value, len);
+            if (len>0)
+                (void)memcpy(_value, value, len);
             _value[len] = 0;
             _len = len;
         }
@@ -219,7 +221,8 @@ struct symbol : public object
         _auto_eval = false;
         if (value != NULL)
         {
-            (void)memcpy(_value, value, len);
+            if (len>0)
+                (void)memcpy(_value, value, len);
             _value[len] = 0;
             _len = len;
         }
@@ -242,7 +245,8 @@ struct keyword : public object
         _fn = fn;
         if (value != NULL)
         {
-            (void)memcpy(_value, value, len);
+            if (len>0)
+                (void)memcpy(_value, value, len);
             _value[len] = 0;
             _len = len;
         }
@@ -271,7 +275,8 @@ struct branch : public object
         arg_bool = 0;
         if (value != NULL)
         {
-            (void)memcpy(_value, value, len);
+            if (len>0)
+                (void)memcpy(_value, value, len);
             _value[len] = 0;
             _len = len;
         }
@@ -321,17 +326,17 @@ void object::show(ostream& stream)
         }
         break;
     case cmd_string:
-        stream << "\"" << *((ostring*)this)->_value << "\"";
+        stream << "\"" << ((ostring*)this)->_value << "\"";
         break;
     case cmd_program:
-        stream << "<< " << *((oprogram*)this)->_value << " >>";
+        stream << "<< " << ((oprogram*)this)->_value << " >>";
         break;
     case cmd_symbol:
-        stream << "'" << *((symbol*)this)->_value << "'";
+        stream << "'" << ((symbol*)this)->_value << "'";
         break;
     case cmd_keyword:
     case cmd_branch:
-        stream << *((keyword*)this)->_value;
+        stream << ((keyword*)this)->_value;
         break;
     default:
         stream << "< unknown object representation >";

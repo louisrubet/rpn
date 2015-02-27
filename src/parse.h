@@ -199,24 +199,38 @@ static bool get_symbol(const string& entry, object*& obj, unsigned int& obj_len)
 {
     bool ret = false;
     int entry_len = entry.size();
-    if (entry_len>1 && entry[0]=='\'')
+    if (entry_len>=1 && entry[0]=='\'')
     {
-        int naked_entry_len;
+        if (entry_len == 1)
+        {
+            // total object length
+            obj_len = sizeof(symbol) + 1;
 
-        // entry length without prefix / postfix
-        naked_entry_len = entry[entry_len-1]=='\''?(entry_len-3):(entry_len-2);
+            // allocate object
+            obj = (symbol*)malloc(obj_len);
 
-        // total object length
-        obj_len = sizeof(symbol) + naked_entry_len;
+            //set it
+            ((symbol*)obj)->set("", 0);
+        }
+        else
+        {
+            int naked_entry_len;
 
-        // allocate object
-        obj = (object*)malloc(obj_len);
+            // entry length without prefix / postfix
+            naked_entry_len = entry[entry_len-1]=='\''?(entry_len-2):(entry_len-1);
 
-        // set it
-        ((symbol*)obj)->set(&entry[1], naked_entry_len);
+            // total object length
+            obj_len = sizeof(symbol) + naked_entry_len + 1;
 
+            // allocate object
+            obj = (symbol*)malloc(obj_len);
+
+            // set it
+            ((symbol*)obj)->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
+        }
         ret = true;
     }
+
     return ret;
 }
 
@@ -224,24 +238,38 @@ static bool get_string(const string& entry, object*& obj, unsigned int& obj_len)
 {
     bool ret = false;
     int entry_len = entry.size();
-    if (entry_len>1 && entry[0]=='"')
+    if (entry_len>=1 && entry[0]=='"')
     {
-        int naked_entry_len;
+        if (entry_len == 1)
+        {
+            // total object length
+            obj_len = sizeof(ostring) + 1;
 
-        // entry length without prefix / postfix
-        naked_entry_len = entry[entry_len-1]=='"'?(entry_len-3):(entry_len-2);
+            // allocate object
+            obj = (ostring*)malloc(obj_len);
 
-        // total object length
-        obj_len = sizeof(ostring) + naked_entry_len;
+            //set it
+            ((ostring*)obj)->set("", 0);
+        }
+        else
+        {
+            int naked_entry_len;
 
-        // allocate object
-        obj = (object*)malloc(obj_len);
+            // entry length without prefix / postfix
+            naked_entry_len = entry[entry_len-1]=='"'?(entry_len-2):(entry_len-1);
 
-        // set it
-        ((ostring*)obj)->set(&entry[1], naked_entry_len);
+            // total object length
+            obj_len = sizeof(ostring) + naked_entry_len + 1;
 
+            // allocate object
+            obj = (ostring*)malloc(obj_len);
+
+            // set it
+            ((ostring*)obj)->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
+        }
         ret = true;
     }
+
     return ret;
 }
 
