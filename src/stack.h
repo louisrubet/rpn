@@ -8,6 +8,8 @@
 #include <map>
 using namespace std;
 
+#include "debug.h"
+
 #define ALLOC_BLOB (128*1024)
 #define LOCAL_COPY_PLACES 3
 #define LOCAL_COPY_SIZE 128
@@ -147,6 +149,11 @@ public:
 		push_back(&local->blob, local->length, local->type);
 	}
 
+    void dump(void)
+    {
+        dump8((unsigned char*)_base, 0, (unsigned long)(_current - _base));
+    }
+
 private:
 	char* _base;
 	char* _current;
@@ -186,13 +193,13 @@ public:
             //TODO gerer les pbs de memoire
 			blob = (struct local_var*)malloc(size + sizeof(local_var));
 			_map[name] = blob;
-		}
+        }
 		else if (size != blob->length)
 		{
             //TODO gerer les pbs de memoire
 			blob = (struct local_var*)realloc(blob, size + sizeof(local_var));
 			_map[name] = blob;
-		}
+        }
 		blob->length = size;
 		blob->type= type;
 		memcpy(&blob->blob, obj, size);
@@ -244,12 +251,12 @@ public:
 			return false;
 	}
 
-	bool erase(const string name)
+    bool erase(const string& name)
 	{
 		map<string, struct local_var*>::iterator i = _map.find(name);
 		if (i != _map.end())
 		{
-			free(i->second);
+            free(i->second);
 			_map.erase(i->first);
 			return true;
 		}

@@ -23,8 +23,9 @@ void rtob()
 	MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-	binary bin((integer_t)getf());
-    _stack->push_back(&bin, sizeof(binary), cmd_binary);
+    binary bin;
+    bin.set(((integer_t)getf()));
+    _stack->push_back(&bin, bin.size(), cmd_binary);
 
 }
 
