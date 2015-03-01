@@ -78,5 +78,5 @@ void depth(void)
 {
     number num;
     num.set((floating_t)_stack->size());
-	_stack->push_back(&num, sizeof(number), cmd_number);
+    _stack->push_back(&num, num.size(), cmd_number);
 }

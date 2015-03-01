@@ -42,21 +42,11 @@ drop2
 drop2
 
 # test symbol entry 3
-'2 3'
--> stack should be '2 3'
-drop
-
-# test symbol entry 4
-'2 3
--> stack should be '2 3'
-drop
-
-# test symbol entry 5
 ''
 -> stack should be ''
 drop
 
-# test symbol entry 6
+# test symbol entry 4
 '
 -> stack should be ''
 drop
@@ -216,9 +206,9 @@ drop
 drop
 
 # if-then-else-end test 8
-0 if then 0 if then 'ok' else 0 end else 'OK !' end
+0 if then 0 if then 'ok' else 0 end else 'OK' end
 -> stack size should be 1
--> stack should be 'OK !'
+-> stack should be 'OK'
 drop
 
 # start-next-step test 1

@@ -72,7 +72,7 @@ int rpn_for(branch& myobj)
 	// store symbol with first value
     number num;
     num.set(myobj.farg1);
-    _heap->add(string(sym->_value), &num, sizeof(number), cmd_number);
+    _heap->add(string(sym->_value), &num, num.size(), cmd_number);
 
 	return myobj.arg1 + 1;
 }
