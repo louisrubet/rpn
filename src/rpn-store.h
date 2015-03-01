@@ -51,8 +51,11 @@ void purge(void)
 	MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    if (!_heap->erase(string(getn())))
+    string name(((symbol*)_stack->back())->_value);
+    if (!_heap->erase(name))
 		ERR_CONTEXT(ret_unknown_variable);
+    else
+        _stack->pop_back();
 }
 
 void vars(void)
