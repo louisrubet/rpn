@@ -723,15 +723,6 @@ private:
         _stack->push_back(&num, num.size(), cmd_binary);
 	}
 
-    // care: return value must be used before pushing something else in stack
-    char* getn()
-    {
-        /* warning, caller must check object type before */
-        char* a = ((ostring*)_stack->back())->_value;
-        _stack->pop_back();
-        return a;
-    }
-
     int stack_size()
 	{
 		return _stack->size();

@@ -193,13 +193,13 @@ public:
             //TODO gerer les pbs de memoire
 			blob = (struct local_var*)malloc(size + sizeof(local_var));
 			_map[name] = blob;
-		}
+        }
 		else if (size != blob->length)
 		{
             //TODO gerer les pbs de memoire
 			blob = (struct local_var*)realloc(blob, size + sizeof(local_var));
 			_map[name] = blob;
-		}
+        }
 		blob->length = size;
 		blob->type= type;
 		memcpy(&blob->blob, obj, size);
@@ -251,12 +251,12 @@ public:
 			return false;
 	}
 
-	bool erase(const string name)
+    bool erase(const string& name)
 	{
 		map<string, struct local_var*>::iterator i = _map.find(name);
 		if (i != _map.end())
 		{
-			free(i->second);
+            free(i->second);
 			_map.erase(i->first);
 			return true;
 		}
