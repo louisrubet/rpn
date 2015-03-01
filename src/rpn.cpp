@@ -43,11 +43,6 @@ using namespace std;
 
 #include "stack.h"
 
-//TODO faut-il que ces variables soient globales ?
-static const char g_cursor[] = "> ";
-static const string g_show_stack_separator = ":\t";
-static const int g_max_commands = 128;
-
 //
 static int g_verbose = 0;
 
@@ -113,7 +108,7 @@ struct object
 
     //
     void show(ostream& stream = cout);
-};
+} __attribute__((packed));
 
 struct number : public object
 {
@@ -125,6 +120,7 @@ struct number : public object
         _type = cmd_number;
         _value = value;
     }
+    unsigned int size() { return sizeof(number); }
 
     // representation mode
 	typedef enum {
@@ -138,7 +134,7 @@ struct number : public object
 	// precision
 	static int s_default_precision;
 	static int s_current_precision;
-};
+} __attribute__((packed));
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
 int number::s_default_precision = 20;
@@ -154,6 +150,7 @@ struct binary : public object
         _type = cmd_binary;
         _value = value;
     }
+    unsigned int size() { return sizeof(binary); }
 
 	// representation mode
 	typedef enum {
@@ -164,7 +161,7 @@ struct binary : public object
 	} binary_enum;
 	static binary_enum s_default_mode;
 	static binary_enum s_mode;
-};
+} __attribute__((packed));
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
@@ -184,11 +181,12 @@ struct ostring : public object
         else
             len = 0;
     }
+    int size() { return sizeof(ostring)+_len+1; }
 
     //
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct oprogram : public object
 {
@@ -206,11 +204,12 @@ struct oprogram : public object
         else
             len = 0;
     }
+    int size() { return sizeof(oprogram)+_len+1; }
 
     //
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct symbol : public object
 {
@@ -229,12 +228,13 @@ struct symbol : public object
         else
             len = 0;
     }
+    int size() { return sizeof(symbol)+_len+1; }
 
     //
     bool _auto_eval;
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct keyword : public object
 {
@@ -253,12 +253,13 @@ struct keyword : public object
         else
             len = 0;
     }
+    int size() { return sizeof(keyword)+_len+1; }
 
     //
     program_fn_t _fn;
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct branch : public object
 {
@@ -283,6 +284,7 @@ struct branch : public object
         else
             len = 0;
     }
+    int size() { return sizeof(branch)+_len+1; }
 
     // branch function
     branch_fn_t _fn;
@@ -292,7 +294,7 @@ struct branch : public object
     bool arg_bool;
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 void object::show(ostream& stream)
 {
@@ -389,9 +391,9 @@ public:
 			}
 
 			// could be an auto-evaluated symbol
-			if (type == cmd_symbol)
+            if (type == cmd_symbol)
 			{
-				auto_rcl((symbol*)seq_obj(i));
+                auto_rcl((symbol*)seq_obj(i));
 				i++;
 			}
 
@@ -482,7 +484,7 @@ public:
 				keyword* k = (keyword*)seq_obj(i);
                 if (compare_keyword(k, "end", 3))
 				{
-					int next = i + 1;
+                    int next = i + 1;
 					if (next >= (int)size())
 						next = -1;
 
@@ -513,13 +515,13 @@ public:
                 if (compare_branch(k, "if", 2))
 				{
 					if_layout_t layout;
-					layout.index_if = i;
+                    layout.index_if = i;
 					vlayout.push_back(layout);
 					layout_index++;
 				}
                 else if (compare_branch(k, "then", 4))
 				{
-					int next = i + 1;
+                    int next = i + 1;
 					if (next >= (int)size())
 						next = -1;
 
@@ -548,7 +550,7 @@ public:
 				}
                 else if (compare_branch(k, "else", 4))
 				{
-					int next = i + 1;
+                    int next = i + 1;
 					if (next >= (int)size())
 						next = -1;
 
@@ -702,7 +704,7 @@ private:
 		/* warning, caller must check object type before */
         number num;
         num.set(value);
-        _stack->push_back(&num, sizeof(number), cmd_number);
+        _stack->push_back(&num, num.size(), cmd_number);
 	}
 
 	integer_t getb()
@@ -718,7 +720,7 @@ private:
 		/* warning, caller must check object type before */
         binary num;
         num.set(value);
-        _stack->push_back(&num, sizeof(binary), cmd_binary);
+        _stack->push_back(&num, num.size(), cmd_binary);
 	}
 
     // care: return value must be used before pushing something else in stack

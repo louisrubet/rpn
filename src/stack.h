@@ -8,6 +8,8 @@
 #include <map>
 using namespace std;
 
+#include "debug.h"
+
 #define ALLOC_BLOB (128*1024)
 #define LOCAL_COPY_PLACES 3
 #define LOCAL_COPY_SIZE 128
@@ -146,6 +148,11 @@ public:
 		struct local_copy* local = (struct local_copy*)_places[from_place];
 		push_back(&local->blob, local->length, local->type);
 	}
+
+    void dump(void)
+    {
+        dump8((unsigned char*)_base, 0, (unsigned long)(_current - _base));
+    }
 
 private:
 	char* _base;
