@@ -346,56 +346,6 @@ void object::show(ostream& stream)
     }
 }
 
-void object::show(ostream& stream)
-{
-    switch(_type)
-    {
-    case cmd_number:
-        stream << ((number*)this)->_value;
-        break;
-    case cmd_binary:
-        {
-            cout << "# ";
-            switch(((binary*)this)->s_mode)
-            {
-                case binary::dec: cout<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-                case binary::hex: cout<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
-                case binary::oct: cout<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
-                case binary::bin:
-                {
-                    string mybin;
-                    for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
-                    {
-                        if (((binary*)this)->_value & (1 << i))
-                            mybin+='1';
-                        else
-                            mybin+='0';
-                    }
-                    cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-                }
-                break;
-            }
-        }
-        break;
-    case cmd_string:
-        stream << "\"" << *((ostring*)this)->_value << "\"";
-        break;
-    case cmd_program:
-        stream << "<< " << *((oprogram*)this)->_value << " >>";
-        break;
-    case cmd_symbol:
-        stream << "'" << *((symbol*)this)->_value << "'";
-        break;
-    case cmd_keyword:
-    case cmd_branch:
-        stream << *((keyword*)this)->_value;
-        break;
-    default:
-        stream << "< unknown object representation >";
-        break;
-    }
-}
-
 struct if_layout_t
 {
     if_layout_t():index_then(-1),index_else(-1),index_end(-1) { }
