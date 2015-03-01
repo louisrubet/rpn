@@ -8,7 +8,7 @@ void eval(void)
 		void* obj;
 		unsigned int size;
 		int type;
-		string& variable = *((symbol*)_stack->back())->_value;
+        string variable(((symbol*)_stack->back())->_value);
 		if (_heap->get(variable, obj, size, type))
 		{
 			_stack->pop_back();
@@ -20,13 +20,13 @@ void eval(void)
 	else if (IS_ARG_TYPE(0, cmd_program))
 	{
 		// eval a program
-		string& entry = *((oprogram*)_stack->back())->_value;
+        string entry(((oprogram*)_stack->back())->_value);
 		_stack->pop_back();
 
 		program prog;
 
         // make program from entry
-		if (program::parse(entry, prog) == ret_ok)
+        if (program::parse(entry.c_str(), prog) == ret_ok)
 		{
 			// run it
 			prog.run(*_stack, *_heap);
@@ -100,16 +100,16 @@ int inprog(branch& myobj)
     // load variables
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--)
     {
-        _heap->add(*((symbol*)seq_obj(i))->_value, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
+        _heap->add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
         _stack->pop_back();
     }
 
     // run the program
-    string& entry = *((oprogram*)seq_obj(myobj.arg1 + count_symbols + 1))->_value;
+    string entry(((oprogram*)seq_obj(myobj.arg1 + count_symbols + 1))->_value);
     program prog;
 
     // make the program from entry
-    if (program::parse(entry, prog) == ret_ok)
+    if (program::parse(entry.c_str(), prog) == ret_ok)
     {
         // run it
         prog.run(*_stack, *_heap);

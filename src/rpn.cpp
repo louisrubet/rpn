@@ -43,11 +43,6 @@ using namespace std;
 
 #include "stack.h"
 
-//TODO faut-il que ces variables soient globales ?
-static const char g_cursor[] = "> ";
-static const string g_show_stack_separator = ":\t";
-static const int g_max_commands = 128;
-
 //
 static int g_verbose = 0;
 
@@ -106,22 +101,28 @@ typedef union
 typedef int (program::*branch_fn_t)(branch&);
 
 //
-class object
+struct object
 {
-public:
-	cmd_type_t _type;// object type
-	object(cmd_type_t type = cmd_undef):_type(type) { }
+    // object type
+    cmd_type_t _type;
 
+    //
     void show(ostream& stream = cout);
-};
+} __attribute__((packed));
 
-class number : public object
+struct number : public object
 {
-public:
-	number(floating_t value) : object(cmd_number) { _value = value; }
 	floating_t _value;
 
-	// representation mode
+    //
+    void set(floating_t value)
+    {
+        _type = cmd_number;
+        _value = value;
+    }
+    unsigned int size() { return sizeof(number); }
+
+    // representation mode
 	typedef enum {
 		std,
 		fix,
@@ -133,18 +134,24 @@ public:
 	// precision
 	static int s_default_precision;
 	static int s_current_precision;
-};
+} __attribute__((packed));
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
 int number::s_default_precision = 20;
 int number::s_current_precision = number::s_default_precision;
 
-class binary : public object
+struct binary : public object
 {
-public:
-	binary(integer_t value) : object(cmd_binary) { _value = value; }	
 	integer_t _value;
 	
+    //
+    void set(integer_t value)
+    {
+        _type = cmd_binary;
+        _value = value;
+    }
+    unsigned int size() { return sizeof(binary); }
+
 	// representation mode
 	typedef enum {
 		dec,
@@ -154,61 +161,190 @@ public:
 	} binary_enum;
 	static binary_enum s_default_mode;
 	static binary_enum s_mode;
-};
+} __attribute__((packed));
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
-class ostring : public object
+struct ostring : public object
 {
-public:
-	ostring(string& value, cmd_type_t type = cmd_string) : object(type)
-	{
-	    _value = new string(value);
-	}
-	ostring(const char* value, cmd_type_t type = cmd_string) : object(type)
-	{
-	    _value = new string(value);
-	}
-	string* _value;
-};
+    //
+    void set(const char* value, unsigned int len)
+    {
+        _type = cmd_string;
+        if (value != NULL)
+        {
+            if (len>0)
+                (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+    int size() { return sizeof(ostring)+_len+1; }
 
-class oprogram : public ostring
-{
-public:
-	oprogram(string& value, cmd_type_t type = cmd_program) : ostring(value, type) { }
-	oprogram(const char* value, cmd_type_t type = cmd_program) : ostring(value, type) { }
-};
+    //
+    unsigned int _len;
+    char _value[0];
+} __attribute__((packed));
 
-class symbol : public ostring
+struct oprogram : public object
 {
-public:
-    symbol(string& value, cmd_type_t type = cmd_symbol) : ostring(value, type), _auto_eval(false) { }
-    symbol(const char* value, cmd_type_t type = cmd_symbol) : ostring(value, type), _auto_eval(false) { }
-	bool _auto_eval;
-};
+    //
+    void set(const char* value, unsigned int len)
+    {
+        _type = cmd_program;
+        if (value != NULL)
+        {
+            if (len>0)
+                (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+    int size() { return sizeof(oprogram)+_len+1; }
 
-class keyword : public symbol
-{
-public:
-	keyword(program_fn_t fn, string& value, cmd_type_t type = cmd_keyword) : symbol(value, type) { _fn = fn; }
-	program_fn_t _fn;
-};
+    //
+    unsigned int _len;
+    char _value[0];
+} __attribute__((packed));
 
-class branch : public keyword
+struct symbol : public object
 {
-public:
-	branch(branch_fn_t fn, string& value) : keyword(NULL, value, cmd_branch), arg1(-1), arg2(-1), arg3(-1), arg_bool(false)
-	{
-		_type = cmd_branch;
-		_fn = fn;
-	}
-	// branch function
-	branch_fn_t _fn;
-	// args used by cmd_branch cmds
-	int arg1, arg2, arg3;
-	floating_t farg1, farg2;
-	bool arg_bool;
-};
+    //
+    void set(const char* value, unsigned int len)
+    {
+        _type = cmd_symbol;
+        _auto_eval = false;
+        if (value != NULL)
+        {
+            if (len>0)
+                (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+    int size() { return sizeof(symbol)+_len+1; }
+
+    //
+    bool _auto_eval;
+    unsigned int _len;
+    char _value[0];
+} __attribute__((packed));
+
+struct keyword : public object
+{
+    //
+    void set(program_fn_t fn, const char* value, unsigned int len)
+    {
+        _type = cmd_keyword;
+        _fn = fn;
+        if (value != NULL)
+        {
+            if (len>0)
+                (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+    int size() { return sizeof(keyword)+_len+1; }
+
+    //
+    program_fn_t _fn;
+    unsigned int _len;
+    char _value[0];
+} __attribute__((packed));
+
+struct branch : public object
+{
+    //
+    void set(branch_fn_t fn, const char* value, unsigned int len)
+    {
+        _type = cmd_branch;
+        _fn = fn;
+        arg1 = -1;
+        arg2 = -1;
+        arg3 = -1;
+        farg1 = 0;
+        farg2 = 0;
+        arg_bool = 0;
+        if (value != NULL)
+        {
+            if (len>0)
+                (void)memcpy(_value, value, len);
+            _value[len] = 0;
+            _len = len;
+        }
+        else
+            len = 0;
+    }
+    int size() { return sizeof(branch)+_len+1; }
+
+    // branch function
+    branch_fn_t _fn;
+    // args used by cmd_branch cmds
+    int arg1, arg2, arg3;
+    floating_t farg1, farg2;
+    bool arg_bool;
+    unsigned int _len;
+    char _value[0];
+} __attribute__((packed));
+
+void object::show(ostream& stream)
+{
+    switch(_type)
+    {
+    case cmd_number:
+        stream << ((number*)this)->_value;
+        break;
+    case cmd_binary:
+        {
+            cout << "# ";
+            switch(((binary*)this)->s_mode)
+            {
+                case binary::dec: cout<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
+                case binary::hex: cout<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
+                case binary::oct: cout<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
+                case binary::bin:
+                {
+                    string mybin;
+                    for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
+                    {
+                        if (((binary*)this)->_value & (1 << i))
+                            mybin+='1';
+                        else
+                            mybin+='0';
+                    }
+                    cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
+                }
+                break;
+            }
+        }
+        break;
+    case cmd_string:
+        stream << "\"" << ((ostring*)this)->_value << "\"";
+        break;
+    case cmd_program:
+        stream << "<< " << ((oprogram*)this)->_value << " >>";
+        break;
+    case cmd_symbol:
+        stream << "'" << ((symbol*)this)->_value << "'";
+        break;
+    case cmd_keyword:
+    case cmd_branch:
+        stream << ((keyword*)this)->_value;
+        break;
+    default:
+        stream << "< unknown object representation >";
+        break;
+    }
+}
 
 void object::show(ostream& stream)
 {
@@ -305,9 +441,9 @@ public:
 			}
 
 			// could be an auto-evaluated symbol
-			if (type == cmd_symbol)
+            if (type == cmd_symbol)
 			{
-				auto_rcl((symbol*)seq_obj(i));
+                auto_rcl((symbol*)seq_obj(i));
 				i++;
 			}
 
@@ -364,7 +500,23 @@ public:
 		return ret;
 	}
 
-	ret_value preprocess(void)
+    bool compare_keyword(keyword* k, const char* str_to_compare, int len)
+    {
+        if (k->_len >= len)
+            return strncmp(k->_value, str_to_compare, len) == 0;
+        else
+            return false;
+    }
+
+    bool compare_branch(branch* b, const char* str_to_compare, int len)
+    {
+        if (b->_len >= len)
+            return strncmp(b->_value, str_to_compare, len) == 0;
+        else
+            return false;
+    }
+
+    ret_value preprocess(void)
 	{
 		// for if-then-else-end
 		vector<struct if_layout_t> vlayout;
@@ -380,9 +532,9 @@ public:
 			if (type == cmd_keyword)
 			{
 				keyword* k = (keyword*)seq_obj(i);
-                if (k->_value->compare("end") == 0)
+                if (compare_keyword(k, "end", 3))
 				{
-					int next = i + 1;
+                    int next = i + 1;
 					if (next >= (int)size())
 						next = -1;
 
@@ -410,16 +562,16 @@ public:
 			else if (type == cmd_branch)
 			{
 				branch* k = (branch*)seq_obj(i);
-				if (k->_value->compare("if") == 0)
+                if (compare_branch(k, "if", 2))
 				{
 					if_layout_t layout;
-					layout.index_if = i;
+                    layout.index_if = i;
 					vlayout.push_back(layout);
 					layout_index++;
 				}
-                else if (k->_value->compare("then") == 0)
+                else if (compare_branch(k, "then", 4))
 				{
-					int next = i + 1;
+                    int next = i + 1;
 					if (next >= (int)size())
 						next = -1;
 
@@ -446,9 +598,9 @@ public:
 					k->arg1 = next;
 					k->arg3 = vlayout[layout_index].index_if;
 				}
-                else if (k->_value->compare("else") == 0)
+                else if (compare_branch(k, "else", 4))
 				{
-					int next = i + 1;
+                    int next = i + 1;
 					if (next >= (int)size())
 						next = -1;
 
@@ -482,16 +634,16 @@ public:
 					k->arg3 = vlayout[layout_index].index_if;
 					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
 				}
-                else if (k->_value->compare("start") == 0)
+                else if (compare_branch(k, "start", 5))
 				{
 					vstartindex.push_back(i);
 				}
-                else if (k->_value->compare("for") == 0)
+                else if (compare_branch(k, "for", 3))
 				{
 					vstartindex.push_back(i);
 					k->arg1 = i + 1;// arg1 points on symbol variable
 				}
-				else if(k->_value->compare("next") == 0)
+                else if(compare_branch(k, "next", 4))
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -502,7 +654,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-                else if (k->_value->compare("step") == 0)
+                else if (compare_branch(k, "step", 4))
 				{
 					if (vstartindex.size() == 0)
 					{
@@ -513,7 +665,7 @@ public:
 					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
 					vstartindex.pop_back();
 				}
-                else if (k->_value->compare("->") == 0)
+                else if (compare_branch(k, "->", 2))
                 {
                     k->arg1 = i;// arg1 is '->' command index in program
                 }
@@ -558,31 +710,6 @@ public:
 		cerr<<"syntax error: "<<context<<endl;
 	}
 
-	// keywords declaration
-	struct keyword_t
-	{
-		cmd_type_t type;
-		char name[24];
-		program_fn_t fn;
-		string comment;
-	};
-    static keyword_t _keywords[g_max_commands];
-
-	static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
-	{
-		for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
-		{
-			if ((strnlen(_keywords[i].name, sizeof(_keywords[i].name))>0)
-				&& (strncmp(fn_name, _keywords[i].name, sizeof(_keywords[i].name)) == 0))
-			{
-				fn = _keywords[i].fn;
-				type = _keywords[i].type;
-				return ret_ok;
-			}
-		}
-		return ret_unknown_err;
-	}
-
 	ret_value get_err(void)	{ return _err; }
 
 #include "parse.h"
@@ -625,8 +752,9 @@ private:
 	void putf(floating_t value)
 	{
 		/* warning, caller must check object type before */
-		number num(value);
-        _stack->push_back(&num, sizeof(number), cmd_number);
+        number num;
+        num.set(value);
+        _stack->push_back(&num, num.size(), cmd_number);
 	}
 
 	integer_t getb()
@@ -640,26 +768,12 @@ private:
 	void putb(integer_t value)
 	{
 		/* warning, caller must check object type before */
-		binary num(value);
-        _stack->push_back(&num, sizeof(binary), cmd_binary);
+        binary num;
+        num.set(value);
+        _stack->push_back(&num, num.size(), cmd_binary);
 	}
 
-	string getn()
-	{
-		/* warning, caller must check object type before */
-		string* a = ((symbol*)_stack->back())->_value;
-		_stack->pop_back();
-		return *a;
-	}
-
-	void putn(string& a)
-	{
-		/* warning, caller must check object type before */
-		symbol sym(a);
-        _stack->push_back(&sym, sizeof(symbol), cmd_symbol);
-	}
-
-	int stack_size()
+    int stack_size()
 	{
 		return _stack->size();
 	}
@@ -748,7 +862,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 		// make program
-		ret = program::parse(entry, prog);
+        ret = program::parse(entry.c_str(), prog);
 		if (ret == ret_ok)
 		{
 			string separator = "";

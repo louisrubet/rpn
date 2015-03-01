@@ -9,23 +9,24 @@ void instr()
 		((object*)_stack->back())->show(out);
 		_stack->pop_back();
 
-		ostring* str = new ostring(out.str().c_str());
-	    _stack->push_back(str, sizeof(ostring), cmd_string);
+        ostring str;
+        str.set(out.str().c_str(), out.str().size());
+        _stack->push_back(&str, str.size(), cmd_string);
 	}
 }
 
 void strout()
 {
-	MIN_ARGUMENTS(1);
+    MIN_ARGUMENTS(1);
 	ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-	string& entry = *((ostring*)_stack->back())->_value;
+    string entry(((ostring*)_stack->back())->_value);
 	_stack->pop_back();
 
 	program prog;
 
 	// make program from string in stack level 1
-	if (program::parse(entry, prog) == ret_ok)
+    if (program::parse(entry.c_str(), prog) == ret_ok)
 	{
 		// run it
 		prog.run(*_stack, *_heap);

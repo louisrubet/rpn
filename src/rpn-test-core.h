@@ -115,7 +115,7 @@ void program::test()
 			{
 				// parse entry and run line
 				program prog;
-				ret = program::parse(entry, prog);
+                ret = program::parse(entry.c_str(), prog);
 				if (ret == ret_ok)
 				{
 					// run it
