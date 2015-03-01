@@ -28,193 +28,191 @@ New commands (nonexistent in RPL) are tagged with * in column new.
 Already implemented commands are tagged with * in column impl.
 Tested commands are tagged with * in column tested.
 
-category	command		new		impl.	tested
+category    command     new     impl.   tested
 
-GENERAL		+					*				
-GENERAL		-					*
-GENERAL		neg					*
-GENERAL		*					*
-GENERAL		/					*
-GENERAL		inv					*
-GENERAL		%					*
-GENERAL		%CH					*
-GENERAL		^					*
-GENERAL		sqrt		*		*
-GENERAL		sq			*		*
-GENERAL		test		*		*
-GENERAL		verbose				*
-GENERAL		verbose		*		*
-GENERAL		std					*
-GENERAL		fix					*
-GENERAL		sci					*
-GENERAL		version		*		*
-GENERAL		uname		*		*
+GENERAL     +                   *
+GENERAL     -                   *
+GENERAL     neg                 *
+GENERAL     *                   *
+GENERAL     /                   *
+GENERAL     inv                 *
+GENERAL     %                   *
+GENERAL     %CH                 *
+GENERAL     ^                   *
+GENERAL     sqrt        *       *
+GENERAL     sq          *       *
+GENERAL     test        *       *
+GENERAL     verbose     *       *
+GENERAL     std                 *
+GENERAL     fix                 *
+GENERAL     sci                 *
+GENERAL     version     *       *
+GENERAL     uname       *       *
 
-STACK		drop 				*
-STACK		swap				*
-STACK		roll
-STACK		dup 				*
-STACK		over
-STACK		dup2				*
-STACK		drop2				*
-STACK		rot 				*
-STACK		list->				
-STACK		rolld
-STACK		pick				*
-STACK		dupn
-STACK		dropn
-STACK		depth				*
-STACK		->list
-STACK		load_stack	*		*
-STACK		save_stack	*		*
+STACK        drop               *
+STACK        swap               *
+STACK        roll
+STACK        dup                *
+STACK        over
+STACK        dup2               *
+STACK        drop2              *
+STACK        rot                *
+STACK        list->                
+STACK        rolld
+STACK        pick               *
+STACK        dupn
+STACK        dropn
+STACK        depth              *
+STACK        ->list
+STACK        load_stack *       *
+STACK        save_stack *       *
 
 STORE
-STORE 		sto 				*
-STORE 		rcl 				*
-STORE 		purge				*
-STORE 		sto+
-STORE 		sto-
-STORE 		sto*
-STORE 		sto/
-STORE 		sneg
-STORE 		sinv
-STORE 		sconj
-STORE 		erase		*		*
-STORE 		vars 		*		*
-STORE 		include 	*
-STORE 		load_vars 	*
-STORE 		save_vars 	*
+STORE         sto               *
+STORE         rcl               *
+STORE         purge             *
+STORE         sto+
+STORE         sto-
+STORE         sto*
+STORE         sto/
+STORE         sneg
+STORE         sinv
+STORE         sconj
+STORE         erase     *       *
+STORE         vars      *       *
+STORE         include   *
+STORE         load_vars *
+STORE         save_vars *
 
-PROGRAM 	eval 				*
-PROGRAM 	load_prog	*
-PROGRAM 	save_prog	*
+PROGRAM       eval              *
+PROGRAM       load_prog *
+PROGRAM       save_prog *
 
-ALGEBRA		neg			*		*
-ALGEBRA		colct
-ALGEBRA		expan
-ALGEBRA		size
-ALGEBRA		form
-ALGEBRA		obsub
-ALGEBRA		exsub
-ALGEBRA		taylr
-ALGEBRA		isol
-ALGEBRA		quad,
-ALGEBRA		show
-ALGEBRA		obget
-ALGEBRA		exget
+ALGEBRA        neg      *       *
+ALGEBRA        colct
+ALGEBRA        expan
+ALGEBRA        size
+ALGEBRA        form
+ALGEBRA        obsub
+ALGEBRA        exsub
+ALGEBRA        taylr
+ALGEBRA        isol
+ALGEBRA        quad,
+ALGEBRA        show
+ALGEBRA        obget
+ALGEBRA        exget
 
-BINARY		+					*
-BINARY		-					*
-BINARY		*					*
-BINARY		/					*
-BINARY		dec					*
-BINARY		hex					*
-BINARY		oct					*
-BINARY		bin 				*
-BINARY		stws
-BINARY		rcws
-BINARY		rl
-BINARY		rr
-BINARY		rlb
-BINARY		rrb
-BINARY		r->b 				*
-BINARY		b->r 				*
-BINARY		sl
-BINARY		sr
-BINARY		slb
-BINARY		srb
-BINARY		asr
-BINARY		and
-BINARY		or
-BINARY		xor
-BINARY		not
+BINARY        +                 *
+BINARY        -                 *
+BINARY        *                 *
+BINARY        /                 *
+BINARY        dec               *
+BINARY        hex               *
+BINARY        oct               *
+BINARY        bin               *
+BINARY        stws
+BINARY        rcws
+BINARY        rl
+BINARY        rr
+BINARY        rlb
+BINARY        rrb
+BINARY        r->b              *
+BINARY        b->r              *
+BINARY        sl
+BINARY        sr
+BINARY        slb
+BINARY        srb
+BINARY        asr
+BINARY        and
+BINARY        or
+BINARY        xor
+BINARY        not
 
-STRING 		+					*
-STRING 		->str 				*
-STRING 		str-> 				*
-STRING 		chr
-STRING 		num
-STRING 		->lcd
-STRING 		lcd->
-STRING 		pos
-STRING 		sub
-STRING 		size
-STRING 		disp
+STRING         +                *
+STRING         ->str            *
+STRING         str->            *
+STRING         chr
+STRING         num
+STRING         ->lcd
+STRING         lcd->
+STRING         pos
+STRING         sub
+STRING         size
+STRING         disp
 
 BRANCH
-BRANCH 		if					*
-BRANCH 		if					*
-BRANCH 		then				*
-BRANCH 		else				*
-BRANCH 		end					*
-BRANCH 		start				*
-BRANCH 		for					*
-BRANCH 		next				*
-BRANCH 		step				*
-BRANCH 		ift
-BRANCH 		ifte
-BRANCH 		do
-BRANCH 		until
-BRANCH 		end
-BRANCH 		while
-BRANCH 		repeat
-BRANCH 		end
+BRANCH         if               *
+BRANCH         then             *
+BRANCH         else             *
+BRANCH         end              *
+BRANCH         start            *
+BRANCH         for              *
+BRANCH         next             *
+BRANCH         step             *
+BRANCH         ift
+BRANCH         ifte
+BRANCH         do
+BRANCH         until
+BRANCH         end
+BRANCH         while
+BRANCH         repeat
+BRANCH         end
  
 TEST
-TEST 		!=					*
-TEST 		>					*
-TEST 		>=					*
-TEST 		<					*
-TEST 		<=					*
-TEST 		sf
-TEST 		cf
-TEST 		fs?
-TEST 		fc?
-TEST 		fs?c
-TEST 		fc?c
-TEST 		and					*
-TEST 		or					*
-TEST 		xor					*
-TEST 		not					*
-TEST 		same				*
-TEST 		==					*
-TEST 		stof
-TEST 		rclf
-TEST 		type
+TEST         !=                 *
+TEST         >                  *
+TEST         >=                 *
+TEST         <                  *
+TEST         <=                 *
+TEST         sf
+TEST         cf
+TEST         fs?
+TEST         fc?
+TEST         fs?c
+TEST         fc?c
+TEST         and                *
+TEST         or                 *
+TEST         xor                *
+TEST         not                *
+TEST         same               *
+TEST         ==                 *
+TEST         stof
+TEST         rclf
+TEST         type
 
 TRIG
-TRIG 		pi 			*		*
-TRIG 		sin					*
-TRIG 		asin				*
-TRIG 		cos					*
-TRIG 		acos				*
-TRIG 		tan					*
-TRIG 		atan				*
-TRIG 		p→r
-TRIG 		r→p
-TRIG 		r→c
-TRIG 		c→r
-TRIG 		arg
-TRIG 		→hms
-TRIG 		hms→
-TRIG 		hms+
-TRIG 		hms-
-TRIG 		d→r					*
-TRIG 		r→d					*
+TRIG         pi         *       *
+TRIG         sin                *
+TRIG         asin               *
+TRIG         cos                *
+TRIG         acos               *
+TRIG         tan                *
+TRIG         atan               *
+TRIG         p→r
+TRIG         r→p
+TRIG         r→c
+TRIG         c→r
+TRIG         arg
+TRIG         →hms
+TRIG         hms→
+TRIG         hms+
+TRIG         hms-
+TRIG         d→r                *
+TRIG         r→d                *
 
 LOGS
-LOGS 		log 				*
-LOGS 		alog 				*
-LOGS 		ln 					*
-LOGS 		exp 				*
-LOGS 		lnp1
-LOGS 		expm
-LOGS 		sinh 				*
-LOGS 		asinh 				*
-LOGS 		cosh 				*
-LOGS 		acosh 				*
-LOGS 		tanh 				*
-LOGS 		atanh 				*
+LOGS         log                *
+LOGS         alog               *
+LOGS         ln                 *
+LOGS         exp                *
+LOGS         lnp1
+LOGS         expm
+LOGS         sinh               *
+LOGS         asinh              *
+LOGS         cosh               *
+LOGS         acosh              *
+LOGS         tanh               *
+LOGS         atanh              *
 
 
 Not yet
