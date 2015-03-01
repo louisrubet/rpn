@@ -2,6 +2,9 @@
 static const char version[] = "1.4-beta";
 static const char uname[] = "rpn v1.4-beta, (c) 2015 <louis@rubet.fr>";
 
+static const char g_cursor[] = "> ";
+static const string g_show_stack_separator = "> ";
+
 // syntax
 static const char* syntax[] = {
 	"Reverse Polish Notation language, based on hewlett-Packard RPL",
