@@ -84,7 +84,7 @@ typedef enum {
 } cmd_type_t;
 
 const char* cmd_type_string[cmd_max] = {
-	"undef", "number", "binary", "symbol", "program", "keyword", "keyword"
+    "undef", "number", "binary", "string", "symbol", "program", "keyword", "keyword"
 };
 
 //
