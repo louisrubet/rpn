@@ -98,10 +98,46 @@ void sci()
 
 void rpn_version()
 {
-	cout << version << endl;
+    int naked_entry_len;
+    int obj_len;
+    ostring* str;
+
+    // entry length without prefix / postfix
+    naked_entry_len = (int)strlen(version);
+
+    // total object length
+    obj_len = sizeof(ostring)+naked_entry_len+1;
+
+    // allocate object
+    str = (ostring*)malloc(obj_len);
+
+    // set it
+    str->set(version, naked_entry_len);
+
+    // push in stack
+    _stack->push_back(str, str->size(), cmd_string);
+    free(str);
 }
 
 void rpn_uname()
 {
-	cout << uname << endl;
+    int naked_entry_len;
+    int obj_len;
+    ostring* str;
+
+    // entry length without prefix / postfix
+    naked_entry_len = (int)strlen(uname);
+
+    // total object length
+    obj_len = sizeof(ostring)+naked_entry_len+1;
+
+    // allocate object
+    str = (ostring*)malloc(obj_len);
+
+    // set it
+    str->set(uname, naked_entry_len);
+
+    // push in stack
+    _stack->push_back(str, str->size(), cmd_string);
+    free(str);
 }
