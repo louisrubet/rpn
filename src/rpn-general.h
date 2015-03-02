@@ -21,7 +21,7 @@ void verbose()
 void help()
 {
 	cout<<endl;
-	rpn_uname();
+    cout<<ATTR_BOLD<<uname<<ATTR_OFF<<endl;
 	cout<<endl;
 
 	// syntax
