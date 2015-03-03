@@ -1,7 +1,10 @@
 //
 void eval(void)
 {
-	MIN_ARGUMENTS(1);
+    bool run_prog = false;
+    string prog_text;
+
+    MIN_ARGUMENTS(1);
 	if (IS_ARG_TYPE(0, cmd_symbol))
 	{
 		// recall a variable
@@ -11,8 +14,19 @@ void eval(void)
         string variable(((symbol*)_stack->back())->_value);
 		if (_heap->get(variable, obj, size, type))
 		{
-			_stack->pop_back();
-			_stack->push_back(obj, size, type);
+            // if variable holds a program, run this program
+            if (type == cmd_program)
+            {
+                prog_text = ((oprogram*)obj)->_value;
+                _stack->pop_back();
+                run_prog = true;
+            }
+            else
+            {
+                // else recall variable (i.e. stack its content)
+                _stack->pop_back();
+                _stack->push_back(obj, size, type);
+            }
 		}
 		else
 			ERR_CONTEXT(ret_unknown_variable);
@@ -20,20 +34,25 @@ void eval(void)
 	else if (IS_ARG_TYPE(0, cmd_program))
 	{
 		// eval a program
-        string entry(((oprogram*)_stack->back())->_value);
+        prog_text = ((oprogram*)_stack->back())->_value;
 		_stack->pop_back();
-
-		program prog;
-
-        // make program from entry
-        if (program::parse(entry.c_str(), prog) == ret_ok)
-		{
-			// run it
-			prog.run(*_stack, *_heap);
-		}
+        run_prog = true;
 	}
 	else
 		ERR_CONTEXT(ret_bad_operand_type);
+
+    // run prog if any
+    if (run_prog)
+    {
+        program prog;
+
+        // make program from entry
+        if (program::parse(prog_text.c_str(), prog) == ret_ok)
+        {
+            // run it
+            prog.run(*_stack, *_heap);
+        }
+    }
 }
 
 // carefull, this not a command but a branch
