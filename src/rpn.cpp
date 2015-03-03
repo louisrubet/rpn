@@ -361,14 +361,19 @@ public:
 	program() { }
 
 	// run this program
-	ret_value run(stack& stk, heap& hp)
+    ret_value run(stack& stk, heap& hp, heap* local_hp = NULL)
 	{
-		bool go_out = false;
+        heap local_heap;
+        bool go_out = false;
 		ret_value ret = ret_ok;
 		cmd_type_t type;
 
 		_stack = &stk;
-		_heap = &hp;
+        _global_heap = &hp;
+        if (local_hp != NULL)
+            _local_heap = local_hp;
+        else
+            _local_heap = &local_heap;
 		_err = ret_ok;
         _err_context = "";
 
@@ -688,7 +693,8 @@ private:
 	ret_value _err;
 	string _err_context;
 	stack* _stack;
-	heap* _heap;
+    heap* _global_heap;
+    heap* _local_heap;
 
 	// helpers for keywords implementation
 	floating_t getf()
@@ -770,8 +776,8 @@ static void apply_default(void)
 //
 int _tmain(int argc, _TCHAR* argv[])
 {
-	heap hp;
-	stack st;
+    heap global_heap;
+    stack global_stack;
 	int ret = 0;
 
 	// apply default configuration
@@ -790,10 +796,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			else
 			{
 				// run it
-				if (prog.run(st, hp) == ret_good_bye)
+                if (prog.run(global_stack, global_heap) == ret_good_bye)
 					break;
 				else
-					program::show_stack(st);
+                    program::show_stack(global_stack);
 			}
 		}
 	}
@@ -818,8 +824,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			string separator = "";
 
 			// run it
-			ret = prog.run(st, hp);
-			program::show_stack(st, separator);
+            ret = prog.run(global_stack, global_heap);
+            program::show_stack(global_stack, separator);
 		}
 	}
 
