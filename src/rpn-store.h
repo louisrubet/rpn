@@ -38,7 +38,13 @@ void auto_rcl(symbol* symb)
 		unsigned int size;
 		int type;
         if (_local_heap->get(string(symb->_value), obj, size, type) || _global_heap->get(string(symb->_value), obj, size, type))
-			_stack->push_back(obj, size, type);
+        {
+            _stack->push_back(obj, size, type);
+            if (type == cmd_program)
+            {
+                eval();
+            }
+        }
 		else
             _stack->push_back(symb, symb->size(), cmd_symbol);
 	}
