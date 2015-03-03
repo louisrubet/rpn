@@ -12,7 +12,7 @@ void eval(void)
 		unsigned int size;
 		int type;
         string variable(((symbol*)_stack->back())->_value);
-		if (_heap->get(variable, obj, size, type))
+        if (_local_heap->get(variable, obj, size, type) || _global_heap->get(variable, obj, size, type))
 		{
             // if variable holds a program, run this program
             if (type == cmd_program)
@@ -50,7 +50,7 @@ void eval(void)
         if (program::parse(prog_text.c_str(), prog) == ret_ok)
         {
             // run it
-            prog.run(*_stack, *_heap);
+            prog.run(*_stack, *_global_heap);
         }
     }
 }
@@ -117,9 +117,10 @@ int inprog(branch& myobj)
     }
 
     // load variables
+    heap local_heap;
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--)
     {
-        _heap->add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
+        local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
         _stack->pop_back();
     }
 
@@ -131,7 +132,8 @@ int inprog(branch& myobj)
     if (program::parse(entry.c_str(), prog) == ret_ok)
     {
         // run it
-        prog.run(*_stack, *_heap);
+        prog.run(*_stack, *_global_heap, &local_heap);
+        //TODO here: _local_heap free
     }
 
     // point on next command
