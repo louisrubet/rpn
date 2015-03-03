@@ -134,6 +134,7 @@ static bool _cut(const char* entry, vector<string>& entries)
                         entries.push_back(tmp);
                         tmp.clear();
                     }
+                    i--;// i has move 1 too far
                 }
                 else
                 {
