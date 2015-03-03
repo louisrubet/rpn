@@ -6,7 +6,7 @@ void sto(void)
 
     string name(((symbol*)_stack->get_obj(0))->_value);
     _stack->pop_back();
-	_heap->add(name, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
+    _global_heap->add(name, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
 	_stack->pop_back();
 }
 
@@ -20,7 +20,7 @@ void rcl(void)
 	unsigned int size;
 	int type;
     string variable(((symbol*)_stack->back())->_value);
-	if (_heap->get(variable, obj, size, type))
+    if (_local_heap->get(variable, obj, size, type) || _global_heap->get(variable, obj, size, type))
 	{
 		_stack->pop_back();
 		_stack->push_back(obj, size, type);
@@ -37,7 +37,7 @@ void auto_rcl(symbol* symb)
 		void* obj;
 		unsigned int size;
 		int type;
-        if (_heap->get(string(symb->_value), obj, size, type))
+        if (_local_heap->get(string(symb->_value), obj, size, type) || _global_heap->get(string(symb->_value), obj, size, type))
 			_stack->push_back(obj, size, type);
 		else
             _stack->push_back(symb, symb->size(), cmd_symbol);
@@ -52,10 +52,18 @@ void purge(void)
 	ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     string name(((symbol*)_stack->back())->_value);
-    if (!_heap->erase(name))
-		ERR_CONTEXT(ret_unknown_variable);
+    if (_local_heap->erase(name))
+    {
+        //TODO another error
+        ERR_CONTEXT(ret_bad_operand_type);
+    }
     else
-        _stack->pop_back();
+    {
+        if (!_global_heap->erase(name))
+            _stack->pop_back();
+        else
+            ERR_CONTEXT(ret_unknown_variable);
+    }
 }
 
 void vars(void)
@@ -65,9 +73,17 @@ void vars(void)
 	int type;
 	string name;
 
-	for (int i=0; i<(int)_heap->size(); i++)
+    for (int i=0; i<(int)_local_heap->size(); i++)
+    {
+        (void)_local_heap->get_by_index(i, name, (void*&)obj, size, type);
+        cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[type]<<", value ";
+        obj->show();
+        cout<<endl;
+    }
+
+    for (int i=0; i<(int)_global_heap->size(); i++)
 	{
-		(void)_heap->get_by_index(i, name, (void*&)obj, size, type);
+        (void)_global_heap->get_by_index(i, name, (void*&)obj, size, type);
 		cout<<"var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[type]<<", value ";
 		obj->show();
 		cout<<endl;
