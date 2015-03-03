@@ -10,7 +10,7 @@ using namespace std;
 
 #include "debug.h"
 
-#define ALLOC_BLOB (128*1024)
+#define ALLOC_BLOB (2*1024)
 #define LOCAL_COPY_PLACES 3
 #define LOCAL_COPY_SIZE 128
 
