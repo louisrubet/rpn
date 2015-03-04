@@ -54,7 +54,6 @@ void eval(void)
         if (program::parse(prog_text.c_str(), prog) == ret_ok)
         {
             // run it
-cout<<"eval: avant run: _local_heap.size = "<<_local_heap.size()<<endl;//lru
             prog.run(*_stack, *_global_heap, &_local_heap);
         }
     }

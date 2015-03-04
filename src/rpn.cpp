@@ -302,9 +302,9 @@ void object::show(ostream& stream)
             cout << "# ";
             switch(((binary*)this)->s_mode)
             {
-                case binary::dec: cout<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-                case binary::hex: cout<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
-                case binary::oct: cout<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
+                case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
+                case binary::hex: stream<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
+                case binary::oct: stream<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
                 case binary::bin:
                 {
                     string mybin;
@@ -315,7 +315,7 @@ void object::show(ostream& stream)
                         else
                             mybin+='0';
                     }
-                    cout<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
+                    stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
                 }
                 break;
             }
