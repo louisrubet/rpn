@@ -37,9 +37,26 @@ void edit(void)
 {
     MIN_ARGUMENTS(1);
 
-    // re-write stack objet in a stream
     stringstream out;
 
+    if (((object*)_stack->back())->_type == cmd_number)
+    {
+        switch(number::s_mode)
+        {
+        case number::std:
+            out.precision(number::s_current_precision);
+            out.unsetf(ios_base::floatfield);
+            break;
+        case number::fix:
+            out << setprecision(number::s_current_precision) << fixed;
+            break;
+        case number::sci:
+            out << setprecision(number::s_current_precision) << scientific;
+            break;
+        }
+    }
+
+    // re-write stack objet in a stream
     ((object*)_stack->back())->show(out);
     _stack->pop_back();
 
