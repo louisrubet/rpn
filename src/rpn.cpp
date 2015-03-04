@@ -21,12 +21,6 @@
  *
  */
 #include <stdlib.h>
-#ifdef WIN32
-#include <tchar.h>
-#else
-#define _TCHAR char
-#define _tmain main
-#endif
 #include <math.h>
 
 extern "C" {
@@ -368,13 +362,20 @@ public:
 		ret_value ret = ret_ok;
 		cmd_type_t type;
 
-		_stack = &stk;
+        // stack comes from outside
+        _stack = &stk;
+
+        // global heap comes from outside
         _global_heap = &hp;
+
+        // local heap can come from outside
+        // if not, set a new local heap
         if (local_hp != NULL)
             _local_heap = local_hp;
         else
             _local_heap = &local_heap;
-		_err = ret_ok;
+
+        _err = ret_ok;
         _err_context = "";
 
 		// branches for 'if'
@@ -774,7 +775,7 @@ static void apply_default(void)
 }
 
 //
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
     heap global_heap;
     stack global_stack;
