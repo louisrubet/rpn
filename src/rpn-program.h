@@ -133,7 +133,6 @@ int inprog(branch& myobj)
     {
         // run it
         prog.run(*_stack, *_global_heap, &local_heap);
-        //TODO here: _local_heap free
     }
 
     // point on next command
