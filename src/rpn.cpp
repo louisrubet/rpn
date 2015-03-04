@@ -355,9 +355,8 @@ public:
 	program() { }
 
 	// run this program
-    ret_value run(stack& stk, heap& hp, heap* local_hp = NULL)
+    ret_value run(stack& stk, heap& hp, heap* parent_local_hp = NULL)
 	{
-        heap local_heap;
         bool go_out = false;
 		ret_value ret = ret_ok;
 		cmd_type_t type;
@@ -368,12 +367,8 @@ public:
         // global heap comes from outside
         _global_heap = &hp;
 
-        // local heap can come from outside
-        // if not, set a new local heap
-        if (local_hp != NULL)
-            _local_heap = local_hp;
-        else
-            _local_heap = &local_heap;
+        // parent local heap comes from outside
+        _parent_local_heap = parent_local_hp;
 
         _err = ret_ok;
         _err_context = "";
@@ -693,9 +688,12 @@ public:
 private:
 	ret_value _err;
 	string _err_context;
-	stack* _stack;
+
+    stack* _stack;
+
     heap* _global_heap;
-    heap* _local_heap;
+    heap _local_heap;
+    heap* _parent_local_heap;
 
 	// helpers for keywords implementation
 	floating_t getf()

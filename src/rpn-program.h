@@ -12,7 +12,11 @@ void eval(void)
 		unsigned int size;
 		int type;
         string variable(((symbol*)_stack->back())->_value);
-        if (_local_heap->get(variable, obj, size, type) || _global_heap->get(variable, obj, size, type))
+
+        // mind the order of heaps
+        if (_local_heap.get(variable, obj, size, type)
+                || ((_parent_local_heap != NULL) && _parent_local_heap->get(variable, obj, size, type))
+                || _global_heap->get(variable, obj, size, type))
 		{
             // if variable holds a program, run this program
             if (type == cmd_program)
@@ -50,7 +54,8 @@ void eval(void)
         if (program::parse(prog_text.c_str(), prog) == ret_ok)
         {
             // run it
-            prog.run(*_stack, *_global_heap);
+cout<<"eval: avant run: _local_heap.size = "<<_local_heap.size()<<endl;//lru
+            prog.run(*_stack, *_global_heap, &_local_heap);
         }
     }
 }

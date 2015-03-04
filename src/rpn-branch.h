@@ -72,7 +72,7 @@ int rpn_for(branch& myobj)
 	// store symbol with first value
     number num;
     num.set(myobj.farg1);
-    _local_heap->add(string(sym->_value), &num, num.size(), cmd_number);
+    _local_heap.add(string(sym->_value), &num, num.size(), cmd_number);
 
 	return myobj.arg1 + 1;
 }
@@ -99,7 +99,7 @@ int rpn_next(branch& myobj)
 		int type;
 		symbol* var = (symbol*)seq_obj(start_or_for->arg1);
 		// check symbol variable is a number, then increase
-        if (_local_heap->get(string(var->_value), obj, size, type) && (type == cmd_number))
+        if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
 			((number*)obj)->_value = myobj.farg1;
 	}
 
@@ -144,7 +144,7 @@ int rpn_step(branch& myobj)
 		int type;
 		symbol* var = (symbol*)seq_obj(start_or_for->arg1);
 		// check symbol variable is a number, then increase
-        if (_local_heap->get(string(var->_value), obj, size, type) && (type == cmd_number))
+        if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
 			((number*)obj)->_value = myobj.farg1;
 	}
 
