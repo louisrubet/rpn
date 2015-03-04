@@ -33,6 +33,23 @@ void rcl(void)
 		ERR_CONTEXT(ret_unknown_variable);
 }
 
+void edit(void)
+{
+    MIN_ARGUMENTS(1);
+
+    // re-write stack objet in a stream
+    stringstream out;
+
+    ((object*)_stack->back())->show(out);
+    _stack->pop_back();
+
+    // edit: stuff chars using readline facility
+    string str = out.str();
+
+    for(int i=0;i<str.size();i++)
+        rl_stuff_char(str[i]);
+}
+
 // carefull : this is not a langage command
 void auto_rcl(symbol* symb)
 {
