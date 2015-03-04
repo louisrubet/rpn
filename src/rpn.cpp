@@ -331,7 +331,7 @@ void object::show(ostream& stream)
         stream << "\"" << ((ostring*)this)->_value << "\"";
         break;
     case cmd_program:
-        stream << "<< " << ((oprogram*)this)->_value << " >>";
+        stream << "<<" << ((oprogram*)this)->_value << ">>";
         break;
     case cmd_symbol:
         stream << "'" << ((symbol*)this)->_value << "'";
