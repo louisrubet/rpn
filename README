@@ -48,6 +48,7 @@ GENERAL     fix                 *
 GENERAL     sci                 *
 GENERAL     version     *       *
 GENERAL     uname       *       *
+GENERAL     edit                *
 
 STACK       drop                *
 STACK       swap                *
