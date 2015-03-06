@@ -333,7 +333,7 @@ static bool get_program(const string& entry, object*& obj, unsigned int& obj_len
 }
 
 // care: not threadsafe
-static bool get_float(const string& entry, object*& obj, unsigned int& obj_size)
+static bool get_float(const string& entry, object*& obj, unsigned int& obj_size, string& remaining_entry)
 {
     static number new_number;
     floating_t val;
@@ -349,6 +349,9 @@ static bool get_float(const string& entry, object*& obj, unsigned int& obj_size)
         obj = &new_number;
         obj_size = sizeof(number);
         ret = true;
+        
+        // remaining string if any
+        token>>remaining_entry;
     }
 
     return ret;
@@ -428,11 +431,13 @@ static bool get_binary_bin(const string& entry, object*& obj, unsigned int& obj_
     return ret;
 }
 
-static bool _obj_from_string(const string& entry, object*& obj, unsigned int& obj_size, cmd_type_t& type)
+static bool _obj_from_string(const string& entry, object*& obj, unsigned int& obj_size, cmd_type_t& type, string& remaining_entry)
 {
     bool ret = false;
+    
+    remaining_entry.erase();
 
-    if (get_float(entry, obj, obj_size))
+    if (get_float(entry, obj, obj_size, remaining_entry))
     {
         type = cmd_number;
         ret = true;
@@ -549,14 +554,23 @@ static ret_value parse(const char* entry, program& prog)
         //2. make an object from each entry, and add it to the program
         for (vector<string>::iterator it = entries.begin(); it != entries.end(); it++)
         {
-            if(_obj_from_string((*it), obj, obj_size, type))
+            string remaining_entry;
+            string main_entry = (*it);
+            while(main_entry.size()>0)
             {
-                prog.push_back(obj, obj_size, type);
-                _delete_obj_from_string(obj);
-            }
-            else
-            {
-                // no syntax error for now, an unknown obj form is considered as a symbol
+                // remaining_entry is used only in case of concatenated entry
+                // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
+                // this remaining entry is treated as an entry
+                if(_obj_from_string(main_entry, obj, obj_size, type, remaining_entry))
+                {
+                    prog.push_back(obj, obj_size, type);
+                    _delete_obj_from_string(obj);
+                }
+                else
+                {
+                    // no syntax error for now, an unknown obj form is considered as a symbol
+                }
+                main_entry = remaining_entry;
             }
         }
     }
