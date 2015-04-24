@@ -131,7 +131,7 @@ struct number : public object
 } __attribute__((packed));
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
-int number::s_default_precision = 20;
+int number::s_default_precision = 12;
 int number::s_current_precision = number::s_default_precision;
 
 struct binary : public object
@@ -303,8 +303,8 @@ void object::show(ostream& stream)
             switch(((binary*)this)->s_mode)
             {
                 case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-                case binary::hex: stream<<std::right<<std::setw(16)<<std::hex<<((binary*)this)->_value<<" h"; break;
-                case binary::oct: stream<<std::right<<std::setw(16)<<std::oct<<((binary*)this)->_value<<" o"; break;
+                case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
+                case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
                 case binary::bin:
                 {
                     string mybin;
