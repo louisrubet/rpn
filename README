@@ -30,7 +30,7 @@ Language extensions will soon be included:
 Here is a list of HP28s reserved words.
 
 New commands (nonexistent in RPL) are tagged with * in column new.
-Already implemented commands are tagged with * in column impl.
+Commands already implemented are tagged with * in column impl.
 Tested commands are tagged with * in column tested.
 
 category    command     new     impl.   tested
