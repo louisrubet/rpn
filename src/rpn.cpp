@@ -45,36 +45,36 @@ static int g_verbose = 0;
 #include "version.h"
 
 typedef enum {
-	ret_ok,
-	ret_unknown_err,
-	ret_missing_operand,
-	ret_bad_operand_type,
-	ret_unknown_variable,
-	ret_internal,
-	ret_deadly,
-	ret_good_bye,
-	ret_not_impl,
-	ret_nop,
-	ret_syntax,
-	ret_div_by_zero,
-	ret_max
+    ret_ok,
+    ret_unknown_err,
+    ret_missing_operand,
+    ret_bad_operand_type,
+    ret_unknown_variable,
+    ret_internal,
+    ret_deadly,
+    ret_good_bye,
+    ret_not_impl,
+    ret_nop,
+    ret_syntax,
+    ret_div_by_zero,
+    ret_max
 } ret_value;
 
 const char* ret_value_string[ret_max] = {
-	"ok", "unknown command", "missing operand", "bad operand type", "unknown variable", "internal error, aborting",
-	"deadly", "goodbye", "not implemented", "no operation", "syntax", "division by zero"
+    "ok", "unknown command", "missing operand", "bad operand type", "unknown variable", "internal error, aborting",
+    "deadly", "goodbye", "not implemented", "no operation", "syntax", "division by zero"
 };
 
 typedef enum {
-	cmd_undef,
-	cmd_number,/* floating value to put in stack */
-	cmd_binary,/* binary (integer) value to put in stack */
-	cmd_string,/* string value to put in stack */
-	cmd_symbol,/* symbol value to put in stack */
-	cmd_program,/* program */
-	cmd_keyword,/* langage keyword */
-	cmd_branch,/* langage branch keyword */
-	cmd_max
+    cmd_undef,
+    cmd_number,/* floating value to put in stack */
+    cmd_binary,/* binary (integer) value to put in stack */
+    cmd_string,/* string value to put in stack */
+    cmd_symbol,/* symbol value to put in stack */
+    cmd_program,/* program */
+    cmd_keyword,/* langage keyword */
+    cmd_branch,/* langage branch keyword */
+    cmd_max
 } cmd_type_t;
 
 const char* cmd_type_string[cmd_max] = {
@@ -90,7 +90,7 @@ class branch;
 typedef void (program::*program_fn_t)(void);
 typedef union
 {
-	program_fn_t _fn;
+    program_fn_t _fn;
 } operand;
 typedef int (program::*branch_fn_t)(branch&);
 
@@ -106,7 +106,7 @@ struct object
 
 struct number : public object
 {
-	floating_t _value;
+    floating_t _value;
 
     //
     void set(floating_t value)
@@ -117,17 +117,17 @@ struct number : public object
     unsigned int size() { return sizeof(number); }
 
     // representation mode
-	typedef enum {
-		std,
-		fix,
-		sci
-	} mode_enum;
-	static mode_enum s_default_mode;
-	static mode_enum s_mode;
-	
-	// precision
-	static int s_default_precision;
-	static int s_current_precision;
+    typedef enum {
+        std,
+        fix,
+        sci
+    } mode_enum;
+    static mode_enum s_default_mode;
+    static mode_enum s_mode;
+    
+    // precision
+    static int s_default_precision;
+    static int s_current_precision;
 } __attribute__((packed));
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
@@ -136,8 +136,8 @@ int number::s_current_precision = number::s_default_precision;
 
 struct binary : public object
 {
-	integer_t _value;
-	
+    integer_t _value;
+    
     //
     void set(integer_t value)
     {
@@ -146,15 +146,15 @@ struct binary : public object
     }
     unsigned int size() { return sizeof(binary); }
 
-	// representation mode
-	typedef enum {
-		dec,
-		hex,
-		oct,
-		bin,
-	} binary_enum;
-	static binary_enum s_default_mode;
-	static binary_enum s_mode;
+    // representation mode
+    typedef enum {
+        dec,
+        hex,
+        oct,
+        bin,
+    } binary_enum;
+    static binary_enum s_default_mode;
+    static binary_enum s_mode;
 } __attribute__((packed));
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
@@ -352,14 +352,14 @@ struct if_layout_t
 class program : public stack
 {
 public:
-	program() { }
+    program() { }
 
-	// run this program
+    // run this program
     ret_value run(stack& stk, heap& hp, heap* parent_local_hp = NULL)
-	{
+    {
         bool go_out = false;
-		ret_value ret = ret_ok;
-		cmd_type_t type;
+        ret_value ret = ret_ok;
+        cmd_type_t type;
 
         // stack comes from outside
         _stack = &stk;
@@ -373,83 +373,83 @@ public:
         _err = ret_ok;
         _err_context = "";
 
-		// branches for 'if'
-		ret = preprocess();
-		if (ret != ret_ok)
-			return ret;
+        // branches for 'if'
+        ret = preprocess();
+        if (ret != ret_ok)
+            return ret;
 
-		// iterate commands
-		for(int i = 0; (go_out==false) && (i<(int)size());)
-		{
-			type = (cmd_type_t)seq_type(i);
+        // iterate commands
+        for(int i = 0; (go_out==false) && (i<(int)size());)
+        {
+            type = (cmd_type_t)seq_type(i);
 
-			//
-			if (g_verbose >= 2)
-			{
-				cout << "(" << i << ") ";
-				((object*)seq_obj(i))->show();
-				cout << endl;
-			}
+            //
+            if (g_verbose >= 2)
+            {
+                cout << "(" << i << ") ";
+                ((object*)seq_obj(i))->show();
+                cout << endl;
+            }
 
-			// could be an auto-evaluated symbol
+            // could be an auto-evaluated symbol
             if (type == cmd_symbol)
-			{
+            {
                 auto_rcl((symbol*)seq_obj(i));
-				i++;
-			}
+                i++;
+            }
 
-			// a keyword
-			else if (type == cmd_keyword)
-			{
-				keyword* k = (keyword*)seq_obj(i);
-				// call matching function
-				(this->*(k->_fn))();
-				switch(_err)
-				{
-					// no pb -> go on
-					case ret_ok:
-						break;
-					// explicit go out software
-					case ret_good_bye:
-						go_out = true;
-						ret = ret_good_bye;
-						break;
-					default:
-						// error: abort prog
-						go_out = true;
+            // a keyword
+            else if (type == cmd_keyword)
+            {
+                keyword* k = (keyword*)seq_obj(i);
+                // call matching function
+                (this->*(k->_fn))();
+                switch(_err)
+                {
+                    // no pb -> go on
+                    case ret_ok:
+                        break;
+                    // explicit go out software
+                    case ret_good_bye:
+                        go_out = true;
+                        ret = ret_good_bye;
+                        break;
+                    default:
+                        // error: abort prog
+                        go_out = true;
 
-						// error: show it
+                        // error: show it
                         if (show_error(_err, _err_context) == ret_deadly)
-						{
-							// pb showing error -> go out software
-							ret = ret_good_bye;
-						}
-						break;
-				}
-				i++;
-			}
+                        {
+                            // pb showing error -> go out software
+                            ret = ret_good_bye;
+                        }
+                        break;
+                }
+                i++;
+            }
 
-			// a branch keyword
-			else if (type == cmd_branch)
-			{
-				// call matching function
-				branch* b = (branch*)seq_obj(i);
-				int tmp = (this->*(b->_fn))(*b);
-				if (tmp == -1)
-					i++;
-				else
-					i = tmp;
-			}
+            // a branch keyword
+            else if (type == cmd_branch)
+            {
+                // call matching function
+                branch* b = (branch*)seq_obj(i);
+                int tmp = (this->*(b->_fn))(*b);
+                if (tmp == -1)
+                    i++;
+                else
+                    i = tmp;
+            }
 
-			// not a command, but a stack entry, manage it
-			else
-			{
-				stk.push_back(seq_obj(i), seq_len(i), type);
-				i++;
-			}
-		}
-		return ret;
-	}
+            // not a command, but a stack entry, manage it
+            else
+            {
+                stk.push_back(seq_obj(i), seq_len(i), type);
+                i++;
+            }
+        }
+        return ret;
+    }
 
     bool compare_keyword(keyword* k, const char* str_to_compare, int len)
     {
@@ -468,226 +468,226 @@ public:
     }
 
     ret_value preprocess(void)
-	{
-		// for if-then-else-end
-		vector<struct if_layout_t> vlayout;
+    {
+        // for if-then-else-end
+        vector<struct if_layout_t> vlayout;
         int layout_index=-1;// TODO remplacable par vlayout.size()-1
         // for start-end-step
-		vector<int> vstartindex;
+        vector<int> vstartindex;
 
-		// analyse if-then-else-end branches
-		// analyse start-{next, step} branches
-		for(int i=0; i<(int)size(); i++)
-		{
-			int type = seq_type(i);
-			if (type == cmd_keyword)
-			{
-				keyword* k = (keyword*)seq_obj(i);
+        // analyse if-then-else-end branches
+        // analyse start-{next, step} branches
+        for(int i=0; i<(int)size(); i++)
+        {
+            int type = seq_type(i);
+            if (type == cmd_keyword)
+            {
+                keyword* k = (keyword*)seq_obj(i);
                 if (compare_keyword(k, "end", 3))
-				{
+                {
                     int next = i + 1;
-					if (next >= (int)size())
-						next = -1;
+                    if (next >= (int)size())
+                        next = -1;
 
-					if (layout_index<0)
-					{
-						// error: show it
-						show_syntax_error("missing if before end");
-						return ret_syntax;
-					}
-					if (vlayout[layout_index].index_end != -1)
-					{
-						// error: show it
-						show_syntax_error("duplicate end");
-						return ret_syntax;
-					}
-					if (vlayout[layout_index].index_else != -1)
-						//fill 'end' branch of 'else'
-						((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
-					else
-						//fill 'end' branch of 'then'
-						((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
-					layout_index--;
-				}
-			}
-			else if (type == cmd_branch)
-			{
-				branch* k = (branch*)seq_obj(i);
+                    if (layout_index<0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing if before end");
+                        return ret_syntax;
+                    }
+                    if (vlayout[layout_index].index_end != -1)
+                    {
+                        // error: show it
+                        show_syntax_error("duplicate end");
+                        return ret_syntax;
+                    }
+                    if (vlayout[layout_index].index_else != -1)
+                        //fill 'end' branch of 'else'
+                        ((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
+                    else
+                        //fill 'end' branch of 'then'
+                        ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
+                    layout_index--;
+                }
+            }
+            else if (type == cmd_branch)
+            {
+                branch* k = (branch*)seq_obj(i);
                 if (compare_branch(k, "if", 2))
-				{
-					if_layout_t layout;
+                {
+                    if_layout_t layout;
                     layout.index_if = i;
-					vlayout.push_back(layout);
-					layout_index++;
-				}
+                    vlayout.push_back(layout);
+                    layout_index++;
+                }
                 else if (compare_branch(k, "then", 4))
-				{
+                {
                     int next = i + 1;
-					if (next >= (int)size())
-						next = -1;
+                    if (next >= (int)size())
+                        next = -1;
 
-					// nothing after 'then' -> error
-					if (next == -1)
-					{
-						// error: show it
-						show_syntax_error("missing end after then");
-						return ret_syntax;
-					}
-					if (layout_index<0)
-					{
-						// error: show it
-						show_syntax_error("missing if before then");
-						return ret_syntax;
-					}
-					if (vlayout[layout_index].index_then != -1)
-					{
-						// error: show it
-						show_syntax_error("duplicate then");
-						return ret_syntax;
-					}
-					vlayout[layout_index].index_then = i;
-					k->arg1 = next;
-					k->arg3 = vlayout[layout_index].index_if;
-				}
+                    // nothing after 'then' -> error
+                    if (next == -1)
+                    {
+                        // error: show it
+                        show_syntax_error("missing end after then");
+                        return ret_syntax;
+                    }
+                    if (layout_index<0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing if before then");
+                        return ret_syntax;
+                    }
+                    if (vlayout[layout_index].index_then != -1)
+                    {
+                        // error: show it
+                        show_syntax_error("duplicate then");
+                        return ret_syntax;
+                    }
+                    vlayout[layout_index].index_then = i;
+                    k->arg1 = next;
+                    k->arg3 = vlayout[layout_index].index_if;
+                }
                 else if (compare_branch(k, "else", 4))
-				{
+                {
                     int next = i + 1;
-					if (next >= (int)size())
-						next = -1;
+                    if (next >= (int)size())
+                        next = -1;
 
-					// nothing after 'else' -> error
-					if (next == -1)
-					{
-						// error: show it
-						show_syntax_error("missing end after else");
-						return ret_syntax;
-					}
-					if (layout_index<0)
-					{
-						// error: show it
-						show_syntax_error("missing if before else");
-						return ret_syntax;
-					}
-					if (vlayout[layout_index].index_then == -1)
-					{
-						// error: show it
-						show_syntax_error("missing then before else");
-						return ret_syntax;
-					}
-					if (vlayout[layout_index].index_else != -1)
-					{
-						// error: show it
-						show_syntax_error("duplicate else");
-						return ret_syntax;
-					}
-					vlayout[layout_index].index_else = i;
-					k->arg1 = next;// fill branch1 (if was false) of 'else'
-					k->arg3 = vlayout[layout_index].index_if;
-					((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
-				}
+                    // nothing after 'else' -> error
+                    if (next == -1)
+                    {
+                        // error: show it
+                        show_syntax_error("missing end after else");
+                        return ret_syntax;
+                    }
+                    if (layout_index<0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing if before else");
+                        return ret_syntax;
+                    }
+                    if (vlayout[layout_index].index_then == -1)
+                    {
+                        // error: show it
+                        show_syntax_error("missing then before else");
+                        return ret_syntax;
+                    }
+                    if (vlayout[layout_index].index_else != -1)
+                    {
+                        // error: show it
+                        show_syntax_error("duplicate else");
+                        return ret_syntax;
+                    }
+                    vlayout[layout_index].index_else = i;
+                    k->arg1 = next;// fill branch1 (if was false) of 'else'
+                    k->arg3 = vlayout[layout_index].index_if;
+                    ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
+                }
                 else if (compare_branch(k, "start", 5))
-				{
-					vstartindex.push_back(i);
-				}
+                {
+                    vstartindex.push_back(i);
+                }
                 else if (compare_branch(k, "for", 3))
-				{
-					vstartindex.push_back(i);
-					k->arg1 = i + 1;// arg1 points on symbol variable
-				}
+                {
+                    vstartindex.push_back(i);
+                    k->arg1 = i + 1;// arg1 points on symbol variable
+                }
                 else if(compare_branch(k, "next", 4))
-				{
-					if (vstartindex.size() == 0)
-					{
-						// error: show it
-						show_syntax_error("missing start or for before next");
-						return ret_syntax;
-					}
-					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
-					vstartindex.pop_back();
-				}
+                {
+                    if (vstartindex.size() == 0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing start or for before next");
+                        return ret_syntax;
+                    }
+                    k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
+                    vstartindex.pop_back();
+                }
                 else if (compare_branch(k, "step", 4))
-				{
-					if (vstartindex.size() == 0)
-					{
-						// error: show it
-						show_syntax_error("missing start or for before step");
-						return ret_syntax;
-					}
-					k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
-					vstartindex.pop_back();
-				}
+                {
+                    if (vstartindex.size() == 0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing start or for before step");
+                        return ret_syntax;
+                    }
+                    k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
+                    vstartindex.pop_back();
+                }
                 else if (compare_branch(k, "->", 2))
                 {
                     k->arg1 = i;// arg1 is '->' command index in program
                 }
-			}
-		}
-		if (layout_index >= 0)
-		{
-			// error: show it
-			show_syntax_error("missing end");
-			return ret_syntax;
-		}
-		if (vstartindex.size() > 0)
-		{
-			// error: show it
-			show_syntax_error("missing next or step after for or start");
-			return ret_syntax;
-		}
-		return ret_ok;
-	}
+            }
+        }
+        if (layout_index >= 0)
+        {
+            // error: show it
+            show_syntax_error("missing end");
+            return ret_syntax;
+        }
+        if (vstartindex.size() > 0)
+        {
+            // error: show it
+            show_syntax_error("missing next or step after for or start");
+            return ret_syntax;
+        }
+        return ret_ok;
+    }
 
-	static ret_value show_error(ret_value err, string& context)
-	{
-		cerr<<context<<": "<<ret_value_string[err]<<endl;
-		switch(err)
-		{
-			case ret_internal:
-			case ret_deadly:
-				return ret_deadly;
-			default:
-				return ret_ok;
-		}
-	}
+    static ret_value show_error(ret_value err, string& context)
+    {
+        cerr<<context<<": "<<ret_value_string[err]<<endl;
+        switch(err)
+        {
+            case ret_internal:
+            case ret_deadly:
+                return ret_deadly;
+            default:
+                return ret_ok;
+        }
+    }
 
-	static ret_value show_error(ret_value err, char* context)
-	{
-		string context_string(context);
-		return show_error(err, context_string);
-	}
+    static ret_value show_error(ret_value err, char* context)
+    {
+        string context_string(context);
+        return show_error(err, context_string);
+    }
 
-	static void show_syntax_error(const char* context)
-	{
-		cerr<<"syntax error: "<<context<<endl;
-	}
+    static void show_syntax_error(const char* context)
+    {
+        cerr<<"syntax error: "<<context<<endl;
+    }
 
-	ret_value get_err(void)	{ return _err; }
+    ret_value get_err(void) { return _err; }
 
 #include "parse.h"
 
-	static void show_stack(stack& st, const string& separator = g_show_stack_separator)
-	{
-		if (st.size() == 1)
-		{
-			((object*)st.back())->show();
-			cout<<endl;
-		}
-		else
-		{
-			bool show_sep = (! separator.empty());
-			for (int i = st.size()-1; i>=0; i--)
-			{
-				if (show_sep)
-					cout<<i+1<<separator;
-				((object*)st[i])->show();
-				cout<<endl;
-			}
-		}
-	}
+    static void show_stack(stack& st, const string& separator = g_show_stack_separator)
+    {
+        if (st.size() == 1)
+        {
+            ((object*)st.back())->show();
+            cout<<endl;
+        }
+        else
+        {
+            bool show_sep = (! separator.empty());
+            for (int i = st.size()-1; i>=0; i--)
+            {
+                if (show_sep)
+                    cout<<i+1<<separator;
+                ((object*)st[i])->show();
+                cout<<endl;
+            }
+        }
+    }
 
 private:
-	ret_value _err;
-	string _err_context;
+    ret_value _err;
+    string _err_context;
 
     stack* _stack;
 
@@ -695,65 +695,65 @@ private:
     heap _local_heap;
     heap* _parent_local_heap;
 
-	// helpers for keywords implementation
-	floating_t getf()
-	{
-		/* warning, caller must check object type before */
-		floating_t a = ((number*)_stack->back())->_value;
-		_stack->pop_back();
-		return a;
-	}
+    // helpers for keywords implementation
+    floating_t getf()
+    {
+        /* warning, caller must check object type before */
+        floating_t a = ((number*)_stack->back())->_value;
+        _stack->pop_back();
+        return a;
+    }
 
-	void putf(floating_t value)
-	{
-		/* warning, caller must check object type before */
+    void putf(floating_t value)
+    {
+        /* warning, caller must check object type before */
         number num;
         num.set(value);
         _stack->push_back(&num, num.size(), cmd_number);
-	}
+    }
 
-	integer_t getb()
-	{
-		/* warning, caller must check object type before */
-		integer_t a = ((binary*)_stack->back())->_value;
-		_stack->pop_back();
-		return a;
-	}
+    integer_t getb()
+    {
+        /* warning, caller must check object type before */
+        integer_t a = ((binary*)_stack->back())->_value;
+        _stack->pop_back();
+        return a;
+    }
 
-	void putb(integer_t value)
-	{
-		/* warning, caller must check object type before */
+    void putb(integer_t value)
+    {
+        /* warning, caller must check object type before */
         binary num;
         num.set(value);
         _stack->push_back(&num, num.size(), cmd_binary);
-	}
+    }
 
     int stack_size()
-	{
-		return _stack->size();
-	}
+    {
+        return _stack->size();
+    }
 
 private:
-	// carefull : some of these macros modify program flow
-	#define ERR_CONTEXT(err) do { _err = (err); _err_context = __FUNCTION__; } while(0)
-	#define MIN_ARGUMENTS(num) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return; } } while(0)
-	#define MIN_ARGUMENTS_RET(num, ret) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return (ret); } } while(0)
-	#define ARG_MUST_BE_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
-	#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
-	#define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
+    // carefull : some of these macros modify program flow
+    #define ERR_CONTEXT(err) do { _err = (err); _err_context = __FUNCTION__; } while(0)
+    #define MIN_ARGUMENTS(num) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return; } } while(0)
+    #define MIN_ARGUMENTS_RET(num, ret) do { if (stack_size()<(num)) { ERR_CONTEXT(ret_missing_operand); return (ret); } } while(0)
+    #define ARG_MUST_BE_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
+    #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
+    #define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
 
-	// keywords implementation
-	#include "rpn-general.h"
-	#include "rpn-algebra.h"
-	#include "rpn-binary.h"
-	#include "rpn-test.h"
-	#include "rpn-stack.h"
-	#include "rpn-string.h"
-	#include "rpn-branch.h"
-	#include "rpn-store.h"
-	#include "rpn-program.h"
-	#include "rpn-trig.h"
-	#include "rpn-logs.h"
+    // keywords implementation
+    #include "rpn-general.h"
+    #include "rpn-algebra.h"
+    #include "rpn-binary.h"
+    #include "rpn-test.h"
+    #include "rpn-stack.h"
+    #include "rpn-string.h"
+    #include "rpn-branch.h"
+    #include "rpn-store.h"
+    #include "rpn-program.h"
+    #include "rpn-trig.h"
+    #include "rpn-logs.h"
 };
 
 //keywords declaration
@@ -764,12 +764,12 @@ private:
 //
 static void apply_default(void)
 {
-	//default precision
-	cout << setprecision(number::s_default_precision);
-	number::s_mode = number::s_default_mode;
+    //default precision
+    cout << setprecision(number::s_default_precision);
+    number::s_mode = number::s_default_mode;
 
-	//default binary mode
-	binary::s_mode = binary::s_default_mode;
+    //default binary mode
+    binary::s_mode = binary::s_default_mode;
 }
 
 //
@@ -777,56 +777,56 @@ int main(int argc, char* argv[])
 {
     heap global_heap;
     stack global_stack;
-	int ret = 0;
+    int ret = 0;
 
-	// apply default configuration
-	apply_default();
+    // apply default configuration
+    apply_default();
 
     // run with interactive prompt
-	if (argc == 1)
-	{
-		//
-		for (;;)
-		{
-			// make program from interactive entry
-			program prog;
-			if (program::entry(prog) == ret_good_bye)
-				break;
-			else
-			{
-				// run it
+    if (argc == 1)
+    {
+        //
+        for (;;)
+        {
+            // make program from interactive entry
+            program prog;
+            if (program::entry(prog) == ret_good_bye)
+                break;
+            else
+            {
+                // run it
                 if (prog.run(global_stack, global_heap) == ret_good_bye)
-					break;
-				else
+                    break;
+                else
                     program::show_stack(global_stack);
-			}
-		}
-	}
-	// run with cmd line arguments
-	else
-	{
-		program prog;
-		string entry;
-		int i;
+            }
+        }
+    }
+    // run with cmd line arguments
+    else
+    {
+        program prog;
+        string entry;
+        int i;
 
-		// make one string from entry
-		for (i=1; i<argc; i++)
-		{
-			entry += argv[i];
-			entry += ' ';
-		}
+        // make one string from entry
+        for (i=1; i<argc; i++)
+        {
+            entry += argv[i];
+            entry += ' ';
+        }
 
-		// make program
+        // make program
         ret = program::parse(entry.c_str(), prog);
-		if (ret == ret_ok)
-		{
-			string separator = "";
+        if (ret == ret_ok)
+        {
+            string separator = "";
 
-			// run it
+            // run it
             ret = prog.run(global_stack, global_heap);
             program::show_stack(global_stack, separator);
-		}
-	}
+        }
+    }
 
-	return ret;
+    return ret;
 }
