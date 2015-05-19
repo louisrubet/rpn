@@ -5,19 +5,19 @@ void eval(void)
     string prog_text;
 
     MIN_ARGUMENTS(1);
-	if (IS_ARG_TYPE(0, cmd_symbol))
-	{
-		// recall a variable
-		void* obj;
-		unsigned int size;
-		int type;
+    if (IS_ARG_TYPE(0, cmd_symbol))
+    {
+        // recall a variable
+        void* obj;
+        unsigned int size;
+        int type;
         string variable(((symbol*)_stack->back())->_value);
 
         // mind the order of heaps
         if (_local_heap.get(variable, obj, size, type)
                 || ((_parent_local_heap != NULL) && _parent_local_heap->get(variable, obj, size, type))
                 || _global_heap->get(variable, obj, size, type))
-		{
+        {
             // if variable holds a program, run this program
             if (type == cmd_program)
             {
@@ -31,19 +31,19 @@ void eval(void)
                 _stack->pop_back();
                 _stack->push_back(obj, size, type);
             }
-		}
-		else
-			ERR_CONTEXT(ret_unknown_variable);
-	}
-	else if (IS_ARG_TYPE(0, cmd_program))
-	{
-		// eval a program
+        }
+        else
+            ERR_CONTEXT(ret_unknown_variable);
+    }
+    else if (IS_ARG_TYPE(0, cmd_program))
+    {
+        // eval a program
         prog_text = ((oprogram*)_stack->back())->_value;
-		_stack->pop_back();
+        _stack->pop_back();
         run_prog = true;
-	}
-	else
-		ERR_CONTEXT(ret_bad_operand_type);
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 
     // run prog if any
     if (run_prog)
