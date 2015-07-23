@@ -30,6 +30,7 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "^", &program::power, "binary operator power" },
     { cmd_keyword, "sqrt", &program::squareroot, "unarity operator square root" },
     { cmd_keyword, "sq", &program::square, "unarity operator square" },
+    { cmd_keyword, "mod", &program::modulo, "binary operator modulo" },
 
     //BINARY
     { cmd_undef, "", NULL, "\nBINARY"},
