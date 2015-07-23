@@ -179,3 +179,14 @@ void square()
     floating_t first = getf();
     putf(first * first);
 }
+
+void modulo()
+{
+    MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+
+    // arithmetic faults are managed by c++
+    floating_t first = getf();
+    putf(fmodl(getf(), first));
+}
