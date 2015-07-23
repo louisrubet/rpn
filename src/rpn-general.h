@@ -30,8 +30,18 @@ void help()
 
     // keywords
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
+    {
         if (_keywords[i].comment.size() != 0)
+        {
+            // titles in bold
+            if (_keywords[i].type==cmd_undef)
+                cout<<ATTR_BOLD;
+            // show title or keyword + comment
             cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
+            if (_keywords[i].type==cmd_undef)
+                cout<<ATTR_OFF;
+        }
+    }
     cout<<endl;
 
     // different modes
