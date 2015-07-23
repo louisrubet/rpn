@@ -1,6 +1,6 @@
 // version and soft name
 static const char version[] = "1.3.3";
-static const char uname[] = "rpn v1.3.3, (c) 2015 <louis@rubet.fr>";
+static const char uname[] = "rpn v1.3.3, (c) 2013 <louis@rubet.fr>, GNU General Public License";
 
 static const char g_cursor[] = "> ";
 static const string g_show_stack_separator = "> ";
