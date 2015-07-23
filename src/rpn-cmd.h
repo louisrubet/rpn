@@ -17,8 +17,8 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
 
-    //ALGEBRA
-    { cmd_undef, "", NULL, "\nALGEBRA"},
+    //REAL
+    { cmd_undef, "", NULL, "\nREAL"},
     { cmd_keyword, "+", &program::plus, "binary operator +" },
     { cmd_keyword, "-", &program::minus, "binary operator -" },
     { cmd_keyword, "neg", &program::neg , "unary operator - (negation)" },

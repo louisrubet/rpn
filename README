@@ -35,17 +35,9 @@ Tested commands are tagged with * in column tested.
 
 category    command     new     impl.   tested
 
-GENERAL     +                   *
-GENERAL     -                   *
-GENERAL     neg                 *
-GENERAL     *                   *
-GENERAL     /                   *
-GENERAL     inv                 *
-GENERAL     %                   *
-GENERAL     %CH                 *
-GENERAL     ^                   *
-GENERAL     sqrt        *       *
-GENERAL     sq          *       *
+GENERAL     nop         *       *       *
+GENERAL     help/h/?    *       *
+GENERAL     quit/exit/q *       *
 GENERAL     test        *       *
 GENERAL     verbose     *       *
 GENERAL     std                 *
@@ -54,6 +46,19 @@ GENERAL     sci                 *
 GENERAL     version     *       *
 GENERAL     uname       *       *
 GENERAL     edit                *
+
+REAL        +                   *
+REAL        -                   *
+REAL        neg                 *
+REAL        *                   *
+REAL        /                   *
+REAL        inv                 *
+REAL        %                   *
+REAL        %CH                 *
+REAL        ^                   *
+REAL        sqrt        *       *
+REAL        sq          *       *
+REAL        mod         *       *
 
 STACK       drop                *
 STACK       swap                *
