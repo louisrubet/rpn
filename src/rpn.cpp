@@ -744,7 +744,7 @@ private:
 
     // keywords implementation
     #include "rpn-general.h"
-    #include "rpn-algebra.h"
+    #include "rpn-real.h"
     #include "rpn-binary.h"
     #include "rpn-test.h"
     #include "rpn-stack.h"
