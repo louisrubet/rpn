@@ -1,7 +1,7 @@
 program::keyword_t program::_keywords[] =
 {
     //GENERAL
-    { cmd_keyword, "", NULL, "\nGENERAL"},
+    { cmd_undef, "", NULL, "\nGENERAL"},
     { cmd_keyword, "nop", &program::nop, "no operation"},
     { cmd_keyword, "?", &program::help, "" },
     { cmd_keyword, "h", &program::help, "" },
