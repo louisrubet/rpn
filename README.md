@@ -26,11 +26,6 @@ double). Binaries are 64-bits longwords format (long long int).
 
 New commands (nonexistent in RPL) are tagged with * in column new.
 Commands already implemented are tagged with * in column impl.
-| TEST |ed commands are tagged with * in column | TEST |ed.
-
-| Période | Qui     | Consommé | Consommé tot. |
-| ------- | ------- | -------- | ------------- |
-| < S36   | Adel    | 1        |   1 / 38      |
 
 | category | command | new | implemented | tested |
 | -------- | ------- | --- | ----------- | ------ |
@@ -209,7 +204,7 @@ Commands already implemented are tagged with * in column impl.
 | LOGS |        tanh | | * | |
 | LOGS |        atanh | | * | |
 
-### Further
+## Further
 
 **MEMORY**
  mem, menu, order, path, home, crdir, vars, clusr,
@@ -225,7 +220,7 @@ Commands already implemented are tagged with * in column impl.
  steq, rceq, isol, quad, show, root,
 
 **PLOT**
- ppar, steq, rceq, pmin, pmax, indep, draw, res, axes, centr, *w, *h,
+ ppar, steq, rceq, pmin, pmax, indep, draw, res, axes, centr, \*w, \*h,
  sto∑, rcl∑, col∑, scl∑, drw∑, cllcd, digtiz
 
 **CURSOR**
