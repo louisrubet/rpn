@@ -19,7 +19,7 @@ double). Binaries are 64-bits longwords format (long long int).
  - file objects and functions,
  - date and time objects and functions,
  - shell-calling objects with return code, stdout and stderr treatment,
- - loading and saving | STACK |, variables, | PROGRAM |s from / to filesystem
+ - loading and saving stack, variables, programs from / to filesystem
 
 ## Implemented commands
 
@@ -80,11 +80,11 @@ This commands list match HP28s reserved words. Commands marked as 'new' do not e
 | STORE | erase | | yes | yes |
 | STORE | vars | | yes | yes |
 | STORE | include | | | |
-| STORE | load_vars | | | |
-| STORE | save_vars | | | |
+| STORE | load_vars | yes | | |
+| STORE | save_vars | yes | | |
 | PROGRAM | eval | | yes | |
-| PROGRAM | load_prog | | | |
-| PROGRAM | save_prog | | | |
+| PROGRAM | load_prog | yes | | |
+| PROGRAM | save_prog | yes | | |
 | ALGEBRA | neg | | yes | yes |
 | ALGEBRA | colct | | | |
 | ALGEBRA | expan | | | |
@@ -201,7 +201,6 @@ This commands list match HP28s reserved words. Commands marked as 'new' do not e
 | LOGS | acosh | | yes | |
 | LOGS | tanh | | yes | |
 | LOGS | atanh | | yes | | |
-| MEMORY | vars | | yes | | |
 
 ## HP28s commands which won't be implemented
 
