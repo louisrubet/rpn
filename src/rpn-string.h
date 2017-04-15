@@ -5,13 +5,17 @@ void instr()
     // stringify only if not already a string
     if (_stack->get_type(0) != cmd_string)
     {
+        // write the object in stack(0) in a string and remove this obj
         stringstream out;
         ((object*)_stack->back())->show(out);
         _stack->pop_back();
 
-        ostring str;
-        str.set(out.str().c_str(), out.str().size());
-        _stack->push_back(&str, str.size(), cmd_string);
+        // reserve the correct size in stack
+        _stack->push_back(NULL, out.str().size(), cmd_string, true);
+
+        // fill the obj
+        ostring* str = (ostring*)_stack->get_obj(0);
+        str->set(out.str().c_str(), out.str().size());
     }
 }
 

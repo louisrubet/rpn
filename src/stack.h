@@ -35,7 +35,7 @@ public:
     }   
     virtual ~stack() { free(_base); }
 
-    void push_back(void* obj, unsigned int size, int type = 0)
+    void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false)
     {
         if (_current + size > _base + _total_size)
         {
@@ -44,7 +44,8 @@ public:
             _base = (char*)realloc(_base, _total_size);
         }
 
-        memcpy(_current, obj, size);
+        if (!dont_copy)
+            memcpy(_current, obj, size);
         _vlen.push_back(size);
         _vpointer.push_back(_current);
         _vtype.push_back(type);
