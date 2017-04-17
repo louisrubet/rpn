@@ -5,7 +5,12 @@ int rpn_if(branch& myobj)
     // myobj.arg1 = 'if' condition evaluation value
     MIN_ARGUMENTS_RET(1, -1);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
-    myobj.arg1 = ((getf() != 0) ? 1 : 0);
+
+    if (mpfr_cmp_si(&((number*)_stack->get_obj(0))->_value.mpfr, 0UL) != 0)
+        myobj.arg1 = 1;
+    else
+        myobj.arg1 = 0;
+    _stack->pop_back();
     return -1;
 }
 
@@ -89,7 +94,7 @@ int rpn_next(branch& myobj)
     }
 
     // increment then test
-    myobj.farg1++;
+    mpfr_add_si(&myobj.farg1.mpfr, &myobj.farg1.mpfr, 1UL, MPFR_DEF_RND);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)
@@ -134,7 +139,7 @@ int rpn_step(branch& myobj)
     }
 
     // increment then test
-    myobj.farg1 += step;
+    mpfr_add(&myobj.farg1.mpfr, &myobj.farg1.mpfr, &step.mpfr, MPFR_DEF_RND);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)

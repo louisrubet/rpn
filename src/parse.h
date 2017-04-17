@@ -336,22 +336,21 @@ static bool get_program(const string& entry, object*& obj, unsigned int& obj_len
 static bool get_float(const string& entry, object*& obj, unsigned int& obj_size, string& remaining_entry)
 {
     static number new_number;
-    floating_t val;
-    stringstream token;
+    char* endptr;
     bool ret = false;
 
-    token<<entry;
-    token>>val;
-
-    if ( (!token.fail()) && (!token.bad()) )
+    if (entry.size() > 0)
     {
-        new_number.set(val);
-        obj = &new_number;
-        obj_size = sizeof(number);
-        ret = true;
-        
-        // remaining string if any
-        token>>remaining_entry;
+        if ((mpfr_strtofr(&new_number._value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND) != -1) && (endptr != entry.c_str()))
+        {
+            obj = &new_number;
+            obj_size = sizeof(number);
+            ret = true;
+
+            // remaining string if any
+            if (endptr != NULL)
+                remaining_entry = endptr;
+        }
     }
 
     return ret;
@@ -563,8 +562,16 @@ static ret_value parse(const char* entry, program& prog)
                 // this remaining entry is treated as an entry
                 if(_obj_from_string(main_entry, obj, obj_size, type, remaining_entry))
                 {
+                    cout<<"parse->obj = "<<obj<<endl;
                     prog.push_back(obj, obj_size, type);
-                    _delete_obj_from_string(obj);
+                    if (((object*)prog.back())->_type == cmd_number)
+                    {
+                        cout<<"((number*)prog.back())="<<(void*)prog.back()<<endl;
+                        cout<<" (((number*)prog.back())->_value.mpfr._mpfr_d = "<<((number*)prog.back())->_value.mpfr._mpfr_d<<")"<<endl;
+                        ((number*)prog.back())->_value.mpfr._mpfr_d = (mp_limb_t*)((number*)prog.back())->_value.significand;
+                        cout<<" -> (((number*)prog.back())->_value.mpfr._mpfr_d = "<<((number*)prog.back())->_value.mpfr._mpfr_d<<")"<<endl;
+                    }
+                    //_delete_obj_from_string(obj);
                 }
                 else
                 {

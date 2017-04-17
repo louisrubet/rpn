@@ -21,6 +21,7 @@
  *
  */
 #include <stdlib.h>
+#include <mpfr.h>
 #include <math.h>
 
 extern "C" {
@@ -36,6 +37,13 @@ extern "C" {
 using namespace std;
 
 #include "stack.h"
+
+// MPFR related constants
+// 128 bits significand storing length in byters, result of mpfr_custom_get_size (128)
+#define MPFR_DEF_FORMAT "%Rf"
+#define MPFR_DEF_RND MPFR_RNDN
+#define MPFR_128BITS_PREC 128
+#define MPFR_128BITS_STORING_LENGTH 16
 
 //
 static int g_verbose = 0;
@@ -81,13 +89,38 @@ const char* cmd_type_string[cmd_max] = {
     "undef", "number", "binary", "string", "symbol", "program", "keyword", "keyword"
 };
 
-//
-typedef long double floating_t;
+// MPFR object
+struct floating_t
+{
+    __mpfr_struct mpfr;
+    char significand[MPFR_128BITS_STORING_LENGTH];
+
+    floating_t()
+    {
+        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        mpfr_custom_init_set(&mpfr, MPFR_NAN_KIND, 0, MPFR_128BITS_PREC, significand);
+    }
+
+    floating_t operator=(const long int val)
+    {
+        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, MPFR_128BITS_PREC, significand);
+        mpfr_set_si(&mpfr, val, MPFR_DEF_RND);
+    }
+
+    operator int()
+    {
+        return (int)mpfr_get_si(&mpfr, MPFR_DEF_RND);
+    }
+};
+
 typedef long long integer_t;
+
 class program;
 class object;
 class branch;
 typedef void (program::*program_fn_t)(void);
+
 typedef union
 {
     program_fn_t _fn;
@@ -102,19 +135,34 @@ struct object
 
     //
     void show(ostream& stream = cout);
-} __attribute__((packed));
+};
 
 struct number : public object
 {
+    number() { _type = cmd_number; }
     floating_t _value;
 
     //
-    void set(floating_t value)
+    void set(const floating_t& value)
     {
         _type = cmd_number;
-        _value = value;
+        _value.mpfr = value.mpfr;
+        (void)memcpy(_value.significand, value.significand, sizeof(_value.significand));
     }
-    unsigned int size() { return sizeof(number); }
+    void set(long value)
+    {
+        _type = cmd_number;
+        _value = (long)value;
+    }
+    unsigned int size() { return (unsigned int)sizeof(floating_t); }
+
+    //
+    number operator=(const number& op)
+    {
+        number num;
+        num.set((const floating_t&)op._value);
+        return num;
+    }
 
     // representation mode
     typedef enum {
@@ -124,11 +172,12 @@ struct number : public object
     } mode_enum;
     static mode_enum s_default_mode;
     static mode_enum s_mode;
-    
+
     // precision
     static int s_default_precision;
     static int s_current_precision;
-} __attribute__((packed));
+};
+
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
 int number::s_default_precision = 12;
@@ -155,7 +204,7 @@ struct binary : public object
     } binary_enum;
     static binary_enum s_default_mode;
     static binary_enum s_mode;
-} __attribute__((packed));
+};
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
@@ -180,7 +229,7 @@ struct ostring : public object
     //
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct oprogram : public object
 {
@@ -203,7 +252,7 @@ struct oprogram : public object
     //
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct symbol : public object
 {
@@ -228,7 +277,7 @@ struct symbol : public object
     bool _auto_eval;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct keyword : public object
 {
@@ -253,7 +302,7 @@ struct keyword : public object
     program_fn_t _fn;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct branch : public object
 {
@@ -288,37 +337,43 @@ struct branch : public object
     bool arg_bool;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 void object::show(ostream& stream)
 {
     switch(_type)
     {
     case cmd_number:
-        stream << ((number*)this)->_value;
+        //TODO
+        //stream << ((number*)this)->_value;
+        stream<<"number._value.mpfr="<<&((number*)this)->_value.mpfr<<endl;
+        stream<<"number._value.mpfr._mpfr_d="<<(void*)((number*)this)->_value.mpfr._mpfr_d<<endl;
+        stream<<"number._value.significand="<<(void*)((number*)this)->_value.significand<<endl;
+        (void)mpfr_printf(MPFR_DEF_FORMAT, &((number*)this)->_value.mpfr);
         break;
     case cmd_binary:
         {
-            cout << "# ";
-            switch(((binary*)this)->s_mode)
-            {
-                case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-                case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
-                case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
-                case binary::bin:
-                {
-                    string mybin;
-                    for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
-                    {
-                        if (((binary*)this)->_value & (1 << i))
-                            mybin+='1';
-                        else
-                            mybin+='0';
-                    }
-                    stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-                }
-                break;
-            }
+            //TODO
+            //cout << "# ";
+            //switch(((binary*)this)->s_mode)
+            //{
+            //    case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
+            //    case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
+            //    case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
+            //    case binary::bin:
+            //    {
+            //        string mybin;
+            //        for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
+            //        {
+            //            if (((binary*)this)->_value & (1 << i))
+            //                mybin+='1';
+            //            else
+            //                mybin+='0';
+            //        }
+            //        stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
+            //    }
+            //    break;
+            //}
         }
         break;
     case cmd_string:

@@ -16,6 +16,7 @@ rpn_SOURCES = src/rpn.cpp \
 		src/rpn-trig.h \
 		src/stack.h
 
-rpn_LDFLAGS = -Wl,--no-as-needed -lreadline
+rpn_CFLAGS = -g
+rpn_LDFLAGS = -Wl,--no-as-needed -lreadline -lmpfr
 
 dist_noinst_SCRIPTS = autogen.sh
