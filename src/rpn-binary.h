@@ -20,19 +20,20 @@ void bin()
 
 void rtob()
 {
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    //TODO
+    //MIN_ARGUMENTS(1);
+    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    binary bin;
-    bin.set(((integer_t)getf()));
-    _stack->push_back(&bin, bin.size(), cmd_binary);
-
+    //binary bin;
+    //bin.set(((integer_t)getf()));
+    //_stack->push_back(&bin, bin.size(), cmd_binary);
 }
 
 void btor()
 {
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_binary);
+    // TODO
+    //MIN_ARGUMENTS(1);
+    //ARG_MUST_BE_OF_TYPE(0, cmd_binary);
 
-    putf((floating_t)getb());
+    //putf((floating_t)getb());
 }
