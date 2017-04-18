@@ -38,12 +38,22 @@ using namespace std;
 
 #include "stack.h"
 
+// default number of printed digitis
+#define DEFAULT_PRECISION 12
+
 // MPFR related constants
-// 128 bits significand storing length in byters, result of mpfr_custom_get_size (128)
-#define MPFR_DEF_FORMAT "%Rf"
+// 128 bits significand storing length in byters, result of mpfr_custom_get_size(128)
 #define MPFR_DEF_RND MPFR_RNDN
 #define MPFR_128BITS_PREC 128
 #define MPFR_128BITS_STORING_LENGTH 16
+
+static string s_mpfr_printf_format_beg = "%.";
+static string s_mpfr_printf_format_std = "Rg";
+static string s_mpfr_printf_format_fix = "Rf";
+static string s_mpfr_printf_format_sci = "Re";
+static string s_mpfr_printf_format = "%.12Rg";
+static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
+static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
 
 //
 static int g_verbose = 0;
@@ -98,19 +108,34 @@ struct floating_t
     floating_t()
     {
         mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        mpfr_custom_init_set(&mpfr, MPFR_NAN_KIND, 0, MPFR_128BITS_PREC, significand);
+        mpfr_custom_init_set(&mpfr, MPFR_NAN_KIND, 0, s_mpfr_prec, significand);
     }
 
     floating_t operator=(const long int val)
     {
         mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, MPFR_128BITS_PREC, significand);
-        mpfr_set_si(&mpfr, val, MPFR_DEF_RND);
+        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+        mpfr_set_si(&mpfr, val, s_mpfr_rnd);
     }
 
     operator int()
     {
-        return (int)mpfr_get_si(&mpfr, MPFR_DEF_RND);
+        return (int)mpfr_get_si(&mpfr, s_mpfr_rnd);
+    }
+
+    void ensure_significand()
+    {
+        mpfr._mpfr_d = (mp_limb_t*)significand;
+    }
+
+    bool operator>(const floating_t right)
+    {
+        return mpfr_cmp(&mpfr, &right.mpfr) > 0;
+    }
+
+    bool operator<(const floating_t right)
+    {
+        return mpfr_cmp(&mpfr, &right.mpfr) < 0;
     }
 };
 
@@ -155,6 +180,11 @@ struct number : public object
         _value = (long)value;
     }
     unsigned int size() { return (unsigned int)sizeof(floating_t); }
+    
+    void ensure_significand()
+    {
+        _value.mpfr._mpfr_d = (mp_limb_t*)_value.significand;
+    }
 
     //
     number operator=(const number& op)
@@ -180,7 +210,7 @@ struct number : public object
 
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
-int number::s_default_precision = 12;
+int number::s_default_precision = DEFAULT_PRECISION;
 int number::s_current_precision = number::s_default_precision;
 
 struct binary : public object
@@ -333,6 +363,7 @@ struct branch : public object
     branch_fn_t _fn;
     // args used by cmd_branch cmds
     int arg1, arg2, arg3;
+    //TODO change to int
     floating_t farg1, farg2;
     bool arg_bool;
     unsigned int _len;
@@ -344,36 +375,31 @@ void object::show(ostream& stream)
     switch(_type)
     {
     case cmd_number:
-        //TODO
-        //stream << ((number*)this)->_value;
-        stream<<"number._value.mpfr="<<&((number*)this)->_value.mpfr<<endl;
-        stream<<"number._value.mpfr._mpfr_d="<<(void*)((number*)this)->_value.mpfr._mpfr_d<<endl;
-        stream<<"number._value.significand="<<(void*)((number*)this)->_value.significand<<endl;
-        (void)mpfr_printf(MPFR_DEF_FORMAT, &((number*)this)->_value.mpfr);
+        ((number*)this)->ensure_significand();
+        (void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
         break;
     case cmd_binary:
         {
-            //TODO
-            //cout << "# ";
-            //switch(((binary*)this)->s_mode)
-            //{
-            //    case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-            //    case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
-            //    case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
-            //    case binary::bin:
-            //    {
-            //        string mybin;
-            //        for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
-            //        {
-            //            if (((binary*)this)->_value & (1 << i))
-            //                mybin+='1';
-            //            else
-            //                mybin+='0';
-            //        }
-            //        stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-            //    }
-            //    break;
-            //}
+            cout << "# ";
+            switch(((binary*)this)->s_mode)
+            {
+                case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
+                case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
+                case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
+                case binary::bin:
+                {
+                    string mybin;
+                    for (int i = (int)(log((double)((binary*)this)->_value) / log(2.)); i>=0; i--)
+                    {
+                        if (((binary*)this)->_value & (1 << i))
+                            mybin+='1';
+                        else
+                            mybin+='0';
+                    }
+                    stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
+                }
+                break;
+            }
         }
         break;
     case cmd_string:
@@ -500,6 +526,14 @@ public:
             else
             {
                 stk.push_back(seq_obj(i), seq_len(i), type);
+
+                // numbers: ensure that significand is correctly recorded by object
+                if (type == cmd_number)
+                {
+                    number* k = (number*)stk.back();
+                    k->ensure_significand();
+                }
+
                 i++;
             }
         }
@@ -796,6 +830,8 @@ private:
     #define ARG_MUST_BE_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
     #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
     #define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
+    //TODO
+    #define CHECK_MPFR(op) do { (void)(op); } while(0)
 
     // keywords implementation
     #include "rpn-general.h"
@@ -820,7 +856,6 @@ private:
 static void apply_default(void)
 {
     //default precision
-    cout << setprecision(number::s_default_precision);
     number::s_mode = number::s_default_mode;
 
     //default binary mode

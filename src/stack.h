@@ -44,7 +44,6 @@ public:
             _base = (char*)realloc(_base, _total_size);
         }
 
-cout<<"current = "<<(void*)_current<<", index is "<<_count<<endl;
         if (!dont_copy)
             memcpy(_current, obj, size);
         _vlen.push_back(size);

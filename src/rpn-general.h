@@ -77,11 +77,14 @@ void std()
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
         number::s_default_precision = int(getf());
     }
+
     number::s_current_precision = number::s_default_precision;
     number::s_mode = number::std;
 
-    cout.precision(number::s_current_precision);
-    cout.unsetf(ios_base::floatfield);
+    // format for mpfr_printf 
+    stringstream ss;
+    ss << number::s_current_precision;
+    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
 }
 
 void fix()
@@ -92,7 +95,10 @@ void fix()
     number::s_current_precision = int(getf());
     number::s_mode = number::fix;
 
-    cout << setprecision(number::s_current_precision) << fixed;
+    // format for mpfr_printf 
+    stringstream ss;
+    ss << number::s_current_precision;
+    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_fix;
 }
 
 void sci()
@@ -103,7 +109,10 @@ void sci()
     number::s_current_precision = (int)getf();
     number::s_mode = number::sci;
 
-    cout << setprecision(number::s_current_precision) << scientific;
+    // format for mpfr_printf 
+    stringstream ss;
+    ss << number::s_current_precision;
+    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_sci;
 }
 
 void rpn_version()
