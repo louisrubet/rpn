@@ -562,15 +562,8 @@ static ret_value parse(const char* entry, program& prog)
                 // this remaining entry is treated as an entry
                 if(_obj_from_string(main_entry, obj, obj_size, type, remaining_entry))
                 {
-                    cout<<"parse->obj = "<<obj<<endl;
                     prog.push_back(obj, obj_size, type);
-                    if (((object*)prog.back())->_type == cmd_number)
-                    {
-                        cout<<"((number*)prog.back())="<<(void*)prog.back()<<endl;
-                        cout<<" (((number*)prog.back())->_value.mpfr._mpfr_d = "<<((number*)prog.back())->_value.mpfr._mpfr_d<<")"<<endl;
-                        ((number*)prog.back())->_value.mpfr._mpfr_d = (mp_limb_t*)((number*)prog.back())->_value.significand;
-                        cout<<" -> (((number*)prog.back())->_value.mpfr._mpfr_d = "<<((number*)prog.back())->_value.mpfr._mpfr_d<<")"<<endl;
-                    }
+                    //TODO wtf !?
                     //_delete_obj_from_string(obj);
                 }
                 else
