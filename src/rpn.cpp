@@ -21,6 +21,7 @@
  *
  */
 #include <stdlib.h>
+#include <stdint.h> //for intmax_t
 #include <mpfr.h>
 #include <math.h>
 
@@ -99,6 +100,8 @@ const char* cmd_type_string[cmd_max] = {
     "undef", "number", "binary", "string", "symbol", "program", "keyword", "keyword"
 };
 
+typedef long long integer_t;
+
 // MPFR object
 struct floating_t
 {
@@ -111,11 +114,18 @@ struct floating_t
         mpfr_custom_init_set(&mpfr, MPFR_NAN_KIND, 0, s_mpfr_prec, significand);
     }
 
-    floating_t operator=(const long int val)
+    floating_t& operator=(const long int val)
     {
         mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
         mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
         mpfr_set_si(&mpfr, val, s_mpfr_rnd);
+    }
+
+    floating_t& operator=(const integer_t val)
+    {
+        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+        mpfr_set_sj(&mpfr, val, s_mpfr_rnd);
     }
 
     operator int()
@@ -138,8 +148,6 @@ struct floating_t
         return mpfr_cmp(&mpfr, &right.mpfr) < 0;
     }
 };
-
-typedef long long integer_t;
 
 class program;
 class object;
@@ -344,8 +352,8 @@ struct branch : public object
         arg1 = -1;
         arg2 = -1;
         arg3 = -1;
-        farg1 = 0;
-        farg2 = 0;
+        farg1 = 0L;
+        farg2 = 0L;
         arg_bool = 0;
         if (value != NULL)
         {
