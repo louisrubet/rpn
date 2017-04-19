@@ -20,20 +20,30 @@ void bin()
 
 void rtob()
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    //binary bin;
-    //bin.set(((integer_t)getf()));
-    //_stack->push_back(&bin, bin.size(), cmd_binary);
+    number* left = (number*)_stack->back();
+    _stack->pop_back();
+
+    cout<<"TODO"<<endl;
+
+    binary bin;
+    bin._value = mpfr_get_sj(&left->_value.mpfr, s_mpfr_rnd);
+    _stack->push_back(&bin, bin.size(), cmd_binary);
 }
 
 void btor()
 {
-    // TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_binary);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_binary);
 
-    //putf((floating_t)getb());
+    integer_t bin = getb();
+
+    cout<<"TODO"<<endl;
+
+    _stack->push_back(NULL, sizeof(number), cmd_number, true);
+    number* left = (number*)_stack->back();
+    left->_value = bin;
+    left->ensure_significand();
 }
