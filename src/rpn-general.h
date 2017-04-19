@@ -15,7 +15,11 @@ void verbose()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    g_verbose = int(getf());
+
+    int verbose = int(((number*)_stack->back())->_value);
+    _stack->pop_back();
+
+    g_verbose = verbose;
 }
 
 void help()
@@ -75,7 +79,10 @@ void std()
     if (stack_size()>=1)
     {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
-        number::s_default_precision = int(getf());
+
+        int precision = int(((number*)_stack->back())->_value);
+        _stack->pop_back();
+        number::s_default_precision = int(precision);
     }
 
     number::s_current_precision = number::s_default_precision;
@@ -92,7 +99,10 @@ void fix()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number::s_current_precision = int(getf());
+    int precision = int(((number*)_stack->back())->_value);
+    _stack->pop_back();
+    number::s_current_precision = int(precision);
+
     number::s_mode = number::fix;
 
     // format for mpfr_printf 
@@ -106,7 +116,10 @@ void sci()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number::s_current_precision = (int)getf();
+    int precision = int(((number*)_stack->back())->_value);
+    _stack->pop_back();
+    number::s_current_precision = int(precision);
+
     number::s_mode = number::sci;
 
     // format for mpfr_printf 

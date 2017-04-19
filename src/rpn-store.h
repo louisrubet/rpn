@@ -84,9 +84,9 @@ void auto_rcl(symbol* symb)
         {
             _stack->push_back(obj, size, type);
             if (type == cmd_program)
-            {
                 eval();
-            }
+            else if (type == cmd_number)
+                ((number*)_stack->back())->ensure_significand();
         }
         else
             _stack->push_back(symb, symb->size(), cmd_symbol);
