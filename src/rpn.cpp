@@ -185,7 +185,12 @@ struct number : public object
     void set(long value)
     {
         _type = cmd_number;
-        _value = (long)value;
+        _value = value;
+    }
+    void set(integer_t value)
+    {
+        _type = cmd_number;
+        _value = value;
     }
     unsigned int size() { return (unsigned int)sizeof(floating_t); }
     
@@ -481,7 +486,7 @@ public:
             }
 
             // could be an auto-evaluated symbol
-            if (type == cmd_symbol)
+            else if (type == cmd_symbol)
             {
                 auto_rcl((symbol*)seq_obj(i));
                 i++;
