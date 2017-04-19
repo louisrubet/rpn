@@ -186,7 +186,7 @@ public:
             free(i->second);
     }
 
-    void add(const string name, void* obj, unsigned int size, int type = 0)
+    void* add(const string name, void* obj, unsigned int size, int type = 0)
     {
         struct local_var* blob = _map[name];
         if (blob == NULL)
@@ -203,9 +203,13 @@ public:
         }
         blob->length = size;
         blob->type= type;
-        memcpy(&blob->blob, obj, size);
-    }
+        
+        if (obj != NULL)
+            memcpy(&blob->blob, obj, size);
 
+        return (void*)&blob->blob;
+    }
+    
     bool get(const string name, void*& obj, unsigned int& size, int& type)
     {
         map<string, struct local_var*>::iterator i = _map.find(name);

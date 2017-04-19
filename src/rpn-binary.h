@@ -26,10 +26,8 @@ void rtob()
     number* left = (number*)_stack->back();
     _stack->pop_back();
 
-    cout<<"TODO"<<endl;
-
     binary bin;
-    bin._value = mpfr_get_sj(&left->_value.mpfr, s_mpfr_rnd);
+    bin.set(mpfr_get_sj(&left->_value.mpfr, s_mpfr_rnd));
     _stack->push_back(&bin, bin.size(), cmd_binary);
 }
 
@@ -40,10 +38,7 @@ void btor()
 
     integer_t bin = getb();
 
-    cout<<"TODO"<<endl;
-
     _stack->push_back(NULL, sizeof(number), cmd_number, true);
     number* left = (number*)_stack->back();
-    left->_value = bin;
-    left->ensure_significand();
+    left->set(bin);
 }

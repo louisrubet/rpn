@@ -48,7 +48,10 @@ void dup2(void)
 void pick(void)
 {
     MIN_ARGUMENTS(1);
-    unsigned int to_pick = (unsigned int)getf();
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    unsigned int to_pick = (unsigned int)int(((number*)_stack->back())->_value);
+    _stack->pop_back();
 
     // treat stack depth errors
     if ((to_pick == 0) || (to_pick > _stack->size()))

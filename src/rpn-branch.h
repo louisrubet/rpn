@@ -79,9 +79,9 @@ int rpn_for(branch& myobj)
     myobj.farg1.ensure_significand();
 
     // store symbol with first value
-    number num;
-    num.set(myobj.farg1);
-    _local_heap.add(string(sym->_value), &num, num.size(), cmd_number);
+    number* num = (number*)_local_heap.add(string(sym->_value), NULL, sizeof(number), cmd_number);
+    num->set(myobj.farg1);
+    num->ensure_significand();
 
     return myobj.arg1 + 1;
 }
@@ -108,10 +108,11 @@ int rpn_next(branch& myobj)
         unsigned int size;
         int type;
         symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+
         // check symbol variable is a number, then increase
         if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
         {
-            ((number*)obj)->_value = myobj.farg1;
+            ((number*)obj)->set(myobj.farg1);
             ((number*)obj)->ensure_significand();
         }
     }
@@ -139,6 +140,8 @@ int rpn_step(branch& myobj)
     // arg1 = index of start or for command in program
     // farg1 = current count
     floating_t step = getf();
+    step.ensure_significand();
+
     branch* start_or_for = (branch*)seq_obj(myobj.arg1);
     if (! myobj.arg_bool)
     {
@@ -157,6 +160,7 @@ int rpn_step(branch& myobj)
         unsigned int size;
         int type;
         symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+
         // check symbol variable is a number, then increase
         if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
         {
