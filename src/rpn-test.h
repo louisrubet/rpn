@@ -1,5 +1,3 @@
-//TODO must work with binary, ostring (others ?)
-
 void sup(void)
 {
     MIN_ARGUMENTS(2);

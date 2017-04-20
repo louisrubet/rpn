@@ -86,7 +86,7 @@ void program::test()
                 if (stack_is != stack_should_be)
                 {
                     cout<<endl<<endl<<test_title<<endl<<entry<<endl<<"FAIL, ";
-                    cout<<"real stack is '"<<stack_is<<endl;
+                    cout<<"real stack is "<<stack_is<<endl;
                     failed = true;
                     indicate_passed = false;
                 }
