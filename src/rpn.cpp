@@ -192,7 +192,7 @@ struct number : public object
         _type = cmd_number;
         _value = value;
     }
-    unsigned int size() { return (unsigned int)sizeof(floating_t); }
+    unsigned int size() { return (unsigned int)sizeof(number); }
     
     void ensure_significand()
     {
@@ -376,7 +376,6 @@ struct branch : public object
     branch_fn_t _fn;
     // args used by cmd_branch cmds
     int arg1, arg2, arg3;
-    //TODO change to int
     floating_t farg1, farg2;
     bool arg_bool;
     unsigned int _len;
@@ -385,11 +384,14 @@ struct branch : public object
 
 void object::show(ostream& stream)
 {
+    //TODO please don't do that
+    char buffer_for_number[256];
     switch(_type)
     {
     case cmd_number:
         ((number*)this)->ensure_significand();
-        (void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
+        (void)mpfr_sprintf(buffer_for_number, s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
+        stream<<buffer_for_number;
         break;
     case cmd_binary:
         {
@@ -573,7 +575,7 @@ public:
     {
         // for if-then-else-end
         vector<struct if_layout_t> vlayout;
-        int layout_index=-1;// TODO remplacable par vlayout.size()-1
+        int layout_index=-1;
         // for start-end-step
         vector<int> vstartindex;
 
@@ -930,6 +932,8 @@ int main(int argc, char* argv[])
             program::show_stack(global_stack, separator);
         }
     }
-
+ 
+    mpfr_free_cache();
+ 
     return ret;
 }

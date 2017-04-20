@@ -27,7 +27,6 @@ static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
 static bool _cut(const char* entry, vector<string>& entries)
 {
     string tmp;
-    //TODO borner
     int len = strlen(entry);
 
     for (int i=0; i < len; i++)
@@ -482,22 +481,6 @@ static bool _obj_from_string(const string& entry, object*& obj, unsigned int& ob
     return ret;
 }
 
-static void _delete_obj_from_string(object* obj)
-{
-    if (obj != NULL)
-    {
-        switch (obj->_type)
-        {
-        case cmd_number:
-        case cmd_binary:
-            break;
-        default:
-            free(obj);
-            break;
-        }
-    }
-}
-
 static char* entry_completion_generator(const char* text, int state)
 {
     static int list_index, len, too_far;
@@ -561,15 +544,7 @@ static ret_value parse(const char* entry, program& prog)
                 // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
                 // this remaining entry is treated as an entry
                 if(_obj_from_string(main_entry, obj, obj_size, type, remaining_entry))
-                {
                     prog.push_back(obj, obj_size, type);
-                    //TODO wtf !?
-                    //_delete_obj_from_string(obj);
-                }
-                else
-                {
-                    // no syntax error for now, an unknown obj form is considered as a symbol
-                }
                 main_entry = remaining_entry;
             }
         }

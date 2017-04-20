@@ -1,72 +1,86 @@
-#define _USE_MATH_DEFINES
-
 //
 void pi(void)
 {
-    //TODO
-    //putf(M_PI);
+    number num;
+    CHECK_MPFR(mpfr_const_pi(&num._value.mpfr, s_mpfr_rnd));
+    _stack->push_back(&num, num.size(), cmd_number);
+    ((number*)_stack->back())->ensure_significand();
 }
 
 void d2r(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value *= M_PI / 360;
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t pi;
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_const_pi(&pi.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_mul(&left->mpfr, &left->mpfr, &pi.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div_si(&left->mpfr, &left->mpfr, 180, s_mpfr_rnd));
 }
 
 void r2d(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value *= 360 / M_PI;
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t pi;
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_const_pi(&pi.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_mul_si(&left->mpfr, &left->mpfr, 180, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div(&left->mpfr, &left->mpfr, &pi.mpfr, s_mpfr_rnd));
 }
 
 void rpn_sin(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value = sin(((number*)_stack->get_obj(0))->_value);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_sin(&left->mpfr, &left->mpfr, s_mpfr_rnd));
 }
 
 void rpn_asin(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value = asin(((number*)_stack->get_obj(0))->_value);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_asin(&left->mpfr, &left->mpfr, s_mpfr_rnd));
 }
 
 void rpn_cos(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value = cos(((number*)_stack->get_obj(0))->_value);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_cos(&left->mpfr, &left->mpfr, s_mpfr_rnd));
 }
 
 void rpn_acos(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value = acos(((number*)_stack->get_obj(0))->_value);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_acos(&left->mpfr, &left->mpfr, s_mpfr_rnd));
 }
 
 void rpn_tan(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value = tan(((number*)_stack->get_obj(0))->_value);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_tan(&left->mpfr, &left->mpfr, s_mpfr_rnd));
 }
 
 void rpn_atan(void)
 {
-    //TODO
-    //MIN_ARGUMENTS(1);
-    //ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    //((number*)_stack->get_obj(0))->_value = atan(((number*)_stack->get_obj(0))->_value);
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_atan(&left->mpfr, &left->mpfr, s_mpfr_rnd));
 }
