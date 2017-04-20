@@ -24,13 +24,17 @@ void verbose()
 
 void help()
 {
+    // software name
     cout<<endl;
     cout<<ATTR_BOLD<<uname<<ATTR_OFF<<endl;
     cout<<endl;
 
+    // description
+    cout<<description<<mpfr_get_version()<<description_more;
+    cout<<endl<<endl;
+
     // syntax
-    for (int i = 0; syntax[i] != NULL; i++)
-        cout<<syntax[i]<<endl;
+    cout<<syntax<<endl;
 
     // keywords
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
