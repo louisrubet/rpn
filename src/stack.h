@@ -10,7 +10,9 @@ using namespace std;
 
 #include "debug.h"
 
-#define ALLOC_BLOB (2*1024)
+// allocation base size
+#define ALLOC_STACK_CHUNK (64*1024)
+#define ALLOC_BLOB_CHUNK (64*1024)
 #define LOCAL_COPY_PLACES 3
 #define LOCAL_COPY_SIZE 128
 
@@ -28,9 +30,11 @@ private:
 public:
     stack()
     {
-        _base = (char*)malloc(ALLOC_BLOB);
-        _total_size = ALLOC_BLOB;
+        _base = (char*)malloc(ALLOC_STACK_CHUNK);
+        _blob = (char*)malloc(ALLOC_BLOB_CHUNK);
+        _total_size = ALLOC_STACK_CHUNK;
         _current = _base;
+        _current_blob = _base;
         _count = 0;
     }   
     virtual ~stack() { free(_base); }
@@ -40,7 +44,7 @@ public:
         if (_current + size > _base + _total_size)
         {
             //TODO gerer les pbs de memoire
-            _total_size += ALLOC_BLOB;
+            _total_size += ALLOC_STACK_CHUNK;
             _base = (char*)realloc(_base, _total_size);
         }
 
@@ -48,9 +52,44 @@ public:
             memcpy(_current, obj, size);
         _vlen.push_back(size);
         _vpointer.push_back(_current);
+        _vlen_blob.push_back(0);
         _vtype.push_back(type);
         _count++;
         _current += size;
+    }
+
+    void* allocate_back(unsigned int size, int type, unsigned int blob_size = 0, void** blob = NULL)
+    {
+        void* allocated;
+
+        if (_current + size > _base + _total_size)
+        {
+            //TODO gerer les pbs de memoire
+            _total_size += ALLOC_STACK_CHUNK;
+            _base = (char*)realloc(_base, _total_size);
+        }
+        if (_current_blob + blob_size > _blob + _total_blob_size)
+        {
+            //TODO gerer les pbs de memoire
+            _total_blob_size += ALLOC_BLOB_CHUNK;
+            _blob = (char*)realloc(_base, _total_blob_size);
+        }
+
+        _vlen.push_back(size);
+        _vpointer.push_back(_current);
+        allocated = _current;
+        _current += size;
+
+        _vlen_blob.push_back(blob_size);
+        _vpointer_blob.push_back(_current_blob);
+        if (blob != NULL)
+            *blob = _current_blob;
+        _current_blob += blob_size;
+
+        _vtype.push_back(type);
+        _count++;
+
+        return allocated;
     }
 
     void* pop_back()
@@ -62,6 +101,11 @@ public:
             _current = _vpointer[_count - 1];
             _vlen.pop_back();
             _vpointer.pop_back();
+            
+            _current_blob = _vpointer_blob[_count - 1];
+            _vlen_blob.pop_back();
+            _vpointer_blob.pop_back();
+
             _vtype.pop_back();
             _count--;
 
@@ -91,6 +135,14 @@ public:
     }
     
     void* back()
+    {
+        if (_count>0)
+            return _vpointer[_count-1];
+        else
+            return NULL;
+    }
+
+    void* back_blob()
     {
         if (_count>0)
             return _vpointer[_count-1];
@@ -141,7 +193,7 @@ public:
 
     // local objects copy
     void copy_obj_to_local(unsigned int index, unsigned int to_place)
-    {       
+    {
         assert(to_place < LOCAL_COPY_PLACES);
         struct local_copy* local = (struct local_copy*)_places[to_place];
         local->length = get_len(index);
@@ -150,7 +202,7 @@ public:
     }
 
     void push_obj_from_local(unsigned int from_place)
-    {       
+    {
         assert(from_place < LOCAL_COPY_PLACES);
         struct local_copy* local = (struct local_copy*)_places[from_place];
         push_back(&local->blob, local->length, local->type);
@@ -163,12 +215,18 @@ public:
 
 private:
     char* _base;
+    char* _blob;
     char* _current;
-    vector<unsigned int> _vlen;// size of each entry in bytes
+    char* _current_blob;
+
     vector<char*> _vpointer;//pointer on each entry
+    vector<char*> _vpointer_blob;//pointer on each entry blob
+    vector<unsigned int> _vlen;// size of each entry in bytes
+    vector<unsigned int> _vlen_blob;// size of each blob entry in bytes
     vector<int> _vtype;//type of each entry
     unsigned int _count;// =_vlen.size()=_vpointer.size()=_vtype.size()
     unsigned int _total_size;//total allocated size in bytes
+    unsigned int _total_blob_size;//total allocated blob size in bytes
 
     char _places[LOCAL_COPY_PLACES][LOCAL_COPY_SIZE];
 };

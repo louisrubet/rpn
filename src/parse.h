@@ -544,7 +544,16 @@ static ret_value parse(const char* entry, program& prog)
                 // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
                 // this remaining entry is treated as an entry
                 if(_obj_from_string(main_entry, obj, obj_size, type, remaining_entry))
-                    prog.push_back(obj, obj_size, type);
+                {
+                    if (type == cmd_number)
+                    {
+                        void* significand;
+                        prog.allocate_back(obj_size, type, MPFR_128BITS_STORING_LENGTH, &significand);
+                        
+                    }
+                    else
+                        prog.push_back(obj, obj_size, type);
+                }
                 main_entry = remaining_entry;
             }
         }
