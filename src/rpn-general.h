@@ -16,9 +16,7 @@ void verbose()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int verbose = int(((number*)_stack->back())->_value);
-    _stack->pop_back();
-
+    int verbose = int(((number*)_stack->pop_back())->_value);
     g_verbose = verbose;
 }
 
@@ -84,8 +82,7 @@ void std()
     {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-        int precision = int(((number*)_stack->back())->_value);
-        _stack->pop_back();
+        int precision = int(((number*)_stack->pop_back())->_value);
         number::s_default_precision = int(precision);
     }
 
@@ -103,8 +100,7 @@ void fix()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int precision = int(((number*)_stack->back())->_value);
-    _stack->pop_back();
+    int precision = int(((number*)_stack->pop_back())->_value);
     number::s_current_precision = int(precision);
 
     number::s_mode = number::fix;
@@ -120,8 +116,7 @@ void sci()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int precision = int(((number*)_stack->back())->_value);
-    _stack->pop_back();
+    int precision = int(((number*)_stack->pop_back())->_value);
     number::s_current_precision = int(precision);
 
     number::s_mode = number::sci;

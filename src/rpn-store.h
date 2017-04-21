@@ -4,10 +4,9 @@ void sto(void)
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    string name(((symbol*)_stack->get_obj(0))->_value);
-    _stack->pop_back();
+    string name(((symbol*)_stack->pop_back())->_value);
     _global_heap->add(name, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
-    _stack->pop_back();
+    (void)_stack->pop_back();
 }
 
 void rcl(void)
@@ -26,7 +25,7 @@ void rcl(void)
             || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size, type)))
             || _global_heap->get(variable, obj, size, type))
     {
-        _stack->pop_back();
+        (void)_stack->pop_back();
         _stack->push_back(obj, size, type);
     }
     else
@@ -57,8 +56,7 @@ void edit(void)
     }
 
     // re-write stack objet in a stream
-    ((object*)_stack->back())->show(out);
-    _stack->pop_back();
+    ((object*)_stack->pop_back())->show(out);
 
     // edit: stuff chars using readline facility
     string str = out.str();
@@ -100,7 +98,7 @@ void purge(void)
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    string name(((symbol*)_stack->back())->_value);
+    string name(((symbol*)_stack->pop_back())->_value);
 
     // mind the order of heaps
     bool done = false;
@@ -114,7 +112,6 @@ void purge(void)
     else
         done = true;
 
-    _stack->pop_back();
     if (!done)
         ERR_CONTEXT(ret_unknown_variable);
 }

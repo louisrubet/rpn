@@ -53,8 +53,10 @@ public:
         _current += size;
     }
 
-    void pop_back()
+    void* pop_back()
     {
+        void* back = NULL;
+
         if (_count > 0)
         {
             _current = _vpointer[_count - 1];
@@ -62,7 +64,11 @@ public:
             _vpointer.pop_back();
             _vtype.pop_back();
             _count--;
+
+            back = _current;
         }
+
+        return back;
     }
 
     unsigned int size()

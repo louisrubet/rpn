@@ -23,8 +23,7 @@ void rtob()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
-    _stack->pop_back();
+    number* left = (number*)_stack->pop_back();
 
     binary bin;
     bin.set(mpfr_get_sj(&left->_value.mpfr, s_mpfr_rnd));

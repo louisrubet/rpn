@@ -10,7 +10,7 @@ int rpn_if(branch& myobj)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
-    _stack->pop_back();
+    (void)_stack->pop_back();
     return -1;
 }
 
