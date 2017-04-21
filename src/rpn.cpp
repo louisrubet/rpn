@@ -193,7 +193,7 @@ struct number : public object
         _value = value;
     }
     unsigned int size() { return (unsigned int)sizeof(number); }
-    
+
     void ensure_significand()
     {
         _value.mpfr._mpfr_d = (mp_limb_t*)_value.significand;
@@ -229,7 +229,7 @@ int number::s_current_precision = number::s_default_precision;
 struct binary : public object
 {
     integer_t _value;
-    
+
     //
     void set(integer_t value)
     {
