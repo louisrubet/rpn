@@ -30,32 +30,43 @@ private:
 public:
     stack()
     {
-        _base = (char*)malloc(ALLOC_STACK_CHUNK);
-        _blob = (char*)malloc(ALLOC_BLOB_CHUNK);
+        _base = new char[ALLOC_STACK_CHUNK];
+        _blob = new char[ALLOC_BLOB_CHUNK];
         _total_size = ALLOC_STACK_CHUNK;
+        _total_blob_size = ALLOC_BLOB_CHUNK;
         _current = _base;
-        _current_blob = _base;
+        _current_blob = _blob;
         _count = 0;
     }   
-    virtual ~stack() { free(_base); }
 
-    void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false)
+    virtual ~stack()
     {
-        if (_current + size > _base + _total_size)
-        {
-            //TODO gerer les pbs de memoire
-            _total_size += ALLOC_STACK_CHUNK;
-            _base = (char*)realloc(_base, _total_size);
-        }
+        delete[] _base;
+        delete[] _blob;
+    }
+    
+    void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false, void* blob = NULL, unsigned int blob_size = 0)
+    {
+        void* allocated_blob;
+        void* allocated = allocate_back(size, type, blob_size, &allocated_blob);
 
         if (!dont_copy)
-            memcpy(_current, obj, size);
-        _vlen.push_back(size);
-        _vpointer.push_back(_current);
-        _vlen_blob.push_back(0);
-        _vtype.push_back(type);
-        _count++;
-        _current += size;
+        {
+            if (size > 0)
+                memcpy(allocated, obj, size);
+            if (blob != NULL && blob_size > 0)
+                memcpy(allocated_blob, blob, blob_size);
+        }
+    }
+
+    static void copy_and_push_back(stack& from, unsigned int index_from, stack& to)
+    {
+        // copy a whole stack entry (with blob) and push it back to another stack
+        void* allocated_blob;
+        void* allocated = to.allocate_back(from.seq_len(index_from), from.seq_type(index_from), from.seq_blob_size(index_from), &allocated_blob);
+
+        memcpy(allocated, from.seq_obj(index_from), from.seq_len(index_from));
+        memcpy(allocated_blob, from.seq_blob(index_from), from.seq_blob_size(index_from));
     }
 
     void* allocate_back(unsigned int size, int type, unsigned int blob_size = 0, void** blob = NULL)
@@ -65,14 +76,18 @@ public:
         if (_current + size > _base + _total_size)
         {
             //TODO gerer les pbs de memoire
+            unsigned long offset = _current - _base;
             _total_size += ALLOC_STACK_CHUNK;
             _base = (char*)realloc(_base, _total_size);
+            _current = _base + offset;
         }
         if (_current_blob + blob_size > _blob + _total_blob_size)
         {
             //TODO gerer les pbs de memoire
+            unsigned long offset = _current_blob - _blob;
             _total_blob_size += ALLOC_BLOB_CHUNK;
-            _blob = (char*)realloc(_base, _total_blob_size);
+            _blob = (char*)realloc(_blob, _total_blob_size);
+            _current_blob = _blob + offset;
         }
 
         _vlen.push_back(size);
@@ -145,7 +160,7 @@ public:
     void* back_blob()
     {
         if (_count>0)
-            return _vpointer[_count-1];
+            return _vpointer_blob[_count-1];
         else
             return NULL;
     }
@@ -183,6 +198,22 @@ public:
             return 0;
     }
 
+    void* seq_blob(unsigned int index)
+    {
+        if (index<_count)
+            return _vpointer_blob[index];
+        else
+            return NULL;
+    }
+
+    unsigned int seq_blob_size(unsigned int index)
+    {
+        if (index<_count)
+            return _vlen_blob[index];
+        else
+            return 0;
+    }
+
     int seq_type(unsigned int index)
     {
         if (index<_count)
@@ -206,11 +237,6 @@ public:
         assert(from_place < LOCAL_COPY_PLACES);
         struct local_copy* local = (struct local_copy*)_places[from_place];
         push_back(&local->blob, local->length, local->type);
-    }
-
-    void dump(void)
-    {
-        dump8((unsigned char*)_base, 0, (unsigned long)(_current - _base));
     }
 
 private:
