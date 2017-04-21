@@ -106,25 +106,29 @@ typedef long long integer_t;
 struct floating_t
 {
     __mpfr_struct mpfr;
-    char significand[MPFR_128BITS_STORING_LENGTH];
 
-    floating_t()
+    void init(void* significand)
     {
         mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        mpfr_custom_init_set(&mpfr, MPFR_NAN_KIND, 0, s_mpfr_prec, significand);
+        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+    }
+
+    void set_significand(void* significand)
+    {
+        mpfr._mpfr_d = (mp_limb_t*)significand;
     }
 
     floating_t& operator=(const long int val)
     {
-        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+        //mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        //mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
         mpfr_set_si(&mpfr, val, s_mpfr_rnd);
     }
 
     floating_t& operator=(const integer_t val)
     {
-        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+        //mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        //mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
         mpfr_set_sj(&mpfr, val, s_mpfr_rnd);
     }
 
@@ -132,10 +136,10 @@ struct floating_t
     {
         return (int)mpfr_get_si(&mpfr, s_mpfr_rnd);
     }
-
+    
     void ensure_significand()
     {
-        mpfr._mpfr_d = (mp_limb_t*)significand;
+        //mpfr._mpfr_d = (mp_limb_t*)significand;
     }
 
     bool operator>(const floating_t right)
@@ -147,7 +151,7 @@ struct floating_t
     {
         return mpfr_cmp(&mpfr, &right.mpfr) < 0;
     }
-};
+} __attribute__((packed));
 
 class program;
 class object;
@@ -157,7 +161,7 @@ typedef void (program::*program_fn_t)(void);
 typedef union
 {
     program_fn_t _fn;
-} operand;
+} __attribute__((packed)) operand;
 typedef int (program::*branch_fn_t)(branch&);
 
 //
@@ -168,19 +172,31 @@ struct object
 
     //
     void show(ostream& stream = cout);
-};
+} __attribute__((packed));
 
 struct number : public object
 {
     number() { _type = cmd_number; }
     floating_t _value;
 
+    void init(void* significand)
+    {
+        _type = cmd_number;
+        _value.init(significand);
+    }
+    
+    void copy(number& op)
+    {
+        _value = op._value;
+        memcpy(_value.mpfr._mpfr_d, op._value.mpfr._mpfr_d, MPFR_128BITS_STORING_LENGTH);
+    }
+
     //
     void set(const floating_t& value)
     {
         _type = cmd_number;
-        _value.mpfr = value.mpfr;
-        (void)memcpy(_value.significand, value.significand, sizeof(_value.significand));
+        _value.mpfr._mpfr_d = value.mpfr._mpfr_d;
+        //(void)memcpy(_value.significand, value.significand, sizeof(_value.significand));
     }
     void set(long value)
     {
@@ -196,7 +212,7 @@ struct number : public object
 
     void ensure_significand()
     {
-        _value.mpfr._mpfr_d = (mp_limb_t*)_value.significand;
+        //_value.mpfr._mpfr_d = (mp_limb_t*)_value.significand;
     }
 
     //
@@ -219,7 +235,7 @@ struct number : public object
     // precision
     static int s_default_precision;
     static int s_current_precision;
-};
+} __attribute__((packed));
 
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
@@ -247,7 +263,7 @@ struct binary : public object
     } binary_enum;
     static binary_enum s_default_mode;
     static binary_enum s_mode;
-};
+} __attribute__((packed));
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
@@ -272,7 +288,7 @@ struct ostring : public object
     //
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct oprogram : public object
 {
@@ -295,7 +311,7 @@ struct oprogram : public object
     //
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct symbol : public object
 {
@@ -320,7 +336,7 @@ struct symbol : public object
     bool _auto_eval;
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct keyword : public object
 {
@@ -345,7 +361,7 @@ struct keyword : public object
     program_fn_t _fn;
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 struct branch : public object
 {
@@ -380,18 +396,14 @@ struct branch : public object
     bool arg_bool;
     unsigned int _len;
     char _value[0];
-};
+} __attribute__((packed));
 
 void object::show(ostream& stream)
 {
-    //TODO please don't do that
-    char buffer_for_number[256];
     switch(_type)
     {
     case cmd_number:
-        ((number*)this)->ensure_significand();
-        (void)mpfr_sprintf(buffer_for_number, s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
-        stream<<buffer_for_number;
+        (void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
         break;
     case cmd_binary:
         {
@@ -540,14 +552,12 @@ public:
             // not a command, but a stack entry, manage it
             else
             {
-                stk.push_back(seq_obj(i), seq_len(i), type);
+                // copy the program stack entry to the running stack
+                copy_and_push_back(*this, i, stk);
 
-                // numbers: ensure that significand is correctly recorded by object
+                // manage particular type of entries
                 if (type == cmd_number)
-                {
-                    number* k = (number*)stk.back();
-                    k->ensure_significand();
-                }
+                    ((number*)stk.back())->_value.set_significand(stk.back_blob());
 
                 i++;
             }
@@ -860,7 +870,7 @@ private:
     #include "rpn-program.h"
     #include "rpn-trig.h"
     #include "rpn-logs.h"
-};
+} __attribute__((packed));
 
 //keywords declaration
 #include "rpn-cmd.h"
