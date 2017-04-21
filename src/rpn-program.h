@@ -22,13 +22,13 @@ void eval(void)
             if (type == cmd_program)
             {
                 prog_text = ((oprogram*)obj)->_value;
-                _stack->pop_back();
+                (void)_stack->pop_back();
                 run_prog = true;
             }
             else
             {
                 // else recall variable (i.e. stack its content)
-                _stack->pop_back();
+                (void)_stack->pop_back();
                 _stack->push_back(obj, size, type);
             }
         }
@@ -38,8 +38,7 @@ void eval(void)
     else if (IS_ARG_TYPE(0, cmd_program))
     {
         // eval a program
-        prog_text = ((oprogram*)_stack->back())->_value;
-        _stack->pop_back();
+        prog_text = ((oprogram*)_stack->pop_back())->_value;
         run_prog = true;
     }
     else
@@ -125,7 +124,7 @@ int inprog(branch& myobj)
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--)
     {
         local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
-        _stack->pop_back();
+        (void)_stack->pop_back();
     }
 
     // run the program

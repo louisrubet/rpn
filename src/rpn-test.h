@@ -4,8 +4,7 @@ void sup(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) > 0)
@@ -20,8 +19,7 @@ void sup_eq(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) >= 0)
@@ -36,8 +34,7 @@ void inf(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) < 0)
@@ -52,8 +49,7 @@ void inf_eq(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) <= 0)
@@ -68,8 +64,7 @@ void diff(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) != 0)
@@ -84,8 +79,7 @@ void eq(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) == 0)
@@ -100,8 +94,7 @@ void test_and(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if ((mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
@@ -117,8 +110,7 @@ void test_or(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if ((mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
@@ -134,8 +126,7 @@ void test_xor(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right =  (number*)_stack->back();
-    _stack->pop_back();
+    number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
     if (mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
