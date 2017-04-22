@@ -37,7 +37,8 @@ void btor()
 
     integer_t bin = getb();
 
-    _stack->push_back(NULL, sizeof(number), cmd_number, true);
-    number* left = (number*)_stack->back();
+    void* significand;
+    number* left = (number*)_stack->allocate_back(sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
+    left->init(significand);
     left->set(bin);
 }
