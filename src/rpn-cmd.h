@@ -16,6 +16,7 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
+    { cmd_keyword, "type", &program::type, "show first stack entry type" },
 
     //REAL
     { cmd_undef, "", NULL, "\nREAL"},
