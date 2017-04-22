@@ -1,11 +1,19 @@
 void program::test()
 {
-    const string test_filename = "test.txt";
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_string);
+
     const string stack_size("-> stack size should be ");
     const string stack_value("-> stack should be ");
     const string cmd_error("-> error should be ");
     const string cmd_exit("exit test");
+
+    string test_filename = ((ostring*)_stack->pop_back())->_value;
     ifstream test_file(test_filename.c_str());
+    int tests = 0;
+    int tests_failed = 0;
+    int steps = 0;
+    int steps_failed = 0;
 
     if (test_file.is_open())
     {
@@ -14,9 +22,9 @@ void program::test()
         ret_value ret;
         stack stk;
         heap hp;
-        bool indicate_passed = false;
         bool failed = false;
-        int count_tests = 0;
+        bool is_first_step;
+        bool is_test_error_shown;
         int last_err;
         stringstream cerr_buffer;
         streambuf* cerr_old_buffer;
@@ -24,36 +32,34 @@ void program::test()
         // redirect cerr
         cerr_old_buffer = cerr.rdbuf(cerr_buffer.rdbuf());
 
-        while ((!failed) && (!test_file.eof()))
+        while (!test_file.eof())
         {
             getline(test_file, entry);
             if (entry.substr(0,2)=="##")
             {
-                // read a test section
-                if (indicate_passed)
-                {
-                    if (g_verbose > 0)
-                        cout << "\t";
-                    cout << "passed " << count_tests << " tests"<< endl;
-                }
                 cout << entry;
-                if (g_verbose == 0)
-                    cout << " .. ";
-                else
-                    cout << endl;
-                indicate_passed = true;
-                count_tests = 0;
+                cout << endl;
             }
             else if (entry.substr(0,1)=="#")
             {
+                // indicates the status of previous test
+                if (failed == false && tests > 0)
+                    cout<<FG_GREEN<<" PASSED"<<COLOR_OFF<<endl;
+                failed = false;
+
                 // read a test title
                 test_title = entry;
-                if (g_verbose > 0)
-                    cout << "\t" << test_title << endl;
-                count_tests++;
+                is_first_step = true;
+                is_test_error_shown = false;
+                cout << test_title;
             }
             else if (entry.find(stack_size, 0) == 0)
             {
+                // count test and step
+                if (is_first_step)
+                    tests++;
+                steps++;
+
                 // check current stack size
                 istringstream isub;
                 int size;
@@ -62,14 +68,29 @@ void program::test()
                 isub>>size;
                 if (size != (int)stk.size())
                 {
-                    cout<<endl<<endl<<test_title<<endl<<entry<<endl<<"FAIL, ";
-                    cout<<"stack size is "<<stk.size()<<endl;
+                    // count fail test and step
+                    if (!is_test_error_shown)
+                    {
+                        cout<<FG_RED<<" FAIL"<<COLOR_OFF<<endl;
+                        tests_failed++;
+                        is_test_error_shown = true;
+                    }
+                    steps_failed++;
+
+                    // show failure
+                    cout<<"\t"<<entry<<endl;
+                    cout<<"\tbut real stack size is "<<FG_RED<<stk.size()<<COLOR_OFF<<endl;
                     failed = true;
-                    indicate_passed = false;
                 }
+                is_first_step = false;
             }
             else if (entry.find(stack_value, 0) == 0)
             {
+                // count test
+                if (is_first_step)
+                    tests++;
+                steps++;
+
                 // check current stack value
                 string stack_should_be = entry.substr(stack_value.size());
                 string stack_is;
@@ -85,14 +106,29 @@ void program::test()
                 }
                 if (stack_is != stack_should_be)
                 {
-                    cout<<endl<<endl<<test_title<<endl<<entry<<endl<<"FAIL, ";
-                    cout<<"real stack is "<<stack_is<<endl;
+                    // count fail test and step
+                    if (!is_test_error_shown)
+                    {
+                        cout<<FG_RED<<" FAIL"<<COLOR_OFF<<endl;
+                        tests_failed++;
+                        is_test_error_shown = true;
+                    }
+                    steps_failed++;
+
+                    // show failure
+                    cout<<"\t"<<entry<<endl;
+                    cout<<"\tbut real stack is "<<FG_RED<<stack_is<<COLOR_OFF<<endl;
                     failed = true;
-                    indicate_passed = false;
                 }
+                is_first_step = false;
             }
             else if (entry.find(cmd_error, 0) == 0)
             {
+                // count test
+                if (is_first_step)
+                    tests++;
+                steps++;
+
                 // check current error
                 istringstream isub;
                 int err_should_be;
@@ -100,11 +136,21 @@ void program::test()
                 isub>>err_should_be;
                 if (err_should_be != last_err)
                 {
-                    cout<<endl<<endl<<test_title<<endl<<entry<<endl<<"FAIL, ";
-                    cout<<"last error is "<<last_err<<endl;
+                    // count fail test and step
+                    if (!is_test_error_shown)
+                    {
+                        cout<<FG_RED<<" FAIL"<<COLOR_OFF<<endl;
+                        tests_failed++;
+                        is_test_error_shown = true;
+                    }
+                    steps_failed++;
+
+                    // show failure
+                    cout<<"\t"<<entry<<endl;
+                    cout<<"\tbut last error is "<<FG_RED<<last_err<<COLOR_OFF<<endl;
                     failed = true;
-                    indicate_passed = false;
                 }
+                is_first_step = false;
             }
             else if (entry.find(cmd_exit, 0) == 0)
             {
@@ -124,13 +170,30 @@ void program::test()
                 }
             }
         }
-        if (indicate_passed)
-            cout << "passed " << count_tests << " tests"<< endl;
-        if (! failed)
-            cout << "test file '"<<test_filename<<"' has passed" << endl;
+
+        // last test
+        // indicates the status of previous test
+        if (failed == false && tests > 0)
+            cout << FG_GREEN << " PASSED" << COLOR_OFF << endl;
 
         // cerr back
         cerr.rdbuf(cerr_old_buffer);
+        
+        // conclusion
+        cout<<endl<<"Run "<<tests<<" tests: "<<tests-tests_failed<<" passed, ";
+        if(tests_failed>0)
+            cout<<FG_RED;
+        cout<<tests_failed<<" failed";
+        if(tests_failed>0)
+            cout<<COLOR_OFF;
+        
+        cout<<" ("<<steps<<" steps: "<<steps-steps_failed<<" passed, ";
+        if(steps_failed>0)
+            cout<<FG_RED;
+        cout<<steps_failed<<" failed";
+        if(steps_failed>0)
+            cout<<COLOR_OFF;
+        cout<<")"<<endl;
     }
     else
         cerr << "test file '"<<test_filename<<"' not found" << endl;
