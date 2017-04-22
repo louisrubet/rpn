@@ -78,7 +78,9 @@ void rot(void)
 
 void depth(void)
 {
-    number num;
-    num.set((long)_stack->size());
-    _stack->push_back(&num, num.size(), cmd_number);
+    unsigned long depth = (unsigned long)_stack->size();
+    void* significand;
+    number* num = (number*)_stack->allocate_back(sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
+    num->init(significand);
+    num->set(depth);
 }
