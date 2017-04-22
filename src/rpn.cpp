@@ -120,15 +120,16 @@ struct floating_t
 
     floating_t& operator=(const long int val)
     {
-        //mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        //mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
         mpfr_set_si(&mpfr, val, s_mpfr_rnd);
+    }
+
+    floating_t& operator=(const unsigned long val)
+    {
+        mpfr_set_ui(&mpfr, val, s_mpfr_rnd);
     }
 
     floating_t& operator=(const integer_t val)
     {
-        //mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        //mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
         mpfr_set_sj(&mpfr, val, s_mpfr_rnd);
     }
 
@@ -196,13 +197,20 @@ struct number : public object
     {
         _type = cmd_number;
         _value.mpfr._mpfr_d = value.mpfr._mpfr_d;
-        //(void)memcpy(_value.significand, value.significand, sizeof(_value.significand));
     }
+
     void set(long value)
     {
         _type = cmd_number;
         _value = value;
     }
+
+    void set(unsigned long value)
+    {
+        _type = cmd_number;
+        _value = value;
+    }
+
     void set(integer_t value)
     {
         _type = cmd_number;
@@ -400,13 +408,18 @@ struct branch : public object
 
 void object::show(ostream& stream)
 {
+    char buffer[512];
+
     switch(_type)
     {
     case cmd_number:
-        (void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
+        //(void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
+        (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
+        stream<<buffer;
         break;
     case cmd_binary:
         {
+            // TODO stream and not cout
             cout << "# ";
             switch(((binary*)this)->s_mode)
             {
