@@ -172,3 +172,17 @@ void rpn_uname()
     _stack->push_back(str, str->size(), cmd_string);
     free(str);
 }
+
+void type()
+{
+    MIN_ARGUMENTS(1);
+
+    int type = _stack->seq_type(_stack->size()-1);
+    if (type < 0 || type >= (int)cmd_max)
+        type = (int)cmd_undef;
+
+    unsigned int string_size = strlen(cmd_type_string[type]);
+    unsigned int size = sizeof(symbol)+string_size+1;
+    symbol* sym = (symbol*)allocate_back(size, cmd_symbol);
+    sym->set(cmd_type_string[type], string_size);
+}
