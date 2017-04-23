@@ -40,7 +40,7 @@ void program::test()
                 cout << entry;
                 cout << endl;
             }
-            else if (entry.substr(0,1)=="#")
+            else if (entry.substr(0,2)=="# ")
             {
                 // indicates the status of previous test
                 if (failed == false && tests > 0)
@@ -53,6 +53,7 @@ void program::test()
                 is_test_error_shown = false;
                 cout << test_title;
             }
+            // treat "-> stack size should be "
             else if (entry.find(stack_size, 0) == 0)
             {
                 // count test and step
@@ -84,6 +85,7 @@ void program::test()
                 }
                 is_first_step = false;
             }
+            // treat "-> stack should be "
             else if (entry.find(stack_value, 0) == 0)
             {
                 // count test
@@ -122,6 +124,7 @@ void program::test()
                 }
                 is_first_step = false;
             }
+            // treat "-> error should be "
             else if (entry.find(cmd_error, 0) == 0)
             {
                 // count test
