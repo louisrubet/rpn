@@ -1,0 +1,87 @@
+## ENTRY TEST
+default
+erase
+
+# real decimal
+1
+-> stack size should be 1
+-> stack should be 1
+
+drop
+2.345
+-> stack should be 2.345
+
+erase
+1 2.345 3 4.9
+-> stack size should be 4
+-> stack should be 1, 2.345, 3, 4.9
+
+# real hex
+erase
+0x1234
+-> stack should be 4660
+
+drop
+0x10.10
+-> stack should be 16.0625
+
+# real binary
+erase
+0b11001100
+-> stack should be 204
+
+erase
+0b11001100.1101
+-> stack should be 204.8125
+
+# real inf, nan
+erase
+inf
+@inf@
++inf
++@inf@
+-inf
+-@inf@
+nan
+@nan@
+-> stack should be inf, inf, inf,-inf, -inf, nan, nan
+
+# binary decimal
+erase
+#123d
+-> stack size should be 1
+-> stack should be      123 d
+
+# binary hex
+erase
+#123h
+-> stack size should be 1
+-> stack should be      291 d
+
+# binary binary
+erase
+#1101b
+-> stack size should be 1
+-> stack should be      13 d
+
+# symbol
+erase
+'test'
+-> stack size should be 1
+-> stack should be 'test'
+
+erase
+'test
+-> stack size should be 1
+-> stack should be 'test'
+
+# string
+erase
+"test string"
+-> stack size should be 1
+-> stack should be "test string"
+
+erase
+"test string
+-> stack size should be 1
+-> stack should be "test string"
