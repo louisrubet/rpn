@@ -28,8 +28,7 @@ void help()
     cout<<endl;
 
     // description
-    cout<<description<<mpfr_get_version()<<description_more;
-    cout<<endl<<endl;
+    cout<<description<<endl<<endl;
 
     // syntax
     cout<<syntax<<endl;
@@ -185,4 +184,9 @@ void type()
     unsigned int size = sizeof(symbol)+string_size+1;
     symbol* sym = (symbol*)allocate_back(size, cmd_symbol);
     sym->set(cmd_type_string[type], string_size);
+}
+
+void rpn_default()
+{
+    program::apply_default();
 }
