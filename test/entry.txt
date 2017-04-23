@@ -85,3 +85,19 @@ erase
 "test string
 -> stack size should be 1
 -> stack should be "test string"
+
+# program
+erase
+<< 'one' >>
+-> stack size should be 1
+-> stack should be << 'one'  >>
+
+erase
+<< 'one' 2
+-> stack size should be 1
+-> stack should be << 'one' 2 >>
+
+erase
+<< -> n << n 2 + >> >>
+-> stack size should be 1
+-> stack should be << -> n  << n 2 +  >> >>
