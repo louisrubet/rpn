@@ -13,20 +13,10 @@ using namespace std;
 // allocation base size
 #define ALLOC_STACK_CHUNK (64*1024)
 #define ALLOC_BLOB_CHUNK (64*1024)
-#define LOCAL_COPY_PLACES 3
-#define LOCAL_COPY_SIZE 128
 
 //
 class stack
 {
-private:
-    struct local_copy
-    {
-        unsigned int length;
-        int type;
-        int blob;
-    };
-
 public:
     stack()
     {
@@ -34,17 +24,27 @@ public:
         _blob = new char[ALLOC_BLOB_CHUNK];
         _total_size = ALLOC_STACK_CHUNK;
         _total_blob_size = ALLOC_BLOB_CHUNK;
-        _current = _base;
-        _current_blob = _blob;
-        _count = 0;
-    }   
+        erase();
+    }
 
     virtual ~stack()
     {
         delete[] _base;
         delete[] _blob;
     }
-    
+
+    void erase()
+    {
+        _current = _base;
+        _current_blob = _blob;
+        _vpointer.clear();
+        _vpointer_blob.clear();
+        _vlen.clear();
+        _vlen_blob.clear();
+        _vtype.clear();
+        _count = 0;
+    }
+
     void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false, void* blob = NULL, unsigned int blob_size = 0)
     {
         void* allocated_blob;
@@ -222,23 +222,6 @@ public:
             return 0;
     }
 
-    // local objects copy
-    void copy_obj_to_local(unsigned int index, unsigned int to_place)
-    {
-        assert(to_place < LOCAL_COPY_PLACES);
-        struct local_copy* local = (struct local_copy*)_places[to_place];
-        local->length = get_len(index);
-        local->type= get_type(index);
-        memcpy(&local->blob, get_obj(index), local->length);
-    }
-
-    void push_obj_from_local(unsigned int from_place)
-    {
-        assert(from_place < LOCAL_COPY_PLACES);
-        struct local_copy* local = (struct local_copy*)_places[from_place];
-        push_back(&local->blob, local->length, local->type);
-    }
-
 private:
     char* _base;
     char* _blob;
@@ -253,8 +236,6 @@ private:
     unsigned int _count;// =_vlen.size()=_vpointer.size()=_vtype.size()
     unsigned int _total_size;//total allocated size in bytes
     unsigned int _total_blob_size;//total allocated blob size in bytes
-
-    char _places[LOCAL_COPY_PLACES][LOCAL_COPY_SIZE];
 };
 
 //
