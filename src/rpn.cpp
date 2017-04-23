@@ -68,6 +68,7 @@ typedef enum {
     ret_unknown_err,
     ret_missing_operand,
     ret_bad_operand_type,
+    ret_out_of_range,
     ret_unknown_variable,
     ret_internal,
     ret_deadly,
@@ -80,7 +81,7 @@ typedef enum {
 } ret_value;
 
 const char* ret_value_string[ret_max] = {
-    "ok", "unknown command", "missing operand", "bad operand type", "unknown variable", "internal error, aborting",
+    "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting",
     "deadly", "goodbye", "not implemented", "no operation", "syntax", "division by zero"
 };
 
@@ -152,7 +153,7 @@ struct floating_t
     {
         return mpfr_cmp(&mpfr, &right.mpfr) < 0;
     }
-} __attribute__((packed));
+};
 
 class program;
 class object;
@@ -162,7 +163,7 @@ typedef void (program::*program_fn_t)(void);
 typedef union
 {
     program_fn_t _fn;
-} __attribute__((packed)) operand;
+} operand;
 typedef int (program::*branch_fn_t)(branch&);
 
 //
@@ -173,7 +174,7 @@ struct object
 
     //
     void show(ostream& stream = cout);
-} __attribute__((packed));
+};
 
 struct number : public object
 {
@@ -243,7 +244,7 @@ struct number : public object
     // precision
     static int s_default_precision;
     static int s_current_precision;
-} __attribute__((packed));
+};
 
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
@@ -271,7 +272,7 @@ struct binary : public object
     } binary_enum;
     static binary_enum s_default_mode;
     static binary_enum s_mode;
-} __attribute__((packed));
+};
 binary::binary_enum binary::s_default_mode = binary::dec;
 binary::binary_enum binary::s_mode = binary::s_default_mode;
 
@@ -296,7 +297,7 @@ struct ostring : public object
     //
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct oprogram : public object
 {
@@ -319,7 +320,7 @@ struct oprogram : public object
     //
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct symbol : public object
 {
@@ -344,7 +345,7 @@ struct symbol : public object
     bool _auto_eval;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct keyword : public object
 {
@@ -369,7 +370,7 @@ struct keyword : public object
     program_fn_t _fn;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct branch : public object
 {
@@ -404,7 +405,7 @@ struct branch : public object
     bool arg_bool;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 void object::show(ostream& stream)
 {
@@ -811,6 +812,21 @@ public:
             }
         }
     }
+    
+    static void apply_default()
+    {
+        //default float precision, float mode, binary mode, verbosity
+        number::s_mode = number::s_default_mode;
+        number::s_current_precision = number::s_default_precision;
+        binary::s_mode = binary::s_default_mode;
+
+        // format for mpfr_printf 
+        stringstream ss;
+        ss << number::s_current_precision;
+        s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
+
+        g_verbose = 0;
+    }
 
 private:
     ret_value _err;
@@ -883,22 +899,11 @@ private:
     #include "rpn-program.h"
     #include "rpn-trig.h"
     #include "rpn-logs.h"
-} __attribute__((packed));
+};
 
 //keywords declaration
 #include "rpn-cmd.h"
-
 #include "rpn-test-core.h"
-
-//
-static void apply_default(void)
-{
-    //default precision
-    number::s_mode = number::s_default_mode;
-
-    //default binary mode
-    binary::s_mode = binary::s_default_mode;
-}
 
 //
 int main(int argc, char* argv[])
@@ -908,7 +913,7 @@ int main(int argc, char* argv[])
     int ret = 0;
 
     // apply default configuration
-    apply_default();
+    program::apply_default();
 
     // run with interactive prompt
     if (argc == 1)

@@ -17,6 +17,7 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
     { cmd_keyword, "type", &program::type, "show first stack entry type" },
+    { cmd_keyword, "default", &program::rpn_default, "setting precision, float representation, float precision, binary mode and verbosity to default" },
 
     //REAL
     { cmd_undef, "", NULL, "\nREAL"},
