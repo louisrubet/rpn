@@ -414,8 +414,8 @@ static bool get_binary_bin(const string& entry, program& prog, string& remaining
             if (entry.at(i+1)=='1')
             {
                 val+=exponent;
-                exponent/=2;
             }
+            exponent>>=1;
         }
 
         binary* new_binary = (binary*)prog.allocate_back((unsigned int)sizeof(binary), cmd_binary);
