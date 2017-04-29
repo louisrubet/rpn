@@ -7,10 +7,10 @@ void sup(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) > 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) > 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void sup_eq(void)
@@ -22,10 +22,10 @@ void sup_eq(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) >= 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) >= 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void inf(void)
@@ -37,10 +37,10 @@ void inf(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) < 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) < 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void inf_eq(void)
@@ -52,10 +52,10 @@ void inf_eq(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) <= 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) <= 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void diff(void)
@@ -67,10 +67,10 @@ void diff(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) != 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) != 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void eq(void)
@@ -82,10 +82,10 @@ void eq(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp(&left->_value.mpfr, &right->_value.mpfr) == 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) == 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void test_and(void)
@@ -97,11 +97,11 @@ void test_and(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if ((mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
-        && (mpfr_cmp_si(&right->_value.mpfr, 0) == 0))
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if ((mpfr_cmp_si(left->_value.mpfr, 0) == 0)
+        && (mpfr_cmp_si(right->_value.mpfr, 0) == 0))
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void test_or(void)
@@ -113,11 +113,11 @@ void test_or(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if ((mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
-        || (mpfr_cmp_si(&right->_value.mpfr, 0) == 0))
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if ((mpfr_cmp_si(left->_value.mpfr, 0) == 0)
+        || (mpfr_cmp_si(right->_value.mpfr, 0) == 0))
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void test_xor(void)
@@ -129,19 +129,19 @@ void test_xor(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
+    if (mpfr_cmp_si(left->_value.mpfr, 0) == 0)
     {
-        if (mpfr_cmp_si(&right->_value.mpfr, 0) != 0)
-            mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+        if (mpfr_cmp_si(right->_value.mpfr, 0) != 0)
+            mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
         else
-            mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);            
+            mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);            
     }
     else
     {
-        if (mpfr_cmp_si(&right->_value.mpfr, 0) == 0)
-            mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+        if (mpfr_cmp_si(right->_value.mpfr, 0) == 0)
+            mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
         else
-            mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);            
+            mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);            
     }
 }
 
@@ -151,10 +151,10 @@ void test_not(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     number* left = (number*)_stack->back();
-    if (mpfr_cmp_si(&left->_value.mpfr, 0) == 0)
-        mpfr_set_si(&left->_value.mpfr, 1, s_mpfr_rnd);
+    if (mpfr_cmp_si(left->_value.mpfr, 0) == 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-        mpfr_set_si(&left->_value.mpfr, 0, s_mpfr_rnd);            
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);            
 }
 
 void same(void)

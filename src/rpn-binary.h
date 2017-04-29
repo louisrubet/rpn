@@ -26,7 +26,7 @@ void rtob()
     number* left = (number*)_stack->pop_back();
 
     binary bin;
-    bin.set(mpfr_get_sj(&left->_value.mpfr, s_mpfr_rnd));
+    bin.set(mpfr_get_sj(left->_value.mpfr, s_mpfr_rnd));
     _stack->push_back(&bin, bin.size(), cmd_binary);
 }
 

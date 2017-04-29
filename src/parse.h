@@ -340,7 +340,7 @@ static bool get_float(const string& entry, program& prog, string& remaining_entr
             number* num = (number*)prog.allocate_back((unsigned int)sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
             num->init(significand);
 
-            int mpfr_ret = mpfr_strtofr(&num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
+            int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
             if (endptr != entry.c_str())
             {
                 ret = true;

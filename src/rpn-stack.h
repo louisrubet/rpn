@@ -1,17 +1,15 @@
-stack _stack_manip;
-
 //
 void swap(void)
 {
     MIN_ARGUMENTS(2);
-    
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _stack_manip);
-    stack::copy_and_push_back(*_stack, _stack->size()-2, _stack_manip);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
     (void)_stack->pop_back();
     (void)_stack->pop_back();
-    stack::copy_and_push_back(_stack_manip, 0, *_stack);
-    stack::copy_and_push_back(_stack_manip, 1, *_stack);
-    _stack_manip.erase();
+    stack::copy_and_push_back(_branch_stack, 0, *_stack);
+    stack::copy_and_push_back(_branch_stack, 1, *_stack);
+    (void)_branch_stack.pop_back();
+    (void)_branch_stack.pop_back();
 }
 
 void drop(void)
@@ -67,17 +65,18 @@ void rot(void)
 {
     MIN_ARGUMENTS(3);
 
-    //TODO could be optimized
-    stack::copy_and_push_back(*_stack, _stack->size()-3, _stack_manip);
-    stack::copy_and_push_back(*_stack, _stack->size()-2, _stack_manip);
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _stack_manip);
+    stack::copy_and_push_back(*_stack, _stack->size()-3, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
     (void)_stack->pop_back();
     (void)_stack->pop_back();
     (void)_stack->pop_back();
-    stack::copy_and_push_back(_stack_manip, 2, *_stack);
-    stack::copy_and_push_back(_stack_manip, 1, *_stack);
-    stack::copy_and_push_back(_stack_manip, 0, *_stack);
-    _stack_manip.erase();
+    stack::copy_and_push_back(_branch_stack, 2, *_stack);
+    stack::copy_and_push_back(_branch_stack, 1, *_stack);
+    stack::copy_and_push_back(_branch_stack, 0, *_stack);
+    (void)_branch_stack.pop_back();
+    (void)_branch_stack.pop_back();
+    (void)_branch_stack.pop_back();
 }
 
 void depth(void)
