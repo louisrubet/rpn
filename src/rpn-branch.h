@@ -55,10 +55,27 @@ int rpn_start(branch& myobj)
 
     // farg1 = first value of start command
     // farg2 = last value of start command
-    myobj.farg2 = getf();
-    myobj.farg2.ensure_significand();
-    myobj.farg1 = getf();
-    myobj.farg1.ensure_significand();
+cout<<__FUNCTION__<<": copy_and_push_back(farg2)"<<endl;
+    stack::copy_and_push_back(*_stack, 0, _branch_stack);
+cout<<"[(number*)_stack->get_obj(0)="; ((number*)_stack->get_obj(0))->show(cout);cout<<"]\n";
+cout<<"(number*)_stack->get_obj(0)="<<(void*)_stack->get_obj(0)<<"=";
+dump8((unsigned char*)_stack->get_obj(0), 0, 40);
+    myobj.farg2 = (number*)_branch_stack.get_obj(0);
+    myobj.farg2->init(_branch_stack.get_blob(0));
+    _stack->pop_back();
+cout<<"myobj.farg2="<<(void*)myobj.farg2<<"=";
+dump8((unsigned char*)myobj.farg2, 0, 40);
+cout<<"[-> arg2="; myobj.farg2->show(cout);cout<<"]\n";
+
+cout<<__FUNCTION__<<": copy_and_push_back(farg1)"<<endl;
+    stack::copy_and_push_back(*_stack, 0, _branch_stack);
+cout<<"[(number*)_stack->get_obj(0)="; ((number*)_stack->get_obj(0))->show(cout);cout<<"]\n";
+cout<<"[_branch_stack.size()="<<_branch_stack.size()<<"]\n";
+    myobj.farg1 = (number*)_branch_stack.get_obj(0);
+    myobj.farg1->init(_branch_stack.get_blob(0));
+    _stack->pop_back();
+cout<<"[myobj.farg2->_value.mpfr._mpfr_d="; myobj.farg2->_value.mpfr._mpfr_d;cout<<"]\n";
+cout<<"[-> arg2="; myobj.farg2->show(cout);cout<<"]\n";
     return -1;
 }
 
@@ -73,15 +90,18 @@ int rpn_for(branch& myobj)
     // farg1 = first value of for command
     // farg2 = last value of for command
     // arg1 = index of symbol to increase
-    myobj.farg2 = getf();
-    myobj.farg2.ensure_significand();
-    myobj.farg1 = getf();
-    myobj.farg1.ensure_significand();
+    stack::copy_and_push_back(*_stack, 0, _branch_stack);
+    myobj.farg2 = (number*)_branch_stack.back();
+    myobj.farg2->init(_branch_stack.back_blob());
+    stack::copy_and_push_back(*_stack, 0, _branch_stack);
+    myobj.farg1 = (number*)_branch_stack.back();
+    myobj.farg1->init(_branch_stack.back_blob());
 
     // store symbol with first value
-    number* num = (number*)_local_heap.add(string(sym->_value), NULL, sizeof(number), cmd_number);
-    num->set(myobj.farg1);
-    num->ensure_significand();
+    //TODO
+    //number* num = (number*)_local_heap.add(string(sym->_value), NULL, sizeof(number), cmd_number);
+    //num->set(myobj.farg1);
+    //num->ensure_significand();
 
     return myobj.arg1 + 1;
 }
@@ -95,11 +115,10 @@ int rpn_next(branch& myobj)
     {
         myobj.arg_bool = true;
         myobj.farg1 = start_or_for->farg1;
-        myobj.farg1.ensure_significand();
     }
 
     // increment then test
-    mpfr_add_si(&myobj.farg1.mpfr, &myobj.farg1.mpfr, 1UL, MPFR_DEF_RND);
+    mpfr_add_si(&myobj.farg1->_value.mpfr, &myobj.farg1->_value.mpfr, 1UL, MPFR_DEF_RND);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)
@@ -110,18 +129,20 @@ int rpn_next(branch& myobj)
         symbol* var = (symbol*)seq_obj(start_or_for->arg1);
 
         // check symbol variable is a number, then increase
-        if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
-        {
-            ((number*)obj)->set(myobj.farg1);
-            ((number*)obj)->ensure_significand();
-        }
+        //TODO
+        // if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
+        // {
+        //     ((number*)obj)->set(myobj.farg1);
+        //     ((number*)obj)->ensure_significand();
+        // }
     }
 
     //test value
-    if (myobj.farg1 > start_or_for->farg2)
+    if (myobj.farg1->_value > start_or_for->farg2->_value)
     {
         // end of loop
         myobj.arg_bool = false;// init again next time
+        _branch_stack.erase();
         return -1;
     }
     else
@@ -137,17 +158,17 @@ int rpn_next(branch& myobj)
 
 int rpn_step(branch& myobj)
 {
+//TODO
+#if 0
     // arg1 = index of start or for command in program
     // farg1 = current count
-    floating_t step = getf();
-    step.ensure_significand();
+    number* step = _stack.pop_back();
 
     branch* start_or_for = (branch*)seq_obj(myobj.arg1);
     if (! myobj.arg_bool)
     {
         myobj.arg_bool = true;
         myobj.farg1 = start_or_for->farg1;
-        myobj.farg1.ensure_significand();
     }
 
     // increment then test
@@ -186,4 +207,7 @@ int rpn_step(branch& myobj)
         else
             return myobj.arg1 + 1;
     }
+#endif
+
+    return -1;
 }
