@@ -6,7 +6,7 @@ int rpn_if(branch& myobj)
     MIN_ARGUMENTS_RET(1, -1);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
 
-    if (mpfr_cmp_si(&((number*)_stack->get_obj(0))->_value.mpfr, 0UL) != 0)
+    if (mpfr_cmp_si(((number*)_stack->get_obj(0))->_value.mpfr, 0UL) != 0)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
@@ -55,27 +55,15 @@ int rpn_start(branch& myobj)
 
     // farg1 = first value of start command
     // farg2 = last value of start command
-cout<<__FUNCTION__<<": copy_and_push_back(farg2)"<<endl;
     stack::copy_and_push_back(*_stack, 0, _branch_stack);
-cout<<"[(number*)_stack->get_obj(0)="; ((number*)_stack->get_obj(0))->show(cout);cout<<"]\n";
-cout<<"(number*)_stack->get_obj(0)="<<(void*)_stack->get_obj(0)<<"=";
-dump8((unsigned char*)_stack->get_obj(0), 0, 40);
     myobj.farg2 = (number*)_branch_stack.get_obj(0);
     myobj.farg2->init(_branch_stack.get_blob(0));
     _stack->pop_back();
-cout<<"myobj.farg2="<<(void*)myobj.farg2<<"=";
-dump8((unsigned char*)myobj.farg2, 0, 40);
-cout<<"[-> arg2="; myobj.farg2->show(cout);cout<<"]\n";
 
-cout<<__FUNCTION__<<": copy_and_push_back(farg1)"<<endl;
     stack::copy_and_push_back(*_stack, 0, _branch_stack);
-cout<<"[(number*)_stack->get_obj(0)="; ((number*)_stack->get_obj(0))->show(cout);cout<<"]\n";
-cout<<"[_branch_stack.size()="<<_branch_stack.size()<<"]\n";
     myobj.farg1 = (number*)_branch_stack.get_obj(0);
     myobj.farg1->init(_branch_stack.get_blob(0));
     _stack->pop_back();
-cout<<"[myobj.farg2->_value.mpfr._mpfr_d="; myobj.farg2->_value.mpfr._mpfr_d;cout<<"]\n";
-cout<<"[-> arg2="; myobj.farg2->show(cout);cout<<"]\n";
     return -1;
 }
 
@@ -118,7 +106,7 @@ int rpn_next(branch& myobj)
     }
 
     // increment then test
-    mpfr_add_si(&myobj.farg1->_value.mpfr, &myobj.farg1->_value.mpfr, 1UL, MPFR_DEF_RND);
+    mpfr_add_si(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, 1UL, MPFR_DEF_RND);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)

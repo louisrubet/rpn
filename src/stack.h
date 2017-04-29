@@ -61,7 +61,7 @@ public:
         }
     }
 
-    // index_from is counted from back, last entry is 0
+    //
     static void copy_and_push_back(stack& from, unsigned int index_from, stack& to)
     {
         // copy a whole stack entry (with blob) and push it back to another stack
@@ -83,6 +83,7 @@ public:
             _base = (char*)realloc(_base, _total_size);
             _current = _base + offset;
         }
+
         if (_current_blob + blob_size > _blob + _total_blob_size)
         {
             unsigned long offset = _current_blob - _blob;
@@ -105,7 +106,6 @@ public:
         _vtype.push_back(type);
         _count++;
 
-//cout<<__FUNCTION__<<": -> stack size is "<<_count<<endl;//lru
         return allocated;
     }
 
@@ -118,7 +118,7 @@ public:
             _current = _vpointer[_count - 1];
             _vlen.pop_back();
             _vpointer.pop_back();
-            
+
             _current_blob = _vpointer_blob[_count - 1];
             _vlen_blob.pop_back();
             _vpointer_blob.pop_back();

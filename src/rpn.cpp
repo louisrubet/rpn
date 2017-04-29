@@ -106,52 +106,52 @@ typedef long long integer_t;
 // MPFR object
 struct floating_t
 {
-    __mpfr_struct mpfr;
+    mpfr_t mpfr;
 
     void init(void* significand)
     {
         mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
-        mpfr_custom_init_set(&mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+        mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
     }
 
     void set_significand(void* significand)
     {
-        mpfr._mpfr_d = (mp_limb_t*)significand;
+        mpfr->_mpfr_d = (mp_limb_t*)significand;
     }
 
     floating_t& operator=(const long int val)
     {
-        mpfr_set_si(&mpfr, val, s_mpfr_rnd);
+        mpfr_set_si(mpfr, val, s_mpfr_rnd);
     }
 
     floating_t& operator=(const unsigned long val)
     {
-        mpfr_set_ui(&mpfr, val, s_mpfr_rnd);
+        mpfr_set_ui(mpfr, val, s_mpfr_rnd);
     }
 
     floating_t& operator=(const integer_t val)
     {
-        mpfr_set_sj(&mpfr, val, s_mpfr_rnd);
+        mpfr_set_sj(mpfr, val, s_mpfr_rnd);
     }
 
     operator int()
     {
-        return (int)mpfr_get_si(&mpfr, s_mpfr_rnd);
+        return (int)mpfr_get_si(mpfr, s_mpfr_rnd);
     }
     
     void ensure_significand()
     {
-        //mpfr._mpfr_d = (mp_limb_t*)significand;
+        //mpfr->_mpfr_d = (mp_limb_t*)significand;
     }
 
     bool operator>(const floating_t right)
     {
-        return mpfr_cmp(&mpfr, &right.mpfr) > 0;
+        return mpfr_cmp(mpfr, right.mpfr) > 0;
     }
 
     bool operator<(const floating_t right)
     {
-        return mpfr_cmp(&mpfr, &right.mpfr) < 0;
+        return mpfr_cmp(mpfr, right.mpfr) < 0;
     }
 };
 
@@ -190,14 +190,14 @@ struct number : public object
     void copy(number& op)
     {
         _value = op._value;
-        memcpy(_value.mpfr._mpfr_d, op._value.mpfr._mpfr_d, MPFR_128BITS_STORING_LENGTH);
+        memcpy(_value.mpfr->_mpfr_d, op._value.mpfr->_mpfr_d, MPFR_128BITS_STORING_LENGTH);
     }
 
     //
     void set(const floating_t& value)
     {
         _type = cmd_number;
-        _value.mpfr._mpfr_d = value.mpfr._mpfr_d;
+        _value.mpfr->_mpfr_d = value.mpfr->_mpfr_d;
     }
 
     void set(long value)
@@ -221,7 +221,7 @@ struct number : public object
 
     void ensure_significand()
     {
-        //_value.mpfr._mpfr_d = (mp_limb_t*)_value.significand;
+        //_value.mpfr->_mpfr_d = (mp_limb_t*)_value.significand;
     }
 
     //
@@ -382,8 +382,8 @@ struct branch : public object
         arg1 = -1;
         arg2 = -1;
         arg3 = -1;
-        farg1 = 0L;
-        farg2 = 0L;
+        farg1 = NULL;
+        farg2 = NULL;
         arg_bool = 0;
         if (value != NULL)
         {
@@ -401,7 +401,7 @@ struct branch : public object
     branch_fn_t _fn;
     // args used by cmd_branch cmds
     int arg1, arg2, arg3;
-    floating_t farg1, farg2;
+    number *farg1, *farg2;
     bool arg_bool;
     unsigned int _len;
     char _value[0];
@@ -415,7 +415,7 @@ void object::show(ostream& stream)
     {
     case cmd_number:
         //(void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
-        (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
+        (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
         stream<<buffer;
         break;
     case cmd_binary:
@@ -576,6 +576,7 @@ public:
                 i++;
             }
         }
+
         return ret;
     }
 
@@ -833,6 +834,7 @@ private:
     string _err_context;
 
     stack* _stack;
+    stack _branch_stack;
 
     heap* _global_heap;
     heap _local_heap;
@@ -884,7 +886,6 @@ private:
     #define ARG_MUST_BE_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
     #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
     #define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
-    //TODO
     #define CHECK_MPFR(op) do { (void)(op); } while(0)
 
     // keywords implementation

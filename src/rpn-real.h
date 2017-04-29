@@ -9,7 +9,7 @@ void plus()
 
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_add(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
+        CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
     }
     // binary
     else if (IS_ARG_TYPE(0, cmd_binary))
@@ -35,7 +35,7 @@ void minus()
 
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sub(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
+        CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
     }
     // binary
     else if (IS_ARG_TYPE(0, cmd_binary))
@@ -59,7 +59,7 @@ void mul()
 
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_mul(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
     }
     // binary
     else if (IS_ARG_TYPE(0, cmd_binary))
@@ -85,7 +85,7 @@ void div()
 
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_div(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
+        CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
     }
     // binary
     else if (IS_ARG_TYPE(0, cmd_binary))
@@ -114,7 +114,7 @@ void neg()
     if (IS_ARG_TYPE(0, cmd_number))
     {
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_neg(&left->_value.mpfr, &left->_value.mpfr, s_mpfr_rnd));
+        CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
     }
     // binary
     else if (IS_ARG_TYPE(0, cmd_binary))
@@ -129,7 +129,7 @@ void inv()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_si_div(&left->_value.mpfr, 1L, &left->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_si_div(left->_value.mpfr, 1L, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void purcent()
@@ -141,8 +141,8 @@ void purcent()
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_mul(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
-    CHECK_MPFR(mpfr_div_si(&left->_value.mpfr, &left->_value.mpfr, 100L, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div_si(left->_value.mpfr, left->_value.mpfr, 100L, s_mpfr_rnd));
 }
 
 void purcentCH()
@@ -154,8 +154,8 @@ void purcentCH()
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_mul_si(&right->_value.mpfr, &right->_value.mpfr, 100L, s_mpfr_rnd));
-    CHECK_MPFR(mpfr_div(&left->_value.mpfr, &right->_value.mpfr, &left->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_mul_si(right->_value.mpfr, right->_value.mpfr, 100L, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div(left->_value.mpfr, right->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void power()
@@ -166,7 +166,7 @@ void power()
 
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_pow(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void squareroot()
@@ -175,7 +175,7 @@ void squareroot()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_sqrt(&left->_value.mpfr, &left->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void square()
@@ -184,7 +184,7 @@ void square()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_sqr(&left->_value.mpfr, &left->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_sqr(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void modulo()
@@ -196,5 +196,5 @@ void modulo()
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_fmod(&left->_value.mpfr, &left->_value.mpfr, &right->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_fmod(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
