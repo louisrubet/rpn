@@ -44,7 +44,7 @@ inf
 -@inf@
 nan
 @nan@
--> stack should be inf, inf, inf,-inf, -inf, nan, nan
+-> stack should be inf, inf, inf, inf, -inf, -inf, nan, nan
 
 # binary decimal
 erase
