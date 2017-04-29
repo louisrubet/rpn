@@ -20,17 +20,19 @@ class stack
 public:
     stack()
     {
-        _base = new char[ALLOC_STACK_CHUNK];
-        _blob = new char[ALLOC_BLOB_CHUNK];
-        _total_size = ALLOC_STACK_CHUNK;
-        _total_blob_size = ALLOC_BLOB_CHUNK;
+        _base = NULL;
+        _blob = NULL;
+        _total_size = 0;
+        _total_blob_size = 0;
         erase();
     }
 
     virtual ~stack()
     {
-        delete[] _base;
-        delete[] _blob;
+        if (_base != NULL)
+            free(_base);
+        if (_blob != NULL)
+            free(_blob);
     }
 
     void erase()
@@ -44,7 +46,7 @@ public:
         _vtype.clear();
         _count = 0;
     }
-
+    
     void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false, void* blob = NULL, unsigned int blob_size = 0)
     {
         void* allocated_blob;
@@ -59,6 +61,7 @@ public:
         }
     }
 
+    // index_from is counted from back, last entry is 0
     static void copy_and_push_back(stack& from, unsigned int index_from, stack& to)
     {
         // copy a whole stack entry (with blob) and push it back to another stack
@@ -75,7 +78,6 @@ public:
 
         if (_current + size > _base + _total_size)
         {
-            //TODO gerer les pbs de memoire
             unsigned long offset = _current - _base;
             _total_size += ALLOC_STACK_CHUNK;
             _base = (char*)realloc(_base, _total_size);
@@ -83,7 +85,6 @@ public:
         }
         if (_current_blob + blob_size > _blob + _total_blob_size)
         {
-            //TODO gerer les pbs de memoire
             unsigned long offset = _current_blob - _blob;
             _total_blob_size += ALLOC_BLOB_CHUNK;
             _blob = (char*)realloc(_blob, _total_blob_size);
@@ -104,6 +105,7 @@ public:
         _vtype.push_back(type);
         _count++;
 
+//cout<<__FUNCTION__<<": -> stack size is "<<_count<<endl;//lru
         return allocated;
     }
 
@@ -140,6 +142,14 @@ public:
     {
         if (index<_count)
             return _vpointer[_count-index-1];
+        else
+            return NULL;
+    }
+
+    void* get_blob(unsigned int index)
+    {
+        if (index<_count)
+            return _vpointer_blob[_count-index-1];
         else
             return NULL;
     }
