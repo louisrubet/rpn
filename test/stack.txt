@@ -1,54 +1,32 @@
 ## STACK TEST
-# test entry 1
+# entry depth 1
 1
 -> stack size should be 1
 
-# test entry 2
+# entry depth 2
 2 3
 -> stack size should be 3
--> stack should be 3, 2, 1
+-> stack should be 1, 2, 3
 
-# test drop
+# drop
 drop
 -> stack size should be 2
 
-# test drop2
+# drop2
 drop2
 -> stack size should be 0
 
-# test drop error
+# drop error
 drop
 -> error should be 2
 
-# test drop2 error
+# drop2 error
 drop2
 -> error should be 2
 
-# test drop2 error
+# drop2 error
 1 drop2
 -> error should be 2
-drop
-
-# test symbol entry 1
-1 '2'
--> stack size should be 2
--> stack should be '2', 1
-drop2
-
-# test symbol entry 2
-1 '2
--> stack size should be 2
--> stack should be '2', 1
-drop2
-
-# test symbol entry 3
-''
--> stack should be ''
-drop
-
-# test symbol entry 4
-'
--> stack should be ''
 drop
 
 # test dup
@@ -59,24 +37,24 @@ drop
 # test dup2
 drop 2 dup2
 -> stack size should be 4
--> stack should be 2, 1, 2, 1
+-> stack should be 1, 2, 1, 2
 drop2 drop2
 
 # test rot
 1 2 3 rot
 -> stack size should be 3
--> stack should be 1, 3, 2
+-> stack should be 2, 3 ,1
 
 # test depth
 depth
 -> stack size should be 4
--> stack should be 3, 1, 3, 2
+-> stack should be 3, 2, 3 ,1
 drop2 drop2
 
 # test pick
 1 2 3 4 2 pick
 -> stack size should be 5
--> stack should be 3, 4, 3, 2, 1
+-> stack should be 2, 1, 2, 3, 4
 
 # test erase
 erase

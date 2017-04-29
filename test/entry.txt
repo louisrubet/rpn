@@ -62,7 +62,7 @@ erase
 erase
 #1101b
 -> stack size should be 1
--> stack should be      13 d
+-> stack should be       13 d
 
 # symbol
 erase
@@ -74,6 +74,11 @@ erase
 'test
 -> stack size should be 1
 -> stack should be 'test'
+
+erase
+''
+-> stack size should be 1
+-> stack should be ''
 
 # string
 erase
