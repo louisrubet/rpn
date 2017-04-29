@@ -97,10 +97,10 @@ void program::test()
                 string stack_should_be = entry.substr(stack_value.size());
                 string stack_is;
                 string tmp;
-                for (int i = (int)stk.size() - 1; i >= 0; i--)
+                for (int i = 0; i < (int)stk.size(); i++)
                 {
                     stringstream os;
-                    if (i < (int)(stk.size() - 1))
+                    if (i > 0)
                         stack_is += ", ";
                     ((object*)stk.seq_obj(i))->show(os);
                     getline(os, tmp);
