@@ -327,27 +327,30 @@ static bool get_program(const string& entry, program& prog, string& remaining_en
 // care: not threadsafe
 static bool get_float(const string& entry, program& prog, string& remaining_entry)
 {
-    static number new_number;
     char* endptr;
     bool ret = false;
 
     if (entry.size() > 0)
     {
-        // TODO dans la mesure du possible, ne pas allouer sur la pile pour désallouer après (?)
-        // mais faire un parse avec une autre fonction que mpfr_strtofr puis seulement si ok faire mpfr_strtofr
-        void* significand;
-        number* num = (number*)prog.allocate_back((unsigned int)sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
-        num->init(significand);
-
-        if ((mpfr_strtofr(&num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND) != -1) && (endptr != entry.c_str()))
+        // pre parse to avoid doing a useless allocation
+        // detect the begining of a number, including nan, inf, @nan@, @inf@
+        if (entry.find_first_of("+-0123456789.ni@", 0) == 0)
         {
-            ret = true;
-            // remaining string if any
-            if (endptr != NULL)
-                remaining_entry = endptr;
+            void* significand;
+            number* num = (number*)prog.allocate_back((unsigned int)sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
+            num->init(significand);
+
+            int mpfr_ret = mpfr_strtofr(&num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
+            if (endptr != entry.c_str())
+            {
+                ret = true;
+                // remaining string if any
+                if (endptr != NULL)
+                    remaining_entry = endptr;
+            }
+            else
+                (void)prog.pop_back();
         }
-        else
-            (void)prog.pop_back();
     }
 
     return ret;
