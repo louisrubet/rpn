@@ -322,7 +322,6 @@ struct symbol : public object
     void set(const char* value, unsigned int len)
     {
         _type = cmd_symbol;
-        _auto_eval = false;
         if (value != NULL)
         {
             if (len>0)
