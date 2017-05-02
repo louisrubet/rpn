@@ -46,24 +46,6 @@ nan
 @nan@
 -> stack should be inf, inf, inf, inf, -inf, -inf, nan, nan
 
-# binary decimal
-erase
-#123d
--> stack size should be 1
--> stack should be      123 d
-
-# binary hex
-erase
-#123h
--> stack size should be 1
--> stack should be      291 d
-
-# binary binary
-erase
-#1101b
--> stack size should be 1
--> stack should be       13 d
-
 # symbol
 erase
 'test'
