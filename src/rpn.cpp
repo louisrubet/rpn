@@ -48,6 +48,8 @@ using namespace std;
 #define MPFR_128BITS_PREC 128
 #define MPFR_128BITS_STORING_LENGTH 16
 
+static string s_mpfr_printf_format_hex = "0x";
+static string s_mpfr_printf_format_bin = "0b";
 static string s_mpfr_printf_format_beg = "%.";
 static string s_mpfr_printf_format_std = "Rg";
 static string s_mpfr_printf_format_fix = "Rf";
@@ -88,7 +90,6 @@ const char* ret_value_string[ret_max] = {
 typedef enum {
     cmd_undef,
     cmd_number,/* floating value to put in stack */
-    cmd_binary,/* binary (integer) value to put in stack */
     cmd_string,/* string value to put in stack */
     cmd_symbol,/* symbol value to put in stack */
     cmd_program,/* program */
@@ -98,10 +99,8 @@ typedef enum {
 } cmd_type_t;
 
 const char* cmd_type_string[cmd_max] = {
-    "undef", "number", "binary", "string", "symbol", "program", "keyword", "keyword"
+    "undef", "number", "string", "symbol", "program", "keyword", "keyword"
 };
-
-typedef long long integer_t;
 
 // MPFR object
 struct floating_t
@@ -129,11 +128,6 @@ struct floating_t
         mpfr_set_ui(mpfr, val, s_mpfr_rnd);
     }
 
-    floating_t& operator=(const integer_t val)
-    {
-        mpfr_set_sj(mpfr, val, s_mpfr_rnd);
-    }
-
     operator int()
     {
         return (int)mpfr_get_si(mpfr, s_mpfr_rnd);
@@ -153,13 +147,8 @@ struct floating_t
 class program;
 class object;
 class branch;
+
 typedef void (program::*program_fn_t)(void);
-
-typedef union
-{
-    program_fn_t _fn;
-} operand;
-
 typedef int (program::*branch_fn_t)(branch&);
 
 //
@@ -182,6 +171,7 @@ struct number : public object
     void init(void* significand)
     {
         _type = cmd_number;
+        _representation = dec;
         _value.init(significand);
     }
 
@@ -210,12 +200,6 @@ struct number : public object
         _value = value;
     }
 
-    void set(integer_t value)
-    {
-        _type = cmd_number;
-        _value = value;
-    }
-
     static unsigned int calc_size()
     {
         return (unsigned int)(sizeof(number)+MPFR_128BITS_STORING_LENGTH);
@@ -237,6 +221,12 @@ struct number : public object
     } mode_enum;
     static mode_enum s_default_mode;
     static mode_enum s_mode;
+    
+    enum {
+        dec,
+        hex,
+        bin
+    } _representation;
 
     // precision
     static int s_default_precision;
@@ -247,30 +237,6 @@ number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
 int number::s_default_precision = DEFAULT_PRECISION;
 int number::s_current_precision = number::s_default_precision;
-
-struct binary : public object
-{
-    integer_t _value;
-
-    //
-    void set(integer_t value)
-    {
-        _type = cmd_binary;
-        _value = value;
-    }
-
-    // representation mode
-    typedef enum {
-        dec,
-        hex,
-        oct,
-        bin,
-    } binary_enum;
-    static binary_enum s_default_mode;
-    static binary_enum s_mode;
-};
-binary::binary_enum binary::s_default_mode = binary::dec;
-binary::binary_enum binary::s_mode = binary::s_default_mode;
 
 struct ostring : public object
 {
@@ -407,34 +373,8 @@ void object::show(ostream& stream)
     switch(_type)
     {
     case cmd_number:
-        //(void)mpfr_printf(s_mpfr_printf_format.c_str(), &((number*)this)->_value.mpfr);
         (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
         stream<<buffer;
-        break;
-    case cmd_binary:
-        {
-            // TODO stream and not cout
-            cout << "# ";
-            switch(((binary*)this)->s_mode)
-            {
-                case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-                case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
-                case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
-                case binary::bin:
-                {
-                    string mybin;
-                    for (int i = (int)(log((double)((binary*)this)->_value) / log(2.)); i>=0; i--)
-                    {
-                        if (((binary*)this)->_value & (1 << i))
-                            mybin+='1';
-                        else
-                            mybin+='0';
-                    }
-                    stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-                }
-                break;
-            }
-        }
         break;
     case cmd_string:
         stream << "\"" << ((ostring*)this)->_value << "\"";
@@ -806,10 +746,9 @@ public:
     
     static void apply_default()
     {
-        //default float precision, float mode, binary mode, verbosity
+        //default float precision, float mode, verbosity
         number::s_mode = number::s_default_mode;
         number::s_current_precision = number::s_default_precision;
-        binary::s_mode = binary::s_default_mode;
 
         // format for mpfr_printf 
         stringstream ss;
@@ -830,17 +769,6 @@ private:
     heap _local_heap;
     heap* _parent_local_heap;
 
-    // helpers for keywords implementation
-    integer_t getb()
-    {
-        return ((binary*)_stack->pop_back())->_value;
-    }
-
-    void putb(integer_t value)
-    {
-        ((binary*)_stack->allocate_back(sizeof(binary), cmd_binary))->set(value);
-    }
-
     int stack_size()
     {
         return _stack->size();
@@ -859,7 +787,6 @@ private:
     // keywords implementation
     #include "rpn-general.h"
     #include "rpn-real.h"
-    #include "rpn-binary.h"
     #include "rpn-test.h"
     #include "rpn-stack.h"
     #include "rpn-string.h"

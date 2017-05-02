@@ -11,13 +11,10 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "exit", &program::good_bye, "" },
     { cmd_keyword, "test", &program::test, "" }, //not seen by user
     { cmd_keyword, "verbose", &program::verbose, "set verbosity, from 0 (not verbose) to > 0" },
-    { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
-    { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
-    { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
     { cmd_keyword, "type", &program::type, "show first stack entry type" },
-    { cmd_keyword, "default", &program::rpn_default, "setting precision, float representation, float precision, binary mode and verbosity to default" },
+    { cmd_keyword, "default", &program::rpn_default, "setting precision, float representation, float precision and verbosity to default" },
 
     //REAL
     { cmd_undef, "", NULL, "\nREAL"},
@@ -34,14 +31,14 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "sq", &program::square, "unarity operator square" },
     { cmd_keyword, "mod", &program::modulo, "binary operator modulo" },
 
-    //BINARY
-    { cmd_undef, "", NULL, "\nBINARY"},
-    { cmd_keyword, "dec", &program::dec, "decimal representation for binaries" },
-    { cmd_keyword, "hex", &program::hex, "hexadecimal representation for binaries" },
-    { cmd_keyword, "oct", &program::oct, "octal representation for binaries" },
-    { cmd_keyword, "bin", &program::bin, "binary representation for binaries" },
-    { cmd_keyword, "r->b", &program::rtob, "real to binary" },
-    { cmd_keyword, "b->r", &program::btor, "binary to real" },
+    //REAL representation
+    { cmd_undef, "", NULL, "\nREAL REPRESENTATION"},
+    //{ cmd_keyword, "dec", &program::dec, "decimal representation" },
+    //{ cmd_keyword, "hex", &program::hex, "hexadecimal representation" },
+    //{ cmd_keyword, "bin", &program::bin, "binary representation" },
+    { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
+    { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
+    { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
 
     //TEST
     { cmd_undef, "", NULL, "\nTEST"},
