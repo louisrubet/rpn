@@ -71,8 +71,8 @@ void rot(void)
     (void)_stack->pop_back();
     (void)_stack->pop_back();
     (void)_stack->pop_back();
-    stack::copy_and_push_back(_branch_stack, 2, *_stack);
     stack::copy_and_push_back(_branch_stack, 1, *_stack);
+    stack::copy_and_push_back(_branch_stack, 2, *_stack);
     stack::copy_and_push_back(_branch_stack, 0, *_stack);
     (void)_branch_stack.pop_back();
     (void)_branch_stack.pop_back();
