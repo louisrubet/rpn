@@ -97,8 +97,8 @@ void test_and(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if ((mpfr_cmp_si(left->_value.mpfr, 0) == 0)
-        && (mpfr_cmp_si(right->_value.mpfr, 0) == 0))
+    if ((mpfr_cmp_si(left->_value.mpfr, 0) != 0)
+        && (mpfr_cmp_si(right->_value.mpfr, 0) != 0))
         mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
         mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
@@ -113,8 +113,8 @@ void test_or(void)
     number* right =  (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if ((mpfr_cmp_si(left->_value.mpfr, 0) == 0)
-        || (mpfr_cmp_si(right->_value.mpfr, 0) == 0))
+    if ((mpfr_cmp_si(left->_value.mpfr, 0) != 0)
+        || (mpfr_cmp_si(right->_value.mpfr, 0) != 0))
         mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
         mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
