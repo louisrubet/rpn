@@ -25,6 +25,8 @@
 #include <mpfr.h>
 #include <math.h>
 
+#include "debug.h"
+
 extern "C" {
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -36,8 +38,6 @@ extern "C" {
 #include <sstream>
 #include <fstream>
 using namespace std;
-
-#include "stack.h"
 
 // default number of printed digitis
 #define DEFAULT_PRECISION 12
@@ -139,11 +139,6 @@ struct floating_t
         return (int)mpfr_get_si(mpfr, s_mpfr_rnd);
     }
     
-    void ensure_significand()
-    {
-        //mpfr->_mpfr_d = (mp_limb_t*)significand;
-    }
-
     bool operator>(const floating_t right)
     {
         return mpfr_cmp(mpfr, right.mpfr) > 0;
@@ -164,6 +159,7 @@ typedef union
 {
     program_fn_t _fn;
 } operand;
+
 typedef int (program::*branch_fn_t)(branch&);
 
 //
@@ -171,8 +167,10 @@ struct object
 {
     // object type
     cmd_type_t _type;
+    unsigned int _size;
 
     //
+    unsigned int size() { return _size; }
     void show(ostream& stream = cout);
 };
 
@@ -186,7 +184,7 @@ struct number : public object
         _type = cmd_number;
         _value.init(significand);
     }
-    
+
     void copy(number& op)
     {
         _value = op._value;
@@ -217,11 +215,10 @@ struct number : public object
         _type = cmd_number;
         _value = value;
     }
-    unsigned int size() { return (unsigned int)sizeof(number); }
 
-    void ensure_significand()
+    static unsigned int calc_size()
     {
-        //_value.mpfr->_mpfr_d = (mp_limb_t*)_value.significand;
+        return (unsigned int)(sizeof(number)+MPFR_128BITS_STORING_LENGTH);
     }
 
     //
@@ -261,7 +258,6 @@ struct binary : public object
         _type = cmd_binary;
         _value = value;
     }
-    unsigned int size() { return sizeof(binary); }
 
     // representation mode
     typedef enum {
@@ -292,7 +288,6 @@ struct ostring : public object
         else
             len = 0;
     }
-    int size() { return sizeof(ostring)+_len+1; }
 
     //
     unsigned int _len;
@@ -315,7 +310,6 @@ struct oprogram : public object
         else
             len = 0;
     }
-    int size() { return sizeof(oprogram)+_len+1; }
 
     //
     unsigned int _len;
@@ -339,7 +333,6 @@ struct symbol : public object
         else
             len = 0;
     }
-    int size() { return sizeof(symbol)+_len+1; }
 
     //
     bool _auto_eval;
@@ -364,7 +357,6 @@ struct keyword : public object
         else
             len = 0;
     }
-    int size() { return sizeof(keyword)+_len+1; }
 
     //
     program_fn_t _fn;
@@ -395,7 +387,6 @@ struct branch : public object
         else
             len = 0;
     }
-    int size() { return sizeof(branch)+_len+1; }
 
     // branch function
     branch_fn_t _fn;
@@ -409,6 +400,7 @@ struct branch : public object
 
 void object::show(ostream& stream)
 {
+    //TODO please NOOO
     char buffer[512];
 
     switch(_type)
@@ -470,6 +462,8 @@ struct if_layout_t
     int index_else;
     int index_end;
 };
+
+#include "stack.h"
 
 class program : public stack
 {
@@ -567,12 +561,7 @@ public:
             else
             {
                 // copy the program stack entry to the running stack
-                copy_and_push_back(*this, i, stk);
-
-                // manage particular type of entries
-                if (type == cmd_number)
-                    ((number*)stk.back())->_value.set_significand(stk.back_blob());
-
+                stack::copy_and_push_back(*this, i, stk);
                 i++;
             }
         }
@@ -841,36 +830,14 @@ private:
     heap* _parent_local_heap;
 
     // helpers for keywords implementation
-    floating_t getf()
-    {
-        /* warning, caller must check object type before */
-        floating_t a = ((number*)_stack->back())->_value;
-        _stack->pop_back();
-        return a;
-    }
-
-    void putf(floating_t value)
-    {
-        /* warning, caller must check object type before */
-        number num;
-        num.set(value);
-        _stack->push_back(&num, num.size(), cmd_number);
-    }
-
     integer_t getb()
     {
-        /* warning, caller must check object type before */
-        integer_t a = ((binary*)_stack->back())->_value;
-        _stack->pop_back();
-        return a;
+        return ((binary*)_stack->pop_back())->_value;
     }
 
     void putb(integer_t value)
     {
-        /* warning, caller must check object type before */
-        binary num;
-        num.set(value);
-        _stack->push_back(&num, num.size(), cmd_binary);
+        ((binary*)_stack->allocate_back(sizeof(binary), cmd_binary))->set(value);
     }
 
     int stack_size()
