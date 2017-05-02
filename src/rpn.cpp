@@ -319,9 +319,11 @@ struct oprogram : public object
 struct symbol : public object
 {
     //
-    void set(const char* value, unsigned int len)
+    void set(const char* value, unsigned int len, bool auto_eval)
     {
         _type = cmd_symbol;
+        _auto_eval = auto_eval;
+
         if (value != NULL)
         {
             if (len>0)

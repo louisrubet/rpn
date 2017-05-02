@@ -213,9 +213,9 @@ static bool get_symbol(const string& entry, program& prog, string& remaining_ent
             obj_len = sizeof(symbol)+1;
 
             // allocate and set object
+            // symbol beginning with ' is not autoevaluated
             symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
-            new_obj->_auto_eval = false;
-            new_obj->set("", 0);
+            new_obj->set("", 0, false);
         }
         else
         {
@@ -228,9 +228,9 @@ static bool get_symbol(const string& entry, program& prog, string& remaining_ent
             obj_len = sizeof(symbol)+naked_entry_len+1;
 
             // allocate and set object
+            // symbol beginning with ' is not autoevaluated
             symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
-            new_obj->_auto_eval = false;
-            new_obj->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
+            new_obj->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len, false);
         }
         ret = true;
     }
@@ -255,9 +255,9 @@ static bool get_other(const string& entry, program& prog, string& remaining_entr
         obj_len = sizeof(symbol)+naked_entry_len+1;
 
         // allocate and set object
+        // symbol not beginning with ' is autoevaluated (ie is evaluated when pushed on stack)
         symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
-        new_obj->set(entry.c_str(), naked_entry_len);
-        new_obj->_auto_eval = true;
+        new_obj->set(entry.c_str(), naked_entry_len, true);
         ret = true;
     }
 
