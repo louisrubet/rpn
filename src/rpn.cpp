@@ -48,12 +48,11 @@ using namespace std;
 #define MPFR_128BITS_PREC 128
 #define MPFR_128BITS_STORING_LENGTH 16
 
-static string s_mpfr_printf_format_hex = "0x";
-static string s_mpfr_printf_format_bin = "0b";
 static string s_mpfr_printf_format_beg = "%.";
 static string s_mpfr_printf_format_std = "Rg";
 static string s_mpfr_printf_format_fix = "Rf";
 static string s_mpfr_printf_format_sci = "Re";
+static string s_mpfr_printf_format_hex = "%Ra";
 static string s_mpfr_printf_format = "%.12Rg";
 static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
 static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
@@ -373,8 +372,19 @@ void object::show(ostream& stream)
     switch(_type)
     {
     case cmd_number:
-        (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
-        stream<<buffer;
+        switch(((number*)this)->_representation)
+        {
+            case number::dec:
+                (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
+                stream<<buffer;
+                break;
+            case number::hex:
+                (void)mpfr_sprintf(buffer, s_mpfr_printf_format_hex.c_str(), ((number*)this)->_value.mpfr);                
+                stream<<buffer;
+                break;
+            case number::bin:
+                cout<<"<binary representation TODO>";
+        }
         break;
     case cmd_string:
         stream << "\"" << ((ostring*)this)->_value << "\"";
