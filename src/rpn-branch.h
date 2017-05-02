@@ -56,13 +56,13 @@ int rpn_start(branch& myobj)
     // farg1 = first value of start command
     // farg2 = last value of start command
     stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    myobj.farg2 = (number*)_branch_stack.get_obj(0);
-    myobj.farg2->init(_branch_stack.get_blob(0));
+    //myobj.farg2 = (number*)_branch_stack.get_obj(0);
+    //myobj.farg2->init(_branch_stack.get_blob(0));
     _stack->pop_back();
 
     stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    myobj.farg1 = (number*)_branch_stack.get_obj(0);
-    myobj.farg1->init(_branch_stack.get_blob(0));
+    //myobj.farg1 = (number*)_branch_stack.get_obj(0);
+    //myobj.farg1->init(_branch_stack.get_blob(0));
     _stack->pop_back();
     return -1;
 }
@@ -79,17 +79,16 @@ int rpn_for(branch& myobj)
     // farg2 = last value of for command
     // arg1 = index of symbol to increase
     stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    myobj.farg2 = (number*)_branch_stack.back();
-    myobj.farg2->init(_branch_stack.back_blob());
+    //myobj.farg2 = (number*)_branch_stack.back();
+    //myobj.farg2->init(_branch_stack.back_blob());
     stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    myobj.farg1 = (number*)_branch_stack.back();
-    myobj.farg1->init(_branch_stack.back_blob());
+    //myobj.farg1 = (number*)_branch_stack.back();
+    //myobj.farg1->init(_branch_stack.back_blob());
 
     // store symbol with first value
     //TODO
-    //number* num = (number*)_local_heap.add(string(sym->_value), NULL, sizeof(number), cmd_number);
+    //number* num = (number*)_local_heap.add(string(sym->_value), NULL, number::calc_size(), cmd_number);
     //num->set(myobj.farg1);
-    //num->ensure_significand();
 
     return myobj.arg1 + 1;
 }
@@ -174,7 +173,6 @@ int rpn_step(branch& myobj)
         if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
         {
             ((number*)obj)->_value = myobj.farg1;
-            ((number*)obj)->ensure_significand();
         }
     }
 

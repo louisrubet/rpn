@@ -8,15 +8,15 @@ void eval(void)
     if (IS_ARG_TYPE(0, cmd_symbol))
     {
         // recall a variable
-        void* obj;
+        object* obj;
         unsigned int size;
         int type;
         string variable(((symbol*)_stack->back())->_value);
 
         // mind the order of heaps
-        if (_local_heap.get(variable, obj, size, type)
-                || ((_parent_local_heap != NULL) && _parent_local_heap->get(variable, obj, size, type))
-                || _global_heap->get(variable, obj, size, type))
+        if (_local_heap.get(variable, obj, size)
+                || ((_parent_local_heap != NULL) && _parent_local_heap->get(variable, obj, size))
+                || _global_heap->get(variable, obj, size))
         {
             // if variable holds a program, run this program
             if (type == cmd_program)
@@ -27,9 +27,10 @@ void eval(void)
             }
             else
             {
-                // else recall variable (i.e. stack its content)
+                // else recall this variable (i.e. stack its content)
                 (void)_stack->pop_back();
-                _stack->push_back(obj, size, type);
+                object* new_obj = _stack->allocate_back(size, obj->_type);
+                stack::copy_and_push_back(obj, *_stack, size);
             }
         }
         else

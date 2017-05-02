@@ -8,11 +8,8 @@
 #include <map>
 using namespace std;
 
-#include "debug.h"
-
 // allocation base size
 #define ALLOC_STACK_CHUNK (64*1024)
-#define ALLOC_BLOB_CHUNK (64*1024)
 
 //
 class stack
@@ -21,9 +18,7 @@ public:
     stack()
     {
         _base = NULL;
-        _blob = NULL;
         _total_size = 0;
-        _total_blob_size = 0;
         erase();
     }
 
@@ -31,51 +26,43 @@ public:
     {
         if (_base != NULL)
             free(_base);
-        if (_blob != NULL)
-            free(_blob);
     }
 
     void erase()
     {
         _current = _base;
-        _current_blob = _blob;
         _vpointer.clear();
-        _vpointer_blob.clear();
         _vlen.clear();
-        _vlen_blob.clear();
-        _vtype.clear();
         _count = 0;
-    }
-    
-    void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false, void* blob = NULL, unsigned int blob_size = 0)
-    {
-        void* allocated_blob;
-        void* allocated = allocate_back(size, type, blob_size, &allocated_blob);
-
-        if (!dont_copy)
-        {
-            if (size > 0)
-                memcpy(allocated, obj, size);
-            if (blob != NULL && blob_size > 0)
-                memcpy(allocated_blob, blob, blob_size);
-        }
     }
 
     //
     static void copy_and_push_back(stack& from, unsigned int index_from, stack& to)
     {
-        // copy a whole stack entry (with blob) and push it back to another stack
-        void* allocated_blob;
-        void* allocated = to.allocate_back(from.seq_len(index_from), from.seq_type(index_from), from.seq_blob_size(index_from), &allocated_blob);
-
+        // copy a whole stack entry and push it back to another stack
+        object* allocated = to.allocate_back(from.seq_len(index_from), from.seq_type(index_from));
         memcpy(allocated, from.seq_obj(index_from), from.seq_len(index_from));
-        memcpy(allocated_blob, from.seq_blob(index_from), from.seq_blob_size(index_from));
+
+        if (allocated->_type == cmd_number)
+            ((number*)allocated)->_value.set_significand(((number*)allocated)+1);
     }
 
-    void* allocate_back(unsigned int size, int type, unsigned int blob_size = 0, void** blob = NULL)
+    //
+    static void copy_and_push_back(object* from, stack& to, unsigned int size)
     {
-        void* allocated;
+        // copy a whole stack entry and push it back to another stack
+        object* allocated = to.allocate_back(size, from->_type);
+        memcpy(allocated, from, size);
 
+        if (allocated->_type == cmd_number)
+            ((number*)allocated)->_value.set_significand(((number*)allocated)+1);
+    }
+    
+    object* allocate_back(unsigned int size, cmd_type_t type)
+    {
+        object* allocated;
+
+        // manage memory allocation
         if (_current + size > _base + _total_size)
         {
             unsigned long offset = _current - _base;
@@ -84,49 +71,35 @@ public:
             _current = _base + offset;
         }
 
-        if (_current_blob + blob_size > _blob + _total_blob_size)
-        {
-            unsigned long offset = _current_blob - _blob;
-            _total_blob_size += ALLOC_BLOB_CHUNK;
-            _blob = (char*)realloc(_blob, _total_blob_size);
-            _current_blob = _blob + offset;
-        }
-
+        // manage stack itself
         _vlen.push_back(size);
-        _vpointer.push_back(_current);
-        allocated = _current;
+        _vpointer.push_back((object*)_current);
+        allocated = (object*)_current;
         _current += size;
-
-        _vlen_blob.push_back(blob_size);
-        _vpointer_blob.push_back(_current_blob);
-        if (blob != NULL)
-            *blob = _current_blob;
-        _current_blob += blob_size;
-
-        _vtype.push_back(type);
         _count++;
+
+        // init object
+        allocated->_type = type;
+        allocated->_size = size;
+        if (type == cmd_number)
+            ((number*)allocated)->_value.init(((number*)allocated)+1);
 
         return allocated;
     }
 
-    void* pop_back()
+    object* pop_back()
     {
-        void* back = NULL;
+        object* back = NULL;
 
         if (_count > 0)
         {
-            _current = _vpointer[_count - 1];
+            _current = (char*)_vpointer[_count - 1];
             _vlen.pop_back();
             _vpointer.pop_back();
 
-            _current_blob = _vpointer_blob[_count - 1];
-            _vlen_blob.pop_back();
-            _vpointer_blob.pop_back();
-
-            _vtype.pop_back();
             _count--;
 
-            back = _current;
+            back = (object*)_current;
         }
 
         return back;
@@ -138,7 +111,7 @@ public:
     }
 
     // stack access (index is counted from back)
-    void* get_obj(unsigned int index)
+    object* get_obj(unsigned int index)
     {
         if (index<_count)
             return _vpointer[_count-index-1];
@@ -146,31 +119,15 @@ public:
             return NULL;
     }
 
-    void* get_blob(unsigned int index)
-    {
-        if (index<_count)
-            return _vpointer_blob[_count-index-1];
-        else
-            return NULL;
-    }
-
-    void* operator[](unsigned int index)
+    object* operator[](unsigned int index)
     {
         return get_obj(index);
     }
     
-    void* back()
+    object* back()
     {
         if (_count>0)
             return _vpointer[_count-1];
-        else
-            return NULL;
-    }
-
-    void* back_blob()
-    {
-        if (_count>0)
-            return _vpointer_blob[_count-1];
         else
             return NULL;
     }
@@ -183,16 +140,16 @@ public:
             return 0;
     }
 
-    int get_type(unsigned int index)
+    cmd_type_t get_type(unsigned int index)
     {
         if (index<_count)
-            return _vtype[_count-index-1];
+            return _vpointer[_count-index-1]->_type;
         else
-            return 0;
+            return cmd_undef;
     }
 
     // sequential access (index is counted from front)
-    void* seq_obj(unsigned int index)
+    object* seq_obj(unsigned int index)
     {
         if (index<_count)
             return _vpointer[index];
@@ -208,44 +165,22 @@ public:
             return 0;
     }
 
-    void* seq_blob(unsigned int index)
+    cmd_type_t seq_type(unsigned int index)
     {
         if (index<_count)
-            return _vpointer_blob[index];
+            return _vpointer[index]->_type;
         else
-            return NULL;
-    }
-
-    unsigned int seq_blob_size(unsigned int index)
-    {
-        if (index<_count)
-            return _vlen_blob[index];
-        else
-            return 0;
-    }
-
-    int seq_type(unsigned int index)
-    {
-        if (index<_count)
-            return _vtype[index];
-        else
-            return 0;
+            return cmd_undef;
     }
 
 private:
     char* _base;
-    char* _blob;
     char* _current;
-    char* _current_blob;
 
-    vector<char*> _vpointer;//pointer on each entry
-    vector<char*> _vpointer_blob;//pointer on each entry blob
+    vector<object*> _vpointer;//pointer on each entry
     vector<unsigned int> _vlen;// size of each entry in bytes
-    vector<unsigned int> _vlen_blob;// size of each blob entry in bytes
-    vector<int> _vtype;//type of each entry
-    unsigned int _count;// =_vlen.size()=_vpointer.size()=_vtype.size()
+    unsigned int _count;// =_vlen.size()=_vpointer.size()
     unsigned int _total_size;//total allocated size in bytes
-    unsigned int _total_blob_size;//total allocated blob size in bytes
 };
 
 //
@@ -255,8 +190,7 @@ private:
     struct local_var
     {
         unsigned int length;
-        int type;
-        int blob;
+        object obj[0];
     };
 
 public:
@@ -267,40 +201,38 @@ public:
             free(i->second);
     }
 
-    void* add(const string name, void* obj, unsigned int size, int type = 0)
+    object* add(const string name, void* obj, unsigned int size, int type = 0)
     {
-        struct local_var* blob = _map[name];
-        if (blob == NULL)
+        struct local_var* local = _map[name];
+        if (local == NULL)
         {
             //TODO gerer les pbs de memoire
-            blob = (struct local_var*)malloc(size + sizeof(local_var));
-            _map[name] = blob;
+            local = (struct local_var*)malloc(size + sizeof(local_var));
+            _map[name] = local;
         }
-        else if (size != blob->length)
+        else if (size != local->length)
         {
             //TODO gerer les pbs de memoire
-            blob = (struct local_var*)realloc(blob, size + sizeof(local_var));
-            _map[name] = blob;
+            local = (struct local_var*)realloc(local, size + sizeof(local_var));
+            _map[name] = local;
         }
-        blob->length = size;
-        blob->type= type;
+        local->length = size;
         
         if (obj != NULL)
-            memcpy(&blob->blob, obj, size);
+            memcpy(local->obj, obj, size);
 
-        return (void*)&blob->blob;
+        return (object*)local->obj;
     }
     
-    bool get(const string name, void*& obj, unsigned int& size, int& type)
+    bool get(const string name, object*& obj, unsigned int& size)
     {
         map<string, struct local_var*>::iterator i = _map.find(name);
         if (i != _map.end())
         {
             if (i->second != NULL)
             {
-                obj = &i->second->blob;
+                obj = i->second->obj;
                 size = i->second->length;
-                type = i->second->type;
             }
             return true;
         }
@@ -313,24 +245,23 @@ public:
         return (_map.find(name) != _map.end());
     }
 
-    bool get_by_index(int num, string& name, void*& obj, unsigned int& size, int& type)
+    bool get_by_index(int num, string& name, object*& obj, unsigned int& size)
     {
         if (num>=0 && num<(int)_map.size())
         {
-            struct local_var* blob;
+            struct local_var* local;
             map<string, struct local_var*>::iterator i=_map.begin();
 
             //TODO moche moche moche
             for(int j=0;j<num;j++)
                 i++;
 
-            blob = (struct local_var*)i->second;
-            assert(blob != NULL);
+            local = (struct local_var*)i->second;
+            assert(local != NULL);
 
             name = i->first;
-            obj = &blob->blob;
-            size = blob->length;
-            type = blob->type;
+            obj = local->obj;
+            size = local->length;
             return true;
         }
         else
