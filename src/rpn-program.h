@@ -29,7 +29,6 @@ void eval(void)
             {
                 // else recall this variable (i.e. stack its content)
                 (void)_stack->pop_back();
-                object* new_obj = _stack->allocate_back(size, obj->_type);
                 stack::copy_and_push_back(obj, *_stack, size);
             }
         }
