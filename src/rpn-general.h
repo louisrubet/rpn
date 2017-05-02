@@ -153,7 +153,7 @@ void type()
     unsigned int string_size = strlen(cmd_type_string[type]);
     unsigned int size = sizeof(symbol)+string_size+1;
     symbol* sym = (symbol*)allocate_back(size, cmd_symbol);
-    sym->set(cmd_type_string[type], string_size);
+    sym->set(cmd_type_string[type], string_size, false);
 }
 
 void rpn_default()
