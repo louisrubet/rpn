@@ -1,7 +1,7 @@
 // version and soft name
 static const char version[] = "2.0 RC1";
 static const char uname[] =
-    "rpn v2.0 RC1, (c) 2013 <louis@rubet.fr>, GNU General Public License";
+    "rpn v2.0 RC1, (c) 2013 <louis@rubet.fr>, GNU LGPL v3";
 
 static const char g_cursor[] = "> ";
 static const string g_show_stack_separator = "> ";
@@ -11,12 +11,10 @@ static const char description[] =
     ATTR_BOLD "R" ATTR_OFF "everse "
     ATTR_BOLD "P" ATTR_OFF "olish "
     ATTR_BOLD "N" ATTR_OFF "otation language, based on "
-    "Hewlett-Packard RPL language\n"
-    "using MPFR library v";
-static const char description_more[] =
-    " released under the GNU Lesser General Public License,\n"
-    "version 3 or any later version\n";
-
+    "Hewlett-Packard RPL language\n\n"
+    "using " ATTR_BOLD "MPFR library v" ATTR_OFF MPFR_VERSION_STRING " under GNU LGPL v3\n"
+    "for multiple-precision floating-point computations with correct rounding\n";
+    
 // syntax
 static const char syntax[] =
     ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\n"
