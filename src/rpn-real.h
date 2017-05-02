@@ -1,126 +1,54 @@
 void plus()
 {
     MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-        number* right = (number*)_stack->pop_back();
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-        
-        binary* right = (binary*)_stack->pop_back();
-        binary* left = (binary*)_stack->back();
-        left->_value += right->_value;
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void minus()
 {
     MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-        number* right = (number*)_stack->pop_back();
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-
-        binary* right = (binary*)_stack->pop_back();
-        binary* left = (binary*)_stack->back();
-        left->_value -= right->_value;
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void mul()
 {
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
+    MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-        number* right = (number*)_stack->pop_back();
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-
-        binary* right = (binary*)_stack->pop_back();
-        binary* left = (binary*)_stack->back();
-        left->_value *= right->_value;
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void div()
 {
     MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-        number* right = (number*)_stack->pop_back();
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-        if (((binary*)_stack->get_obj(0))->_value == 0)
-        {
-            ERR_CONTEXT(ret_div_by_zero);
-        }
-        else
-        {
-            binary* right = (binary*)_stack->pop_back();
-            binary* left = (binary*)_stack->back();
-            left->_value /= right->_value;
-        }
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void neg()
 {
     MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-        ((binary*)_stack->back())->_value *= -1;
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void inv()

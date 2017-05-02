@@ -327,8 +327,7 @@ static bool get_program(const string& entry, program& prog, string& remaining_en
     return ret;
 }
 
-// care: not threadsafe
-static bool get_float(const string& entry, program& prog, string& remaining_entry)
+static bool get_number(const string& entry, program& prog, string& remaining_entry)
 {
     char* endptr;
     bool ret = false;
@@ -344,6 +343,15 @@ static bool get_float(const string& entry, program& prog, string& remaining_entr
             int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
             if (endptr != NULL && endptr != entry.c_str())
             {
+                // determine representation
+                string beg = entry.substr(0, 2);
+                if (beg == "0x" || beg == "0X")
+                    num->_representation = number::hex;
+                else if (beg == "0b" || beg == "0B")
+                    num->_representation = number::bin;
+                else
+                    num->_representation = number::dec;
+
                 ret = true;
 
                 // remaining string if any
@@ -357,91 +365,13 @@ static bool get_float(const string& entry, program& prog, string& remaining_entr
     return ret;
 }
 
-// care: not threadsafe
-static bool get_binary(const string& entry, program& prog, string& remaining_entry)
-{
-    integer_t val;
-    bool ret = false;
-
-    if ((entry.size() >= 2) && (entry[0] == '#'))
-    {
-        stringstream token;
-        char type = entry[entry.size() - 1];
-        bool syntax;
-
-        switch(type)
-        {
-            case 'd':
-                token<<std::dec<<entry.substr(1);
-                syntax = true;
-                break;
-            case 'h':
-                token<<std::hex<<entry.substr(1);
-                syntax = true;
-                break;
-            case 'o':
-                token<<std::oct<<entry.substr(1);
-                syntax = true;
-                break;
-            default:
-                syntax = false;
-                break;
-        }
-
-        token>>val;
-        if(syntax && !token.fail())
-        {
-            binary* new_binary = (binary*)prog.allocate_back((unsigned int)sizeof(binary), cmd_binary);
-            new_binary->set(val);
-            ret = true;
-        }
-    }
-
-    return ret;
-}
-
-static bool get_binary_bin(const string& entry, program& prog, string& remaining_entry)
-{
-    integer_t val;
-    int len = entry.size();
-    bool ret = false;
-    
-    if ((len > 2) && (entry[0] == '#') && (entry[len - 1] == 'b'))
-    {
-        integer_t val(0);
-        integer_t exponent = (1 << (len-3));
-        for(int i=0; i<(len-2); i++)
-        {
-            if (entry.at(i+1)=='1')
-            {
-                val+=exponent;
-            }
-            exponent>>=1;
-        }
-
-        binary* new_binary = (binary*)prog.allocate_back((unsigned int)sizeof(binary), cmd_binary);
-        new_binary->set(val);
-        ret = true;
-    }
-
-    return ret;
-}
-
 static bool _obj_from_string(const string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
     
     remaining_entry.erase();
 
-    if (get_float(entry, prog, remaining_entry))
-    {
-        ret = true;
-    }
-    else if (get_binary(entry, prog, remaining_entry))
-    {
-        ret = true;
-    }
-    else if (get_binary_bin(entry, prog, remaining_entry))
+    if (get_number(entry, prog, remaining_entry))
     {
         ret = true;
     }

@@ -62,16 +62,6 @@ void help()
     }
 
     cout<<endl<<"Current float precision is "<<number::s_current_precision<<endl;
-
-    cout<<"Current binary mode is ";
-    switch(binary::s_mode)
-    {
-        case binary::dec: cout << "'dec'"; break;
-        case binary::hex: cout << "'hex'"; break;
-        case binary::oct: cout << "'oct'"; break;
-        case binary::bin: cout << "'bin'"; break;
-        default: cout << "unknown"; break;
-    }
     cout<<endl<<endl;
 }
 
