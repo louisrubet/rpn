@@ -91,3 +91,85 @@ drop
 -> stack size should be 1
 -> stack should be 0
 drop
+
+# not (1)
+not
+-> error should be 2
+1 not
+-> stack size should be 1
+-> stack should be 0
+drop
+
+# not (2)
+0 not
+-> stack size should be 1
+-> stack should be 1
+drop
+
+# >
+0 0.1 >
+-> stack should be 0
+drop
+0.1 0 >
+-> stack should be 1
+drop
+1 1 >
+-> stack should be 0
+drop
+
+# >=
+0 0.1 >=
+-> stack should be 0
+drop
+0.1 0 >=
+-> stack should be 1
+drop
+1 1 >=
+-> stack should be 1
+drop
+
+# <
+0 0.1 <
+-> stack should be 1
+drop
+0.1 0 <
+-> stack should be 0
+drop
+1 1 <
+-> stack should be 0
+drop
+
+# <=
+0 0.1 <=
+-> stack should be 1
+drop
+0.1 0 <=
+-> stack should be 0
+drop
+1 1 <=
+-> stack should be 1
+drop
+
+# !=
+0 0.1 !=
+-> stack should be 1
+drop
+1 1 !=
+-> stack should be 0
+drop
+
+# ==
+0 0.1 ==
+-> stack should be 0
+drop
+1 1 ==
+-> stack should be 1
+drop
+
+# same
+0 0.1 same
+-> stack should be 0
+drop
+1 1 same
+-> stack should be 1
+drop
