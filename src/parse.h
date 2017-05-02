@@ -214,6 +214,7 @@ static bool get_symbol(const string& entry, program& prog, string& remaining_ent
 
             // allocate and set object
             symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
+            new_obj->_auto_eval = false;
             new_obj->set("", 0);
         }
         else
@@ -228,6 +229,7 @@ static bool get_symbol(const string& entry, program& prog, string& remaining_ent
 
             // allocate and set object
             symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
+            new_obj->_auto_eval = false;
             new_obj->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
         }
         ret = true;

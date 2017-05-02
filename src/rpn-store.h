@@ -69,7 +69,7 @@ void edit(void)
 // carefull : this is not a langage command
 void auto_rcl(symbol* symb)
 {
-    if (!symb->_auto_eval)
+    if (symb->_auto_eval)
     {
         object* obj;
         unsigned int size;
