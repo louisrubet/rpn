@@ -5,7 +5,7 @@ void sto(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     string name(((symbol*)_stack->pop_back())->_value);
-    _global_heap->add(name, _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
+    _global_heap->add(name, _stack->get_obj(0), _stack->get_len(0));
     (void)_stack->pop_back();
 }
 
@@ -15,18 +15,19 @@ void rcl(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     // recall a variable
-    void* obj;
+    object* obj;
     unsigned int size;
     int type;
     string variable(((symbol*)_stack->back())->_value);
 
     // mind the order of heaps
-    if (_local_heap.get(variable, obj, size, type)
-            || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size, type)))
-            || _global_heap->get(variable, obj, size, type))
+    if (_local_heap.get(variable, obj, size)
+            || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size)))
+            || _global_heap->get(variable, obj, size))
     {
         (void)_stack->pop_back();
-        _stack->push_back(obj, size, type);
+        object* new_obj = _stack->allocate_back(size, obj->_type);
+        stack::copy_and_push_back(obj, *_stack, size);
     }
     else
         ERR_CONTEXT(ret_unknown_variable);
@@ -68,29 +69,31 @@ void edit(void)
 // carefull : this is not a langage command
 void auto_rcl(symbol* symb)
 {
-    if (symb->_auto_eval)
+    if (!symb->_auto_eval)
     {
-        void* obj;
+        object* obj;
         unsigned int size;
         int type;
         string variable(symb->_value);
 
         // mind the order of heaps
-        if (_local_heap.get(variable, obj, size, type)
-                || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size, type)))
-                || _global_heap->get(variable, obj, size, type))
+        if (_local_heap.get(variable, obj, size)
+                || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size)))
+                || _global_heap->get(variable, obj, size))
         {
-            _stack->push_back(obj, size, type);
+            stack::copy_and_push_back(obj, *_stack, size);
             if (type == cmd_program)
                 eval();
-            else if (type == cmd_number)
-                ((number*)_stack->back())->ensure_significand();
         }
         else
-            _stack->push_back(symb, symb->size(), cmd_symbol);
+        {
+            stack::copy_and_push_back(symb, *_stack, symb->size());
+        }
     }
     else
-        _stack->push_back(symb, symb->size(), cmd_symbol);
+    {
+        stack::copy_and_push_back(symb, *_stack, symb->size());
+    }
 }
 
 void purge(void)
@@ -125,8 +128,8 @@ void vars(void)
 
     for (int i=0; i<(int)_global_heap->size(); i++)
     {
-        (void)_global_heap->get_by_index(i, name, (void*&)obj, size, type);
-        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[type]<<", value ";
+        (void)_global_heap->get_by_index(i, name, obj, size);
+        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[obj->_type]<<", value ";
         obj->show();
         cout<<endl;
     }
@@ -134,16 +137,16 @@ void vars(void)
     {
         for (int i=0; i<(int)_parent_local_heap->size(); i++)
         {
-            (void)_parent_local_heap->get_by_index(i, name, (void*&)obj, size, type);
-            cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[type]<<", value ";
+            (void)_parent_local_heap->get_by_index(i, name, obj, size);
+            cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[obj->_type]<<", value ";
             obj->show();
             cout<<endl;
         }
     }
     for (int i=0; i<(int)_local_heap.size(); i++)
     {
-        (void)_local_heap.get_by_index(i, name, (void*&)obj, size, type);
-        cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[type]<<", value ";
+        (void)_local_heap.get_by_index(i, name, obj, size);
+        cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[obj->_type]<<", value ";
         obj->show();
         cout<<endl;
     }

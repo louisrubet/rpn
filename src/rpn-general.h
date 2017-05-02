@@ -128,55 +128,25 @@ void sci()
 
 void rpn_version()
 {
-    int naked_entry_len;
-    int obj_len;
-    ostring* str;
-
-    // entry length without prefix / postfix
-    naked_entry_len = (int)strlen(version);
-
-    // total object length
-    obj_len = sizeof(ostring)+naked_entry_len+1;
-
-    // allocate object
-    str = (ostring*)malloc(obj_len);
-
-    // set it
+    // allocate and set object
+    unsigned int naked_entry_len = strlen(version);
+    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring)+naked_entry_len+1, cmd_string);
     str->set(version, naked_entry_len);
-
-    // push in stack
-    _stack->push_back(str, str->size(), cmd_string);
-    free(str);
 }
 
 void rpn_uname()
 {
-    int naked_entry_len;
-    int obj_len;
-    ostring* str;
-
-    // entry length without prefix / postfix
-    naked_entry_len = (int)strlen(uname);
-
-    // total object length
-    obj_len = sizeof(ostring)+naked_entry_len+1;
-
-    // allocate object
-    str = (ostring*)malloc(obj_len);
-
-    // set it
+    // allocate and set object
+    unsigned int naked_entry_len = strlen(uname);
+    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring)+naked_entry_len+1, cmd_string);
     str->set(uname, naked_entry_len);
-
-    // push in stack
-    _stack->push_back(str, str->size(), cmd_string);
-    free(str);
 }
 
 void type()
 {
     MIN_ARGUMENTS(1);
 
-    int type = _stack->seq_type(_stack->size()-1);
+    int type = _stack->pop_back()->_type;
     if (type < 0 || type >= (int)cmd_max)
         type = (int)cmd_undef;
 

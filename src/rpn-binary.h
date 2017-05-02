@@ -24,10 +24,8 @@ void rtob()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     number* left = (number*)_stack->pop_back();
-
-    binary bin;
-    bin.set(mpfr_get_sj(left->_value.mpfr, s_mpfr_rnd));
-    _stack->push_back(&bin, bin.size(), cmd_binary);
+    binary* bin = (binary*)_stack->allocate_back(sizeof(binary), cmd_binary);
+    bin->set(mpfr_get_sj(left->_value.mpfr, s_mpfr_rnd));
 }
 
 void btor()
@@ -36,9 +34,6 @@ void btor()
     ARG_MUST_BE_OF_TYPE(0, cmd_binary);
 
     integer_t bin = getb();
-
-    void* significand;
-    number* left = (number*)_stack->allocate_back(sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
-    left->init(significand);
+    number* left = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     left->set(bin);
 }

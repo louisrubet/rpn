@@ -10,11 +10,11 @@ void instr()
         ((object*)_stack->pop_back())->show(out);
 
         // reserve the correct size in stack
-        _stack->push_back(NULL, out.str().size(), cmd_string, true);
+        unsigned int str_size = (unsigned int)out.str().size();
+        ostring* str = (ostring*)_stack->allocate_back(str_size+1+sizeof(ostring), cmd_string);
 
         // fill the obj
-        ostring* str = (ostring*)_stack->get_obj(0);
-        str->set(out.str().c_str(), out.str().size());
+        str->set(out.str().c_str(), str_size);
     }
 }
 
