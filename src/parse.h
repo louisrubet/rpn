@@ -206,9 +206,9 @@ static bool get_symbol(const string& entry, program& prog, string& remaining_ent
 
     if (entry_len>=1 && entry[0]=='\'')
     {
-        // symbol entry, like 'toto'
         if (entry_len == 1)
         {
+            // void symbol entry, like '
             // total object length
             obj_len = sizeof(symbol)+1;
 
@@ -218,6 +218,7 @@ static bool get_symbol(const string& entry, program& prog, string& remaining_ent
         }
         else
         {
+            // symbol entry, like 'toto' or 'toto
             int naked_entry_len;
 
             // entry length without prefix / postfix
@@ -336,17 +337,15 @@ static bool get_float(const string& entry, program& prog, string& remaining_entr
         // detect the begining of a number, including nan, inf, @nan@, @inf@
         if (entry.find_first_of("+-0123456789.ni@", 0) == 0)
         {
-            void* significand;
-            number* num = (number*)prog.allocate_back((unsigned int)sizeof(number), cmd_number, MPFR_128BITS_STORING_LENGTH, &significand);
-            num->init(significand);
+            number* num = (number*)prog.allocate_back(number::calc_size(), cmd_number);
 
             int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
-            if (endptr != entry.c_str())
+            if (endptr != NULL && endptr != entry.c_str())
             {
                 ret = true;
+
                 // remaining string if any
-                if (endptr != NULL)
-                    remaining_entry = endptr;
+                remaining_entry = endptr;
             }
             else
                 (void)prog.pop_back();

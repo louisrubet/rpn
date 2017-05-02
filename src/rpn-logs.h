@@ -1,9 +1,8 @@
 void rpn_e(void)
 {
-    number num;
-    CHECK_MPFR(mpfr_const_euler(num._value.mpfr, s_mpfr_rnd));
-    _stack->push_back(&num, num.size(), cmd_number);
-    ((number*)_stack->back())->ensure_significand();
+    number* euler = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+    euler->_value = 1L;
+    CHECK_MPFR(mpfr_exp(euler->_value.mpfr, euler->_value.mpfr, s_mpfr_rnd));
 }
 
 void rpn_log()
