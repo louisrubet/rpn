@@ -136,7 +136,7 @@ void type()
 {
     MIN_ARGUMENTS(1);
 
-    int type = _stack->pop_back()->_type;
+    int type = _stack->back()->_type;
     if (type < 0 || type >= (int)cmd_max)
         type = (int)cmd_undef;
 
