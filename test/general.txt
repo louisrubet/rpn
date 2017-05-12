@@ -35,21 +35,27 @@ version
 
 uname
 ->stack size should be 2
+erase
 
+# default
+1
+-> stack should be 1.00e+00
+default
+-> stack should be 1
 erase
 
 # type
 1
 type
--> stack should be 'number'
-drop
+-> stack should be 1, 'number'
+erase
 
 "hey"
 type
--> stack should be 'string'
-drop
+-> stack should be "hey", 'string'
+erase
 
 << -> n << n >> >>
 type
--> stack should be 'program'
-drop
+-> stack should be << -> n  << n  >> >>, 'program'
+erase
