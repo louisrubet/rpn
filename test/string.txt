@@ -1,0 +1,36 @@
+## STRING
+
+default
+erase
+
+# ->str on real (1)
+1
+->str
+-> stack should be "1"
+drop
+
+# ->str on real (2)
+1.234
+25 std
+->str
+-> stack should be "1.234"
+drop
+
+# ->str on real (3)
+1.234
+20 fix
+->str
+-> stack should be "1.23400000000000000000"
+drop
+
+# ->str on symbol (1)
+toto
+->str
+-> stack should be "'toto'"
+drop
+
+# ->str on symbol (2)
+'toto'
+->str
+-> stack should be "'toto'"
+drop
