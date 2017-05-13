@@ -10,7 +10,6 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "quit", &program::good_bye, "(or q or exit) quit software" },
     { cmd_keyword, "exit", &program::good_bye, "" },
     { cmd_keyword, "test", &program::test, "" }, //not seen by user
-    { cmd_keyword, "verbose", &program::verbose, "set verbosity, from 0 (not verbose) to > 0" },
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
     { cmd_keyword, "type", &program::type, "show first stack entry type" },

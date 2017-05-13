@@ -11,15 +11,6 @@ void good_bye()
     ERR_CONTEXT(ret_good_bye);
 }
 
-void verbose()
-{
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    int verbose = int(((number*)_stack->pop_back())->_value);
-    g_verbose = verbose;
-}
-
 void help()
 {
     // software name
@@ -50,8 +41,6 @@ void help()
     cout<<endl;
 
     // different modes
-    cout<<"Current verbosity is "<<g_verbose<<endl;
-
     cout<<"Current float mode is ";
     switch(number::s_mode)
     {
