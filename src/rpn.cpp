@@ -58,9 +58,6 @@ static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
 static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
 
 //
-static int g_verbose = 0;
-
-//
 #include "escape.h"
 #include "version.h"
 
@@ -450,16 +447,8 @@ public:
         {
             type = (cmd_type_t)seq_type(i);
 
-            //
-            if (g_verbose >= 2)
-            {
-                cout << "(" << i << ") ";
-                ((object*)seq_obj(i))->show();
-                cout << endl;
-            }
-
             // could be an auto-evaluated symbol
-            else if (type == cmd_symbol)
+            if (type == cmd_symbol)
             {
                 auto_rcl((symbol*)seq_obj(i));
                 i++;
@@ -764,8 +753,6 @@ public:
         stringstream ss;
         ss << number::s_current_precision;
         s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
-
-        g_verbose = 0;
     }
 
 private:
