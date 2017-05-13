@@ -82,3 +82,9 @@ str->
 my_pi
 -> stack should be 3.14
 erase
+
+# str-> on program
+"<< -> n << n >> >>"
+str->
+-> stack should be << -> n  << n  >> >>
+erase
