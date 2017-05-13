@@ -1,327 +1,175 @@
-## 1 ## ENTRY and STACK
-# test entry 1
-1
--> stack size should be 1
-
-# test entry 2
-2 3
--> stack size should be 3
--> stack should be 3, 2, 1
-
-# test drop
-drop
--> stack size should be 2
-
-# test drop2
-drop2
--> stack size should be 0
-
-# test drop error
-drop
--> error should be 2
-
-# test drop2 error
-drop2
--> error should be 2
-
-# test drop2 error
-1 drop2
--> error should be 2
-drop
-
-# test symbol entry 1
-1 '2'
--> stack size should be 2
--> stack should be '2', 1
-drop2
-
-# test symbol entry 2
-1 '2
--> stack size should be 2
--> stack should be '2', 1
-drop2
-
-# test symbol entry 3
-''
--> stack should be ''
-drop
-
-# test symbol entry 4
-'
--> stack should be ''
-drop
-
-# test dup
-1 dup
--> stack size should be 2
--> stack should be 1, 1
-
-# test dup2
-drop 2 dup2
--> stack size should be 4
--> stack should be 2, 1, 2, 1
-drop2 drop2
-
-# test rot
-1 2 3 rot
--> stack size should be 3
--> stack should be 1, 3, 2
-
-# test depth
-depth
--> stack size should be 4
--> stack should be 3, 1, 3, 2
-drop2 drop2
-
-# test pick
-1 2 3 4 2 pick
--> stack size should be 5
--> stack should be 3, 4, 3, 2, 1
-
-# test erase
-erase
--> stack size should be 0
-
-## 2 ## TEST
-# and
+## TESTS
+# and (1)
 and
 -> error should be 2
 1 and
 -> error should be 2
 drop
 
+# and (2)
 0 0 and
 -> stack size should be 1
 -> stack should be 0
 drop
 
+# and (3)
 1 0 and
 -> stack size should be 1
 -> stack should be 0
 drop
 
+# and (4)
 0 1 and
 -> stack size should be 1
 -> stack should be 0
 drop
 
+# and (5)
 1 1 and
 -> stack size should be 1
 -> stack should be 1
 drop
 
-# or
+# or (1)
 or
 -> error should be 2
 1 or
 -> error should be 2
 drop
 
+# or (2)
 0 0 or
 -> stack size should be 1
 -> stack should be 0
 drop
 
+# or (3)
 0 1 or
 -> stack size should be 1
 -> stack should be 1
 drop
 
+# or (4)
 1 0 or
 -> stack size should be 1
 -> stack should be 1
 drop
 
+# or (5)
 1 1 or
 -> stack size should be 1
 -> stack should be 1
 drop
 
-# xor
+# xor (1)
 xor
 -> error should be 2
 1 xor
 -> error should be 2
 drop
 
+# xor (2)
 0 0 xor
 -> stack size should be 1
 -> stack should be 0
 drop
 
+# xor (3)
 0 1 xor
 -> stack size should be 1
 -> stack should be 1
 drop
 
+# xor (4)
 1 0 xor
 -> stack size should be 1
 -> stack should be 1
 drop
 
+# xor (5)
 1 1 xor
 -> stack size should be 1
 -> stack should be 0
 drop
 
-## 3 ## BRANCH
-# if-then-else-end test 1
-1 if then 'ok' end
--> stack size should be 1
--> stack should be 'ok'
-drop
-
-# if-then-else-end test 2
-0 if then 'ok' end
--> stack size should be 0
-
-# if-then-else-end test 3
-1 if 0 1 then 'ok' end
--> stack size should be 3
--> stack should be 'ok', 1, 0
-drop2 drop
-
-# if-then-else-end test 4
-1 if then 'ok' else 0 end
--> stack size should be 1
--> stack should be 'ok'
-drop
-
-# if-then-else-end test 5
-0 if then 'ok' else 0 end
+# not (1)
+not
+-> error should be 2
+1 not
 -> stack size should be 1
 -> stack should be 0
 drop
 
-# if-then-else-end test 6
-1 if then 1 if then 'ok' else 0 end end
--> stack size should be 1
--> stack should be 'ok'
-drop
-
-# if-then-else-end test 7
-1 if then 0 if then 'ok' else 0 end end
--> stack size should be 1
--> stack should be 0
-drop
-
-# if-then-else-end test 8
-0 if then 0 if then 'ok' else 0 end else 'OK' end
--> stack size should be 1
--> stack should be 'OK'
-drop
-
-# start-next-step test 1
-1 3 start 'ok' next
--> stack size should be 3
--> stack should be 'ok', 'ok', 'ok'
-drop drop2
-
-# start-next-step test 2
-3 1 start 'ok' next
--> stack size should be 1
--> stack should be 'ok'
-drop
-
-# start-next-step test 3
--1 0 start 'ok' next
--> stack size should be 2
--> stack should be 'ok', 'ok'
-drop2
-
-# start-next-step test 4
-0 4 start 'ok' 2 step
--> stack size should be 3
--> stack should be 'ok', 'ok', 'ok'
-drop2 drop
-
-# start-next-step test 5
-0 -2 start 'ok' -1 step
--> stack size should be 3
--> stack should be 'ok', 'ok', 'ok'
-drop2 drop
-
-# start-next-step test 6
-0 0.2 start 'ok' 0.1 step
--> stack size should be 3
--> stack should be 'ok', 'ok', 'ok'
-drop2 drop
-
-# for-next-step test 1
-1 3 for i i next
--> stack size should be 3
--> stack should be 3, 2, 1
-drop drop2
-
-# for-next-step test 2
-3 1 for i i next
--> stack size should be 1
--> stack should be 3
-drop
-
-# for-next-step test 3
--1 0 for i i next
--> stack size should be 2
--> stack should be 0, -1
-drop2
-
-# for-next-step test 4
-0 4 for i i 2 step
--> stack size should be 3
--> stack should be 4, 2, 0
-drop2 drop
-
-# for-next-step test 5
-0 -2 for i i -1 step
--> stack size should be 3
--> stack should be -2, -1, 0
-drop2 drop
-
-# for-next-step test 6
-0 0.2 for i i 0.1 step
--> stack size should be 3
--> stack should be 0.2, 0.1, 0
-drop2 drop
-
-# for-next-step test 7
-1 2 for i 10 20 for j i j + 10 step next
--> stack size should be 4
--> stack should be 22, 12, 21, 11
-drop2 drop2
-
-## 4 ##  STORE
-# sto test 1
-1 'a' sto
--> stack size should be 0
-
-# rcl test 1
-'a' rcl
+# not (2)
+0 not
 -> stack size should be 1
 -> stack should be 1
 drop
 
-# sto test 2
-'toto' 'b' sto
--> stack size should be 0
-
-# rcl test 2
-'b' rcl
--> stack size should be 1
--> stack should be 'toto'
+# >
+0 0.1 >
+-> stack should be 0
+drop
+0.1 0 >
+-> stack should be 1
+drop
+1 1 >
+-> stack should be 0
 drop
 
-# sto/rcl test 1
-'b' rcl 'a' sto 'a' rcl
--> stack size should be 1
--> stack should be 'toto'
+# >=
+0 0.1 >=
+-> stack should be 0
+drop
+0.1 0 >=
+-> stack should be 1
+drop
+1 1 >=
+-> stack should be 1
 drop
 
-# purge test 1
-'a' purge 'b' purge
--> stack size should be 0
+# <
+0 0.1 <
+-> stack should be 1
+drop
+0.1 0 <
+-> stack should be 0
+drop
+1 1 <
+-> stack should be 0
+drop
 
-# auto-eval test 1
-1 'a' sto 1 3 start 1 a + 'a' sto next a
--> stack size should be 1
--> stack should be 4
+# <=
+0 0.1 <=
+-> stack should be 1
+drop
+0.1 0 <=
+-> stack should be 0
+drop
+1 1 <=
+-> stack should be 1
+drop
+
+# !=
+0 0.1 !=
+-> stack should be 1
+drop
+1 1 !=
+-> stack should be 0
+drop
+
+# ==
+0 0.1 ==
+-> stack should be 0
+drop
+1 1 ==
+-> stack should be 1
+drop
+
+# same
+0 0.1 same
+-> stack should be 0
+drop
+1 1 same
+-> stack should be 1
 drop
