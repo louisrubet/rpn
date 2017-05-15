@@ -1,0 +1,46 @@
+## BRANCH
+
+# if then else end (1)
+1 if then 'ok' end
+-> stack should be 'ok'
+erase
+
+# if then else end (2)
+1 if 'before' then 'ok' end
+-> stack should be 'before', 'ok'
+erase
+
+# if then else end (3)
+0 if then 'ok' end
+-> stack size should be 0
+erase
+
+# if then else end (4)
+0 if then 'ok' end
+-> stack size should be 0
+erase
+
+# if then else end (5)
+1 if then 'ok' else 'KO' end
+-> stack should be 'ok'
+erase
+
+# if then else end (6)
+1 if then 'ok' 'dokey' else 'KO' end
+-> stack should be 'ok', 'dokey'
+erase
+
+# if then else end (7)
+0 if then 'ok' else 'KO' end
+-> stack should be 'KO'
+erase
+
+# start next (1)
+1 2 start 0 next
+-> stack should be 0, 0
+erase
+
+# start next (2)
+2 1 start 0 next
+-> stack size should be 0
+erase
