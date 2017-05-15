@@ -49,6 +49,8 @@ void rpn_end(void)
 
 int rpn_start(branch& myobj)
 {
+    int ret = -1;
+
     MIN_ARGUMENTS_RET(2, 1);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
@@ -63,7 +65,14 @@ int rpn_start(branch& myobj)
     myobj.farg1 = (number*)_branch_stack.back();
     _stack->pop_back();
 
-    return -1;
+    // test value
+    if (myobj.farg1->_value > myobj.farg2->_value)
+        // last boundary lower than first boundary
+        // -> next command shall be after 'next'
+        // arg2 holds index of 'next'
+        ret = myobj.arg2 + 1;
+
+    return ret;
 }
 
 int rpn_for(branch& myobj)
