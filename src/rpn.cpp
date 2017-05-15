@@ -661,6 +661,7 @@ public:
                         return ret_syntax;
                     }
                     k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
+                    ((branch*)seq_obj(vstartindex[vstartindex.size() - 1]))->arg2 = i;// fill 'for' or 'start' arg2 = 'next' index
                     vstartindex.pop_back();
                 }
                 else if (compare_branch(k, "step", 4))
