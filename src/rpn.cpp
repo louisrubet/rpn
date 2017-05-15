@@ -490,11 +490,11 @@ public:
             {
                 // call matching function
                 branch* b = (branch*)seq_obj(i);
-                int tmp = (this->*(b->_fn))(*b);
-                if (tmp == -1)
+                int next_cmd = (this->*(b->_fn))(*b);
+                if (next_cmd == -1)
                     i++;
                 else
-                    i = tmp;
+                    i = next_cmd;
             }
 
             // not a command, but a stack entry, manage it

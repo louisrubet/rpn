@@ -53,17 +53,16 @@ int rpn_start(branch& myobj)
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
 
-    // farg1 = first value of start command
     // farg2 = last value of start command
-    stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    //myobj.farg2 = (number*)_branch_stack.get_obj(0);
-    //myobj.farg2->init(_branch_stack.get_blob(0));
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg2 = (number*)_branch_stack.back();
     _stack->pop_back();
 
-    stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    //myobj.farg1 = (number*)_branch_stack.get_obj(0);
-    //myobj.farg1->init(_branch_stack.get_blob(0));
+    // farg1 = first value of start command
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg1 = (number*)_branch_stack.back();
     _stack->pop_back();
+
     return -1;
 }
 
@@ -116,7 +115,6 @@ int rpn_next(branch& myobj)
         symbol* var = (symbol*)seq_obj(start_or_for->arg1);
 
         // check symbol variable is a number, then increase
-        //TODO
         // if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
         // {
         //     ((number*)obj)->set(myobj.farg1);
@@ -129,7 +127,8 @@ int rpn_next(branch& myobj)
     {
         // end of loop
         myobj.arg_bool = false;// init again next time
-        _branch_stack.erase();
+        _branch_stack.pop_back();
+        _branch_stack.pop_back();
         return -1;
     }
     else
