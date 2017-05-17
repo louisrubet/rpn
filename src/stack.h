@@ -201,7 +201,7 @@ public:
             free(i->second);
     }
 
-    object* add(const string name, void* obj, unsigned int size, int type = 0)
+    object* add(const string name, object* obj, unsigned int size, int type = 0)
     {
         struct local_var* local = _map[name];
         if (local == NULL)
@@ -217,11 +217,15 @@ public:
             _map[name] = local;
         }
         local->length = size;
-        
-        if (obj != NULL)
-            memcpy(local->obj, obj, size);
 
-        return (object*)local->obj;
+        if (obj != NULL)
+        {
+            memcpy(local->obj, obj, size);
+            if (local->obj->_type == cmd_number)
+                ((number*)local->obj)->_value.set_significand(((number*)local->obj)+1);
+        }
+        
+        return local->obj;
     }
     
     bool get(const string name, object*& obj, unsigned int& size)
@@ -238,6 +242,24 @@ public:
         }
         else
             return false;
+    }
+
+    bool replace_value(const string name, object* obj, unsigned int size)
+    {
+        bool ret=false;
+        map<string, struct local_var*>::iterator i = _map.find(name);
+
+        if (i != _map.end())
+        {
+            if (i->second != NULL && size==i->second->length)
+            {
+                (void)memcpy(i->second->obj, obj, size);
+                if (i->second->obj->_type == cmd_number)
+                    ((number*)i->second->obj)->_value.set_significand(((number*)i->second->obj)+1);
+            }
+            return true;
+        }
+        return ret;
     }
 
     bool exist(const string name)

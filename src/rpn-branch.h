@@ -77,28 +77,41 @@ int rpn_start(branch& myobj)
 
 int rpn_for(branch& myobj)
 {
+    int ret;
+
     MIN_ARGUMENTS_RET(2, 1);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
 
     symbol* sym = ((symbol*)seq_obj(myobj.arg1));
 
-    // farg1 = first value of for command
     // farg2 = last value of for command
     // arg1 = index of symbol to increase
-    stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    //myobj.farg2 = (number*)_branch_stack.back();
-    //myobj.farg2->init(_branch_stack.back_blob());
-    stack::copy_and_push_back(*_stack, 0, _branch_stack);
-    //myobj.farg1 = (number*)_branch_stack.back();
-    //myobj.farg1->init(_branch_stack.back_blob());
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg2 = (number*)_branch_stack.back();
+    _stack->pop_back();
 
-    // store symbol with first value
-    //TODO
-    //number* num = (number*)_local_heap.add(string(sym->_value), NULL, number::calc_size(), cmd_number);
-    //num->set(myobj.farg1);
+    // farg1 = first value of for command
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg1 = (number*)_branch_stack.back();
+    _stack->pop_back();
 
-    return myobj.arg1 + 1;
+    // test value
+    if (myobj.farg1->_value > myobj.farg2->_value)
+        // last boundary lower than first boundary
+        // -> next command shall be after 'next'
+        // arg2 holds index of 'next'
+        ret = myobj.arg2 + 1;
+    else
+    {
+        // store symbol with first value
+        _local_heap.add(sym->_value, myobj.farg1, myobj.farg1->size());
+        (void)_stack->pop_back();
+
+        ret = myobj.arg1 + 1;
+    }
+
+    return ret;
 }
 
 int rpn_next(branch& myobj)
@@ -118,17 +131,12 @@ int rpn_next(branch& myobj)
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)
     {
-        void* obj;
+        object* obj;
         unsigned int size;
-        int type;
         symbol* var = (symbol*)seq_obj(start_or_for->arg1);
 
-        // check symbol variable is a number, then increase
-        // if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
-        // {
-        //     ((number*)obj)->set(myobj.farg1);
-        //     ((number*)obj)->ensure_significand();
-        // }
+        // increase symbol variable
+        _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
     }
 
     //test value
