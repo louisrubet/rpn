@@ -44,3 +44,13 @@ erase
 2 1 start 0 next
 -> stack size should be 0
 erase
+
+# for next (1)
+23 27 for i i next
+-> stack should be 23, 24, 25, 26, 27
+erase
+
+# for next (2)
+27 23 for i i next
+-> stack size should be 0
+erase
