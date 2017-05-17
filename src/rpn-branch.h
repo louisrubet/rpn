@@ -161,6 +161,48 @@ int rpn_next(branch& myobj)
 
 int rpn_step(branch& myobj)
 {
+    // arg1 = index of start or for command in program
+    // farg1 = current count
+    branch* start_or_for = (branch*)seq_obj(myobj.arg1);
+    if (! myobj.arg_bool)
+    {
+        myobj.arg_bool = true;
+        myobj.farg1 = start_or_for->farg1;
+    }
+
+    // increment then test
+    number* step = (number*)_stack->pop_back();
+    mpfr_add(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, step->_value.mpfr, MPFR_DEF_RND);
+
+    // for command: increment symbol too
+    if (start_or_for->arg1 != -1)
+    {
+        object* obj;
+        unsigned int size;
+        symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+
+        // increase symbol variable
+        _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
+    }
+
+    //test value
+    if (myobj.farg1->_value > start_or_for->farg2->_value)
+    {
+        // end of loop
+        myobj.arg_bool = false;// init again next time
+        _branch_stack.pop_back();
+        _branch_stack.pop_back();
+        return -1;
+    }
+    else
+    {
+        // for command: next instruction will be after symbol variable
+        if (start_or_for->arg1 != -1)
+            return start_or_for->arg1 + 1;
+        // start command: next instruction will be after start command
+        else
+            return myobj.arg1 + 1;
+    }
 //TODO
 #if 0
     // arg1 = index of start or for command in program
