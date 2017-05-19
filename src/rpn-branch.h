@@ -96,22 +96,11 @@ int rpn_for(branch& myobj)
     myobj.farg1 = (number*)_branch_stack.back();
     _stack->pop_back();
 
-    // test value
-    if (myobj.farg1->_value > myobj.farg2->_value)
-        // last boundary lower than first boundary
-        // -> next command shall be after 'next'
-        // arg2 holds index of 'next'
-        ret = myobj.arg2 + 1;
-    else
-    {
-        // store symbol with first value
-        _local_heap.add(sym->_value, myobj.farg1, myobj.farg1->size());
-        (void)_stack->pop_back();
+    // store symbol with first value
+    _local_heap.add(sym->_value, myobj.farg1, myobj.farg1->size());
+    (void)_stack->pop_back();
 
-        ret = myobj.arg1 + 1;
-    }
-
-    return ret;
+    return myobj.arg1 + 1;
 }
 
 int rpn_next(branch& myobj)
@@ -161,6 +150,7 @@ int rpn_next(branch& myobj)
 
 int rpn_step(branch& myobj)
 {
+static int count = 0;
     // arg1 = index of start or for command in program
     // farg1 = current count
     branch* start_or_for = (branch*)seq_obj(myobj.arg1);
@@ -174,6 +164,9 @@ int rpn_step(branch& myobj)
     number* step = (number*)_stack->pop_back();
     mpfr_add(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, step->_value.mpfr, MPFR_DEF_RND);
 
+cout<<"step=";step->show(cout);cout<<endl;
+return -1;
+
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)
     {
@@ -186,7 +179,14 @@ int rpn_step(branch& myobj)
     }
 
     //test value
-    if (myobj.farg1->_value > start_or_for->farg2->_value)
+    bool step_positive = mpfr_cmp_d(step->_value.mpfr, 0.0)>0;
+
+cout<<"(count="<<count;")\n";
+if (count++>10)
+return -1;
+
+    if ((step_positive && (myobj.farg1 > start_or_for->farg2))
+       || ((! step_positive) && (myobj.farg1 < start_or_for->farg2)))
     {
         // end of loop
         myobj.arg_bool = false;// init again next time
