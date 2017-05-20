@@ -75,12 +75,13 @@ typedef enum {
     ret_nop,
     ret_syntax,
     ret_div_by_zero,
+    ret_runtime_error,
     ret_max
 } ret_value;
 
 const char* ret_value_string[ret_max] = {
     "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting",
-    "deadly", "goodbye", "not implemented", "no operation", "syntax", "division by zero"
+    "deadly", "goodbye", "not implemented", "no operation", "syntax error", "division by zero", "runtime error"
 };
 
 typedef enum {
@@ -491,10 +492,20 @@ public:
                 // call matching function
                 branch* b = (branch*)seq_obj(i);
                 int next_cmd = (this->*(b->_fn))(*b);
-                if (next_cmd == -1)
-                    i++;
-                else
-                    i = next_cmd;
+                switch (next_cmd)
+                {
+                    case -1:
+                        i++; // meaning 'next command'
+                        break;
+                    case -(int)ret_runtime_error:
+                        // error: show it
+                        (void)show_error(_err, _err_context);
+                        go_out = true;// end of run
+                        break;
+                    default:
+                        i = next_cmd;// new direction
+                        break;
+                }
             }
 
             // not a command, but a stack entry, manage it
@@ -660,8 +671,8 @@ public:
                         show_syntax_error("missing start or for before next");
                         return ret_syntax;
                     }
-                    k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
-                    ((branch*)seq_obj(vstartindex[vstartindex.size() - 1]))->arg2 = i;// fill 'for' or 'start' arg2 = 'next' index
+                    k->arg1 = vstartindex[vstartindex.size() - 1]; // 'next' arg1 = 'start' index
+                    ((branch*)seq_obj(vstartindex[vstartindex.size() - 1]))->arg2 = i; // 'for' or 'start' arg2 = 'next' index
                     vstartindex.pop_back();
                 }
                 else if (compare_branch(k, "step", 4))
@@ -673,6 +684,7 @@ public:
                         return ret_syntax;
                     }
                     k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
+                    ((branch*)seq_obj(vstartindex[vstartindex.size() - 1]))->arg2 = i; // 'for' or 'start' arg2 = 'next' index
                     vstartindex.pop_back();
                 }
                 else if (compare_branch(k, "->", 2))
@@ -696,28 +708,46 @@ public:
         return ret_ok;
     }
 
-    static ret_value show_error(ret_value err, string& context)
+    ret_value show_error()
     {
-        cerr<<context<<": "<<ret_value_string[err]<<endl;
-        switch(err)
+        ret_value ret;
+
+        // show last recorded error
+        cerr<<ret_value_string[_err]<<"("<<_err<<"): "<<_err_context<<endl;
+        switch(_err)
         {
             case ret_internal:
             case ret_deadly:
-                return ret_deadly;
+                ret = ret_deadly;
             default:
-                return ret_ok;
+                ret = ret_ok;
         }
+        
+        return ret;
     }
 
-    static ret_value show_error(ret_value err, char* context)
+    ret_value show_error(ret_value err, string& context)
     {
-        string context_string(context);
-        return show_error(err, context_string);
+        // record error
+        _err = err;
+        _err_context = context;
+        return show_error();
     }
 
-    static void show_syntax_error(const char* context)
+    ret_value show_error(ret_value err, const char* context)
     {
-        cerr<<"syntax error: "<<context<<endl;
+        // record error
+        _err = err;
+        _err_context = context;
+        return show_error();
+    }
+
+    void show_syntax_error(const char* context)
+    {
+        // record error
+        _err = ret_syntax;
+        _err_context = context;
+        (void)show_error();
     }
 
     ret_value get_err(void) { return _err; }
