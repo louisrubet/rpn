@@ -8,61 +8,101 @@
 #include <map>
 using namespace std;
 
-#include "debug.h"
-
-#define ALLOC_BLOB (2*1024)
-#define LOCAL_COPY_PLACES 3
-#define LOCAL_COPY_SIZE 128
+// allocation base size
+#define ALLOC_STACK_CHUNK (64*1024)
 
 //
 class stack
 {
-private:
-    struct local_copy
-    {
-        unsigned int length;
-        int type;
-        int blob;
-    };
-
 public:
     stack()
     {
-        _base = (char*)malloc(ALLOC_BLOB);
-        _total_size = ALLOC_BLOB;
-        _current = _base;
-        _count = 0;
-    }   
-    virtual ~stack() { free(_base); }
-
-    void push_back(void* obj, unsigned int size, int type = 0, bool dont_copy = false)
-    {
-        if (_current + size > _base + _total_size)
-        {
-            //TODO gerer les pbs de memoire
-            _total_size += ALLOC_BLOB;
-            _base = (char*)realloc(_base, _total_size);
-        }
-
-        if (!dont_copy)
-            memcpy(_current, obj, size);
-        _vlen.push_back(size);
-        _vpointer.push_back(_current);
-        _vtype.push_back(type);
-        _count++;
-        _current += size;
+        _base = NULL;
+        _total_size = 0;
+        erase();
     }
 
-    void pop_back()
+    virtual ~stack()
     {
+        if (_base != NULL)
+            free(_base);
+    }
+
+    void erase()
+    {
+        _current = _base;
+        _vpointer.clear();
+        _vlen.clear();
+        _count = 0;
+    }
+
+    //
+    static void copy_and_push_back(stack& from, unsigned int index_from, stack& to)
+    {
+        // copy a whole stack entry and push it back to another stack
+        object* allocated = to.allocate_back(from.seq_len(index_from), from.seq_type(index_from));
+        memcpy(allocated, from.seq_obj(index_from), from.seq_len(index_from));
+
+        if (allocated->_type == cmd_number)
+            ((number*)allocated)->_value.set_significand(((number*)allocated)+1);
+    }
+
+    //
+    static void copy_and_push_back(object* from, stack& to, unsigned int size)
+    {
+        // copy a whole stack entry and push it back to another stack
+        object* allocated = to.allocate_back(size, from->_type);
+        memcpy(allocated, from, size);
+
+        if (allocated->_type == cmd_number)
+            ((number*)allocated)->_value.set_significand(((number*)allocated)+1);
+    }
+    
+    object* allocate_back(unsigned int size, cmd_type_t type)
+    {
+        object* allocated;
+
+        // manage memory allocation
+        if (_current + size > _base + _total_size)
+        {
+            unsigned long offset = _current - _base;
+            _total_size += ALLOC_STACK_CHUNK;
+            _base = (char*)realloc(_base, _total_size);
+            _current = _base + offset;
+        }
+
+        // manage stack itself
+        _vlen.push_back(size);
+        _vpointer.push_back((object*)_current);
+        allocated = (object*)_current;
+        _current += size;
+        _count++;
+
+        // init object
+        allocated->_type = type;
+        allocated->_size = size;
+        if (type == cmd_number)
+            ((number*)allocated)->_value.init(((number*)allocated)+1);
+
+        return allocated;
+    }
+
+    object* pop_back()
+    {
+        object* back = NULL;
+
         if (_count > 0)
         {
-            _current = _vpointer[_count - 1];
+            _current = (char*)_vpointer[_count - 1];
             _vlen.pop_back();
             _vpointer.pop_back();
-            _vtype.pop_back();
+
             _count--;
+
+            back = (object*)_current;
         }
+
+        return back;
     }
 
     unsigned int size()
@@ -71,7 +111,7 @@ public:
     }
 
     // stack access (index is counted from back)
-    void* get_obj(unsigned int index)
+    object* get_obj(unsigned int index)
     {
         if (index<_count)
             return _vpointer[_count-index-1];
@@ -79,12 +119,12 @@ public:
             return NULL;
     }
 
-    void* operator[](unsigned int index)
+    object* operator[](unsigned int index)
     {
         return get_obj(index);
     }
     
-    void* back()
+    object* back()
     {
         if (_count>0)
             return _vpointer[_count-1];
@@ -100,16 +140,16 @@ public:
             return 0;
     }
 
-    int get_type(unsigned int index)
+    cmd_type_t get_type(unsigned int index)
     {
         if (index<_count)
-            return _vtype[_count-index-1];
+            return _vpointer[_count-index-1]->_type;
         else
-            return 0;
+            return cmd_undef;
     }
 
     // sequential access (index is counted from front)
-    void* seq_obj(unsigned int index)
+    object* seq_obj(unsigned int index)
     {
         if (index<_count)
             return _vpointer[index];
@@ -125,46 +165,22 @@ public:
             return 0;
     }
 
-    int seq_type(unsigned int index)
+    cmd_type_t seq_type(unsigned int index)
     {
         if (index<_count)
-            return _vtype[index];
+            return _vpointer[index]->_type;
         else
-            return 0;
-    }
-
-    // local objects copy
-    void copy_obj_to_local(unsigned int index, unsigned int to_place)
-    {       
-        assert(to_place < LOCAL_COPY_PLACES);
-        struct local_copy* local = (struct local_copy*)_places[to_place];
-        local->length = get_len(index);
-        local->type= get_type(index);
-        memcpy(&local->blob, get_obj(index), local->length);
-    }
-
-    void push_obj_from_local(unsigned int from_place)
-    {       
-        assert(from_place < LOCAL_COPY_PLACES);
-        struct local_copy* local = (struct local_copy*)_places[from_place];
-        push_back(&local->blob, local->length, local->type);
-    }
-
-    void dump(void)
-    {
-        dump8((unsigned char*)_base, 0, (unsigned long)(_current - _base));
+            return cmd_undef;
     }
 
 private:
     char* _base;
     char* _current;
-    vector<unsigned int> _vlen;// size of each entry in bytes
-    vector<char*> _vpointer;//pointer on each entry
-    vector<int> _vtype;//type of each entry
-    unsigned int _count;// =_vlen.size()=_vpointer.size()=_vtype.size()
-    unsigned int _total_size;//total allocated size in bytes
 
-    char _places[LOCAL_COPY_PLACES][LOCAL_COPY_SIZE];
+    vector<object*> _vpointer;//pointer on each entry
+    vector<unsigned int> _vlen;// size of each entry in bytes
+    unsigned int _count;// =_vlen.size()=_vpointer.size()
+    unsigned int _total_size;//total allocated size in bytes
 };
 
 //
@@ -174,8 +190,7 @@ private:
     struct local_var
     {
         unsigned int length;
-        int type;
-        int blob;
+        object obj[0];
     };
 
 public:
@@ -186,36 +201,42 @@ public:
             free(i->second);
     }
 
-    void add(const string name, void* obj, unsigned int size, int type = 0)
+    object* add(const string name, object* obj, unsigned int size, int type = 0)
     {
-        struct local_var* blob = _map[name];
-        if (blob == NULL)
+        struct local_var* local = _map[name];
+        if (local == NULL)
         {
             //TODO gerer les pbs de memoire
-            blob = (struct local_var*)malloc(size + sizeof(local_var));
-            _map[name] = blob;
+            local = (struct local_var*)malloc(size + sizeof(local_var));
+            _map[name] = local;
         }
-        else if (size != blob->length)
+        else if (size != local->length)
         {
             //TODO gerer les pbs de memoire
-            blob = (struct local_var*)realloc(blob, size + sizeof(local_var));
-            _map[name] = blob;
+            local = (struct local_var*)realloc(local, size + sizeof(local_var));
+            _map[name] = local;
         }
-        blob->length = size;
-        blob->type= type;
-        memcpy(&blob->blob, obj, size);
-    }
+        local->length = size;
 
-    bool get(const string name, void*& obj, unsigned int& size, int& type)
+        if (obj != NULL)
+        {
+            memcpy(local->obj, obj, size);
+            if (local->obj->_type == cmd_number)
+                ((number*)local->obj)->_value.set_significand(((number*)local->obj)+1);
+        }
+        
+        return local->obj;
+    }
+    
+    bool get(const string name, object*& obj, unsigned int& size)
     {
         map<string, struct local_var*>::iterator i = _map.find(name);
         if (i != _map.end())
         {
             if (i->second != NULL)
             {
-                obj = &i->second->blob;
+                obj = i->second->obj;
                 size = i->second->length;
-                type = i->second->type;
             }
             return true;
         }
@@ -223,29 +244,46 @@ public:
             return false;
     }
 
+    bool replace_value(const string name, object* obj, unsigned int size)
+    {
+        bool ret=false;
+        map<string, struct local_var*>::iterator i = _map.find(name);
+
+        if (i != _map.end())
+        {
+            if (i->second != NULL && size==i->second->length)
+            {
+                (void)memcpy(i->second->obj, obj, size);
+                if (i->second->obj->_type == cmd_number)
+                    ((number*)i->second->obj)->_value.set_significand(((number*)i->second->obj)+1);
+            }
+            return true;
+        }
+        return ret;
+    }
+
     bool exist(const string name)
     {
         return (_map.find(name) != _map.end());
     }
 
-    bool get_by_index(int num, string& name, void*& obj, unsigned int& size, int& type)
+    bool get_by_index(int num, string& name, object*& obj, unsigned int& size)
     {
         if (num>=0 && num<(int)_map.size())
         {
-            struct local_var* blob;
+            struct local_var* local;
             map<string, struct local_var*>::iterator i=_map.begin();
 
             //TODO moche moche moche
             for(int j=0;j<num;j++)
                 i++;
 
-            blob = (struct local_var*)i->second;
-            assert(blob != NULL);
+            local = (struct local_var*)i->second;
+            assert(local != NULL);
 
             name = i->first;
-            obj = &blob->blob;
-            size = blob->length;
-            type = blob->type;
+            obj = local->obj;
+            size = local->length;
             return true;
         }
         else

@@ -7,15 +7,14 @@ void instr()
     {
         // write the object in stack(0) in a string and remove this obj
         stringstream out;
-        ((object*)_stack->back())->show(out);
-        _stack->pop_back();
+        ((object*)_stack->pop_back())->show(out);
 
         // reserve the correct size in stack
-        _stack->push_back(NULL, out.str().size(), cmd_string, true);
+        unsigned int str_size = (unsigned int)out.str().size();
+        ostring* str = (ostring*)_stack->allocate_back(str_size+1+sizeof(ostring), cmd_string);
 
         // fill the obj
-        ostring* str = (ostring*)_stack->get_obj(0);
-        str->set(out.str().c_str(), out.str().size());
+        str->set(out.str().c_str(), str_size);
     }
 }
 
@@ -24,8 +23,7 @@ void strout()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    string entry(((ostring*)_stack->back())->_value);
-    _stack->pop_back();
+    string entry(((ostring*)_stack->pop_back())->_value);
 
     program prog;
 

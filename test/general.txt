@@ -1,0 +1,33 @@
+## GENERAL
+
+# version
+version
+-> stack size should be 1
+
+uname
+-> stack size should be 2
+erase
+
+# type
+1
+type
+-> stack should be 1, 'number'
+erase
+
+"hey"
+type
+-> stack should be "hey", 'string'
+erase
+
+<< -> n << n >> >>
+type
+-> stack should be << -> n  << n  >> >>, 'program'
+erase
+
+# default
+2 sci
+1
+-> stack should be 1.00e+00
+default
+-> stack should be 1
+erase
