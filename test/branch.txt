@@ -38,34 +38,47 @@ erase
 # if then else end - error case (1)
 if then end
 -> error should be 2
+erase
 
 # if then else end - error case (2)
 0 if then
 -> error should be 11
+erase
 
 # if then else end - error case (3)
 0 if end
 -> error should be 11
+erase
 
 # if then else end - error case (4)
 0 if end
 -> error should be 11
+erase
 
 # if then else end - error case (5)
 then
 -> error should be 11
+erase
 
 # if then else end - error case (6)
 1 if
 -> error should be 11
+erase
 
 # if then else end - error case (7)
 else
 -> error should be 11
+erase
 
 # if then else end - error case (8)
 end
 -> error should be 11
+erase
+
+# if then else end - error case (9)
+"1" if then end
+-> error should be 3
+erase
 
 # start next (1)
 1 2 start 0 next
@@ -90,6 +103,36 @@ erase
 # start next (5)
 1 1 start 0 next
 -> stack should be 0
+erase
+
+# start next - error case (1)
+1 start next
+->error should be 2
+erase
+
+# start next - error case (2)
+start next
+->error should be 2
+erase
+
+# start next - error case (3)
+start
+->error should be 11
+erase
+
+# start next - error case (4)
+next
+->error should be 11
+erase
+
+# start next - error case (5)
+"1" 2 start next
+->error should be 3
+erase
+
+# start next - error case (5)
+1 "2" start next
+->error should be 3
 erase
 
 # for next (1)
@@ -117,6 +160,36 @@ erase
 -> stack size should be 0
 erase
 
+# for next - error case (1)
+1 for i i next
+-> error should be 2
+erase
+
+# for next - error case (2)
+for i i next
+-> error should be 2
+erase
+
+# for next - error case (3)
+"1" 2 for i i next
+-> error should be 3
+erase
+
+# for next - error case (4)
+1 "2" for i i next
+-> error should be 3
+erase
+
+# for next - error case (5)
+1 2 for i i
+-> error should be 11
+erase
+
+# for next - error case (6)
+for
+-> error should be 11
+erase
+
 # for step (1)
 23 27 for i i 1 step
 -> stack should be 23, 24, 25, 26, 27
@@ -140,4 +213,14 @@ erase
 # for step (5)
 0 -1 for i i -0.25 step
 -> stack size should be 0
+erase
+
+# for step - error case (1)
+0 1 for i i "0.5" step
+-> error should be 3
+erase
+
+# for step - error case (2)
+step
+-> error should be 11
 erase
