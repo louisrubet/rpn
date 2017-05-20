@@ -574,8 +574,17 @@ public:
                         //fill 'end' branch of 'else'
                         ((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
                     else
+                    {
                         //fill 'end' branch of 'then'
-                        ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
+                        if (vlayout[layout_index].index_then != -1)
+                            ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
+                        else
+                        {
+                            // error: show it
+                            show_syntax_error("missing then before end");
+                            return ret_syntax;
+                        }
+                    }
                     layout_index--;
                 }
             }
