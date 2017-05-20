@@ -35,6 +35,38 @@ erase
 -> stack should be 'KO'
 erase
 
+# if then else end - error case (1)
+if then end
+-> error should be 2
+
+# if then else end - error case (2)
+0 if then
+-> error should be 11
+
+# if then else end - error case (3)
+0 if end
+-> error should be 11
+
+# if then else end - error case (4)
+0 if end
+-> error should be 11
+
+# if then else end - error case (5)
+then
+-> error should be 11
+
+# if then else end - error case (6)
+1 if
+-> error should be 11
+
+# if then else end - error case (7)
+else
+-> error should be 11
+
+# if then else end - error case (8)
+end
+-> error should be 11
+
 # start next (1)
 1 2 start 0 next
 -> stack should be 0, 0
@@ -86,7 +118,7 @@ erase
 erase
 
 # for step (1)
-23 27 for i 1 step
+23 27 for i i 1 step
 -> stack should be 23, 24, 25, 26, 27
 erase
 
@@ -107,5 +139,5 @@ erase
 
 # for step (5)
 0 -1 for i i -0.25 step
--> stack size should be 0, -0.25, -0.5, -0.75, -1
+-> stack size should be 0
 erase
