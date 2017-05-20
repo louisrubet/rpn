@@ -11,22 +11,18 @@ void good_bye()
     ERR_CONTEXT(ret_good_bye);
 }
 
-void verbose()
-{
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    g_verbose = (int)getf();
-}
-
 void help()
 {
+    // software name
     cout<<endl;
     cout<<ATTR_BOLD<<uname<<ATTR_OFF<<endl;
     cout<<endl;
 
+    // description
+    cout<<description<<endl<<endl;
+
     // syntax
-    for (int i = 0; syntax[i] != NULL; i++)
-        cout<<syntax[i]<<endl;
+    cout<<syntax<<endl;
 
     // keywords
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
@@ -45,8 +41,6 @@ void help()
     cout<<endl;
 
     // different modes
-    cout<<"Current verbosity is "<<g_verbose<<endl;
-
     cout<<"Current float mode is ";
     switch(number::s_mode)
     {
@@ -57,16 +51,6 @@ void help()
     }
 
     cout<<endl<<"Current float precision is "<<number::s_current_precision<<endl;
-
-    cout<<"Current binary mode is ";
-    switch(binary::s_mode)
-    {
-        case binary::dec: cout << "'dec'"; break;
-        case binary::hex: cout << "'hex'"; break;
-        case binary::oct: cout << "'oct'"; break;
-        case binary::bin: cout << "'bin'"; break;
-        default: cout << "unknown"; break;
-    }
     cout<<endl<<endl;
 }
 
@@ -75,13 +59,18 @@ void std()
     if (stack_size()>=1)
     {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
-        number::s_default_precision = (int)getf();
+
+        int precision = int(((number*)_stack->pop_back())->_value);
+        number::s_default_precision = int(precision);
     }
+
     number::s_current_precision = number::s_default_precision;
     number::s_mode = number::std;
 
-    cout.precision(number::s_current_precision);
-    cout.unsetf(ios_base::floatfield);
+    // format for mpfr_printf 
+    stringstream ss;
+    ss << number::s_current_precision;
+    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
 }
 
 void fix()
@@ -89,10 +78,15 @@ void fix()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number::s_current_precision = (int)getf();
+    int precision = int(((number*)_stack->pop_back())->_value);
+    number::s_current_precision = int(precision);
+
     number::s_mode = number::fix;
 
-    cout << setprecision(number::s_current_precision) << fixed;
+    // format for mpfr_printf 
+    stringstream ss;
+    ss << number::s_current_precision;
+    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_fix;
 }
 
 void sci()
@@ -100,54 +94,48 @@ void sci()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number::s_current_precision = (int)getf();
+    int precision = int(((number*)_stack->pop_back())->_value);
+    number::s_current_precision = int(precision);
+
     number::s_mode = number::sci;
 
-    cout << setprecision(number::s_current_precision) << scientific;
+    // format for mpfr_printf 
+    stringstream ss;
+    ss << number::s_current_precision;
+    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_sci;
 }
 
 void rpn_version()
 {
-    int naked_entry_len;
-    int obj_len;
-    ostring* str;
-
-    // entry length without prefix / postfix
-    naked_entry_len = (int)strlen(version);
-
-    // total object length
-    obj_len = sizeof(ostring)+naked_entry_len+1;
-
-    // allocate object
-    str = (ostring*)malloc(obj_len);
-
-    // set it
+    // allocate and set object
+    unsigned int naked_entry_len = strlen(version);
+    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring)+naked_entry_len+1, cmd_string);
     str->set(version, naked_entry_len);
-
-    // push in stack
-    _stack->push_back(str, str->size(), cmd_string);
-    free(str);
 }
 
 void rpn_uname()
 {
-    int naked_entry_len;
-    int obj_len;
-    ostring* str;
-
-    // entry length without prefix / postfix
-    naked_entry_len = (int)strlen(uname);
-
-    // total object length
-    obj_len = sizeof(ostring)+naked_entry_len+1;
-
-    // allocate object
-    str = (ostring*)malloc(obj_len);
-
-    // set it
+    // allocate and set object
+    unsigned int naked_entry_len = strlen(uname);
+    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring)+naked_entry_len+1, cmd_string);
     str->set(uname, naked_entry_len);
+}
 
-    // push in stack
-    _stack->push_back(str, str->size(), cmd_string);
-    free(str);
+void type()
+{
+    MIN_ARGUMENTS(1);
+
+    int type = _stack->back()->_type;
+    if (type < 0 || type >= (int)cmd_max)
+        type = (int)cmd_undef;
+
+    unsigned int string_size = strlen(cmd_type_string[type]);
+    unsigned int size = sizeof(symbol)+string_size+1;
+    symbol* sym = (symbol*)_stack->allocate_back(size, cmd_symbol);
+    sym->set(cmd_type_string[type], string_size, false);
+}
+
+void rpn_default()
+{
+    program::apply_default();
 }

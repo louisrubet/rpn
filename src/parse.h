@@ -27,7 +27,6 @@ static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
 static bool _cut(const char* entry, vector<string>& entries)
 {
     string tmp;
-    //TODO borner
     int len = strlen(entry);
 
     for (int i=0; i < len; i++)
@@ -168,9 +167,11 @@ static bool _cut(const char* entry, vector<string>& entries)
     return entries.size()>0;
 }
 
-static bool get_keyword(const string& entry, object*& obj, unsigned int& obj_size, cmd_type_t& type)
+static bool get_keyword(const string& entry, program& prog, string& remaining_entry)
 {
     program_fn_t fn;
+    unsigned int obj_len;
+    cmd_type_t type;
     bool ret = false;
 
     // could be a command
@@ -179,17 +180,17 @@ static bool get_keyword(const string& entry, object*& obj, unsigned int& obj_siz
         if (type == cmd_keyword)
         {
             // allocate keyword object
-            obj_size = sizeof(keyword)+entry.size()+1;
-            obj = (object*)malloc(obj_size);
-            ((keyword*)obj)->set(fn, entry.c_str(), entry.size());
+            obj_len = sizeof(keyword)+entry.size()+1;
+            keyword* new_obj = (keyword*)prog.allocate_back(obj_len, cmd_keyword);
+            new_obj->set(fn, entry.c_str(), entry.size());
             ret = true;
         }
         else if (type == cmd_branch)
         {
             // allocate branch object
-            obj_size = sizeof(branch)+entry.size()+1;
-            obj = (object*)malloc(obj_size);
-            ((branch*)obj)->set((branch_fn_t)fn, entry.c_str(), entry.size());
+            obj_len = sizeof(branch)+entry.size()+1;
+            branch* new_obj = (branch*)prog.allocate_back(obj_len, cmd_branch);
+            new_obj->set((branch_fn_t)fn, entry.c_str(), entry.size());
             ret = true;
         }
     }
@@ -197,27 +198,28 @@ static bool get_keyword(const string& entry, object*& obj, unsigned int& obj_siz
     return ret;
 }
 
-static bool get_symbol(const string& entry, object*& obj, unsigned int& obj_len)
+static bool get_symbol(const string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
     int entry_len = entry.size();
+    unsigned int obj_len;
 
     if (entry_len>=1 && entry[0]=='\'')
     {
-        // symbol entry, like 'toto'
         if (entry_len == 1)
         {
+            // void symbol entry, like '
             // total object length
             obj_len = sizeof(symbol)+1;
 
-            // allocate object
-            obj = (symbol*)malloc(obj_len);
-
-            //set it
-            ((symbol*)obj)->set("", 0);
+            // allocate and set object
+            // symbol beginning with ' is not autoevaluated
+            symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
+            new_obj->set("", 0, false);
         }
         else
         {
+            // symbol entry, like 'toto' or 'toto
             int naked_entry_len;
 
             // entry length without prefix / postfix
@@ -225,11 +227,10 @@ static bool get_symbol(const string& entry, object*& obj, unsigned int& obj_len)
             // total object length
             obj_len = sizeof(symbol)+naked_entry_len+1;
 
-            // allocate object
-            obj = (symbol*)malloc(obj_len);
-
-            // set it
-            ((symbol*)obj)->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
+            // allocate and set object
+            // symbol beginning with ' is not autoevaluated
+            symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
+            new_obj->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len, false);
         }
         ret = true;
     }
@@ -237,10 +238,11 @@ static bool get_symbol(const string& entry, object*& obj, unsigned int& obj_len)
     return ret;
 }
 
-static bool get_other(const string& entry, object*& obj, unsigned int& obj_len, cmd_type_t& type)
+static bool get_other(const string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
     int entry_len = entry.size();
+    unsigned int obj_len;
 
     if (entry_len>=1)
     {
@@ -252,22 +254,20 @@ static bool get_other(const string& entry, object*& obj, unsigned int& obj_len, 
         // total object length
         obj_len = sizeof(symbol)+naked_entry_len+1;
 
-        // allocate object
-        obj = (symbol*)malloc(obj_len);
-
-        // set it
-        ((symbol*)obj)->set(entry.c_str(), naked_entry_len);
-        ((symbol*)obj)->_auto_eval = true;
-        type = cmd_symbol;
+        // allocate and set object
+        // symbol not beginning with ' is autoevaluated (ie is evaluated when pushed on stack)
+        symbol* new_obj = (symbol*)prog.allocate_back(obj_len, cmd_symbol);
+        new_obj->set(entry.c_str(), naked_entry_len, true);
         ret = true;
     }
 
     return ret;
 }
 
-static bool get_string(const string& entry, object*& obj, unsigned int& obj_len)
+static bool get_string(const string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
+    unsigned int obj_len;
     int entry_len = entry.size();
     if (entry_len>=1 && entry[0]=='"')
     {
@@ -276,11 +276,9 @@ static bool get_string(const string& entry, object*& obj, unsigned int& obj_len)
             // total object length
             obj_len = sizeof(ostring)+1;
 
-            // allocate object
-            obj = (ostring*)malloc(obj_len);
-
-            //set it
-            ((ostring*)obj)->set("", 0);
+            // allocate and set object
+            ostring* new_obj = (ostring*)prog.allocate_back(obj_len, cmd_string);
+            new_obj->set("", 0);
         }
         else
         {
@@ -292,11 +290,9 @@ static bool get_string(const string& entry, object*& obj, unsigned int& obj_len)
             // total object length
             obj_len = sizeof(ostring)+naked_entry_len+1;
 
-            // allocate object
-            obj = (ostring*)malloc(obj_len);
-
-            // set it
-            ((ostring*)obj)->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
+            // allocate and set object
+            ostring* new_obj = (ostring*)prog.allocate_back(obj_len, cmd_string);
+            new_obj->set(entry.substr(1, naked_entry_len).c_str(), naked_entry_len);
         }
         ret = true;
     }
@@ -304,9 +300,10 @@ static bool get_string(const string& entry, object*& obj, unsigned int& obj_len)
     return ret;
 }
 
-static bool get_program(const string& entry, object*& obj, unsigned int& obj_len)
+static bool get_program(const string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
+    unsigned int obj_len;
     int entry_len = entry.size();
     if (entry_len>=2 && entry[0]=='<' && entry[1]=='<')
     {
@@ -321,182 +318,89 @@ static bool get_program(const string& entry, object*& obj, unsigned int& obj_len
         // total object length
         obj_len = sizeof(oprogram)+naked_entry_len+1;
 
-        // allocate object
-        obj = (object*)malloc(obj_len);
-
-        // set it
-        ((oprogram*)obj)->set(&entry[2], naked_entry_len);
+        // allocate and set object
+        oprogram* new_obj = (oprogram*)prog.allocate_back(obj_len, cmd_program);
+        new_obj->set(&entry[2], naked_entry_len);
 
         ret = true;
     }
     return ret;
 }
 
-// care: not threadsafe
-static bool get_float(const string& entry, object*& obj, unsigned int& obj_size, string& remaining_entry)
+static bool get_number(const string& entry, program& prog, string& remaining_entry)
 {
-    static number new_number;
-    floating_t val;
-    stringstream token;
+    char* endptr;
     bool ret = false;
 
-    token<<entry;
-    token>>val;
-
-    if ( (!token.fail()) && (!token.bad()) )
+    if (entry.size() > 0)
     {
-        new_number.set(val);
-        obj = &new_number;
-        obj_size = sizeof(number);
-        ret = true;
-        
-        // remaining string if any
-        token>>remaining_entry;
-    }
-
-    return ret;
-}
-
-// care: not threadsafe
-static bool get_binary(const string& entry, object*& obj, unsigned int& obj_size)
-{
-    static binary new_binary;
-    integer_t val;
-    bool ret = false;
-
-    if ((entry.size() >= 2) && (entry[0] == '#'))
-    {
-        stringstream token;
-        char type = entry[entry.size() - 1];
-        bool syntax;
-
-        switch(type)
+        // pre parse to avoid doing a useless allocation
+        // detect the begining of a number, including nan, inf, @nan@, @inf@
+        if (entry.find_first_of("+-0123456789.ni@", 0) == 0)
         {
-            case 'd':
-                token<<std::dec<<entry.substr(1);
-                syntax = true;
-                break;
-            case 'h':
-                token<<std::hex<<entry.substr(1);
-                syntax = true;
-                break;
-            case 'o':
-                token<<std::oct<<entry.substr(1);
-                syntax = true;
-                break;
-            default:
-                syntax = false;
-                break;
-        }
+            number* num = (number*)prog.allocate_back(number::calc_size(), cmd_number);
 
-        token>>val;
-        if(syntax && !token.fail())
-        {
-            new_binary.set(val);
-            obj = &new_binary;
-            obj_size = sizeof(binary);
-            ret = true;
-        }
-    }
-
-    return ret;
-}
-
-// care: not threadsafe
-static bool get_binary_bin(const string& entry, object*& obj, unsigned int& obj_size)
-{
-    static binary new_binary;
-    integer_t val;
-    int len = entry.size();
-    bool ret = false;
-    
-    if ((len > 2) && (entry[0] == '#') && (entry[len - 1] == 'b'))
-    {
-        integer_t val(0);
-        integer_t exponent = (1 << (len-3));
-        for(int i=0; i<(len-2); i++)
-        {
-            if (entry.at(i+1)=='1')
+            int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
+            if (endptr != NULL && endptr != entry.c_str())
             {
-                val+=exponent;
-                exponent/=2;
+                // determine representation
+                string beg = entry.substr(0, 2);
+                if (beg == "0x" || beg == "0X")
+                    num->_representation = number::hex;
+                else if (beg == "0b" || beg == "0B")
+                    num->_representation = number::bin;
+                else
+                    num->_representation = number::dec;
+
+                ret = true;
+
+                // remaining string if any
+                remaining_entry = endptr;
             }
+            else
+                (void)prog.pop_back();
         }
-        new_binary.set(val);
-        obj = &new_binary;
-        obj_size = sizeof(binary);
-        ret = true;
     }
 
     return ret;
 }
 
-static bool _obj_from_string(const string& entry, object*& obj, unsigned int& obj_size, cmd_type_t& type, string& remaining_entry)
+static bool _obj_from_string(const string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
     
     remaining_entry.erase();
 
-    if (get_float(entry, obj, obj_size, remaining_entry))
+    if (get_number(entry, prog, remaining_entry))
     {
-        type = cmd_number;
         ret = true;
     }
-    else if (get_binary(entry, obj, obj_size))
+    else if (get_symbol(entry, prog, remaining_entry))
     {
-        type = cmd_binary;
         ret = true;
     }
-    else if (get_binary_bin(entry, obj, obj_size))
+    else if (get_string(entry, prog, remaining_entry))
     {
-        type = cmd_binary;
         ret = true;
     }
-    else if (get_symbol(entry, obj, obj_size))
+    else if (get_program(entry, prog, remaining_entry))
     {
-        type = cmd_symbol;
         ret = true;
     }
-    else if (get_string(entry, obj, obj_size))
-    {
-        type = cmd_string;
-        ret = true;
-    }
-    else if (get_program(entry, obj, obj_size))
-    {
-        type = cmd_program;
-        ret = true;
-    }
-    else if (get_keyword(entry, obj, obj_size, type))
+    else if (get_keyword(entry, prog, remaining_entry))
     {
         ret = true;
     }
     else
     {
         // nothing, considered as an auto-evaluated symbol
-        if (get_other(entry, obj, obj_size, type))
+        if (get_other(entry, prog, remaining_entry))
         {
             ret = true;
         }
     }
 
     return ret;
-}
-
-static void _delete_obj_from_string(object* obj)
-{
-    if (obj != NULL)
-    {
-        switch (obj->_type)
-        {
-        case cmd_number:
-        case cmd_binary:
-            break;
-        default:
-            free(obj);
-            break;
-        }
-    }
 }
 
 static char* entry_completion_generator(const char* text, int state)
@@ -544,9 +448,6 @@ static ret_value parse(const char* entry, program& prog)
 {
     vector<string> entries;
     ret_value ret = ret_ok;
-    cmd_type_t type;
-    unsigned int obj_size;
-    object* obj;
 
     //1. cut global entry string into shorter strings
     if (_cut(entry, entries))
@@ -561,15 +462,9 @@ static ret_value parse(const char* entry, program& prog)
                 // remaining_entry is used only in case of concatenated entry
                 // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
                 // this remaining entry is treated as an entry
-                if(_obj_from_string(main_entry, obj, obj_size, type, remaining_entry))
-                {
-                    prog.push_back(obj, obj_size, type);
-                    _delete_obj_from_string(obj);
-                }
-                else
-                {
-                    // no syntax error for now, an unknown obj form is considered as a symbol
-                }
+                
+                // TODO errors ?
+                _obj_from_string(main_entry, prog, remaining_entry);
                 main_entry = remaining_entry;
             }
         }
@@ -601,5 +496,6 @@ static ret_value entry(program& prog)
     else
         ret = ret_internal;
 
+    //TODO
     free(buf);
 }

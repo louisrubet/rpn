@@ -39,3 +39,7 @@ static void dump8(unsigned char* to_dump, unsigned long offset,
     }
     printf("\n");
 }
+
+//
+#define TRACE(x) cout<<__FUNCTION__<<": "<<(x)<<endl;
+#define TRACE2(x, y) cout<<__FUNCTION__<<": "<<(x)<<(y)<<endl;
