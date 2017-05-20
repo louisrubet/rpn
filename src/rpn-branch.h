@@ -3,9 +3,14 @@
 int rpn_if(branch& myobj)
 {
     // myobj.arg1 = 'if' condition evaluation value
-    MIN_ARGUMENTS_RET(1, -1);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
-    myobj.arg1 = ((getf() != 0) ? 1 : 0);
+    MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
+
+    if (mpfr_cmp_si(((number*)_stack->get_obj(0))->_value.mpfr, 0UL) != 0)
+        myobj.arg1 = 1;
+    else
+        myobj.arg1 = 0;
+    (void)_stack->pop_back();
     return -1;
 }
 
@@ -44,37 +49,68 @@ void rpn_end(void)
 
 int rpn_start(branch& myobj)
 {
-    MIN_ARGUMENTS_RET(2, 1);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
-    ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
+    int ret = -1;
+
+    MIN_ARGUMENTS_RET(2, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
+
+    // farg2 = last value of start command
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg2 = (number*)_branch_stack.back();
+    _stack->pop_back();
 
     // farg1 = first value of start command
-    // farg2 = last value of start command
-    myobj.farg2 = getf();
-    myobj.farg1 = getf();
-    return -1;
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg1 = (number*)_branch_stack.back();
+    _stack->pop_back();
+
+    // test value
+    if (myobj.farg1->_value > myobj.farg2->_value)
+        // last boundary lower than first boundary
+        // -> next command shall be after 'next'
+        // arg2 holds index of 'next'
+        ret = myobj.arg2 + 1;
+
+    return ret;
 }
 
 int rpn_for(branch& myobj)
 {
-    MIN_ARGUMENTS_RET(2, 1);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -1);
-    ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -1);
+    int ret;
+
+    MIN_ARGUMENTS_RET(2, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
     symbol* sym = ((symbol*)seq_obj(myobj.arg1));
 
-    // farg1 = first value of for command
     // farg2 = last value of for command
     // arg1 = index of symbol to increase
-    myobj.farg2 = getf();
-    myobj.farg1 = getf();
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg2 = (number*)_branch_stack.back();
+    _stack->pop_back();
 
-    // store symbol with first value
-    number num;
-    num.set(myobj.farg1);
-    _local_heap.add(string(sym->_value), &num, num.size(), cmd_number);
+    // farg1 = first value of for command
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    myobj.farg1 = (number*)_branch_stack.back();
+    _stack->pop_back();
 
-    return myobj.arg1 + 1;
+    // test value
+    if (myobj.farg1->_value > myobj.farg2->_value)
+        // last boundary lower than first boundary
+        // -> next command shall be after 'next'
+        // arg2 holds index of 'next'
+        ret = myobj.arg2 + 1;
+    else
+    {
+        // store symbol with first value
+        _local_heap.add(sym->_value, myobj.farg1, myobj.farg1->size());
+        (void)_stack->pop_back();
+        ret = myobj.arg1 + 1;
+    }
+
+    return ret;
 }
 
 int rpn_next(branch& myobj)
@@ -89,25 +125,26 @@ int rpn_next(branch& myobj)
     }
 
     // increment then test
-    myobj.farg1++;
+    mpfr_add_si(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, 1UL, MPFR_DEF_RND);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1)
     {
-        void* obj;
+        object* obj;
         unsigned int size;
-        int type;
         symbol* var = (symbol*)seq_obj(start_or_for->arg1);
-        // check symbol variable is a number, then increase
-        if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
-            ((number*)obj)->_value = myobj.farg1;
+
+        // increase symbol variable
+        _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
     }
 
     //test value
-    if (myobj.farg1 > start_or_for->farg2)
+    if (myobj.farg1->_value > start_or_for->farg2->_value)
     {
         // end of loop
         myobj.arg_bool = false;// init again next time
+        _branch_stack.pop_back();
+        _branch_stack.pop_back();
         return -1;
     }
     else
@@ -123,46 +160,59 @@ int rpn_next(branch& myobj)
 
 int rpn_step(branch& myobj)
 {
-    // arg1 = index of start or for command in program
-    // farg1 = current count
-    floating_t step = getf();
-    branch* start_or_for = (branch*)seq_obj(myobj.arg1);
-    if (! myobj.arg_bool)
-    {
-        myobj.arg_bool = true;
-        myobj.farg1 = start_or_for->farg1;
-    }
+    int ret;
+    MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    // increment then test
-    myobj.farg1 += step;
+    number* step = (number*)_stack->pop_back();
 
-    // for command: increment symbol too
-    if (start_or_for->arg1 != -1)
-    {
-        void* obj;
-        unsigned int size;
-        int type;
-        symbol* var = (symbol*)seq_obj(start_or_for->arg1);
-        // check symbol variable is a number, then increase
-        if (_local_heap.get(string(var->_value), obj, size, type) && (type == cmd_number))
-            ((number*)obj)->_value = myobj.farg1;
-    }
-
-    //test value
-    if (((step>0) && (myobj.farg1 > start_or_for->farg2))
-       || ((step<0) && (myobj.farg1 < start_or_for->farg2)))
-    {
-        // end of loop
-        myobj.arg_bool = false;// init again next time
-        return -1;
-    }
+    // end of loop if step is negative or zero
+    if (mpfr_cmp_d(step->_value.mpfr, 0.0)<=0)
+        ret = -1;
     else
     {
-        // for command: next instruction will be after symbol variable
+        // arg1 = index of start or for command in program
+        // farg1 = current count
+        branch* start_or_for = (branch*)seq_obj(myobj.arg1);
+        if (! myobj.arg_bool)
+        {
+            myobj.arg_bool = true;
+            myobj.farg1 = start_or_for->farg1;
+        }
+
+        // increment then test
+        mpfr_add(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, step->_value.mpfr, MPFR_DEF_RND);
+
+        // for command: increment symbol too
         if (start_or_for->arg1 != -1)
-            return start_or_for->arg1 + 1;
-        // start command: next instruction will be after start command
+        {
+            object* obj;
+            unsigned int size;
+            symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+
+            // increase symbol variable
+            _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
+        }
+
+        // test loop value is out of range
+        if (myobj.farg1->_value > start_or_for->farg2->_value)
+        {
+            // end of loop
+            myobj.arg_bool = false;// init again next time
+            _branch_stack.pop_back();
+            _branch_stack.pop_back();
+            ret = -1;
+        }
         else
-            return myobj.arg1 + 1;
+        {
+            // for command: next instruction will be after symbol variable
+            if (start_or_for->arg1 != -1)
+                ret = start_or_for->arg1 + 1;
+            // start command: next instruction will be after start command
+            else
+                ret = myobj.arg1 + 1;
+        }
     }
+    
+    return ret;
 }

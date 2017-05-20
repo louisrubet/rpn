@@ -1,0 +1,67 @@
+## STACK TEST
+# entry depth 1
+1
+-> stack size should be 1
+
+# entry depth 2
+2 3
+-> stack size should be 3
+-> stack should be 1, 2, 3
+
+# drop
+drop
+-> stack size should be 2
+
+# drop2
+drop2
+-> stack size should be 0
+
+# drop error
+drop
+-> error should be 2
+
+# drop2 error
+drop2
+-> error should be 2
+
+# drop2 error
+1 drop2
+-> error should be 2
+drop
+
+# test dup
+1 dup
+-> stack size should be 2
+-> stack should be 1, 1
+
+# test dup2
+drop 2 dup2
+-> stack size should be 4
+-> stack should be 1, 2, 1, 2
+drop2 drop2
+
+# test rot
+1 2 3 rot
+-> stack size should be 3
+-> stack should be 2, 3, 1
+erase
+
+# test depth
+1 2 3
+depth
+-> stack size should be 4
+-> stack should be 1, 2, 3, 3
+erase
+
+# test pick
+1 2 3 4 2 pick
+-> stack size should be 5
+-> stack should be 1, 2, 3, 4, 3
+0 pick
+-> error should be 4
+7 pick
+-> error should be 4
+
+# test erase
+erase
+-> stack size should be 0

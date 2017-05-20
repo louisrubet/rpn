@@ -21,7 +21,11 @@
  *
  */
 #include <stdlib.h>
+#include <stdint.h> //for intmax_t
+#include <mpfr.h>
 #include <math.h>
+
+#include "debug.h"
 
 extern "C" {
 #include <readline/readline.h>
@@ -35,10 +39,23 @@ extern "C" {
 #include <fstream>
 using namespace std;
 
-#include "stack.h"
+// default number of printed digitis
+#define DEFAULT_PRECISION 12
 
-//
-static int g_verbose = 0;
+// MPFR related constants
+// 128 bits significand storing length in byters, result of mpfr_custom_get_size(128)
+#define MPFR_DEF_RND MPFR_RNDN
+#define MPFR_128BITS_PREC 128
+#define MPFR_128BITS_STORING_LENGTH 16
+
+static string s_mpfr_printf_format_beg = "%.";
+static string s_mpfr_printf_format_std = "Rg";
+static string s_mpfr_printf_format_fix = "Rf";
+static string s_mpfr_printf_format_sci = "Re";
+static string s_mpfr_printf_format_hex = "%Ra";
+static string s_mpfr_printf_format = "%.12Rg";
+static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
+static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
 
 //
 #include "escape.h"
@@ -49,6 +66,7 @@ typedef enum {
     ret_unknown_err,
     ret_missing_operand,
     ret_bad_operand_type,
+    ret_out_of_range,
     ret_unknown_variable,
     ret_internal,
     ret_deadly,
@@ -57,18 +75,18 @@ typedef enum {
     ret_nop,
     ret_syntax,
     ret_div_by_zero,
+    ret_runtime_error,
     ret_max
 } ret_value;
 
 const char* ret_value_string[ret_max] = {
-    "ok", "unknown command", "missing operand", "bad operand type", "unknown variable", "internal error, aborting",
-    "deadly", "goodbye", "not implemented", "no operation", "syntax", "division by zero"
+    "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting",
+    "deadly", "goodbye", "not implemented", "no operation", "syntax error", "division by zero", "runtime error"
 };
 
 typedef enum {
     cmd_undef,
     cmd_number,/* floating value to put in stack */
-    cmd_binary,/* binary (integer) value to put in stack */
     cmd_string,/* string value to put in stack */
     cmd_symbol,/* symbol value to put in stack */
     cmd_program,/* program */
@@ -78,20 +96,56 @@ typedef enum {
 } cmd_type_t;
 
 const char* cmd_type_string[cmd_max] = {
-    "undef", "number", "binary", "string", "symbol", "program", "keyword", "keyword"
+    "undef", "number", "string", "symbol", "program", "keyword", "keyword"
 };
 
-//
-typedef long double floating_t;
-typedef long long integer_t;
+// MPFR object
+struct floating_t
+{
+    mpfr_t mpfr;
+
+    void init(void* significand)
+    {
+        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+    }
+
+    void set_significand(void* significand)
+    {
+        mpfr->_mpfr_d = (mp_limb_t*)significand;
+    }
+
+    floating_t& operator=(const long int val)
+    {
+        mpfr_set_si(mpfr, val, s_mpfr_rnd);
+    }
+
+    floating_t& operator=(const unsigned long val)
+    {
+        mpfr_set_ui(mpfr, val, s_mpfr_rnd);
+    }
+
+    operator int()
+    {
+        return (int)mpfr_get_si(mpfr, s_mpfr_rnd);
+    }
+    
+    bool operator>(const floating_t right)
+    {
+        return mpfr_cmp(mpfr, right.mpfr) > 0;
+    }
+
+    bool operator<(const floating_t right)
+    {
+        return mpfr_cmp(mpfr, right.mpfr) < 0;
+    }
+};
+
 class program;
 class object;
 class branch;
+
 typedef void (program::*program_fn_t)(void);
-typedef union
-{
-    program_fn_t _fn;
-} operand;
 typedef int (program::*branch_fn_t)(branch&);
 
 //
@@ -99,22 +153,62 @@ struct object
 {
     // object type
     cmd_type_t _type;
+    unsigned int _size;
 
     //
+    unsigned int size() { return _size; }
     void show(ostream& stream = cout);
-} __attribute__((packed));
+};
 
 struct number : public object
 {
+    number() { _type = cmd_number; }
     floating_t _value;
 
+    void init(void* significand)
+    {
+        _type = cmd_number;
+        _representation = dec;
+        _value.init(significand);
+    }
+
+    void copy(number& op)
+    {
+        _value = op._value;
+        memcpy(_value.mpfr->_mpfr_d, op._value.mpfr->_mpfr_d, MPFR_128BITS_STORING_LENGTH);
+    }
+
     //
-    void set(floating_t value)
+    void set(const floating_t& value)
+    {
+        _type = cmd_number;
+        _value.mpfr->_mpfr_d = value.mpfr->_mpfr_d;
+    }
+
+    void set(long value)
     {
         _type = cmd_number;
         _value = value;
     }
-    unsigned int size() { return sizeof(number); }
+
+    void set(unsigned long value)
+    {
+        _type = cmd_number;
+        _value = value;
+    }
+
+    static unsigned int calc_size()
+    {
+        return (unsigned int)(sizeof(number)+MPFR_128BITS_STORING_LENGTH);
+    }
+
+    //
+    number operator=(const number& op)
+    {
+        number num;
+        num.set((const floating_t&)op._value);
+        return num;
+    }
 
     // representation mode
     typedef enum {
@@ -125,39 +219,21 @@ struct number : public object
     static mode_enum s_default_mode;
     static mode_enum s_mode;
     
+    enum {
+        dec,
+        hex,
+        bin
+    } _representation;
+
     // precision
     static int s_default_precision;
     static int s_current_precision;
-} __attribute__((packed));
+};
+
 number::mode_enum number::s_default_mode = number::std;
 number::mode_enum number::s_mode = number::s_default_mode;
-int number::s_default_precision = 12;
+int number::s_default_precision = DEFAULT_PRECISION;
 int number::s_current_precision = number::s_default_precision;
-
-struct binary : public object
-{
-    integer_t _value;
-    
-    //
-    void set(integer_t value)
-    {
-        _type = cmd_binary;
-        _value = value;
-    }
-    unsigned int size() { return sizeof(binary); }
-
-    // representation mode
-    typedef enum {
-        dec,
-        hex,
-        oct,
-        bin,
-    } binary_enum;
-    static binary_enum s_default_mode;
-    static binary_enum s_mode;
-} __attribute__((packed));
-binary::binary_enum binary::s_default_mode = binary::dec;
-binary::binary_enum binary::s_mode = binary::s_default_mode;
 
 struct ostring : public object
 {
@@ -175,12 +251,11 @@ struct ostring : public object
         else
             len = 0;
     }
-    int size() { return sizeof(ostring)+_len+1; }
 
     //
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct oprogram : public object
 {
@@ -198,20 +273,20 @@ struct oprogram : public object
         else
             len = 0;
     }
-    int size() { return sizeof(oprogram)+_len+1; }
 
     //
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct symbol : public object
 {
     //
-    void set(const char* value, unsigned int len)
+    void set(const char* value, unsigned int len, bool auto_eval)
     {
         _type = cmd_symbol;
-        _auto_eval = false;
+        _auto_eval = auto_eval;
+
         if (value != NULL)
         {
             if (len>0)
@@ -222,13 +297,12 @@ struct symbol : public object
         else
             len = 0;
     }
-    int size() { return sizeof(symbol)+_len+1; }
 
     //
     bool _auto_eval;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct keyword : public object
 {
@@ -247,13 +321,12 @@ struct keyword : public object
         else
             len = 0;
     }
-    int size() { return sizeof(keyword)+_len+1; }
 
     //
     program_fn_t _fn;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 struct branch : public object
 {
@@ -265,8 +338,8 @@ struct branch : public object
         arg1 = -1;
         arg2 = -1;
         arg3 = -1;
-        farg1 = 0;
-        farg2 = 0;
+        farg1 = NULL;
+        farg2 = NULL;
         arg_bool = 0;
         if (value != NULL)
         {
@@ -278,47 +351,37 @@ struct branch : public object
         else
             len = 0;
     }
-    int size() { return sizeof(branch)+_len+1; }
 
     // branch function
     branch_fn_t _fn;
     // args used by cmd_branch cmds
     int arg1, arg2, arg3;
-    floating_t farg1, farg2;
+    number *farg1, *farg2;
     bool arg_bool;
     unsigned int _len;
     char _value[0];
-} __attribute__((packed));
+};
 
 void object::show(ostream& stream)
 {
+    //TODO please NOOO
+    char buffer[512];
+
     switch(_type)
     {
     case cmd_number:
-        stream << ((number*)this)->_value;
-        break;
-    case cmd_binary:
+        switch(((number*)this)->_representation)
         {
-            cout << "# ";
-            switch(((binary*)this)->s_mode)
-            {
-                case binary::dec: stream<<std::right<<std::setw(8)<<std::dec<<((binary*)this)->_value<<" d"; break;
-                case binary::hex: stream<<std::right<<std::setw(8)<<std::hex<<((binary*)this)->_value<<" h"; break;
-                case binary::oct: stream<<std::right<<std::setw(8)<<std::oct<<((binary*)this)->_value<<" o"; break;
-                case binary::bin:
-                {
-                    string mybin;
-                    for (int i = (int)(log((floating_t)((binary*)this)->_value) / log(2.)); i>=0; i--)
-                    {
-                        if (((binary*)this)->_value & (1 << i))
-                            mybin+='1';
-                        else
-                            mybin+='0';
-                    }
-                    stream<<std::right<<std::setw(20)<<std::oct<<mybin<<" b";
-                }
+            case number::dec:
+                (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
+                stream<<buffer;
                 break;
-            }
+            case number::hex:
+                (void)mpfr_sprintf(buffer, s_mpfr_printf_format_hex.c_str(), ((number*)this)->_value.mpfr);                
+                stream<<buffer;
+                break;
+            case number::bin:
+                cout<<"<binary representation TODO>";
         }
         break;
     case cmd_string:
@@ -348,6 +411,8 @@ struct if_layout_t
     int index_else;
     int index_end;
 };
+
+#include "stack.h"
 
 class program : public stack
 {
@@ -382,14 +447,6 @@ public:
         for(int i = 0; (go_out==false) && (i<(int)size());)
         {
             type = (cmd_type_t)seq_type(i);
-
-            //
-            if (g_verbose >= 2)
-            {
-                cout << "(" << i << ") ";
-                ((object*)seq_obj(i))->show();
-                cout << endl;
-            }
 
             // could be an auto-evaluated symbol
             if (type == cmd_symbol)
@@ -434,20 +491,32 @@ public:
             {
                 // call matching function
                 branch* b = (branch*)seq_obj(i);
-                int tmp = (this->*(b->_fn))(*b);
-                if (tmp == -1)
-                    i++;
-                else
-                    i = tmp;
+                int next_cmd = (this->*(b->_fn))(*b);
+                switch (next_cmd)
+                {
+                    case -1:
+                        i++; // meaning 'next command'
+                        break;
+                    case -(int)ret_runtime_error:
+                        // error: show it
+                        (void)show_error(_err, _err_context);
+                        go_out = true;// end of run
+                        break;
+                    default:
+                        i = next_cmd;// new direction
+                        break;
+                }
             }
 
             // not a command, but a stack entry, manage it
             else
             {
-                stk.push_back(seq_obj(i), seq_len(i), type);
+                // copy the program stack entry to the running stack
+                stack::copy_and_push_back(*this, i, stk);
                 i++;
             }
         }
+
         return ret;
     }
 
@@ -471,7 +540,7 @@ public:
     {
         // for if-then-else-end
         vector<struct if_layout_t> vlayout;
-        int layout_index=-1;// TODO remplacable par vlayout.size()-1
+        int layout_index=-1;
         // for start-end-step
         vector<int> vstartindex;
 
@@ -505,8 +574,17 @@ public:
                         //fill 'end' branch of 'else'
                         ((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
                     else
+                    {
                         //fill 'end' branch of 'then'
-                        ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
+                        if (vlayout[layout_index].index_then != -1)
+                            ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
+                        else
+                        {
+                            // error: show it
+                            show_syntax_error("missing then before end");
+                            return ret_syntax;
+                        }
+                    }
                     layout_index--;
                 }
             }
@@ -602,7 +680,8 @@ public:
                         show_syntax_error("missing start or for before next");
                         return ret_syntax;
                     }
-                    k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'next' branch1 = 'start' index
+                    k->arg1 = vstartindex[vstartindex.size() - 1]; // 'next' arg1 = 'start' index
+                    ((branch*)seq_obj(vstartindex[vstartindex.size() - 1]))->arg2 = i; // 'for' or 'start' arg2 = 'next' index
                     vstartindex.pop_back();
                 }
                 else if (compare_branch(k, "step", 4))
@@ -614,6 +693,7 @@ public:
                         return ret_syntax;
                     }
                     k->arg1 = vstartindex[vstartindex.size() - 1];// fill 'step' branch1 = 'start' index
+                    ((branch*)seq_obj(vstartindex[vstartindex.size() - 1]))->arg2 = i; // 'for' or 'start' arg2 = 'next' index
                     vstartindex.pop_back();
                 }
                 else if (compare_branch(k, "->", 2))
@@ -637,28 +717,46 @@ public:
         return ret_ok;
     }
 
-    static ret_value show_error(ret_value err, string& context)
+    ret_value show_error()
     {
-        cerr<<context<<": "<<ret_value_string[err]<<endl;
-        switch(err)
+        ret_value ret;
+
+        // show last recorded error
+        cerr<<ret_value_string[_err]<<"("<<_err<<"): "<<_err_context<<endl;
+        switch(_err)
         {
             case ret_internal:
             case ret_deadly:
-                return ret_deadly;
+                ret = ret_deadly;
             default:
-                return ret_ok;
+                ret = ret_ok;
         }
+        
+        return ret;
     }
 
-    static ret_value show_error(ret_value err, char* context)
+    ret_value show_error(ret_value err, string& context)
     {
-        string context_string(context);
-        return show_error(err, context_string);
+        // record error
+        _err = err;
+        _err_context = context;
+        return show_error();
     }
 
-    static void show_syntax_error(const char* context)
+    ret_value show_error(ret_value err, const char* context)
     {
-        cerr<<"syntax error: "<<context<<endl;
+        // record error
+        _err = err;
+        _err_context = context;
+        return show_error();
+    }
+
+    void show_syntax_error(const char* context)
+    {
+        // record error
+        _err = ret_syntax;
+        _err_context = context;
+        (void)show_error();
     }
 
     ret_value get_err(void) { return _err; }
@@ -684,49 +782,29 @@ public:
             }
         }
     }
+    
+    static void apply_default()
+    {
+        //default float precision, float mode, verbosity
+        number::s_mode = number::s_default_mode;
+        number::s_current_precision = number::s_default_precision;
+
+        // format for mpfr_printf 
+        stringstream ss;
+        ss << number::s_current_precision;
+        s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
+    }
 
 private:
     ret_value _err;
     string _err_context;
 
     stack* _stack;
+    stack _branch_stack;
 
     heap* _global_heap;
     heap _local_heap;
     heap* _parent_local_heap;
-
-    // helpers for keywords implementation
-    floating_t getf()
-    {
-        /* warning, caller must check object type before */
-        floating_t a = ((number*)_stack->back())->_value;
-        _stack->pop_back();
-        return a;
-    }
-
-    void putf(floating_t value)
-    {
-        /* warning, caller must check object type before */
-        number num;
-        num.set(value);
-        _stack->push_back(&num, num.size(), cmd_number);
-    }
-
-    integer_t getb()
-    {
-        /* warning, caller must check object type before */
-        integer_t a = ((binary*)_stack->back())->_value;
-        _stack->pop_back();
-        return a;
-    }
-
-    void putb(integer_t value)
-    {
-        /* warning, caller must check object type before */
-        binary num;
-        num.set(value);
-        _stack->push_back(&num, num.size(), cmd_binary);
-    }
 
     int stack_size()
     {
@@ -741,11 +819,11 @@ private:
     #define ARG_MUST_BE_OF_TYPE(num, type) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } } while(0)
     #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { if (_stack->get_type(num) != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } } while(0)
     #define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
+    #define CHECK_MPFR(op) do { (void)(op); } while(0)
 
     // keywords implementation
     #include "rpn-general.h"
     #include "rpn-real.h"
-    #include "rpn-binary.h"
     #include "rpn-test.h"
     #include "rpn-stack.h"
     #include "rpn-string.h"
@@ -758,19 +836,7 @@ private:
 
 //keywords declaration
 #include "rpn-cmd.h"
-
 #include "rpn-test-core.h"
-
-//
-static void apply_default(void)
-{
-    //default precision
-    cout << setprecision(number::s_default_precision);
-    number::s_mode = number::s_default_mode;
-
-    //default binary mode
-    binary::s_mode = binary::s_default_mode;
-}
 
 //
 int main(int argc, char* argv[])
@@ -780,7 +846,7 @@ int main(int argc, char* argv[])
     int ret = 0;
 
     // apply default configuration
-    apply_default();
+    program::apply_default();
 
     // run with interactive prompt
     if (argc == 1)
@@ -827,6 +893,8 @@ int main(int argc, char* argv[])
             program::show_stack(global_stack, separator);
         }
     }
-
+ 
+    mpfr_free_cache();
+ 
     return ret;
 }

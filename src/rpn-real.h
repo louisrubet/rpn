@@ -1,125 +1,54 @@
 void plus()
 {
     MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-        //TODO really too slow
-        putf(getf() + getf());
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-        //TODO really too slow
-        putb(getb() + getb());
-    }
-    //TODO
-#if 0
-    // string
-    else if (IS_ARG_TYPE(0, cmd_string))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_string);
-        string& second = *((ostring*)_stack->back())->_value;
-        _stack->pop_back();
-        *((ostring*)_stack->back())->_value += second;
-    }
-#endif
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void minus()
 {
     MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-        //TODO really too slow
-        floating_t first = getf();
-        putf(getf() - first);
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-        //TODO really too slow
-        integer_t first = getb();
-        putb(getb() - first);
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void mul()
 {
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-        //TODO really too slow
-        putf(getf() * getf());
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-        //TODO really too slow
-        putb(getb() * getb());
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void div()
 {
     MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
-        //TODO really too slow
-
-        floating_t first = getf();
-        // arithmetic faults are managed by c++
-        putf(getf() / first);
-    }
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-    {
-        ARG_MUST_BE_OF_TYPE(1, cmd_binary);
-        if (((binary*)_stack->get_obj(0))->_value == 0)
-        {
-            ERR_CONTEXT(ret_div_by_zero);
-        }
-        else
-        {
-            //TODO really too slow
-            integer_t first = getb();
-            putb(getb() / first);
-        }
-    }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void neg()
 {
     MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    // float
-    if (IS_ARG_TYPE(0, cmd_number))
-        putf(-getf());
-    // binary
-    else if (IS_ARG_TYPE(0, cmd_binary))
-        putb(-getb());
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void inv()
@@ -127,8 +56,8 @@ void inv()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    // arithmetic faults are managed by c++
-    putf(1 / getf());
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_si_div(left->_value.mpfr, 1L, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void purcent()
@@ -137,7 +66,11 @@ void purcent()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    putf((getf() * getf()) / 100);
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div_si(left->_value.mpfr, left->_value.mpfr, 100L, s_mpfr_rnd));
 }
 
 void purcentCH()
@@ -146,9 +79,11 @@ void purcentCH()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // arithmetic faults are managed by c++
-    floating_t first = getf();
-    putf((100 * first) / getf());
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_mul_si(right->_value.mpfr, right->_value.mpfr, 100L, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div(left->_value.mpfr, right->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void power()
@@ -157,9 +92,9 @@ void power()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // arithmetic faults are managed by c++
-    floating_t first = getf();
-    putf(powl(getf(), first));
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
 }
 
 void squareroot()
@@ -167,8 +102,8 @@ void squareroot()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    // arithmetic faults are managed by c++
-    putf(sqrtl(getf()));
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void square()
@@ -176,8 +111,8 @@ void square()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t first = getf();
-    putf(first * first);
+    number* left = (number*)_stack->back();
+    CHECK_MPFR(mpfr_sqr(left->_value.mpfr, left->_value.mpfr, s_mpfr_rnd));
 }
 
 void modulo()
@@ -186,7 +121,29 @@ void modulo()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    // arithmetic faults are managed by c++
-    floating_t first = getf();
-    putf(fmodl(getf(), first));
+    number* right = (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_fmod(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, s_mpfr_rnd));
+}
+
+void hex()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ((number*)_stack->back())->_representation = number::hex;
+}
+
+void bin()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ((number*)_stack->back())->_representation = number::bin;
+}
+
+void dec()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ((number*)_stack->back())->_representation = number::dec;
 }

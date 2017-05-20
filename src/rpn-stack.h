@@ -2,81 +2,86 @@
 void swap(void)
 {
     MIN_ARGUMENTS(2);
-    _stack->copy_obj_to_local(0, 0);
-    _stack->copy_obj_to_local(1, 1);
-    _stack->pop_back();
-    _stack->pop_back();
-    _stack->push_obj_from_local(0);
-    _stack->push_obj_from_local(1);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
+    stack::copy_and_push_back(_branch_stack, 0, *_stack);
+    stack::copy_and_push_back(_branch_stack, 1, *_stack);
+    (void)_branch_stack.pop_back();
+    (void)_branch_stack.pop_back();
 }
 
 void drop(void)
 {
     MIN_ARGUMENTS(1);
-    _stack->pop_back();
+    (void)_stack->pop_back();
 }
 
 void drop2(void)
 {
     MIN_ARGUMENTS(2);
-    _stack->pop_back();
-    _stack->pop_back();
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
 }
 
 void erase(void)
 {
     while(_stack->size()>0)
-        _stack->pop_back();
+        (void)_stack->pop_back();
 }
 
 void dup(void)
 {
     MIN_ARGUMENTS(1);
-    _stack->copy_obj_to_local(0, 0);
-    _stack->push_obj_from_local(0);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, *_stack);
 }
 
 void dup2(void)
 {
     MIN_ARGUMENTS(2);
-    _stack->copy_obj_to_local(0, 0);
-    _stack->copy_obj_to_local(1, 1);
-    _stack->push_obj_from_local(1);
-    _stack->push_obj_from_local(0);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, *_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, *_stack);
 }
 
 void pick(void)
 {
     MIN_ARGUMENTS(1);
-    unsigned int to_pick = (unsigned int)getf();
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    unsigned int to_pick = (unsigned int)int(((number*)_stack->pop_back())->_value);
 
     // treat stack depth errors
     if ((to_pick == 0) || (to_pick > _stack->size()))
     {
-        ERR_CONTEXT(ret_missing_operand);
+        ERR_CONTEXT(ret_out_of_range);
         return;
     }
-    _stack->copy_obj_to_local(to_pick - 1, 0);
-    _stack->push_obj_from_local(0);
+
+    stack::copy_and_push_back(*_stack, _stack->size()-to_pick, *_stack);
 }
 
 void rot(void)
 {
     MIN_ARGUMENTS(3);
-    _stack->copy_obj_to_local(0, 0);
-    _stack->copy_obj_to_local(1, 1);
-    _stack->copy_obj_to_local(2, 2);
-    _stack->pop_back();
-    _stack->pop_back();
-    _stack->pop_back();
-    _stack->push_obj_from_local(1);
-    _stack->push_obj_from_local(0);
-    _stack->push_obj_from_local(2);
+
+    stack::copy_and_push_back(*_stack, _stack->size()-3, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
+    stack::copy_and_push_back(_branch_stack, 1, *_stack);
+    stack::copy_and_push_back(_branch_stack, 2, *_stack);
+    stack::copy_and_push_back(_branch_stack, 0, *_stack);
+    (void)_branch_stack.pop_back();
+    (void)_branch_stack.pop_back();
+    (void)_branch_stack.pop_back();
 }
 
 void depth(void)
 {
-    number num;
-    num.set((floating_t)_stack->size());
-    _stack->push_back(&num, num.size(), cmd_number);
+    unsigned long depth = (unsigned long)_stack->size();
+    number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+    num->set(depth);
 }

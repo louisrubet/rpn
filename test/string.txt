@@ -1,0 +1,90 @@
+## STRING
+
+default
+erase
+
+# ->str on real (1)
+1
+->str
+-> stack should be "1"
+drop
+
+# ->str on real (2)
+1.234
+25 std
+->str
+-> stack should be "1.234"
+drop
+
+# ->str on real (3)
+1.234
+20 fix
+->str
+-> stack should be "1.23400000000000000000"
+drop
+
+# ->str on symbol (1)
+toto
+->str
+-> stack should be "'toto'"
+drop
+
+# ->str on symbol (2)
+'toto'
+->str
+-> stack should be "'toto'"
+drop
+
+default
+
+# str-> on real (1)
+"1"
+str->
+-> stack should be 1
+drop
+
+# str-> on real (2)
+"1 2.345 3 4.9"
+str->
+-> stack should be 1, 2.345, 3, 4.9
+erase
+
+# str-> on real (3)
+4 fix
+"1 2.345 3 4.9"
+str->
+-> stack should be 1.0000, 2.3450, 3.0000, 4.9000
+erase
+default
+
+# str-> on constant (1)
+"pi"
+str->
+-> stack should be 3.141592653589793238462643
+erase
+
+# str-> on constant (2)
+"'pi' 'e'"
+str->
+-> stack should be 'pi', 'e'
+erase
+
+# str-> on command (1)
+"2 dup"
+str->
+-> stack should be 2, 2
+erase
+
+# str-> on command (2)
+"3.14 my_pi sto"
+str->
+-> stack size should be 0
+my_pi
+-> stack should be 3.14
+erase
+
+# str-> on program
+"<< -> n << n >> >>"
+str->
+-> stack should be << -> n  << n  >> >>
+erase

@@ -4,8 +4,13 @@ void sup(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    putf(getf() > first);
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) > 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void sup_eq(void)
@@ -14,8 +19,13 @@ void sup_eq(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    putf(getf() >= first);
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) >= 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void inf(void)
@@ -24,8 +34,13 @@ void inf(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    putf(getf() < first);
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) < 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void inf_eq(void)
@@ -34,8 +49,13 @@ void inf_eq(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    putf(getf() <= first);
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) <= 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void diff(void)
@@ -44,47 +64,28 @@ void diff(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    putf(getf() != first);
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) != 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void eq(void)
 {
     MIN_ARGUMENTS(2);
-    int type = _stack->get_type(0);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    if (_stack->get_type(1) == type)
-    {
-        switch(type)
-        {
-        case cmd_number:
-        {
-            floating_t first = getf();
-            putf(getf() == first);
-        }
-        break;
-        //TODO
-#if 0
-        case cmd_symbol:
-        {
-            string first = getn();
-            putf(getn() == first);
-        }
-#endif
-        break;
-        default:
-            _stack->pop_back();
-            _stack->pop_back();
-            putf(0);
-            break;
-        }
-    }
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) == 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
     else
-    {
-        _stack->pop_back();
-        _stack->pop_back();
-        putf(0);
-    }
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void test_and(void)
@@ -93,9 +94,14 @@ void test_and(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    floating_t second = getf();
-    putf((first != 0) && (second != 0));
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if ((mpfr_cmp_si(left->_value.mpfr, 0) != 0)
+        && (mpfr_cmp_si(right->_value.mpfr, 0) != 0))
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void test_or(void)
@@ -104,9 +110,14 @@ void test_or(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    floating_t second = getf();
-    putf((first != 0) || (second != 0));
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if ((mpfr_cmp_si(left->_value.mpfr, 0) != 0)
+        || (mpfr_cmp_si(right->_value.mpfr, 0) != 0))
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);
 }
 
 void test_xor(void)
@@ -115,9 +126,23 @@ void test_xor(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    floating_t first = getf();
-    floating_t second = getf();
-    putf(((first == 0) && (second != 0)) || ((first != 0) && (second == 0)));
+    number* right =  (number*)_stack->pop_back();
+    number* left = (number*)_stack->back();
+
+    if (mpfr_cmp_si(left->_value.mpfr, 0) == 0)
+    {
+        if (mpfr_cmp_si(right->_value.mpfr, 0) != 0)
+            mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+        else
+            mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);            
+    }
+    else
+    {
+        if (mpfr_cmp_si(right->_value.mpfr, 0) == 0)
+            mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+        else
+            mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);            
+    }
 }
 
 void test_not(void)
@@ -125,8 +150,11 @@ void test_not(void)
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t first = getf();
-    putf((first == 0) ? 1 : 0);
+    number* left = (number*)_stack->back();
+    if (mpfr_cmp_si(left->_value.mpfr, 0) == 0)
+        mpfr_set_si(left->_value.mpfr, 1, s_mpfr_rnd);
+    else
+        mpfr_set_si(left->_value.mpfr, 0, s_mpfr_rnd);            
 }
 
 void same(void)
