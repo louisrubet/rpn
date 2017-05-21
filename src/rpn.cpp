@@ -364,7 +364,6 @@ struct branch : public object
 
 void object::show(ostream& stream)
 {
-    //TODO please NOOO
     char buffer[512];
 
     switch(_type)
@@ -373,11 +372,11 @@ void object::show(ostream& stream)
         switch(((number*)this)->_representation)
         {
             case number::dec:
-                (void)mpfr_sprintf(buffer, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
+                (void)mpfr_snprintf(buffer, sizeof(buffer)-1, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
                 stream<<buffer;
                 break;
             case number::hex:
-                (void)mpfr_sprintf(buffer, s_mpfr_printf_format_hex.c_str(), ((number*)this)->_value.mpfr);                
+                (void)mpfr_snprintf(buffer, sizeof(buffer)-1, s_mpfr_printf_format_hex.c_str(), ((number*)this)->_value.mpfr);                
                 stream<<buffer;
                 break;
             case number::bin:
