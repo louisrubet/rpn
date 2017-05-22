@@ -43,7 +43,7 @@ using namespace std;
 #define DEFAULT_PRECISION 12
 
 // MPFR related constants
-// 128 bits significand storing length in byters, result of mpfr_custom_get_size(128)
+// 128 bits significand storing length in bytes, result of mpfr_custom_get_size(128)
 #define MPFR_DEF_RND MPFR_RNDN
 #define MPFR_128BITS_PREC 128
 #define MPFR_128BITS_STORING_LENGTH 16
@@ -56,6 +56,7 @@ static string s_mpfr_printf_format_hex = "%Ra";
 static string s_mpfr_printf_format = "%.12Rg";
 static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
 static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
+static unsigned int s_mpfr_prec_bytes = MPFR_128BITS_STORING_LENGTH;
 
 //
 #include "escape.h"
@@ -106,7 +107,7 @@ struct floating_t
 
     void init(void* significand)
     {
-        mpfr_custom_init(significand, MPFR_128BITS_STORING_LENGTH);
+        mpfr_custom_init(significand, MPFR_128BITS_PREC);
         mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
     }
 
@@ -175,7 +176,7 @@ struct number : public object
     void copy(number& op)
     {
         _value = op._value;
-        memcpy(_value.mpfr->_mpfr_d, op._value.mpfr->_mpfr_d, MPFR_128BITS_STORING_LENGTH);
+        memcpy(_value.mpfr->_mpfr_d, op._value.mpfr->_mpfr_d, s_mpfr_prec_bytes);
     }
 
     //
@@ -199,7 +200,7 @@ struct number : public object
 
     static unsigned int calc_size()
     {
-        return (unsigned int)(sizeof(number)+MPFR_128BITS_STORING_LENGTH);
+        return (unsigned int)(sizeof(number)+s_mpfr_prec_bytes);
     }
 
     //
