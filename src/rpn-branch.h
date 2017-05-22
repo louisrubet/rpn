@@ -105,7 +105,7 @@ int rpn_for(branch& myobj)
     else
     {
         // store symbol with first value
-        _local_heap.add(sym->_value, myobj.farg1, myobj.farg1->size());
+        _local_heap.add(sym->_value, (object*)myobj.farg1, myobj.farg1->size());
         (void)_stack->pop_back();
         ret = myobj.arg1 + 1;
     }
