@@ -23,6 +23,24 @@ void rpn_alog()
     CHECK_MPFR(mpfr_exp10(left->mpfr, left->mpfr, s_mpfr_rnd));
 }
 
+void rpn_log2()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_log2(left->mpfr, left->mpfr, s_mpfr_rnd));
+}
+
+void rpn_alog2()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    floating_t* left = &((number*)_stack->get_obj(0))->_value;
+    CHECK_MPFR(mpfr_exp2(left->mpfr, left->mpfr, s_mpfr_rnd));
+}
+
 void rpn_ln()
 {
     MIN_ARGUMENTS(1);
