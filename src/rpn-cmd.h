@@ -12,8 +12,11 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "test", &program::test, "" }, //not seen by user
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
-    { cmd_keyword, "type", &program::type, "show first stack entry type" },
+    { cmd_keyword, "type", &program::type, "show type of stack first entry" },
     { cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default" },
+    { cmd_keyword, "prec", &program::precision, "get float precision in bits when first stack is not a number\n\t"
+                                                "set float precision in bits when first stack entry is a number. ex: 256 prec\n\t" },
+    { cmd_keyword, "round", &program::rpn_default, "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward +inf\", \"toward +inf\", \"away from zero\"] round" },
 
     //REAL
     { cmd_undef, "", NULL, "\nREAL"},
