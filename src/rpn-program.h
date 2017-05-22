@@ -123,7 +123,7 @@ int inprog(branch& myobj)
     heap local_heap;
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--)
     {
-        local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0), _stack->get_type(0));
+        local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0));
         (void)_stack->pop_back();
     }
 
