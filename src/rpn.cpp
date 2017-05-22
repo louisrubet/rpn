@@ -39,8 +39,8 @@ extern "C" {
 #include <fstream>
 using namespace std;
 
-// default number of printed digitis
-#define DEFAULT_PRECISION 12
+// default number of printed digits
+#define DEFAULT_PRECISION 20
 
 // MPFR related constants
 // 128 bits significand storing length in bytes, result of mpfr_custom_get_size(128)
@@ -53,10 +53,12 @@ static string s_mpfr_printf_format_std = "Rg";
 static string s_mpfr_printf_format_fix = "Rf";
 static string s_mpfr_printf_format_sci = "Re";
 static string s_mpfr_printf_format_hex = "%Ra";
-static string s_mpfr_printf_format = "%.12Rg";
+static string s_mpfr_printf_format = "%.20Rg";
 static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
-static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
 static unsigned int s_mpfr_prec_bytes = MPFR_128BITS_STORING_LENGTH;
+
+static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
+static const char* s_mpfr_rnd_str[5] = { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" };
 
 //
 #include "escape.h"
@@ -80,7 +82,7 @@ typedef enum {
     ret_max
 } ret_value;
 
-const char* ret_value_string[ret_max] = {
+static const char* ret_value_string[ret_max] = {
     "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting",
     "deadly", "goodbye", "not implemented", "no operation", "syntax error", "division by zero", "runtime error"
 };
