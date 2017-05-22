@@ -32,7 +32,6 @@ public:
     {
         _current = _base;
         _vpointer.clear();
-        _vlen.clear();
         _count = 0;
     }
 
@@ -72,7 +71,6 @@ public:
         }
 
         // manage stack itself
-        _vlen.push_back(size);
         _vpointer.push_back((object*)_current);
         allocated = (object*)_current;
         _current += size;
@@ -94,7 +92,6 @@ public:
         if (_count > 0)
         {
             _current = (char*)_vpointer[_count - 1];
-            _vlen.pop_back();
             _vpointer.pop_back();
 
             _count--;
@@ -135,7 +132,7 @@ public:
     unsigned int get_len(unsigned int index)
     {
         if (index<_count)
-            return _vlen[_count-index-1];
+            return _vpointer[_count-index-1]->_size;
         else
             return 0;
     }
@@ -160,7 +157,7 @@ public:
     unsigned int seq_len(unsigned int index)
     {
         if (index<_count)
-            return _vlen[index];
+            return _vpointer[index]->_size;
         else
             return 0;
     }
@@ -178,7 +175,6 @@ private:
     char* _current;
 
     vector<object*> _vpointer;//pointer on each entry
-    vector<unsigned int> _vlen;// size of each entry in bytes
     unsigned int _count;// =_vlen.size()=_vpointer.size()
     unsigned int _total_size;//total allocated size in bytes
 };
