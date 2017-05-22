@@ -139,3 +139,25 @@ void rpn_default()
 {
     program::apply_default();
 }
+
+void precision()
+{
+    if (stack_size()>0 && _stack->get_type(0) == cmd_number)
+    {
+        //set MPFR float precision
+        long prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, s_mpfr_rnd);
+        if (prec >= 0)
+        {
+            s_mpfr_prec = (mpfr_prec_t)prec;
+            s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
+        }
+        else
+            ERR_CONTEXT(ret_out_of_range);
+    }
+    else
+    {
+        // get MPFR float precision
+        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        num->set((long)s_mpfr_prec);
+    }
+}
