@@ -40,7 +40,7 @@ void help()
     }
     cout<<endl;
 
-    // different modes
+    // show mode
     cout<<"Current float mode is ";
     switch(number::s_mode)
     {
@@ -49,8 +49,11 @@ void help()
         case number::sci: cout << "'sci'"; break;
         default: cout << "unknown"; break;
     }
+    cout<<" with "<<number::s_current_precision<<" digits"<<endl;
 
-    cout<<endl<<"Current float precision is "<<number::s_current_precision<<endl;
+    // calc precision and rounding mode
+    cout<<"Current floating point precision is "<<(int)s_mpfr_prec<<" bits"<<endl;
+    cout<<"Current rounding mode is '"<<s_mpfr_rnd_str[s_mpfr_rnd]<<"'"<<endl;
     cout<<endl<<endl;
 }
 
@@ -142,22 +145,35 @@ void rpn_default()
 
 void precision()
 {
-    if (stack_size()>0 && _stack->get_type(0) == cmd_number)
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    //set MPFR float precision
+    long prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, s_mpfr_rnd);
+    if (prec >= 0)
     {
-        //set MPFR float precision
-        long prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, s_mpfr_rnd);
-        if (prec >= 0)
-        {
-            s_mpfr_prec = (mpfr_prec_t)prec;
-            s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
-        }
-        else
-            ERR_CONTEXT(ret_out_of_range);
+        s_mpfr_prec = (mpfr_prec_t)prec;
+        s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
     }
     else
+        ERR_CONTEXT(ret_out_of_range);
+}
+
+void round()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_string);
+    
+    ostring* str = (ostring*)_stack->pop_back();
+    bool done = false;
+    for(int rnd = (int)MPFR_DEF_RND; rnd <= (int)MPFR_RNDA; rnd++)
     {
-        // get MPFR float precision
-        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        num->set((long)s_mpfr_prec);
+        if (string(s_mpfr_rnd_str[rnd]) == str->_value)
+        {
+            s_mpfr_rnd = (mpfr_rnd_t)rnd;
+            done = true;
+        }
     }
+    if (!done)
+        ERR_CONTEXT(ret_out_of_range);
 }
