@@ -340,7 +340,7 @@ static bool get_number(const string& entry, program& prog, string& remaining_ent
         {
             number* num = (number*)prog.allocate_back(number::calc_size(), cmd_number);
 
-            int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEF_RND);
+            int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEFAULT_RND);
             if (endptr != NULL && endptr != entry.c_str())
             {
                 // determine representation
