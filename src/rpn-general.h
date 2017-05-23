@@ -59,15 +59,17 @@ void help()
 
 void std()
 {
+    int precision = -1;
+
     if (stack_size()>=1)
     {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-        int precision = int(((number*)_stack->pop_back())->_value);
-        number::s_default_precision = int(precision);
+        precision = int(((number*)_stack->pop_back())->_value);
     }
 
-    number::s_current_precision = number::s_default_precision;
+    if (precision != -1)
+        number::s_current_precision = precision;
     number::s_mode = number::std;
 
     // format for mpfr_printf 
