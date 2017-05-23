@@ -75,7 +75,7 @@ void std()
     // format for mpfr_printf 
     stringstream ss;
     ss << number::s_current_precision;
-    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
+    s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
 }
 
 void fix()
@@ -91,7 +91,7 @@ void fix()
     // format for mpfr_printf 
     stringstream ss;
     ss << number::s_current_precision;
-    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_fix;
+    s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_FIX);
 }
 
 void sci()
@@ -107,7 +107,7 @@ void sci()
     // format for mpfr_printf 
     stringstream ss;
     ss << number::s_current_precision;
-    s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_sci;
+    s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_SCI);
 }
 
 void rpn_version()
