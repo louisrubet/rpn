@@ -1,17 +1,26 @@
+// default values
+//
+
 // default mode and number of printed digits
 //
 #define DEFAULT_MODE number::std
 #define DEFAULT_PRECISION 20
+#define MPFR_DEFAULT_FORMAT "%.20Rg"
 
-// MPFR related constants
+// MPFR related defaults
 //
 
 // rounding method
-#define MPFR_DEF_RND MPFR_RNDN
+#define MPFR_DEFAULT_RND MPFR_RNDN
+
 // 128 bits significand precision
 #define MPFR_DEFAULT_PREC_BITS 128
+
 // 128 bits significand storing length in bytes, result of mpfr_custom_get_size(128)
 #define MPFR_DEFAULT_STORING_LENGTH_BYTES 16
+
+// constants
+//
 
 // show formats
 #define MPFR_FORMAT_BEG "%."
@@ -19,7 +28,6 @@
 #define MPFR_FORMAT_FIX "Rf"
 #define MPFR_FORMAT_SCI "Re"
 #define MPFR_FORMAT_HEX "%Ra"
-#define MPFR_FORMAT "%.20Rg"
 
 #define MPFR_RND_STRINGS { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" }
 

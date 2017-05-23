@@ -41,11 +41,11 @@ extern "C" {
 #include <fstream>
 using namespace std;
 
-static string s_mpfr_printf_format = string(MPFR_FORMAT);
+static string s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
 static mpfr_prec_t s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
 static unsigned int s_mpfr_prec_bytes = MPFR_DEFAULT_STORING_LENGTH_BYTES;
 
-static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
+static mpfr_rnd_t s_mpfr_rnd = MPFR_DEFAULT_RND;
 static const char* s_mpfr_rnd_str[5] = MPFR_RND_STRINGS;
 
 //

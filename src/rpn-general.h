@@ -168,7 +168,7 @@ void round()
     
     ostring* str = (ostring*)_stack->pop_back();
     bool done = false;
-    for(int rnd = (int)MPFR_DEF_RND; rnd <= (int)MPFR_RNDA; rnd++)
+    for(int rnd = (int)MPFR_DEFAULT_RND; rnd <= (int)MPFR_RNDA; rnd++)
     {
         if (string(s_mpfr_rnd_str[rnd]) == str->_value)
         {
