@@ -62,48 +62,36 @@ public:
         object* allocated;
         bool data_is_reallocated = false;
         ptrdiff_t realloc_offset = 0;
+        char* old_base;
 
         // manage data memory allocation (add as much as memory it is needed)
-cout<<"** BASE"<<endl;
-cout<<"    size="<<size<<endl;
-cout<<"    _total_size="<<_total_size<<endl;
         if (((_current - _base) + size) > _total_size)
         {
-            // realloc data
+            // calc nb of needed pages
+            ptrdiff_t current_offset;
             unsigned long page_number = 1 + ((_current - _base) + size - _total_size) / ALLOC_STACK_CHUNK;
-            realloc_offset = _current - _base;
+            current_offset = _current - _base;
             _total_size += page_number * ALLOC_STACK_CHUNK;
+
+            old_base = _base;
             _base = (char*)realloc(_base, _total_size);
-cout<<"    ->realloc size="<<_total_size<<endl;
-cout<<"    ->realloc offset="<<realloc_offset<<endl;
-cout<<"    ->_base="<<(void*)_base<<endl;
-            _current = _base + realloc_offset;
+
+            _current = _base + current_offset;
             data_is_reallocated = true;            
         }
 
         // manage pointers memory allocation (page by page)
-cout<<"COUNT"<<endl;
-cout<<"    _count="<<_count<<endl;
-cout<<"    _total_count_pointer="<<_total_count_pointer<<endl;
         if ((_count + 1) > _total_count_pointer)
         {
-cout<<"POINTERS"<<endl;
             _base_pointer = (object**)realloc(_base_pointer, (_total_count_pointer * sizeof(object*)) + ALLOC_STACK_CHUNK);
             _total_count_pointer += (ALLOC_STACK_CHUNK / sizeof(object));
-cout<<"    ->_total_count_pointer="<<_total_count_pointer<<endl;
         }
 
         if (data_is_reallocated)
         {
             // recalc object pointers
-cout<<"    DATA_IS_REALLOCATED!"<<endl;
-cout<<"    realloc_offset="<<realloc_offset<<endl;
             for(int i = 0; i < _count; i++)
-            {
-cout<<"    _base_pointer["<<i<<"]="<<(void*)_base_pointer[i]<<endl;
-                _base_pointer[i] += realloc_offset;
-cout<<"    ->_base_pointer["<<i<<"]="<<(void*)_base_pointer[i]<<endl;
-            }
+                _base_pointer[i] = (object*)(_base + ((char*)_base_pointer[i] - old_base));
         }
 
         // manage stack itself
