@@ -25,6 +25,8 @@
 #include <mpfr.h>
 #include <math.h>
 
+#include "constant.h"
+
 #include "debug.h"
 
 extern "C" {
@@ -39,27 +41,12 @@ extern "C" {
 #include <fstream>
 using namespace std;
 
-// default mode and number of printed digits
-#define DEFAULT_MODE number::std
-#define DEFAULT_PRECISION 20
-
-// MPFR related constants
-// 128 bits significand storing length in bytes, result of mpfr_custom_get_size(128)
-#define MPFR_DEF_RND MPFR_RNDN
-#define MPFR_128BITS_PREC 128
-#define MPFR_128BITS_STORING_LENGTH 16
-
-static string s_mpfr_printf_format_beg = "%.";
-static string s_mpfr_printf_format_std = "Rg";
-static string s_mpfr_printf_format_fix = "Rf";
-static string s_mpfr_printf_format_sci = "Re";
-static string s_mpfr_printf_format_hex = "%Ra";
-static string s_mpfr_printf_format = "%.20Rg";
-static mpfr_prec_t s_mpfr_prec = MPFR_128BITS_PREC;
-static unsigned int s_mpfr_prec_bytes = MPFR_128BITS_STORING_LENGTH;
+static string s_mpfr_printf_format = string(MPFR_FORMAT);
+static mpfr_prec_t s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
+static unsigned int s_mpfr_prec_bytes = MPFR_DEFAULT_STORING_LENGTH_BYTES;
 
 static mpfr_rnd_t s_mpfr_rnd = MPFR_DEF_RND;
-static const char* s_mpfr_rnd_str[5] = { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" };
+static const char* s_mpfr_rnd_str[5] = MPFR_RND_STRINGS;
 
 //
 #include "escape.h"
@@ -83,10 +70,7 @@ typedef enum {
     ret_max
 } ret_value;
 
-static const char* ret_value_string[ret_max] = {
-    "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting",
-    "deadly", "goodbye", "not implemented", "no operation", "syntax error", "division by zero", "runtime error"
-};
+static const char* ret_value_string[ret_max] = RET_VALUE_STRINGS;
 
 typedef enum {
     cmd_undef,
@@ -99,9 +83,7 @@ typedef enum {
     cmd_max
 } cmd_type_t;
 
-const char* cmd_type_string[cmd_max] = {
-    "undef", "number", "string", "symbol", "program", "keyword", "keyword"
-};
+const char* cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
 
 // MPFR object
 struct floating_t
@@ -110,7 +92,7 @@ struct floating_t
 
     void init(void* significand)
     {
-        mpfr_custom_init(significand, MPFR_128BITS_PREC);
+        mpfr_custom_init(significand, MPFR_DEFAULT_PREC_BITS);
         mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
     }
 
@@ -376,7 +358,7 @@ void object::show(ostream& stream)
                 //stream<<buffer;
                 break;
             case number::hex:
-                (void)mpfr_printf(s_mpfr_printf_format_hex.c_str(), ((number*)this)->_value.mpfr);                
+                (void)mpfr_printf(string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 //stream<<buffer;
                 break;
             case number::bin:
@@ -791,7 +773,7 @@ public:
         // format for mpfr_printf 
         stringstream ss;
         ss << number::s_current_precision;
-        s_mpfr_printf_format = s_mpfr_printf_format_beg + ss.str() + s_mpfr_printf_format_std;
+        s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
     }
 
 private:
