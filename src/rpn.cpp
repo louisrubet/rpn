@@ -39,7 +39,8 @@ extern "C" {
 #include <fstream>
 using namespace std;
 
-// default number of printed digits
+// default mode and number of printed digits
+#define DEFAULT_MODE number::std
 #define DEFAULT_PRECISION 20
 
 // MPFR related constants
@@ -219,7 +220,6 @@ struct number : public object
         fix,
         sci
     } mode_enum;
-    static mode_enum s_default_mode;
     static mode_enum s_mode;
     
     enum {
@@ -229,14 +229,11 @@ struct number : public object
     } _representation;
 
     // precision
-    static int s_default_precision;
     static int s_current_precision;
 };
 
-number::mode_enum number::s_default_mode = number::std;
-number::mode_enum number::s_mode = number::s_default_mode;
-int number::s_default_precision = DEFAULT_PRECISION;
-int number::s_current_precision = number::s_default_precision;
+number::mode_enum number::s_mode = DEFAULT_MODE;
+int number::s_current_precision = DEFAULT_PRECISION;
 
 struct ostring : public object
 {
@@ -788,8 +785,8 @@ public:
     static void apply_default()
     {
         //default float precision, float mode, verbosity
-        number::s_mode = number::s_default_mode;
-        number::s_current_precision = number::s_default_precision;
+        number::s_mode = DEFAULT_MODE;
+        number::s_current_precision = DEFAULT_PRECISION;
 
         // format for mpfr_printf 
         stringstream ss;
