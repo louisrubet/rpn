@@ -462,7 +462,7 @@ static ret_value parse(const char* entry, program& prog)
                 // remaining_entry is used only in case of concatenated entry
                 // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
                 // this remaining entry is treated as an entry
-                
+
                 // TODO errors ?
                 _obj_from_string(main_entry, prog, remaining_entry);
                 main_entry = remaining_entry;
