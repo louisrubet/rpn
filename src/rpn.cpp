@@ -809,11 +809,11 @@ private:
     #include "rpn-program.h"
     #include "rpn-trig.h"
     #include "rpn-logs.h"
+    #include "rpn-test-core.h"
 };
 
 //keywords declaration
 #include "rpn-cmd.h"
-#include "rpn-test-core.h"
 
 //
 int main(int argc, char* argv[])
