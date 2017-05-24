@@ -11,14 +11,16 @@ void instr()
         {
             ((object*)_stack->pop_back())->show(tmp);
 
-            // reserve the correct size in stack
+            // reserve the correct size on stack
             unsigned int str_size = (unsigned int)ftell(tmp);
             ostring* str = (ostring*)_stack->allocate_back(str_size+1+sizeof(ostring), cmd_string);
-            str->_size = str_size;
+            str->_size = str_size+1;
 
             // fill the obj
-            if (fread(str->_value, str_size, 1, tmp) != str_size)
+            rewind(tmp);
+            if (fread(str->_value, str_size, 1, tmp) != 1)
                 ERR_CONTEXT(ret_runtime_error);
+            str->_value[str_size] = 0;
             fclose(tmp);
         }
         else
