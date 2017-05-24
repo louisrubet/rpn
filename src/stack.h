@@ -68,7 +68,6 @@ public:
         {
             // calc nb of needed pages
             unsigned long page_number = 1 + ((_current - _base) + size - _total_size) / ALLOC_STACK_CHUNK;
-            current_offset = _current - _base;
             _total_size += page_number * ALLOC_STACK_CHUNK;
 
             old_base = _base;
