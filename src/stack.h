@@ -61,14 +61,12 @@ public:
     {
         object* allocated;
         bool data_is_reallocated = false;
-        ptrdiff_t realloc_offset = 0;
         char* old_base;
 
         // manage data memory allocation (add as much as memory it is needed)
         if (((_current - _base) + size) > _total_size)
         {
             // calc nb of needed pages
-            ptrdiff_t current_offset;
             unsigned long page_number = 1 + ((_current - _base) + size - _total_size) / ALLOC_STACK_CHUNK;
             current_offset = _current - _base;
             _total_size += page_number * ALLOC_STACK_CHUNK;
@@ -76,23 +74,21 @@ public:
             old_base = _base;
             _base = (char*)realloc(_base, _total_size);
 
-            _current = _base + current_offset;
+            _current = _base + (_current - old_base);
             data_is_reallocated = true;            
         }
 
-        // manage pointers memory allocation (page by page)
+        // manage pointers memory allocation (add one page if needed)
         if ((_count + 1) > _total_count_pointer)
         {
             _base_pointer = (object**)realloc(_base_pointer, (_total_count_pointer * sizeof(object*)) + ALLOC_STACK_CHUNK);
             _total_count_pointer += (ALLOC_STACK_CHUNK / sizeof(object));
         }
 
+        // recalc object pointers in case of base reallocation
         if (data_is_reallocated)
-        {
-            // recalc object pointers
             for(int i = 0; i < _count; i++)
                 _base_pointer[i] = (object*)(_base + ((char*)_base_pointer[i] - old_base));
-        }
 
         // manage stack itself
         _base_pointer[_count++] = (object*)_current;
@@ -114,9 +110,7 @@ public:
 
         if (_count > 0)
         {
-            _current = (char*)_base_pointer[_count - 1];
-            _count--;
-
+            _current = (char*)_base_pointer[--_count];
             back = (object*)_current;
         }
 
@@ -131,64 +125,55 @@ public:
     // stack access (index is counted from back)
     object* get_obj(unsigned int index)
     {
-        if (index<_count)
-            return _base_pointer[_count - index - 1];
-        else
-            return NULL;
+        return seq_obj(_count - index - 1);
     }
 
     object* operator[](unsigned int index)
     {
-        return get_obj(index);
+        return seq_obj(_count - index - 1);
     }
-    
+
     object* back()
     {
+        object* obj = NULL;
         if (_count>0)
-            return _base_pointer[_count - 1];
-        else
-            return NULL;
+            obj = _base_pointer[_count - 1];
+        return obj;
     }
 
     unsigned int get_len(unsigned int index)
     {
-        if (index<_count)
-            return _base_pointer[_count - index - 1]->_size;
-        else
-            return 0;
+        return seq_len(_count - index - 1);
     }
 
     cmd_type_t get_type(unsigned int index)
     {
-        if (index<_count)
-            return _base_pointer[_count - index - 1]->_type;
-        else
-            return cmd_undef;
+        return seq_type(_count - index - 1);
     }
 
     // sequential access (index is counted from front)
     object* seq_obj(unsigned int index)
     {
+        object* obj = NULL;
         if (index<_count)
-            return _base_pointer[index];
-        else
-            return NULL;
+            obj = _base_pointer[index];
+        return obj;
     }
 
     unsigned int seq_len(unsigned int index)
     {
+        unsigned int len = 0;
         if (index<_count)
-            return _base_pointer[index]->_size;
-        else
-            return 0;
+            len = _base_pointer[index]->_size;
+        return len;
     }
 
     cmd_type_t seq_type(unsigned int index)
     {
+        cmd_type_t type = cmd_undef;
         if (index<_count)
-            return _base_pointer[index]->_type;
-        else
-            return cmd_undef;
+            type = _base_pointer[index]->_type;
+        return type;
     }
 
 private:
@@ -196,9 +181,9 @@ private:
     char* _current;
     object** _base_pointer;
 
-    unsigned int _count;// =_vlen.size()=_vpointer.size()
+    unsigned int _count;//stack count
     unsigned int _total_count_pointer;//total number of possible pointers
-    unsigned int _total_size;//total allocated size in bytes
+    unsigned int _total_size;//total allocated data size in bytes
 };
 
 //
@@ -270,8 +255,7 @@ public:
             object* local;
             map<string, object*>::iterator i= _map.begin();
 
-            //TODO another formulation, please
-            for(int j=0;j<num;j++)
+            for(int j = 0; j < num; j++)
                 i++;
 
             local = (object*)i->second;
