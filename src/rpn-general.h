@@ -1,5 +1,3 @@
-void test();
-
 //
 void nop()
 {
