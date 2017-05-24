@@ -193,14 +193,18 @@ public:
     virtual ~heap() { }
 
     object* add(const string name, object* obj, unsigned int size)
-    {        
-        object* local = _map[name];
+    {
+        map<string, unsigned int>::iterator i = _map.find(name);
+        object* local = NULL;
 
         // variable does not exist in heap or already exists but its size is too short -> allocate
+        if (i!=_map.end())
+            local = seq_obj(i->second);
+
         if (local==NULL || (local!=NULL && size>local->_size))
         {
             copy_and_push_back(obj, *this, size);
-            _map[name] = back();
+            _map[name] = this->size()-1;
         }
         else
         {
@@ -217,12 +221,12 @@ public:
     bool get(const string name, object*& obj, unsigned int& size)
     {
         bool ret = false;
-        map<string, object*>::iterator i = _map.find(name);
+        map<string, unsigned int>::iterator i = _map.find(name);
 
-        if (i!=_map.end() && i->second!=NULL)
+        if (i!=_map.end())
         {
-            obj = i->second;
-            size = i->second->_size;
+            obj = seq_obj(i->second);
+            size = obj->_size;
             ret = true;
         }
         return ret;
@@ -231,14 +235,18 @@ public:
     bool replace_value(const string name, object* obj, unsigned int size)
     {
         bool ret=false;
-        map<string, object*>::iterator i = _map.find(name);
+        map<string, unsigned int>::iterator i = _map.find(name);
 
-        if (i!=_map.end() && i->second!=NULL && size==i->second->_size)
+        if (i!=_map.end())
         {
-            (void)memcpy(i->second, obj, size);
-            if (i->second->_type == cmd_number)
-                ((number*)i->second)->_value.set_significand(((number*)i->second)+1);
-            ret = true;
+            object* obj_dst = seq_obj(i->second);
+            if (size<=obj_dst->_size)
+            {
+                (void)memcpy(obj_dst, obj, size);
+                if (obj_dst->_type == cmd_number)
+                    ((number*)obj_dst)->_value.set_significand(((number*)obj_dst)+1);
+                ret = true;
+            }
         }
     }
 
@@ -252,12 +260,12 @@ public:
         if (num>=0 && num<(int)_map.size())
         {
             object* local;
-            map<string, object*>::iterator i= _map.begin();
+            map<string, unsigned int>::iterator i= _map.begin();
 
             for(int j = 0; j < num; j++)
                 i++;
 
-            local = (object*)i->second;
+            local = (object*)seq_obj(i->second);
             name = i->first;
             obj = local;
             size = local->_size;
@@ -269,7 +277,7 @@ public:
 
     bool erase(const string& name)
     {
-        map<string, object*>::iterator i = _map.find(name);
+        map<string, unsigned int>::iterator i = _map.find(name);
         bool ret = false;
         
         if (i != _map.end())
@@ -283,7 +291,7 @@ public:
     unsigned int size() { return _map.size(); }
 
 private:
-    map<string, object*> _map;
+    map<string, unsigned int> _map;
 };
 
 #endif // __stack_h__

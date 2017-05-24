@@ -368,7 +368,7 @@ void object::show(FILE* stream)
         fprintf(stream, "<<%s>>", ((oprogram*)this)->_value);
         break;
     case cmd_symbol:
-        fprintf(stream, "'%s'", ((oprogram*)this)->_value);
+        fprintf(stream, "'%s'", ((symbol*)this)->_value);
         break;
     case cmd_keyword:
     case cmd_branch:
