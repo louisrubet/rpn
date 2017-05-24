@@ -60,7 +60,7 @@ default
 # str-> on constant (1)
 "pi"
 str->
--> stack should be 3.141592653589793238462643
+-> stack should be 3.1415926535897932385
 erase
 
 # str-> on constant (2)
