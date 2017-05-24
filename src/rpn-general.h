@@ -14,15 +14,13 @@ void good_bye()
 void help()
 {
     // software name
-    cout<<endl;
-    cout<<ATTR_BOLD<<uname<<ATTR_OFF<<endl;
-    cout<<endl;
+    printf("\n" ATTR_BOLD "%s" ATTR_OFF "\n", uname);
 
     // description
-    cout<<description<<endl<<endl;
+    printf("%s\n\n", description);
 
     // syntax
-    cout<<syntax<<endl;
+    printf("%s\n", syntax);
 
     // keywords
     for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
@@ -31,30 +29,30 @@ void help()
         {
             // titles in bold
             if (_keywords[i].type==cmd_undef)
-                cout<<ATTR_BOLD;
+                printf(ATTR_BOLD);
             // show title or keyword + comment
-            cout<<_keywords[i].name<<"\t"<<_keywords[i].comment<<endl;
+            printf("%s\t%s\n", _keywords[i].name, _keywords[i].comment.c_str());
             if (_keywords[i].type==cmd_undef)
-                cout<<ATTR_OFF;
+                printf(ATTR_OFF);
         }
     }
-    cout<<endl;
+    printf("\n");
 
     // show mode
-    cout<<"Current float mode is ";
+    printf("Current float mode is ");
     switch(number::s_mode)
     {
-        case number::std: cout << "'std'"; break;
-        case number::fix: cout << "'fix'"; break;
-        case number::sci: cout << "'sci'"; break;
-        default: cout << "unknown"; break;
+        case number::std: printf("'std'"); break;
+        case number::fix: printf("'fix'"); break;
+        case number::sci: printf("'sci'"); break;
+        default: printf("unknown"); break;
     }
-    cout<<" with "<<number::s_current_precision<<" digits"<<endl;
+    printf(" with %d digits\n", number::s_current_precision);
 
     // calc precision and rounding mode
-    cout<<"Current floating point precision is "<<(int)s_mpfr_prec<<" bits"<<endl;
-    cout<<"Current rounding mode is '"<<s_mpfr_rnd_str[s_mpfr_rnd]<<"'"<<endl;
-    cout<<endl<<endl;
+    printf("Current floating point precision is %d bits\n", (int)s_mpfr_prec);
+    printf("Current rounding mode is '%s'\n", s_mpfr_rnd_str[s_mpfr_rnd]);
+    printf("\n\n");
 }
 
 void std()

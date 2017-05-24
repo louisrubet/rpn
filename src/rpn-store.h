@@ -37,33 +37,28 @@ void edit(void)
 {
     MIN_ARGUMENTS(1);
 
-    stringstream out;
-
-    if (((object*)_stack->back())->_type == cmd_number)
+    FILE* tmp = tmpfile();
+    if (tmp != NULL)
     {
-        switch(number::s_mode)
+        // re-write stack objet in a stream
+        ((object*)_stack->pop_back())->show(tmp);
+
+        // edit: stuff chars using readline facility
+        int len = (int)ftell(tmp);
+        rewind(tmp);
+        for(int i=0;i<len;i++)
         {
-        case number::std:
-            out.precision(number::s_current_precision);
-            out.unsetf(ios_base::floatfield);
-            break;
-        case number::fix:
-            out << setprecision(number::s_current_precision) << fixed;
-            break;
-        case number::sci:
-            out << setprecision(number::s_current_precision) << scientific;
-            break;
+            char readc;
+            if (fread(&readc, 1, 1, tmp) == 1)
+                rl_stuff_char(readc);
+            else
+            {
+                ERR_CONTEXT(ret_runtime_error);
+                break;
+            }
         }
+        fclose(tmp);
     }
-
-    // re-write stack objet in a stream
-    ((object*)_stack->pop_back())->show(out);
-
-    // edit: stuff chars using readline facility
-    string str = out.str();
-
-    for(int i=0;i<str.size();i++)
-        rl_stuff_char(str[i]);
 }
 
 // carefull : this is not a langage command
@@ -129,25 +124,25 @@ void vars(void)
     for (int i=0; i<(int)_global_heap->size(); i++)
     {
         (void)_global_heap->get_by_index(i, name, obj, size);
-        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[obj->_type]<<", value ";
+        printf("var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
         obj->show();
-        cout<<endl;
+        printf("\n");
     }
     if (_parent_local_heap != NULL)
     {
         for (int i=0; i<(int)_parent_local_heap->size(); i++)
         {
             (void)_parent_local_heap->get_by_index(i, name, obj, size);
-            cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[obj->_type]<<", value ";
+            printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
             obj->show();
-            cout<<endl;
+            printf("\n");
         }
     }
     for (int i=0; i<(int)_local_heap.size(); i++)
     {
         (void)_local_heap.get_by_index(i, name, obj, size);
-        cout<<"local var "<<i+1<<": name '"<<name<<"', type "<<cmd_type_string[obj->_type]<<", value ";
+        printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
         obj->show();
-        cout<<endl;
+        printf("\n");
     }
 }

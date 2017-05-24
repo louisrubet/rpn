@@ -36,22 +36,19 @@ void program::test()
         {
             getline(test_file, entry);
             if (entry.substr(0,2)=="##")
-            {
-                cout << entry;
-                cout << endl;
-            }
+                printf("%s\n", entry.c_str());
             else if (entry.substr(0,2)=="# ")
             {
                 // indicates the status of previous test
                 if (failed == false && tests > 0)
-                    cout<<FG_GREEN<<" PASSED"<<COLOR_OFF<<endl;
+                    printf(FG_GREEN " PASSED" COLOR_OFF "\n");
                 failed = false;
 
                 // read a test title
                 test_title = entry;
                 is_first_step = true;
                 is_test_error_shown = false;
-                cout << test_title;
+                printf("%s", test_title.c_str());
             }
             // treat "-> stack size should be "
             else if (entry.find(stack_size, 0) == 0)
@@ -72,15 +69,15 @@ void program::test()
                     // count fail test and step
                     if (!is_test_error_shown)
                     {
-                        cout<<FG_RED<<" FAIL"<<COLOR_OFF<<endl;
+                        printf(FG_RED " FAIL" COLOR_OFF "\n");
                         tests_failed++;
                         is_test_error_shown = true;
                     }
                     steps_failed++;
 
                     // show failure
-                    cout<<"\t"<<entry<<endl;
-                    cout<<"\tbut real stack size is "<<FG_RED<<stk.size()<<COLOR_OFF<<endl;
+                    printf("\t%s\n", entry.c_str());
+                    printf("\tbut real stack size is " FG_RED "%d" COLOR_OFF "\n", stk.size());
                     failed = true;
                 }
                 is_first_step = false;
@@ -97,32 +94,51 @@ void program::test()
                 string stack_should_be = entry.substr(stack_value.size());
                 string stack_is;
                 string tmp;
-                for (int i = 0; i < (int)stk.size(); i++)
+                
+                FILE* tmp_file = tmpfile();
+                if (tmp_file != NULL)
                 {
-                    stringstream os;
-                    if (i > 0)
-                        stack_is += ", ";
-                    ((object*)stk.seq_obj(i))->show(os);
-                    getline(os, tmp);
-                    stack_is += tmp;
-                }
-                if (stack_is != stack_should_be)
-                {
-                    // count fail test and step
-                    if (!is_test_error_shown)
+                    char* line;
+                    for (int i = 0; i < (int)stk.size(); i++)
                     {
-                        cout<<FG_RED<<" FAIL"<<COLOR_OFF<<endl;
-                        tests_failed++;
-                        is_test_error_shown = true;
-                    }
-                    steps_failed++;
+                        if (i > 0)
+                            stack_is += ", ";
 
-                    // show failure
-                    cout<<"\t"<<entry<<endl;
-                    cout<<"\tbut real stack is "<<FG_RED<<stack_is<<COLOR_OFF<<endl;
-                    failed = true;
+                        rewind(tmp_file);
+                        ((object*)stk.seq_obj(i))->show(tmp_file);
+                        line = NULL;
+                        if (getline(&line, NULL, tmp_file) >=0)
+                        {
+                            stack_is += line;
+                            free(line);
+                        }
+                        else
+                        {
+                            ERR_CONTEXT(ret_runtime_error);
+                            break;
+                        }
+                    }
+                    if (stack_is != stack_should_be)
+                    {
+                        // count fail test and step
+                        if (!is_test_error_shown)
+                        {
+                            printf(FG_RED " FAIL" COLOR_OFF "\n");
+                            tests_failed++;
+                            is_test_error_shown = true;
+                        }
+                        steps_failed++;
+
+                        // show failure
+                        printf("\t%s\n", entry.c_str());
+                        printf("\tbut real stack size is " FG_RED "%s" COLOR_OFF "\n", stack_is.c_str());
+                        failed = true;
+                    }
+                    is_first_step = false;
+                    fclose(tmp_file);
                 }
-                is_first_step = false;
+                else
+                    ERR_CONTEXT(ret_runtime_error);
             }
             // treat "-> error should be "
             else if (entry.find(cmd_error, 0) == 0)
@@ -142,15 +158,15 @@ void program::test()
                     // count fail test and step
                     if (!is_test_error_shown)
                     {
-                        cout<<FG_RED<<" FAIL"<<COLOR_OFF<<endl;
+                        printf(FG_RED " FAIL" COLOR_OFF "\n");
                         tests_failed++;
                         is_test_error_shown = true;
                     }
                     steps_failed++;
 
                     // show failure
-                    cout<<"\t"<<entry<<endl;
-                    cout<<"\tbut last error is "<<FG_RED<<last_err<<COLOR_OFF<<endl;
+                    printf("\t%s\n", entry.c_str());
+                    printf("\tbut last error is " FG_RED "%d" COLOR_OFF "\n", last_err);
                     failed = true;
                 }
                 is_first_step = false;
@@ -177,27 +193,27 @@ void program::test()
         // last test
         // indicates the status of previous test
         if (failed == false && tests > 0)
-            cout << FG_GREEN << " PASSED" << COLOR_OFF << endl;
+            printf(FG_GREEN " PASSED" COLOR_OFF "\n");
 
         // cerr back
         cerr.rdbuf(cerr_old_buffer);
         
         // conclusion
-        cout<<endl<<"Run "<<tests<<" tests: "<<tests-tests_failed<<" passed, ";
+        printf("\nRun %d tests: %d passed, ", tests, tests-tests_failed);
         if(tests_failed>0)
-            cout<<FG_RED;
-        cout<<tests_failed<<" failed";
+            printf(FG_RED);
+        printf("%d failed", tests_failed);
         if(tests_failed>0)
-            cout<<COLOR_OFF;
+            printf(COLOR_OFF);
         
-        cout<<" ("<<steps<<" steps: "<<steps-steps_failed<<" passed, ";
+        printf(" (%d steps:  %d passed, ", steps, steps-steps_failed);
         if(steps_failed>0)
-            cout<<FG_RED;
-        cout<<steps_failed<<" failed";
+            printf(FG_RED);
+        printf("%d failed", steps_failed);
         if(steps_failed>0)
-            cout<<COLOR_OFF;
-        cout<<")"<<endl;
+            printf(COLOR_OFF);
+        printf(")\n");
     }
     else
-        cerr << "test file '"<<test_filename<<"' not found" << endl;
+        fprintf(stderr, "test file '%s' not found\n", test_filename.c_str());
 }

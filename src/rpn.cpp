@@ -143,7 +143,7 @@ struct object
 
     //
     unsigned int size() { return _size; }
-    void show(ostream& stream = cout);
+    void show(FILE* stream = stdout);
 };
 
 struct number : public object
@@ -344,42 +344,38 @@ struct branch : public object
     char _value[0];
 };
 
-void object::show(ostream& stream)
+void object::show(FILE* stream)
 {
-    //char buffer[512];
-
     switch(_type)
     {
     case cmd_number:
         switch(((number*)this)->_representation)
         {
             case number::dec:
-                (void)mpfr_printf(s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
-                //stream<<buffer;
+                mpfr_fprintf(stream, s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
                 break;
             case number::hex:
-                (void)mpfr_printf(string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
-                //stream<<buffer;
+                mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 break;
             case number::bin:
-                cout<<"<binary representation TODO>";
+                fprintf(stream, "<binary representation TODO>\n");
         }
         break;
     case cmd_string:
-        stream << "\"" << ((ostring*)this)->_value << "\"";
+        fprintf(stream, "\"%s\"", ((ostring*)this)->_value);
         break;
     case cmd_program:
-        stream << "<<" << ((oprogram*)this)->_value << ">>";
+        fprintf(stream, "<<%s>>", ((oprogram*)this)->_value);
         break;
     case cmd_symbol:
-        stream << "'" << ((symbol*)this)->_value << "'";
+        fprintf(stream, "'%s'", ((oprogram*)this)->_value);
         break;
     case cmd_keyword:
     case cmd_branch:
-        stream << ((keyword*)this)->_value;
+        fprintf(stream, "%s", ((keyword*)this)->_value);
         break;
     default:
-        stream << "< unknown object representation >";
+        fprintf(stream, "< unknown object representation >");
         break;
     }
 }
@@ -749,7 +745,7 @@ public:
         if (st.size() == 1)
         {
             ((object*)st.back())->show();
-            cout<<endl;
+            printf("\n");
         }
         else
         {
@@ -757,9 +753,9 @@ public:
             for (int i = st.size()-1; i>=0; i--)
             {
                 if (show_sep)
-                    cout<<i+1<<separator;
+                    printf("%d%s", i+1, separator.c_str());
                 ((object*)st[i])->show();
-                cout<<endl;
+                printf("\n");
             }
         }
     }

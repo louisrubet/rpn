@@ -6,15 +6,23 @@ void instr()
     if (_stack->get_type(0) != cmd_string)
     {
         // write the object in stack(0) in a string and remove this obj
-        stringstream out;
-        ((object*)_stack->pop_back())->show(out);
+        FILE* tmp = tmpfile();
+        if (tmp != NULL)
+        {
+            ((object*)_stack->pop_back())->show(tmp);
 
-        // reserve the correct size in stack
-        unsigned int str_size = (unsigned int)out.str().size();
-        ostring* str = (ostring*)_stack->allocate_back(str_size+1+sizeof(ostring), cmd_string);
+            // reserve the correct size in stack
+            unsigned int str_size = (unsigned int)ftell(tmp);
+            ostring* str = (ostring*)_stack->allocate_back(str_size+1+sizeof(ostring), cmd_string);
+            str->_size = str_size;
 
-        // fill the obj
-        str->set(out.str().c_str(), str_size);
+            // fill the obj
+            if (fread(str->_value, str_size, 1, tmp) != str_size)
+                ERR_CONTEXT(ret_runtime_error);
+            fclose(tmp);
+        }
+        else
+            ERR_CONTEXT(ret_runtime_error);
     }
 }
 
@@ -29,8 +37,6 @@ void strout()
 
     // make program from string in stack level 1
     if (program::parse(entry.c_str(), prog) == ret_ok)
-    {
         // run it
         prog.run(*_stack, *_global_heap, &_local_heap);
-    }
 }

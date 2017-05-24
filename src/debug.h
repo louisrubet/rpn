@@ -41,5 +41,5 @@ static void dump8(unsigned char* to_dump, unsigned long offset,
 }
 
 //
-#define TRACE(x) cout<<__FUNCTION__<<": "<<(x)<<endl;
-#define TRACE2(x, y) cout<<__FUNCTION__<<": "<<(x)<<(y)<<endl;
+#define TRACE(...) do { (void)printf(__FUNCTION__ ": "); (void)printf(__VA_ARGS__); } while(0)
+
