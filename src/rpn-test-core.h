@@ -1,4 +1,34 @@
-void program::test()
+void test_get_stack(string& stack_is, stack& stk)
+{
+    // write stack in a string, each entry separated between commas
+    for (int i = 0; i < (int)stk.size(); i++)
+    {
+        FILE* tmp_file = tmpfile();
+        char* line = NULL;
+        size_t len;
+
+        if (i > 0)
+            stack_is += ", ";
+
+        if (tmp_file != NULL)
+        {
+            ((object*)stk.seq_obj(i))->show(tmp_file);
+
+            // write stack in a tmp file
+            (void)rewind(tmp_file);
+            if (getline(&line, &len, tmp_file) >=0)
+            {
+                stack_is += line;
+                free(line);
+            }
+            (void)fclose(tmp_file);
+        }
+        else
+            ERR_CONTEXT(ret_runtime_error);
+    }
+}
+
+void test()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -93,52 +123,26 @@ void program::test()
                 // check current stack value
                 string stack_should_be = entry.substr(stack_value.size());
                 string stack_is;
-                string tmp;
-                
-                FILE* tmp_file = tmpfile();
-                if (tmp_file != NULL)
+
+                test_get_stack(stack_is, stk);
+
+                if (stack_is != stack_should_be)
                 {
-                    char* line;
-                    for (int i = 0; i < (int)stk.size(); i++)
+                    // count fail test and step
+                    if (!is_test_error_shown)
                     {
-                        if (i > 0)
-                            stack_is += ", ";
-
-                        rewind(tmp_file);
-                        ((object*)stk.seq_obj(i))->show(tmp_file);
-                        line = NULL;
-                        if (getline(&line, NULL, tmp_file) >=0)
-                        {
-                            stack_is += line;
-                            free(line);
-                        }
-                        else
-                        {
-                            ERR_CONTEXT(ret_runtime_error);
-                            break;
-                        }
+                        printf(FG_RED " FAIL" COLOR_OFF "\n");
+                        tests_failed++;
+                        is_test_error_shown = true;
                     }
-                    if (stack_is != stack_should_be)
-                    {
-                        // count fail test and step
-                        if (!is_test_error_shown)
-                        {
-                            printf(FG_RED " FAIL" COLOR_OFF "\n");
-                            tests_failed++;
-                            is_test_error_shown = true;
-                        }
-                        steps_failed++;
+                    steps_failed++;
 
-                        // show failure
-                        printf("\t%s\n", entry.c_str());
-                        printf("\tbut real stack size is " FG_RED "%s" COLOR_OFF "\n", stack_is.c_str());
-                        failed = true;
-                    }
-                    is_first_step = false;
-                    fclose(tmp_file);
+                    // show failure
+                    printf("\t%s\n", entry.c_str());
+                    printf("\tbut real stack size is " FG_RED "%s" COLOR_OFF "\n", stack_is.c_str());
+                    failed = true;
                 }
-                else
-                    ERR_CONTEXT(ret_runtime_error);
+                is_first_step = false;
             }
             // treat "-> error should be "
             else if (entry.find(cmd_error, 0) == 0)
