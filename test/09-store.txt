@@ -1,0 +1,39 @@
+## VARS
+
+# sto (1)
+1 'a' sto
+-> stack size should be 0
+'a' a
+-> stack should be 'a', 1
+erase
+
+# sto (2)
+2 'a' sto a
+-> stack should be 2
+erase
+
+# rcl (1)
+'a' rcl
+-> stack should be 2
+erase
+
+# rcl (2)
+'b' rcl
+-> error should be 5
+-> stack should be 'b'
+erase
+
+# sto in prog then rcl
+3 << 'r' sto >> eval r 'r' rcl
+-> stack should be 3, 3
+erase
+
+# purge (1)
+a 'a' purge a
+-> stack should be 2, 'a'
+erase
+
+# purge (2)
+'a' purge
+-> error should be 5
+-> stack size should be 0
