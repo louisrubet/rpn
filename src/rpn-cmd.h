@@ -93,7 +93,7 @@ program::keyword_t program::_keywords[] =
     { cmd_keyword, "rcl", &program::rcl, "recall a variable. ex: 'name' rcl" },
     { cmd_keyword, "purge", &program::purge, "delete a variable. ex: 'name' purge" },
     { cmd_keyword, "vars", &program::vars, "list all variables" },
-    { cmd_keyword, "edit", &program::edit, "edit a vriable content" },
+    { cmd_keyword, "edit", &program::edit, "edit a variable content" },
 
     //PROGRAM
     { cmd_undef, "", NULL, "\nPROGRAM"},

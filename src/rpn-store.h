@@ -5,7 +5,7 @@ void sto(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     string name(((symbol*)_stack->pop_back())->_value);
-    _global_heap->add(name, _stack->get_obj(0), _stack->get_len(0));
+    _heap->add(name, _stack->get_obj(0), _stack->get_len(0));
     (void)_stack->pop_back();
 }
 
@@ -17,16 +17,12 @@ void rcl(void)
     // recall a variable
     object* obj;
     unsigned int size;
-    int type;
     string variable(((symbol*)_stack->back())->_value);
 
     // mind the order of heaps
-    if (_local_heap.get(variable, obj, size)
-            || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size)))
-            || _global_heap->get(variable, obj, size))
+    if (find_variable(variable, obj, size))
     {
         (void)_stack->pop_back();
-        object* new_obj = _stack->allocate_back(size, obj->_type);
         stack::copy_and_push_back(obj, *_stack, size);
     }
     else
@@ -68,16 +64,13 @@ void auto_rcl(symbol* symb)
     {
         object* obj;
         unsigned int size;
-        int type;
         string variable(symb->_value);
 
         // mind the order of heaps
-        if (_local_heap.get(variable, obj, size)
-                || ((_parent_local_heap != NULL) && (_parent_local_heap->get(variable, obj, size)))
-                || _global_heap->get(variable, obj, size))
+        if (find_variable(variable, obj, size))
         {
             stack::copy_and_push_back(obj, *_stack, size);
-            if (type == cmd_program)
+            if (obj->_type == cmd_program)
                 eval();
         }
         else
@@ -97,20 +90,7 @@ void purge(void)
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     string name(((symbol*)_stack->pop_back())->_value);
-
-    // mind the order of heaps
-    bool done = false;
-    if (!_local_heap.erase(name))
-    {
-        if ((_parent_local_heap != NULL) && (_parent_local_heap->erase(name)))
-            done = true;
-        else if (_global_heap->erase(name))
-            done = true;
-    }
-    else
-        done = true;
-
-    if (!done)
+    if (!_heap->erase(name))
         ERR_CONTEXT(ret_unknown_variable);
 }
 
@@ -118,26 +98,32 @@ void vars(void)
 {
     object* obj;
     unsigned int size;
-    int type;
+    program* parent = _parent_prog;
     string name;
 
-    for (int i=0; i<(int)_global_heap->size(); i++)
+    // heap variables
+    for (int i=0; i<(int)_heap->size(); i++)
     {
-        (void)_global_heap->get_by_index(i, name, obj, size);
+        (void)_heap->get_by_index(i, name, obj, size);
         printf("var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
         obj->show();
         printf("\n");
     }
-    if (_parent_local_heap != NULL)
+
+    // parents local variables
+    while (parent != NULL)
     {
-        for (int i=0; i<(int)_parent_local_heap->size(); i++)
+        for (int i=0; i<(int)parent->_local_heap.size(); i++)
         {
-            (void)_parent_local_heap->get_by_index(i, name, obj, size);
+            (void)parent->_local_heap.get_by_index(i, name, obj, size);
             printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
             obj->show();
             printf("\n");
         }
+        parent = parent->_parent_prog;
     }
+
+    // local variables
     for (int i=0; i<(int)_local_heap.size(); i++)
     {
         (void)_local_heap.get_by_index(i, name, obj, size);
