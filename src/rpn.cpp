@@ -394,7 +394,7 @@ struct if_layout_t
 class program : public stack
 {
 public:
-    program() { }
+    program(program* parent_prog = NULL) { _parent_prog = parent_prog; }
 
     // run this program
     ret_value run(stack& stk, heap& hp, heap* parent_local_hp = NULL)
@@ -407,10 +407,7 @@ public:
         _stack = &stk;
 
         // global heap comes from outside
-        _global_heap = &hp;
-
-        // parent local heap comes from outside
-        _parent_local_heap = parent_local_hp;
+        _heap = &hp;
 
         _err = ret_ok;
         _err_context = "";
@@ -773,15 +770,24 @@ public:
     }
 
 private:
+    // current error and its context
     ret_value _err;
     string _err_context;
 
+    // global stack holding results for user
     stack* _stack;
+
+    // global heap (sto, rcl)
+    heap* _heap;
+
+    // local heap for local loop vairables (for..next)
+    heap _local_heap;
+
+    // local stack internally used by branch commands (start, for, next, ..)
     stack _branch_stack;
 
-    heap* _global_heap;
-    heap _local_heap;
-    heap* _parent_local_heap;
+    // parent prog for inheriting heaps
+    program* _parent_prog;
 
     int stack_size()
     {
