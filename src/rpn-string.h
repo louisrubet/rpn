@@ -40,5 +40,5 @@ void strout()
     // make program from string in stack level 1
     if (program::parse(entry.c_str(), prog) == ret_ok)
         // run it
-        prog.run(*_stack, *_global_heap, &_local_heap);
+        prog.run(*_stack, *_heap, &_local_heap);
 }
