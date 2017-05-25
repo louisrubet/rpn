@@ -1,0 +1,7 @@
+#include test/2-entry.txt
+#include test/3-general.txt
+#include test/4-branch.txt
+#include test/5-stack.txt
+#include test/6-real.txt
+#include test/7-string.txt
+#include test/8-test.txt
