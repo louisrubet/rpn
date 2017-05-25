@@ -2,7 +2,7 @@ void rpn_e(void)
 {
     number* euler = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     euler->_value = 1L;
-    CHECK_MPFR(mpfr_exp(euler->_value.mpfr, euler->_value.mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_exp(euler->_value.mpfr, euler->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_log()
@@ -11,7 +11,7 @@ void rpn_log()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_log10(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_log10(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_alog()
@@ -20,7 +20,7 @@ void rpn_alog()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_exp10(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_exp10(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_log2()
@@ -29,7 +29,7 @@ void rpn_log2()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_log2(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_log2(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_alog2()
@@ -38,7 +38,7 @@ void rpn_alog2()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_exp2(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_exp2(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_ln()
@@ -47,7 +47,7 @@ void rpn_ln()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_log(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_log(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_exp()
@@ -56,7 +56,7 @@ void rpn_exp()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_exp(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_exp(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_sinh()
@@ -65,7 +65,7 @@ void rpn_sinh()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_sinh(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_sinh(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_asinh()
@@ -74,7 +74,7 @@ void rpn_asinh()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_asinh(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_asinh(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_cosh()
@@ -83,7 +83,7 @@ void rpn_cosh()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_cosh(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_cosh(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_acosh()
@@ -92,7 +92,7 @@ void rpn_acosh()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_cosh(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_cosh(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_tanh()
@@ -101,7 +101,7 @@ void rpn_tanh()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_tanh(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_tanh(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
 
 void rpn_atanh()
@@ -110,5 +110,5 @@ void rpn_atanh()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_atanh(left->mpfr, left->mpfr, s_mpfr_rnd));
+    CHECK_MPFR(mpfr_atanh(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
 }
