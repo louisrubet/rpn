@@ -1,249 +1,144 @@
 # Reverse Polish Notation language
 
-- This project plans to create a clone of **Hewlett Packard RPN calculator language**, including at least STACK, STORE, BRANCH, TEST, TRIG and LOGS commands of HP28S RPL implementation.
+- __rpn__ is a reverse polish notation mathematical language, which brings powerfull calculation facilities on floating point number with __arbitrary precision__
 
-- Inspired by Hewlett-Packard RPL language. **HP28S** user manual is provided as a reference.
+- The special feature of this language is to make no difference between keywords and functions, even user functions
 
-- Following objects are managed: numbers, binaries, symbols, strings,
- programs, plus keywords (ie langage commands and flow controls).
+- Following objects are managed: floating numbers, symbols, strings, programs, plus language keywords (commands and flow controls)
 
-- The special feature of this language is to make no difference between
-keywords and functions, even user functions.
+- Inspired by Hewlett-Packard RPL language (**HP28S** user manual is provided as a reference), it includes at least STACK, STORE, BRANCH, TEST, TRIG and LOGS commands of HP28S RPL implementation
 
-- A GNU-readline-based interactive editor with autocompletion is provided.
+- A __GNU-readline__-based interactive editor with autocompletion is provided.
 
-- Language extensions will soon be included:
-  - file objects and functions,
-  - date and time objects and functions,
-  - shell-calling objects with return code, stdout and stderr treatment,
-  - loading and saving stack, variables, programs from / to filesystem
-
-
-Multiple-precision floating-point computations with correct rounding are ensured by __MPFR library__ under GNU LGPL v3 or later
-
-
-Integer calculations are ensured by __GNU MP library__ (__GMP__) under GNU LGPL v3 and GNU GPL v2
-
+Multiple-precision floating-point computations with correct rounding are ensured by __MPFR library__ under LGPL v3
 
 ## Implemented commands
 
-This commands list match HP28s reserved words. Commands marked as 'new' do not exist in HP28s.
+|GENERAL||
+|-|-|
+|nop	| no operation |
+|help |	(or h or ?) this help message
+|quit |	(or q or exit) quit software
+|version |	show rpn version
+|uname |	show rpn complete identification string
+|type |	show type of stack first entry
+|default |	set float representation and precision to default
+|prec |	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
+|round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
+	
+|REAL||
+|-|-|
+|+|	addition
+|-|	substraction
+|neg|	negation
+|*|	multiplication
+|/|	division
+|inv|	inverse
+|%|	purcent
+|%|CH	inverse purcent
+|^|	(or pow) power
+|sqrt|	square root
+|sq|	(or sqr) square
+|mod|	modulo
+|abs|	absolute value
+	
+|REAL REPRESENTATION||
+|-|-|
+|dec|	decimal representation
+|hex|	hexadecimal representation
+|bin|	binary representation
+|std|	standard floating numbers representation. ex: [25] std
+|fix|	fixed point representation. ex: 6 fix
+|sci|	scientific floating point representation. ex: 20 sci
+	
+|TEST||
+|-|-|
+|>|	binary operator >
+|>=|	binary operator >=
+|<|	binary operator <
+|<=|	binary operator <=
+|!=|	binary operator != (different)
+|==|	binary operator == (equal)
+|and|	boolean operator and
+|or|	boolean operator or
+|xor|	boolean operator xor
+|not|	boolean operator not
+|same|	boolean operator same (equal)
+	
+|STACK||
+|-|-|
+|swap|	swap 2 first stack entries
+|drop|	drop first stack entry
+|drop2|	drop 2 first stack entries
+|erase|	drop all stack entries
+|rot|	rotate 3 first stack entries
+|dup|	duplicate first stack entry
+|dup2|	duplicate 2 first stack entries
+|pick|	push a copy of  the given stack level onto the stack
+|depth|	give stack depth
+	
+|STRING||
+|-|-|
+|->str|	convert an object into a string
+|str->|	convert a string into an object
+	
+|BRANCH||
+|-|-|
+|if|	<test-instructions>
+|then|	<true-instructions>
+|else|	<false-instructions>
+|end|	(end of if structure)
+|start|	repeat instructions several times
+|for|	repeat instructions several times with variable
+|next|	ex: ```1 10 start <instructions> next```
+|step|	ex: ```1 100 start <instructions> 4 step```
+	
+|STORE||
+|-|-|
+|sto|	store a variable. ex: ```1 'name' sto```
+|rcl|	recall a variable. ex: ```'name' rcl```
+|purge|	delete a variable. ex: ```'name' purge```
+|vars|	list all variables
+|edit|	edit a variable content
+	
+|PROGRAM||
+|-|-|
+|eval|	evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
+->	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
+	
+|TRIG||
+|-|-|
+|pi|	PI constant
+|sin|	sinus
+|asin|	arg sinus
+|cos|	cosinus
+|acos|	arg cosinus
+|tan|	tangent
+|atan|	arg tangent
+|d|->r	convert degrees to radians
+|r|->d	convert radians to degrees
+	
+|LOGS||
+|-|-|
+|e|	exp(0) constant
+|log|	logarithm base 10
+|alog|	(or exp10) exponential base 10
+|log2|	logarithm base 2
+|alog2|	(or exp2) exponential base 2
+|ln|	logarithm base e
+|exp|	exponential
+|sinh|	hyperbolic sine
+|asinh|	inverse hyperbolic sine
+|cosh|	hyperbolic cosine
+|acosh|	inverse hyperbolic cosine
+|tanh|	hyperbolic tangent
+|atanh|	inverse hyperbolic tangent
 
-| category | command | new | implemented | tested |
-| -------- | ------- | --- | ----------- | ------ |
-| GENERAL | nop |yes| yes| yes|
-| GENERAL | help/h/? | yes | yes| |
-| GENERAL | quit/exit/q| yes| yes| |
-| GENERAL | verbose | yes | yes| |
-| GENERAL | std | | yes| |
-| GENERAL | fix | | yes| |
-| GENERAL | sci | | yes| |
-| GENERAL | version | yes | yes| |
-| GENERAL | uname | yes | yes| |
-| GENERAL | edit | | yes| |
-| GENERAL | type | yes | yes| yes |
-| GENERAL | default | yes | yes| yes |
-| TEST | test | yes | yes| yes |
-| REAL | + | | yes| |
-| REAL | - | | yes| |
-| REAL | neg | | yes| |
-| REAL | * | | yes| |
-| REAL | / | | yes| |
-| REAL | inv | | yes| |
-| REAL | % | | yes| |
-| REAL | %CH | | yes| |
-| REAL | ^ | | yes| |
-| REAL | pow (_alias for_ ^) | | yes| yes |
-| REAL | sqrt | yes | yes| |
-| REAL | sq | yes | yes| |
-| REAL | sqr (_alias for_ sq) | yes | yes| yes |
-| REAL | mod |yes| yes| |
-| STACK | drop | | yes| |
-| STACK | swap | | yes| |
-| STACK | roll | | | |
-| STACK | dup | | yes| |
-| STACK | over | | | |
-| STACK | dup2 | | yes| |
-| STACK | drop2 | | yes| |
-| STACK | rot | | yes| |
-| STACK | list-> | | | |
-| STACK | rolld | | | |
-| STACK | pick | | yes| |
-| STACK | dupn | | | |
-| STACK | dropn | | | |
-| STACK | depth | | yes| |
-| STACK | ->list | | | |
-| STACK | load_store | yes | yes| |
-| STACK | save_store | yes | yes| |
-| STORE | sto | | yes | |
-| STORE | rcl | | yes | |
-| STORE | purge | | yes | |
-| STORE | sto+ | | | |
-| STORE | sto- | | | |
-| STORE | sto* | | | |
-| STORE | sto/ | | | |
-| STORE | sneg | | | |
-| STORE | sinv | | | |
-| STORE | sconj | | | |
-| STORE | erase | | yes | yes |
-| STORE | vars | | yes | yes |
-| STORE | include | | | |
-| STORE | load_vars | yes | | |
-| STORE | save_vars | yes | | |
-| PROGRAM | eval | | yes | |
-| PROGRAM | load_prog | yes | | |
-| PROGRAM | save_prog | yes | | |
-| ALGEBRA | neg | | yes | yes |
-| ALGEBRA | colct | | | |
-| ALGEBRA | expan | | | |
-| ALGEBRA | size | | | |
-| ALGEBRA | form | | | |
-| ALGEBRA | obsub | | | |
-| ALGEBRA | exsub | | | |
-| ALGEBRA | taylr | | | |
-| ALGEBRA | isol | | | |
-| ALGEBRA | quad | | | |
-| ALGEBRA | show | | | |
-| ALGEBRA | obget | | | |
-| ALGEBRA | exget | | | |
-| BINARY | + | | yes | yes |
-| BINARY | - | | yes | yes |
-| BINARY | * | | yes | yes |
-| BINARY | / | | yes | yes |
-| BINARY | dec | | yes | yes |
-| BINARY | hex | | yes | yes |
-| BINARY | oct | | yes | yes |
-| BINARY | bin | | yes | yes |
-| BINARY | stws | | | |
-| BINARY | rcws | | | |
-| BINARY | rl | | | |
-| BINARY | rr | | | |
-| BINARY | rlb | | | |
-| BINARY | rrb | | | |
-| BINARY | r->b | | yes | yes |
-| BINARY | b->r | | yes | yes |
-| BINARY | sl | | | |
-| BINARY | sr | | | |
-| BINARY | slb | | | |
-| BINARY | srb | | | |
-| BINARY | asr | | | |
-| BINARY | and | | yes | yes |
-| BINARY | or | | yes | yes |
-| BINARY | xor | | yes | yes |
-| BINARY | not | | yes | yes |
-| STRING | + | | yes | |
-| STRING | ->str | | yes | |
-| STRING | str-> | | yes | |
-| STRING | chr | | | |
-| STRING | num | | | |
-| STRING | ->lcd | | | |
-| STRING | lcd-> | | | |
-| STRING | pos | | | |
-| STRING | sub | | | |
-| STRING | size | | | |
-| STRING | disp | | | |
-| BRANCH |
-| BRANCH | if | | yes | yes |
-| BRANCH | then | | yes | yes |
-| BRANCH | else | | yes | yes |
-| BRANCH | end | | yes | yes |
-| BRANCH | start | | yes | yes |
-| BRANCH | for | | yes | yes |
-| BRANCH | next | | yes | yes |
-| BRANCH | step | | yes | yes |
-| BRANCH | ift | | | |
-| BRANCH | ifte | | | |
-| BRANCH | do | | | |
-| BRANCH | until | | | |
-| BRANCH | end | | | |
-| BRANCH | while | | | |
-| BRANCH | repeat | | | |
-| BRANCH | end | | | |
-| TEST | != | | yes | |
-| TEST | > | | yes | |
-| TEST | >= | | yes | |
-| TEST | < | | yes | |
-| TEST | <= | | yes | |
-| TEST | sf | | | |
-| TEST | cf | | | |
-| TEST | fs? | | | |
-| TEST | fc? | | | |
-| TEST | fs?c | | | |
-| TEST | fc?c | | | |
-| TEST | and | | yes | |
-| TEST | or | | yes | |
-| TEST | xor | | yes | |
-| TEST | not | | yes | |
-| TEST | same | | yes | |
-| TEST | == | | yes | |
-| TEST | stof | | | |
-| TEST | rclf | | | |
-| TEST | type | | | |
-| TRIG | pi | | yes | yes |
-| TRIG | sin | | yes | |
-| TRIG | asin | | yes | |
-| TRIG | cos | | yes | |
-| TRIG | acos | | yes | |
-| TRIG | tan | | yes | |
-| TRIG | atan | | yes | |
-| TRIG | p->r | | | |
-| TRIG | r->p | | | |
-| TRIG | r->c | | | |
-| TRIG | c->r | | | |
-| TRIG | arg | | | |
-| TRIG | ->hms | | | |
-| TRIG | hms-> | | | |
-| TRIG | hms+ | | | |
-| TRIG | hms- | | | |
-| TRIG | d->r | | yes | |
-| TRIG | r->d | | yes | |
-| LOGS | log | | yes | |
-| LOGS | alog | | yes | |
-| LOGS | ln | | yes | |
-| LOGS | exp | | yes | |
-| LOGS | lnp1 | | | |
-| LOGS | expm | | | |
-| LOGS | sinh | | yes | |
-| LOGS | asinh | | yes | |
-| LOGS | cosh | | yes | |
-| LOGS | acosh | | yes | |
-| LOGS | tanh | | yes | |
-| LOGS | atanh | | yes | | |
+Default float mode is 'std' with 20 digits
 
-## HP28s commands which are not (or won't be) implemented
+Default floating point precision is 128 bits
 
-**MEMORY**
- mem, menu, order, path, home, crdir, clusr,
-
-**STAT**
- ∑dat, ∑par, ∑+, ∑-, n∑, cl∑, sto∑, rcl∑, tot, mean, sdev, var, max∑,
- min∑, col∑, corr, cov, lr, predev, utpc, utpf, utpn, utpt, comb, perm
-
-**PRINT**
- pr1, prst, prvar, prlcd, cr, trac, prstc, prusr, prmd
-
-**SOLV**
- steq, rceq, isol, quad, show, root,
-
-**PLOT**
- ppar, steq, rceq, pmin, pmax, indep, draw, res, axes, centr, \*w, \*h,
- sto∑, rcl∑, col∑, scl∑, drw∑, cllcd, digtiz
-
-**CURSOR**
- ins, del, ← → ↑ ↓, cmd, undo, last, ml, rdx, prmd
-
-**CONTRL**
- sst, halt, abort, kill, wait, key, bepp, cllcd, disp, clmf, errn,
- errm
-
-**CATALOG**
- next, prev, scan, use, fetch, quit
-
-**UNITS**
- convert
-
-**CUSTOM**
- menu, custom
+Default rounding mode is 'nearest' 
 
 ## Tests
 
@@ -251,21 +146,12 @@ Unit tests are given as txt files in the test subdirectory.
 
 Use the command 'test' to run a test file, eg
 ```
-# cd test_directory/
+# cd src_directory/
 # rpn
-rpn> "entry.txt"
+rpn> "test/01-all.txt"
 rpn> test
 ## ENTRY TEST
-# real decimal PASSED
-# real hex PASSED
-# real binary PASSED
 (...)
-```
-or
-```
-# cd test_directory/
-# rpn \"entry.txt\" test
-## ENTRY TEST
 # real decimal PASSED
 # real hex PASSED
 # real binary PASSED
