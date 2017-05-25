@@ -1,3 +1,6 @@
+#ifndef ESCAPE_H
+#define ESCAPE_H
+
 // ANSI escape sequences
 
 // foreground colors
@@ -30,3 +33,5 @@
 #define ATTR_CONCEALED "\33[8m"
 
 #define ATTR_OFF "\33[0m"
+
+#endif

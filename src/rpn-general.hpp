@@ -21,18 +21,20 @@ void help()
     printf("%s\n", syntax);
 
     // keywords
-    for(unsigned int i=0; i<sizeof(_keywords)/sizeof(_keywords[0]); i++)
+    unsigned int i = 0;
+    while(s_keywords[i].type != cmd_max)
     {
-        if (_keywords[i].comment.size() != 0)
+        if (s_keywords[i].comment.size() != 0)
         {
             // titles in bold
-            if (_keywords[i].type==cmd_undef)
+            if (s_keywords[i].type==cmd_undef)
                 printf(ATTR_BOLD);
             // show title or keyword + comment
-            printf("%s\t%s\n", _keywords[i].name, _keywords[i].comment.c_str());
-            if (_keywords[i].type==cmd_undef)
+            printf("%s\t%s\n", s_keywords[i].name, s_keywords[i].comment.c_str());
+            if (s_keywords[i].type==cmd_undef)
                 printf(ATTR_OFF);
         }
+        i++;
     }
     printf("\n");
 
@@ -48,8 +50,8 @@ void help()
     printf(" with %d digits\n", number::s_current_precision);
 
     // calc precision and rounding mode
-    printf("Current floating point precision is %d bits\n", (int)s_mpfr_prec);
-    printf("Current rounding mode is '%s'\n", s_mpfr_rnd_str[s_mpfr_rnd]);
+    printf("Current floating point precision is %d bits\n", (int)floating_t::s_mpfr_prec);
+    printf("Current rounding mode is '%s'\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
     printf("\n\n");
 }
 
@@ -71,7 +73,7 @@ void std()
     // format for mpfr_printf 
     stringstream ss;
     ss << number::s_current_precision;
-    s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
+    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
 }
 
 void fix()
@@ -87,7 +89,7 @@ void fix()
     // format for mpfr_printf 
     stringstream ss;
     ss << number::s_current_precision;
-    s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_FIX);
+    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_FIX);
 }
 
 void sci()
@@ -103,7 +105,7 @@ void sci()
     // format for mpfr_printf 
     stringstream ss;
     ss << number::s_current_precision;
-    s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_SCI);
+    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_SCI);
 }
 
 void rpn_version()
@@ -130,10 +132,10 @@ void type()
     if (type < 0 || type >= (int)cmd_max)
         type = (int)cmd_undef;
 
-    unsigned int string_size = strlen(cmd_type_string[type]);
+    unsigned int string_size = strlen(object::s_cmd_type_string[type]);
     unsigned int size = sizeof(symbol)+string_size+1;
     symbol* sym = (symbol*)_stack->allocate_back(size, cmd_symbol);
-    sym->set(cmd_type_string[type], string_size, false);
+    sym->set(object::s_cmd_type_string[type], string_size, false);
 }
 
 void rpn_default()
@@ -147,11 +149,11 @@ void precision()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     //set MPFR float precision
-    long prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, s_mpfr_rnd);
+    long prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
     if (prec >= 0)
     {
-        s_mpfr_prec = (mpfr_prec_t)prec;
-        s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
+        floating_t::s_mpfr_prec = (mpfr_prec_t)prec;
+        floating_t::s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
     }
     else
         ERR_CONTEXT(ret_out_of_range);
@@ -166,9 +168,9 @@ void round()
     bool done = false;
     for(int rnd = (int)MPFR_DEFAULT_RND; rnd <= (int)MPFR_RNDA; rnd++)
     {
-        if (string(s_mpfr_rnd_str[rnd]) == str->_value)
+        if (string(floating_t::s_mpfr_rnd_str[rnd]) == str->_value)
         {
-            s_mpfr_rnd = (mpfr_rnd_t)rnd;
+            floating_t::s_mpfr_rnd = (mpfr_rnd_t)rnd;
             done = true;
         }
     }
