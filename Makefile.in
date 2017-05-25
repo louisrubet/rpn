@@ -105,7 +105,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_rpn_OBJECTS = src/rpn.$(OBJEXT)
+am_rpn_OBJECTS = src/object.$(OBJEXT) src/program.$(OBJEXT) \
+	src/main.$(OBJEXT)
 rpn_OBJECTS = $(am_rpn_OBJECTS)
 rpn_LDADD = $(LDADD)
 rpn_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(rpn_LDFLAGS) \
@@ -140,18 +141,6 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
 SOURCES = $(rpn_SOURCES)
 DIST_SOURCES = $(rpn_SOURCES)
 am__can_run_installinfo = \
@@ -288,20 +277,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
-rpn_SOURCES = src/rpn.cpp \
-		src/rpn-branch.h \
-		src/rpn-cmd.h \
-		src/rpn-algebra.h \
-		src/rpn-general-core.h \
-		src/rpn-general.h \
-		src/rpn-logs.h \
-		src/rpn-stack.h \
-		src/rpn-store.h \
-		src/rpn-test.h \
-		src/rpn-trig.h \
-		src/stack.h
+rpn_SOURCES = src/object.cpp \
+			src/program.cpp \
+			src/main.cpp
 
-rpn_CFLAGS = -g
+rpn_CFLAGS = 
 rpn_LDFLAGS = -Wl,--no-as-needed -lreadline -lmpfr
 dist_noinst_SCRIPTS = autogen.sh
 all: config.h
@@ -405,7 +385,11 @@ src/$(am__dirstamp):
 src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/$(DEPDIR)
 	@: > src/$(DEPDIR)/$(am__dirstamp)
-src/rpn.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
+src/object.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/program.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/main.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 
 rpn$(EXEEXT): $(rpn_OBJECTS) $(rpn_DEPENDENCIES) $(EXTRA_rpn_DEPENDENCIES) 
 	@rm -f rpn$(EXEEXT)
@@ -418,7 +402,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/rpn.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/object.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/program.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
