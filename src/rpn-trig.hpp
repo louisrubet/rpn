@@ -10,11 +10,14 @@ void d2r(void)
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t pi;
+    mpfr_t pi;
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_const_pi(pi.mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_mul(left->mpfr, left->mpfr, pi.mpfr, floating_t::s_mpfr_rnd));
+
+    mpfr_init(pi);
+    CHECK_MPFR(mpfr_const_pi(pi, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_mul(left->mpfr, left->mpfr, pi, floating_t::s_mpfr_rnd));
     CHECK_MPFR(mpfr_div_si(left->mpfr, left->mpfr, 180, floating_t::s_mpfr_rnd));
+    mpfr_clear(pi);
 }
 
 void r2d(void)
@@ -22,11 +25,14 @@ void r2d(void)
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t pi;
+    mpfr_t pi;
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_const_pi(pi.mpfr, floating_t::s_mpfr_rnd));
+
+    mpfr_init(pi);
+    CHECK_MPFR(mpfr_const_pi(pi, floating_t::s_mpfr_rnd));
     CHECK_MPFR(mpfr_mul_si(left->mpfr, left->mpfr, 180, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_div(left->mpfr, left->mpfr, pi.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div(left->mpfr, left->mpfr, pi, floating_t::s_mpfr_rnd));
+    mpfr_clear(pi);
 }
 
 void rpn_sin(void)
