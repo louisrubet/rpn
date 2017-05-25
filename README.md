@@ -84,9 +84,9 @@ Multiple-precision floating-point computations with correct rounding are ensured
 	
 |BRANCH||
 |-|-|
-|if|	<test-instructions>
-|then|	<true-instructions>
-|else|	<false-instructions>
+|if|	test-instructions
+|then|	true-instructions
+|else|	false-instructions
 |end|	(end of if structure)
 |start|	repeat instructions several times
 |for|	repeat instructions several times with variable
