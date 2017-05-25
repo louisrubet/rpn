@@ -105,7 +105,7 @@ void vars(void)
     for (int i=0; i<(int)_heap->size(); i++)
     {
         (void)_heap->get_by_index(i, name, obj, size);
-        printf("var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
+        printf("var %d: name '%s', type %s, value ", i+1, name.c_str(), object::s_cmd_type_string[obj->_type]);
         obj->show();
         printf("\n");
     }
@@ -116,7 +116,7 @@ void vars(void)
         for (int i=0; i<(int)parent->_local_heap.size(); i++)
         {
             (void)parent->_local_heap.get_by_index(i, name, obj, size);
-            printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
+            printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), object::s_cmd_type_string[obj->_type]);
             obj->show();
             printf("\n");
         }
@@ -127,7 +127,7 @@ void vars(void)
     for (int i=0; i<(int)_local_heap.size(); i++)
     {
         (void)_local_heap.get_by_index(i, name, obj, size);
-        printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), cmd_type_string[obj->_type]);
+        printf("local var %d: name '%s', type %s, value ", i+1, name.c_str(), object::s_cmd_type_string[obj->_type]);
         obj->show();
         printf("\n");
     }

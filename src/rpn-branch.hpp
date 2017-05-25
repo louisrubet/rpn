@@ -1,4 +1,3 @@
-
 //
 int rpn_if(branch& myobj)
 {

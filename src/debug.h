@@ -1,3 +1,6 @@
+#ifndef DEBUG_H
+#define DEBUG_H
+
 static void dump8(unsigned char* to_dump, unsigned long offset,
         unsigned long size)
 {
@@ -43,3 +46,4 @@ static void dump8(unsigned char* to_dump, unsigned long offset,
 //
 #define TRACE(...) do { (void)printf(__FUNCTION__ ": "); (void)printf(__VA_ARGS__); } while(0)
 
+#endif

@@ -1,25 +1,74 @@
-// keywords declaration
-struct keyword_t
+public:
+static ret_value parse(const char* entry, program& prog)
 {
-    cmd_type_t type;
-    char name[24];
-    program_fn_t fn;
-    string comment;
-};
-static const int g_max_commands = 128;
-static keyword_t _keywords[g_max_commands];
+    vector<string> entries;
+    ret_value ret = ret_ok;
 
+    //1. cut global entry string into shorter strings
+    if (_cut(entry, entries))
+    {
+        //2. make an object from each entry, and add it to the program
+        for (vector<string>::iterator it = entries.begin(); it != entries.end(); it++)
+        {
+            string remaining_entry;
+            string main_entry = (*it);
+            while(main_entry.size()>0)
+            {
+                // remaining_entry is used only in case of concatenated entry
+                // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
+                // this remaining entry is treated as an entry
+
+                // TODO errors ?
+                _obj_from_string(main_entry, prog, remaining_entry);
+                main_entry = remaining_entry;
+            }
+        }
+    }
+
+    return ret;
+}
+
+// interactive entry and decoding
+static ret_value entry(program& prog)
+{
+    char* buf;
+    ret_value ret;
+
+    // declare completion fn (bound to '\t' by default)
+    rl_completion_entry_function = entry_completion_generator;
+
+    // get user entry
+    buf = readline(prompt);
+    if (buf != NULL)
+    {
+        // parse it
+        ret = parse(buf, prog);
+
+        // keep history
+        if (buf[0]!=0)
+            add_history(buf);
+    }
+    else
+        ret = ret_internal;
+
+    //TODO
+    free(buf);
+}
+
+private:
 static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
 {
-    for(unsigned int i=0; (i<sizeof(_keywords)/sizeof(_keywords[0])) && (_keywords[i].type != cmd_max); i++)
+    unsigned int i = 0;
+    while(s_keywords[i].type != cmd_max)
     {
-        if ((strnlen(_keywords[i].name, sizeof(_keywords[i].name))>0)
-            && (strncmp(fn_name, _keywords[i].name, sizeof(_keywords[i].name)) == 0))
+        if ((strnlen(s_keywords[i].name, sizeof(s_keywords[i].name))>0)
+            && (strncmp(fn_name, s_keywords[i].name, sizeof(s_keywords[i].name)) == 0))
         {
-            fn = _keywords[i].fn;
-            type = _keywords[i].type;
+            fn = s_keywords[i].fn;
+            type = s_keywords[i].type;
             return ret_ok;
         }
+        i++;
     }
     return ret_unknown_err;
 }
@@ -417,16 +466,16 @@ static char* entry_completion_generator(const char* text, int state)
     while(too_far == 0)
     {
         list_index++;
-        if (_keywords[list_index].fn != NULL)
+        if (s_keywords[list_index].fn != NULL)
         {
             // compare list entry with text, return if match
-            if (strncmp(_keywords[list_index].name, text, len) == 0)
-                return entry_completion_dupstr(_keywords[list_index].name);
+            if (strncmp(s_keywords[list_index].name, text, len) == 0)
+                return entry_completion_dupstr(s_keywords[list_index].name);
         }
         else
         {
             // fn=NULL and size=0 = last entry in list -> go out
-            if (_keywords[list_index].comment.size() == 0)
+            if (s_keywords[list_index].comment.size() == 0)
                 too_far = 1;
         }
     }
@@ -442,60 +491,4 @@ static char* entry_completion_dupstr(char* s)
     if (r != NULL)
         strcpy(r, s);
     return r;
-}
-
-static ret_value parse(const char* entry, program& prog)
-{
-    vector<string> entries;
-    ret_value ret = ret_ok;
-
-    //1. cut global entry string into shorter strings
-    if (_cut(entry, entries))
-    {
-        //2. make an object from each entry, and add it to the program
-        for (vector<string>::iterator it = entries.begin(); it != entries.end(); it++)
-        {
-            string remaining_entry;
-            string main_entry = (*it);
-            while(main_entry.size()>0)
-            {
-                // remaining_entry is used only in case of concatenated entry
-                // ex:  entry="1 2+" -> vector<string> = {"1", "2+"} -> first "1", second "2" and remaining_entry="+"
-                // this remaining entry is treated as an entry
-
-                // TODO errors ?
-                _obj_from_string(main_entry, prog, remaining_entry);
-                main_entry = remaining_entry;
-            }
-        }
-    }
-
-    return ret;
-}
-
-// interactive entry and decoding
-static ret_value entry(program& prog)
-{
-    char* buf;
-    ret_value ret;
-
-    // declare completion fn (bound to '\t' by default)
-    rl_completion_entry_function = entry_completion_generator;
-
-    // get user entry
-    buf = readline(prompt);
-    if (buf != NULL)
-    {
-        // parse it
-        ret = parse(buf, prog);
-
-        // keep history
-        if (buf[0]!=0)
-            add_history(buf);
-    }
-    else
-        ret = ret_internal;
-
-    //TODO
-    free(buf);
 }
