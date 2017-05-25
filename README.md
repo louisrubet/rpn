@@ -104,11 +104,11 @@ Multiple-precision floating-point computations with correct rounding are ensured
 |PROGRAM||
 |-|-|
 |eval|	evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
-->	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
-	
+|->|	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
+
 |TRIG||
 |-|-|
-|pi|	PI constant
+|pi|	pi constant
 |sin|	sinus
 |asin|	arg sinus
 |cos|	cosinus
@@ -120,7 +120,7 @@ Multiple-precision floating-point computations with correct rounding are ensured
 	
 |LOGS||
 |-|-|
-|e|	exp(0) constant
+|e|	exp(1) constant
 |log|	logarithm base 10
 |alog|	(or exp10) exponential base 10
 |log2|	logarithm base 2
