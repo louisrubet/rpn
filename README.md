@@ -1,19 +1,56 @@
-# Reverse Polish Notation language
+# **rpn** - **R**everse **P**olish **N**otation language
 
-- __rpn__ is a reverse polish notation mathematical language, which brings powerfull calculation facilities on floating point number with __arbitrary precision__
+- **rpn** is a mathematical language, which brings
+	- powerfull calculation facilities on floating point numbers with __arbitrary precision__, provided by **GNU MPFR** library
+	- a **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **test**, **trig** and **logs** commands
+	- using that so cool **reverse polish notation**
 
-- The special feature of this language is to make no difference between keywords and functions, even user functions
+Quick examples:
 
-- Following objects are managed: floating numbers, symbols, strings, programs, plus language keywords (commands and flow controls)
+  - easy calculation with **stacked results**
+	```
+	rpn> 1 exp 3 *
+	8.1548454853771357061
+	rpn> 2 sqrt
+	2> 8.1548454853771357061
+	1> 1.4142135623730950488
+	rpn> 
+	```
+  - **programs** and **variables**, eg same example as in HP28S Quick Reference:
+	```
+	rpn> << rot * swap 2 / chs dup sq rot - sqrt >> 'quadratic_solution' sto
+	rpn> 1 2 -3 quadratic_solution
+	2> -1
+	1> 2
+	rpn> vars
+	var 1: name 'quadratic_solution', type program, value << rot * swap 2 / chs dup sq rot - sqrt  >>
+	```
+  - **local variables**, always from the same reference:
+	```
+	rpn> << -> x y << x y + ln >> >> 'P' sto
+	rpn> 1 2 P
+	rpn> 1.0986122886681096914
+	```
+  - **arbitrary precision** (up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR !)
+  	```
+  	rpn> 256 prec 200 std
+  	rpn> pi 3 * 4 / cos
+  	-0.70710678118654752440084436210484903928483593768847403658833986899536623923105962592591087473479525356117497671223960240783675485777817360566073272153486395308799122357513534343724299243077135552002446
+  	rpn> 
+  	```
 
-- Inspired by Hewlett-Packard RPL language (**HP28S** user manual is provided as a reference), it includes at least STACK, STORE, BRANCH, TEST, TRIG and LOGS commands of HP28S RPL implementation
+- Following objects are managed: **floating numbers**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
+  	```
+  	4> 'symbol'
+  	3> "string"
+  	2> 12.3456
+  	1> << -> n << 0 1 n for i i 2 * inv + next >> >>
+  	rpn> 
+	```
 
 - A __GNU-readline__-based interactive editor with autocompletion is provided.
 
-Multiple-precision floating-point computations with correct rounding are ensured by __MPFR library__ under LGPL v3
-
-## Implemented commands
-
+## Keywords
 |GENERAL||
 |-|-|
 |nop	| no operation |
