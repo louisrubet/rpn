@@ -1,4 +1,33 @@
 //
+bool find_variable(string& variable, object*& obj, unsigned int& size)
+{
+    bool found = false;
+    program* parent = _parent_prog;
+
+    // find variable in local heap, parens heaps, global heap
+    if (_local_heap.get(variable, obj, size))
+        found = true;
+    else
+    {
+        while(parent != NULL)
+        {
+            if (parent->_local_heap.get(variable, obj, size))
+            {
+                found = true;
+                break;
+            }
+            parent = parent->_parent_prog;
+        }
+        if (!found)
+        {
+            if (_heap->get(variable, obj, size))
+                found = true;
+        }
+    }
+    
+    return found;
+}
+
 void eval(void)
 {
     bool run_prog = false;
@@ -10,16 +39,12 @@ void eval(void)
         // recall a variable
         object* obj;
         unsigned int size;
-        int type;
         string variable(((symbol*)_stack->back())->_value);
-
-        // mind the order of heaps
-        if (_local_heap.get(variable, obj, size)
-                || ((_parent_local_heap != NULL) && _parent_local_heap->get(variable, obj, size))
-                || _global_heap->get(variable, obj, size))
+        
+        // if variable holds a program, run this program
+        if (find_variable(variable, obj, size))
         {
-            // if variable holds a program, run this program
-            if (type == cmd_program)
+            if (obj->_type == cmd_program)
             {
                 prog_text = ((oprogram*)obj)->_value;
                 (void)_stack->pop_back();
@@ -47,13 +72,13 @@ void eval(void)
     // run prog if any
     if (run_prog)
     {
-        program prog;
+        program prog(this);
 
         // make program from entry
         if (program::parse(prog_text.c_str(), prog) == ret_ok)
         {
             // run it
-            prog.run(*_stack, *_global_heap, &_local_heap);
+            prog.run(*_stack, *_heap, &_local_heap);
         }
     }
 }
@@ -135,7 +160,7 @@ int inprog(branch& myobj)
     if (program::parse(entry.c_str(), prog) == ret_ok)
     {
         // run it
-        prog.run(*_stack, *_global_heap, &local_heap);
+        prog.run(*_stack, *_heap, &local_heap);
     }
 
     // point on next command
