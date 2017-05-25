@@ -50,7 +50,13 @@ void help()
     printf(" with %d digits\n", number::s_current_precision);
 
     // calc precision and rounding mode
-    printf("Current floating point precision is %d bits\n", (int)floating_t::s_mpfr_prec);
+
+    // MPFR_PREC_MAX mpfr_prec_t depends on _MPFR_PREC_FORMAT macro (see mpfr.h)
+    // this could not exceed 63 bits max (0x7FFFFFFFFFFFFFFF)
+    int64_t prec_min = (int64_t)MPFR_PREC_MIN;
+    int64_t prec_max = (int64_t)MPFR_PREC_MAX;
+
+    printf("Current floating point precision is %d bits (min=%ld bits, max=0x%lx bits)\n", (int)floating_t::s_mpfr_prec, prec_min, prec_max);
     printf("Current rounding mode is '%s'\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
     printf("\n\n");
 }
@@ -148,9 +154,14 @@ void precision()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
+    // MPFR_PREC_MAX mpfr_prec_t depends on _MPFR_PREC_FORMAT macro (see mpfr.h)
+    // this could not exceed 63 bits max (0x7FFFFFFFFFFFFFFF)
+    int64_t prec_min = (int64_t)MPFR_PREC_MIN;
+    int64_t prec_max = (int64_t)MPFR_PREC_MAX;
+
     //set MPFR float precision
-    long prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
-    if (prec >= 0)
+    int64_t prec = mpfr_get_si(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+    if (prec >= prec_min && prec <= prec_max)
     {
         floating_t::s_mpfr_prec = (mpfr_prec_t)prec;
         floating_t::s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
