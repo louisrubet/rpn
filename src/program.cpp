@@ -71,12 +71,17 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "swap", &program::swap, "swap 2 first stack entries" },
     { cmd_keyword, "drop", &program::drop, "drop first stack entry" },
     { cmd_keyword, "drop2", &program::drop2, "drop 2 first stack entries" },
+    { cmd_keyword, "dropn", &program::dropn, "drop n first stack entries" },
     { cmd_keyword, "erase", &program::erase, "drop all stack entries" },
     { cmd_keyword, "rot", &program::rot, "rotate 3 first stack entries" },
     { cmd_keyword, "dup", &program::dup, "duplicate first stack entry" },
     { cmd_keyword, "dup2", &program::dup2, "duplicate 2 first stack entries" },
+    { cmd_keyword, "dupn", &program::dupn, "duplicate n first stack entries" },
     { cmd_keyword, "pick", &program::pick, "push a copy of  the given stack level onto the stack" },
     { cmd_keyword, "depth", &program::depth, "give stack depth" },
+    { cmd_keyword, "roll", &program::roll, "move a stack entry to the top of the stack" },
+    { cmd_keyword, "rolld", &program::rolld, "move the element on top of the stack to a higher stack position" },
+    { cmd_keyword, "over", &program::over, "push a copy of the element in stack level 2 onto the stack" },
 
     //STRING
     { cmd_undef, "", NULL, "\nSTRING"},

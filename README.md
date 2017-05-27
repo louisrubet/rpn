@@ -107,13 +107,18 @@ Quick examples:
 |swap|	swap 2 first stack entries
 |drop|	drop first stack entry
 |drop2|	drop 2 first stack entries
+|dropn|	drop n first stack entries
 |erase|	drop all stack entries
 |rot|	rotate 3 first stack entries
 |dup|	duplicate first stack entry
 |dup2|	duplicate 2 first stack entries
+|dupn|	duplicate n first stack entries
 |pick|	push a copy of  the given stack level onto the stack
 |depth|	give stack depth
-	
+|roll| move a stack entry to the top of the stack
+|rolld| move the element on top of the stack to a higher stack position
+|over| push a copy of the element in stack level 2 onto the stack
+
 |STRING||
 |-|-|
 |->str|	convert an object into a string
