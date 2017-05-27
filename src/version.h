@@ -1,7 +1,7 @@
 // version and soft name
-static const char version[] = "2.0 RC1";
+static const char version[] = "2.0";
 static const char uname[] =
-    "rpn v2.0 RC1, (c) 2013 <louis@rubet.fr>, GNU LGPL v3";
+    "rpn v2.0, (c) 2017 <louis@rubet.fr>, GNU LGPL v3";
 
 // description
 static const char description[] =
