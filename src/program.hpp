@@ -42,7 +42,7 @@ public:
     program(program* parent_prog = NULL) { _parent_prog = parent_prog; }
 
     // run this program
-    ret_value run(stack& stk, heap& hp, heap* parent_local_hp = NULL)
+    ret_value run(stack& stk, heap& hp)
     {
         bool go_out = false;
         ret_value ret = ret_ok;
@@ -426,7 +426,7 @@ private:
     // global heap (sto, rcl)
     heap* _heap;
 
-    // local heap for local loop vairables (for..next)
+    // local heap for local loop variables (for..next)
     heap _local_heap;
 
     // local stack internally used by branch commands (start, for, next, ..)
