@@ -341,7 +341,7 @@ public:
         ret_value ret;
 
         // show last recorded error
-        cerr<<s_ret_value_string[_err]<<"("<<_err<<"): "<<_err_context<<endl;
+        cerr<<_err_context<<": error "<<_err<<": "<<s_ret_value_string[_err]<<endl;
         switch(_err)
         {
             case ret_internal:
