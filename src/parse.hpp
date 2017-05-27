@@ -396,8 +396,6 @@ static bool get_number(const string& entry, program& prog, string& remaining_ent
                 string beg = entry.substr(0, 2);
                 if (beg == "0x" || beg == "0X")
                     num->_representation = number::hex;
-                else if (beg == "0b" || beg == "0B")
-                    num->_representation = number::bin;
                 else
                     num->_representation = number::dec;
 
