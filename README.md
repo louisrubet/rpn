@@ -1,57 +1,63 @@
 # **rpn** - **R**everse **P**olish **N**otation language
 
-- **rpn** is a mathematical language, which brings
-	- powerfull calculation facilities on floating point numbers with __arbitrary precision__, provided by **GNU MPFR** library
-	- a **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **test**, **trig** and **logs** commands
-	- using that so cool **reverse polish notation**
+**rpn**
+- is a **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **test**, **trig** and **logs** commands
+- brings powerfull calculation facilities on floating point numbers with __arbitrary precision__, provided by **GNU MPFR** library
+- uses that so cool **reverse polish notation**
 
 Quick examples:
 
-  - easy calculation with **stacked results**
-	```
-	rpn> 1 exp 3 *
-	8.1548454853771357061
-	rpn> 2 sqrt
-	2> 8.1548454853771357061
-	1> 1.4142135623730950488
-	rpn> 
-	```
-  - **programs** and **variables**, eg same example as in HP28S Quick Reference:
-	```
-	rpn> << rot * swap 2 / chs dup sq rot - sqrt >> 'quadratic_solution' sto
-	rpn> 1 2 -3 quadratic_solution
-	2> -1
-	1> 2
-	rpn> vars
-	var 1: name 'quadratic_solution', type program, value << rot * swap 2 / chs dup sq rot - sqrt  >>
-	```
-  - **local variables**, always from the same reference:
-	```
-	rpn> << -> x y << x y + ln >> >> 'P' sto
-	rpn> 1 2 P
-	rpn> 1.0986122886681096914
-	```
-  - **arbitrary precision** (up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR !)
-  	```
-  	rpn> 256 prec 200 std
-  	rpn> pi 3 * 4 / cos
-  	-0.70710678118654752440084436210484903928483593768847403658833986899536623923105962592591087473479525356117497671223960240783675485777817360566073272153486395308799122357513534343724299243077135552002446
-  	rpn> 
-  	```
+- easy calculation with **stacked results**
+```
+rpn> 1 exp 3 *
+8.1548454853771357061
+rpn> 2 sqrt
+2> 8.1548454853771357061
+1> 1.4142135623730950488
+rpn> 
+```
+
+- **programs** and **variables**, eg same example as in HP28S Quick Reference:
+```
+rpn> << rot * swap 2 / chs dup sq rot - sqrt >> 'quadratic_solution' sto
+rpn> 1 2 -3 quadratic_solution
+2> -1
+1> 2
+rpn> vars
+var 1: name 'quadratic_solution', type program, value << rot * swap 2 / chs dup sq rot - sqrt  >>
+```
+
+- **local variables**, always from the same reference:
+```
+rpn> << -> x y << x y + ln >> >> 'P' sto
+rpn> 1 2 P
+rpn> 1.0986122886681096914
+```
+
+- **arbitrary precision** (up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR !)
+```
+rpn> 256 prec 200 std
+rpn> pi 3 * 4 / cos
+-0.70710678118654752440084436210484903928483593768847403658833986899536623923105962592591087473479525356117497671223960240783675485777817360566073272153486395308799122357513534343724299243077135552002446
+rpn> 
+```
 
 - Following objects are managed: **floating numbers**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
-  	```
-  	4> 'symbol'
-  	3> "string"
-  	2> 12.3456
-  	1> << -> n << 0 1 n for i i 2 * inv + next >> >>
-  	rpn> 
-	```
+```
+4> 'symbol'
+3> "string"
+2> 12.3456
+1> << -> n << 0 1 n for i i 2 * inv + next >> >>
+rpn> 
+```
 
 - A __GNU-readline__-based interactive editor with autocompletion is provided.
 
-## Keywords
-|GENERAL||
+## keywords
+
+#### general
+
+|keyword|description|
 |-|-|
 |nop	| no operation |
 |help |	(or h or ?) this help message
@@ -62,8 +68,10 @@ Quick examples:
 |default |	set float representation and precision to default
 |prec |	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
 |round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
-	
-|REAL||
+
+#### real
+
+|keyword|description|
 |-|-|
 |+|	addition
 |-|	substraction
@@ -78,8 +86,10 @@ Quick examples:
 |sq|	(or sqr) square
 |mod|	modulo
 |abs|	absolute value
-	
-|REAL REPRESENTATION||
+
+#### real representation
+
+|keyword|description|
 |-|-|
 |dec|	decimal representation
 |hex|	hexadecimal representation
@@ -87,8 +97,10 @@ Quick examples:
 |std|	standard floating numbers representation. ex: [25] std
 |fix|	fixed point representation. ex: 6 fix
 |sci|	scientific floating point representation. ex: 20 sci
-	
-|TEST||
+
+#### test
+
+|keyword|description|
 |-|-|
 |>|	binary operator >
 |>=|	binary operator >=
@@ -101,8 +113,10 @@ Quick examples:
 |xor|	boolean operator xor
 |not|	boolean operator not
 |same|	boolean operator same (equal)
-	
-|STACK||
+
+#### stack
+
+|keyword|description|
 |-|-|
 |swap|	swap 2 first stack entries
 |drop|	drop first stack entry
@@ -119,12 +133,16 @@ Quick examples:
 |rolld| move the element on top of the stack to a higher stack position
 |over| push a copy of the element in stack level 2 onto the stack
 
-|STRING||
+#### string
+
+|keyword|description|
 |-|-|
 |->str|	convert an object into a string
 |str->|	convert a string into an object
-	
-|BRANCH||
+
+#### branch
+
+|keyword|description|
 |-|-|
 |if|	test-instructions
 |then|	true-instructions
@@ -134,21 +152,27 @@ Quick examples:
 |for|	repeat instructions several times with variable
 |next|	ex: ```1 10 start <instructions> next```
 |step|	ex: ```1 100 start <instructions> 4 step```
-	
-|STORE||
+
+#### store
+
+|keyword|description|
 |-|-|
 |sto|	store a variable. ex: ```1 'name' sto```
 |rcl|	recall a variable. ex: ```'name' rcl```
 |purge|	delete a variable. ex: ```'name' purge```
 |vars|	list all variables
 |edit|	edit a variable content
-	
-|PROGRAM||
+
+#### program
+
+|keyword|description|
 |-|-|
 |eval|	evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
 |->|	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
 
-|TRIG||
+#### trig
+
+|keyword|description|
 |-|-|
 |pi|	pi constant
 |sin|	sinus
@@ -159,8 +183,10 @@ Quick examples:
 |atan|	arg tangent
 |d|->r	convert degrees to radians
 |r|->d	convert radians to degrees
-	
-|LOGS||
+
+#### logs
+
+|keyword|description|
 |-|-|
 |e|	exp(1) constant
 |log|	logarithm base 10
@@ -175,6 +201,8 @@ Quick examples:
 |acosh|	inverse hyperbolic cosine
 |tanh|	hyperbolic tangent
 |atanh|	inverse hyperbolic tangent
+
+#### default
 
 Default float mode is 'std' with 20 digits
 
@@ -200,10 +228,20 @@ rpn> test
 (...)
 ```
 
-The test output is done on stdout and is not stacked in rpn.
+Test output is done on stdout and is not stacked in rpn.
 
-## Installation
+## generation and installation
 
-## Generation
- Compiled with g++ Makefile generated by automake.
- External dependencies needed: automake, readline (libreadline-dev), MPFR library, GNU MP library
+- clone this repository
+	```
+	# git clone https://github.com/louisrubet/rpn.git
+	```
+- configure and make
+	```
+	# cd rpn/
+	# ./configure && make
+	```
+- install
+	```
+	# sudo make install
+	```
