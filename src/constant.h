@@ -25,6 +25,12 @@
 // constants
 //
 
+// commands and entry related constants
+#define MAX_COMMAND_LENGTH 24
+#define AUTOCOMPLETE_KEY '\t'
+#define SHOW_STACK_SEPARATOR "> "
+#define PROMPT "rpn> "
+
 // show formats
 #define MPFR_FORMAT_BEG "%."
 #define MPFR_FORMAT_STD "Rg"
