@@ -21,7 +21,7 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "type", &program::type, "show type of stack first entry" },
     { cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default" },
     { cmd_keyword, "prec", &program::precision, "get float precision in bits when first stack is not a number\n\t"
-                                                "set float precision in bits when first stack entry is a number. ex: 256 prec\n\t" },
+                                                "set float precision in bits when first stack entry is a number. ex: 256 prec" },
     { cmd_keyword, "round", &program::round, "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward +inf\", \"toward -inf\", \"away from zero\"] round" },
 
     //REAL
