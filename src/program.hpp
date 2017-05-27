@@ -380,7 +380,7 @@ public:
 
     ret_value get_err(void) { return _err; }
 
-    static void show_stack(stack& st, const string& separator = g_show_stack_separator)
+    static void show_stack(stack& st, bool show_separator = true)
     {
         if (st.size() == 1)
         {
@@ -389,11 +389,10 @@ public:
         }
         else
         {
-            bool show_sep = (! separator.empty());
             for (int i = st.size()-1; i>=0; i--)
             {
-                if (show_sep)
-                    printf("%d%s", i+1, separator.c_str());
+                if (show_separator)
+                    printf("%d%s", i+1, SHOW_STACK_SEPARATOR);
                 ((object*)st[i])->show();
                 printf("\n");
             }
@@ -457,7 +456,7 @@ private:
     struct keyword_t
     {
         cmd_type_t type;
-        char name[24];
+        char name[MAX_COMMAND_LENGTH];
         program_fn_t fn;
         string comment;
     };
