@@ -144,13 +144,6 @@ void hex()
     ((number*)_stack->back())->_representation = number::hex;
 }
 
-void bin()
-{
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ((number*)_stack->back())->_representation = number::bin;
-}
-
 void dec()
 {
     MIN_ARGUMENTS(1);
