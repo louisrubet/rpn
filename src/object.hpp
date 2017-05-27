@@ -151,8 +151,7 @@ struct number : public object
     
     enum {
         dec,
-        hex,
-        bin
+        hex
     } _representation;
 
     // precision

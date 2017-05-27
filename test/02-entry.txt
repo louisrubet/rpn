@@ -18,12 +18,13 @@ erase
 
 # real hex
 erase
-0x1234
--> stack should be 4660
+0x1234 0x10.10
+-> stack should be 0x1.234p+12, 0x1.01p+4
 
-drop
-0x10.10
--> stack should be 16.0625
+# real hex (2)
+dec swap dec swap
+-> stack should be 4660, 16.0625
+erase
 
 # real binary
 erase

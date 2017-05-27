@@ -47,7 +47,6 @@ program::keyword_t program::s_keywords[] =
     { cmd_undef, "", NULL, "\nREAL REPRESENTATION"},
     { cmd_keyword, "dec", &program::dec, "decimal representation" },
     { cmd_keyword, "hex", &program::hex, "hexadecimal representation" },
-    { cmd_keyword, "bin", &program::bin, "binary representation" },
     { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
     { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
     { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
