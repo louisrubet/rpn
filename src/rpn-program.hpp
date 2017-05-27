@@ -78,7 +78,7 @@ void eval(void)
         if (program::parse(prog_text.c_str(), prog) == ret_ok)
         {
             // run it
-            prog.run(*_stack, *_heap, &_local_heap);
+            prog.run(*_stack, *_heap);
         }
     }
 }
@@ -145,22 +145,21 @@ int inprog(branch& myobj)
     }
 
     // load variables
-    heap local_heap;
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--)
     {
-        local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0));
+        _local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0));
         (void)_stack->pop_back();
     }
 
     // run the program
     string entry(((oprogram*)seq_obj(myobj.arg1 + count_symbols + 1))->_value);
-    program prog;
+    program prog(this);
 
     // make the program from entry
     if (program::parse(entry.c_str(), prog) == ret_ok)
     {
         // run it
-        prog.run(*_stack, *_heap, &local_heap);
+        prog.run(*_stack, *_heap);
     }
 
     // point on next command
