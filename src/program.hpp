@@ -402,7 +402,7 @@ public:
     
     static void apply_default()
     {
-        //default float precision, float mode, verbosity
+        //default float precision, float mode
         number::s_mode = DEFAULT_MODE;
         number::s_current_precision = DEFAULT_PRECISION;
 
@@ -410,6 +410,10 @@ public:
         stringstream ss;
         ss << number::s_current_precision;
         number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
+
+        // default calc precision for MPFR
+        floating_t::s_mpfr_prec = (mpfr_prec_t)MPFR_DEFAULT_PREC_BITS;
+        floating_t::s_mpfr_prec_bytes = MPFR_DEFAULT_STORING_LENGTH_BYTES;
     }
 
 private:
