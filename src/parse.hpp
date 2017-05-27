@@ -31,28 +31,28 @@ static ret_value parse(const char* entry, program& prog)
 // interactive entry and decoding
 static ret_value entry(program& prog)
 {
-    char* buf;
+    char* entry;
     ret_value ret;
 
     // declare completion fn (bound to '\t' by default)
     rl_completion_entry_function = entry_completion_generator;
 
     // get user entry
-    buf = readline(prompt);
-    if (buf != NULL)
+    entry = readline(PROMPT);
+    if (entry != NULL)
     {
         // parse it
-        ret = parse(buf, prog);
+        ret = parse(entry, prog);
 
         // keep history
-        if (buf[0]!=0)
-            add_history(buf);
+        add_history(entry);
     }
     else
         ret = ret_internal;
 
-    //TODO
-    free(buf);
+    free(entry);
+
+    return ret;
 }
 
 private:
@@ -480,13 +480,13 @@ static char* entry_completion_generator(const char* text, int state)
  
     /* If no names matched, then return NULL. */
     return (char*)NULL;
- 
 }
 
-static char* entry_completion_dupstr(char* s)
+static char* entry_completion_dupstr(const char* src)
 {
-    char* r = (char*)malloc((strlen(s)+1));
-    if (r != NULL)
-        strcpy(r, s);
-    return r;
+    int len = strlen(src);
+    char* dst = (char*)malloc(len+1);
+    if (dst != NULL)
+        strcpy(dst, src);
+    return dst;
 }

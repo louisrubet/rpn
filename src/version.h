@@ -3,9 +3,6 @@ static const char version[] = "2.0 RC1";
 static const char uname[] =
     "rpn v2.0 RC1, (c) 2013 <louis@rubet.fr>, GNU LGPL v3";
 
-static const char g_cursor[] = "> ";
-static const string g_show_stack_separator = "> ";
-
 // description
 static const char description[] =
     ATTR_BOLD "R" ATTR_OFF "everse "
@@ -19,5 +16,3 @@ static const char description[] =
 static const char syntax[] =
     ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\n"
     "with optional command = list of commands";
-
-static const char prompt[] = ATTR_BOLD "rpn" ATTR_OFF "> ";
