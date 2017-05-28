@@ -21,7 +21,7 @@ erase
 
 << -> n << n >> >>
 type
--> stack should be << -> n  << n  >> >>, 'program'
+-> stack should be << -> n << n >> >>, 'program'
 erase
 
 # default

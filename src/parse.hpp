@@ -140,7 +140,7 @@ static bool _cut(const char* entry, vector<string>& entries)
                     tmp = "<< ";
 
                     // trim leading spaces
-                    while (i < len && (entry[i]==' ' || entry[i]=='\t'))
+                    while (i < len && isspace(entry[i]))
                         i++;
 
                     while(i < len)
@@ -149,20 +149,25 @@ static bool _cut(const char* entry, vector<string>& entries)
                         {
                             up++;
                             i += 2;
-                            tmp += " << ";
+                            tmp += "<< ";
                             // trim leading spaces
-                            while (i < len && (entry[i] == ' ' || entry[i] == '\t'))
+                            while (i < len && isspace(entry[i]))
                                 i++;
                         }
                         else if (strncmp(&entry[i], ">>", 2) == 0)
-                        {
+                        {                        
+                            if (isspace(entry[i-1]) && entry[i-2]!='>')
+                                tmp += ">>";
+                            else
+                                tmp += " >>";
+
                             up--;
                             i += 2;
-                            tmp += " >>";
 
                             // trim trailing spaces
-                            while (i < len && (entry[i] == ' ' || entry[i] == '\t'))
+                            while (i < len && isspace(entry[i]))
                                 i++;
+
                             // found end
                             if (up == 0)
                                 break;
@@ -174,9 +179,8 @@ static bool _cut(const char* entry, vector<string>& entries)
                         }
                     }
                     while((up--)>0)
-                    {
                         tmp += " >>";
-                    }
+
                     if (tmp.size()>0)
                     {
                         entries.push_back(tmp);
@@ -185,15 +189,13 @@ static bool _cut(const char* entry, vector<string>& entries)
                     i--;// i has move 1 too far
                 }
                 else
-                {
                     // reinject '<'' which is not a prog begin
                     tmp = "<";
-                }
                 break;
 
             //other
             default:
-                if (entry[i] != ' ' && entry[i] != '\t')
+                if (!isspace(entry[i]))
                 {
                     tmp += entry[i];
                 }
@@ -349,7 +351,7 @@ static bool get_string(const string& entry, program& prog, string& remaining_ent
     return ret;
 }
 
-static bool get_program(const string& entry, program& prog, string& remaining_entry)
+static bool get_program(string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
     unsigned int obj_len;
@@ -412,7 +414,7 @@ static bool get_number(const string& entry, program& prog, string& remaining_ent
     return ret;
 }
 
-static bool _obj_from_string(const string& entry, program& prog, string& remaining_entry)
+static bool _obj_from_string(string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
     
