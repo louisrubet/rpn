@@ -232,7 +232,21 @@ Test output is done on stdout and is not stacked in rpn.
 
 ## generation and installation
 
-- clone this repository
+At this time the software is proposed for **GNU/Linux** only and provided as a source code.
+
+No binary package is provided, user must compile its version by following these 3 steps:
+
+#### GNU GMP 6.1.2
+
+- download and install **GNU GMP v6.1.2** at [https://gmplib.org/](https://gmplib.org/)
+
+#### GNU MPFR 3.1.5
+
+- download and install **GNU MPFR v3.1.5** from [http://www.mpfr.org](http://www.mpfr.org)
+
+#### rpn
+
+- clone this project or download a zipped version from [the release directory](https://github.com/louisrubet/rpn/releases)
 	```
 	# git clone https://github.com/louisrubet/rpn.git
 	```
