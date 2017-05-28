@@ -2,6 +2,7 @@
 
 **rpn**
 - is a **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **test**, **trig** and **logs** commands
+- is implemented as a a **command-line calculator** for GNU/Linux
 - brings powerfull calculation facilities on floating point numbers with __arbitrary precision__, provided by **GNU MPFR** library
 - uses that so cool **reverse polish notation**
 
