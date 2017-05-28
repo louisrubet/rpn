@@ -6,3 +6,4 @@
 #include test/07-string.txt
 #include test/08-test.txt
 #include test/09-store.txt
+#include test/10-program.txt
