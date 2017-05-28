@@ -121,15 +121,15 @@ public:
         return _count;
     }
 
-    // stack access (index is counted from back)
-    object* get_obj(unsigned int index)
+    // stack access (stack_level=0=first out)
+    object* get_obj(unsigned int stack_level)
     {
-        return seq_obj(_count - index - 1);
+        return seq_obj(_count - stack_level - 1);
     }
 
-    object* operator[](unsigned int index)
+    object* operator[](unsigned int stack_level)
     {
-        return seq_obj(_count - index - 1);
+        return seq_obj(_count - stack_level - 1);
     }
 
     object* back()

@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
                 if (prog.run(s_global_stack, s_global_heap) == ret_good_bye)
                     break;
                 else
-                    program::show_stack(s_global_stack, false);
+                    program::show_stack(s_global_stack);
             }
         }
     }
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
             // run it
             ret = prog.run(s_global_stack, s_global_heap);
-            program::show_stack(s_global_stack);
+            program::show_stack(s_global_stack, true);
         }
     }
  

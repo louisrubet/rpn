@@ -161,7 +161,7 @@ struct number : public object
 
 struct ostring : public object
 {
-    //
+    // ostring may first have been allocated with len+1 bytes
     void set(const char* value, unsigned int len)
     {
         _type = cmd_string;
@@ -173,17 +173,20 @@ struct ostring : public object
             _len = len;
         }
         else
-            len = 0;
+        {
+            _value[_len] = 0;
+            _len = 0;
+        }
     }
 
-    //
+    // length of _value, not includiong the terminal '\0'
     unsigned int _len;
     char _value[0];
 };
 
 struct oprogram : public object
 {
-    //
+    // oprogram may first have been allocated with len+1 bytes
     void set(const char* value, unsigned int len)
     {
         _type = cmd_program;
@@ -195,17 +198,20 @@ struct oprogram : public object
             _len = len;
         }
         else
-            len = 0;
+        {
+            _value[0] = 0;
+            _len = 0;
+        }
     }
 
-    //
+    // length of _value, not includiong the terminal '\0'
     unsigned int _len;
     char _value[0];
 };
 
 struct symbol : public object
 {
-    //
+    // symbol may first have been allocated with len+1 bytes
     void set(const char* value, unsigned int len, bool auto_eval)
     {
         _type = cmd_symbol;
@@ -219,18 +225,22 @@ struct symbol : public object
             _len = len;
         }
         else
-            len = 0;
+        {
+            _value[0] = 0;
+            _len = 0;
+        }
     }
 
     //
     bool _auto_eval;
+    // length of _value, not includiong the terminal '\0'
     unsigned int _len;
     char _value[0];
 };
 
 struct keyword : public object
 {
-    //
+    // keyword may first have been allocated with len+1 bytes
     void set(program_fn_t fn, const char* value, unsigned int len)
     {
         _type = cmd_keyword;
@@ -243,11 +253,15 @@ struct keyword : public object
             _len = len;
         }
         else
-            len = 0;
+        {
+            _value[0] = 0;
+            _len = 0;
+        }
     }
 
     //
     program_fn_t _fn;
+    // length of _value, not includiong the terminal '\0'
     unsigned int _len;
     char _value[0];
 };
@@ -273,7 +287,10 @@ struct branch : public object
             _len = len;
         }
         else
-            len = 0;
+        {
+            _value[0] = 0;
+            _len = 0;
+        }
     }
 
     // branch function
@@ -282,6 +299,8 @@ struct branch : public object
     int arg1, arg2, arg3;
     number *farg1, *farg2;
     bool arg_bool;
+    
+    // length of _value, not includiong the terminal '\0'
     unsigned int _len;
     char _value[0];
 };
