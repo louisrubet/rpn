@@ -1,0 +1,37 @@
+## MODE
+default
+erase
+
+# std (1)
+erase
+1
+10 std
+-> stack should be 1
+
+# std (2)
+3 /
+-> stack should be 0.3333333333
+
+# std (3)
+3 std
+-> stack should be 0.333
+
+# fix (1)
+drop
+10 fix
+1
+-> stack should be 1.0000000000
+
+# fix (2)
+4 fix
+-> stack should be 1.0000
+
+# sci (1)
+12 sci
+-> stack should be 1.000000000000e+00
+
+# sci (2)
+2 sci
+-> stack should be 1.00e+00
+drop
+

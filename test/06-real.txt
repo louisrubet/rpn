@@ -2,38 +2,53 @@
 
 default erase
 
-# std (1)
-erase
+# real decimal
 1
-10 std
+-> stack size should be 1
 -> stack should be 1
-
-# std (2)
-3 /
--> stack should be 0.3333333333
-
-# std (3)
-3 std
--> stack should be 0.333
-
-# fix (1)
 drop
-10 fix
-1
--> stack should be 1.0000000000
 
-# fix (2)
-4 fix
--> stack should be 1.0000
+# real decimal (2)
+2.345
+-> stack should be 2.345
+erase
 
-# sci (1)
-12 sci
--> stack should be 1.000000000000e+00
+# real decimal (3)
+1 2.345 3 4.9
+-> stack size should be 4
+-> stack should be 1, 2.345, 3, 4.9
+erase
 
-# sci (2)
-2 sci
--> stack should be 1.00e+00
-drop
+# real hex
+0x1234 0x10.10
+-> stack should be 0x1.234p+12, 0x1.01p+4
+
+# real hex (2)
+dec swap dec swap
+-> stack should be 4660, 16.0625
+erase
+
+# real binary
+0b11001100
+-> stack should be 204
+erase
+
+# real binary (2)
+0b11001100.1101
+-> stack should be 204.8125
+erase
+
+# real inf, nan
+inf
+@inf@
++inf
++@inf@
+-inf
+-@inf@
+nan
+@nan@
+-> stack should be inf, inf, inf, inf, -inf, -inf, nan, nan
+erase
 
 # prec (1)
 default
