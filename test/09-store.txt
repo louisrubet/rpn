@@ -1,5 +1,29 @@
 ## VARS
 
+# symbol entry
+'test'
+-> stack size should be 1
+-> stack should be 'test'
+erase
+
+# symbol entry (2)
+'test
+-> stack size should be 1
+-> stack should be 'test'
+erase
+
+# symbol entry (3)
+''
+-> stack size should be 1
+-> stack should be ''
+erase
+
+# symbol entry (4)
+'
+-> stack size should be 1
+-> stack should be ''
+erase
+
 # sto (1)
 1 'a' sto
 -> stack size should be 0
