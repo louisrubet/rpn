@@ -14,15 +14,124 @@ void stoadd(void)
 {
     MIN_ARGUMENTS(2);
 
-    if ((_stack->get_type(0) == cmd_symbol && _stack->get_type(1) == cmd_number)
-        || (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number))
+    if (_stack->get_type(0) == cmd_symbol && _stack->get_type(1) == cmd_number)
     {
-        
+        // get variable value on stack level 1, make op then modify variable
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        plus();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
+    }
+    else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
+    {
+        // copy value, get variable value on stack level 1, 
+        // put back value on stack level 1, make op then modify variable
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        _stack->pop_back();
+
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+        plus();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
     }
     else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+void stosub(void)
+{
+    MIN_ARGUMENTS(2);
+
+    if (_stack->get_type(0) == cmd_symbol && _stack->get_type(1) == cmd_number)
     {
-        
+        // get variable value on stack level 1, make op then modify variable
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        minus();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
     }
+    else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
+    {
+        // copy value, get variable value on stack level 1, 
+        // put back value on stack level 1, make op then modify variable
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        _stack->pop_back();
+
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+        minus();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+void stomul(void)
+{
+    MIN_ARGUMENTS(2);
+
+    if (_stack->get_type(0) == cmd_symbol && _stack->get_type(1) == cmd_number)
+    {
+        // get variable value on stack level 1, make op then modify variable
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        mul();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
+    }
+    else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
+    {
+        // copy value, get variable value on stack level 1, 
+        // put back value on stack level 1, make op then modify variable
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        _stack->pop_back();
+
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+        mul();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+void stodiv(void)
+{
+    MIN_ARGUMENTS(2);
+
+    if (_stack->get_type(0) == cmd_symbol && _stack->get_type(1) == cmd_number)
+    {
+        // get variable value on stack level 1, make op then modify variable
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        div();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
+    }
+    else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
+    {
+        // copy value, get variable value on stack level 1, 
+        // put back value on stack level 1, make op then modify variable
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        _stack->pop_back();
+
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+        div();
+        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+        _stack->pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rcl(void)

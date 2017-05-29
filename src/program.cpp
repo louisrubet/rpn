@@ -109,8 +109,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "sto-", &program::stosub, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-" },
     { cmd_keyword, "sto*", &program::stomul, "multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*" },
     { cmd_keyword, "sto/", &program::stodiv, "divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/" },
-    { cmd_keyword, "sneg", &program::stoneg, "negate a variable. ex: 'name' sneg" },
-    { cmd_keyword, "sinv", &program::stoinv, "inverse a variable. ex: 1 'name' sinv" },
+    /*{ cmd_keyword, "sneg", &program::stoneg, "negate a variable. ex: 'name' sneg" },
+    { cmd_keyword, "sinv", &program::stoinv, "inverse a variable. ex: 1 'name' sinv" },*/
 
     //PROGRAM
     { cmd_undef, "", NULL, "\nPROGRAM"},
