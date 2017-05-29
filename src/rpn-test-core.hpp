@@ -171,7 +171,7 @@ void test(string test_filename, int& total_tests, int& total_tests_failed, int& 
 
                     // show failure
                     printf("\t%s\n", entry.c_str());
-                    printf("\tbut real stack size is " FG_RED "%s" COLOR_OFF "\n", stack_is.c_str());
+                    printf("\tbut real stack is " FG_RED "%s" COLOR_OFF "\n", stack_is.c_str());
                     failed = true;
                 }
                 is_first_step = false;
