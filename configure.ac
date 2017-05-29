@@ -1,4 +1,4 @@
-AC_INIT([rpn], [2.0], [louis@rubet.fr],
+AC_INIT([rpn], [2.1], [louis@rubet.fr],
              [rpn], [http://www.rubet.fr/])
 AC_PREREQ([2.59])
 AM_INIT_AUTOMAKE([1.10 -Wall no-define])
