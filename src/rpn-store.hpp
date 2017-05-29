@@ -9,6 +9,22 @@ void sto(void)
     (void)_stack->pop_back();
 }
 
+//
+void stoadd(void)
+{
+    MIN_ARGUMENTS(2);
+
+    if ((_stack->get_type(0) == cmd_symbol && _stack->get_type(1) == cmd_number)
+        || (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number))
+    {
+        
+    }
+    else
+    {
+        
+    }
+}
+
 void rcl(void)
 {
     MIN_ARGUMENTS(1);
