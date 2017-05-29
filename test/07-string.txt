@@ -3,6 +3,24 @@
 default
 erase
 
+# string entry
+"test string"
+-> stack size should be 1
+-> stack should be "test string"
+erase
+
+# string entry (2)
+"test string
+-> stack size should be 1
+-> stack should be "test string"
+erase
+
+# string entry (3)
+"
+-> stack size should be 1
+-> stack should be ""
+erase
+
 # ->str on real (1)
 1
 ->str

@@ -1,8 +1,33 @@
 ## PROGRAM
 
-# program entry
-<< 1 >> dup eval
--> stack should be << 1 >>, 1
+# program
+<< 'one' >>
+-> stack size should be 1
+-> stack should be << 'one' >>
+erase
+
+# program (2)
+<< 'one' 2
+-> stack size should be 1
+-> stack should be << 'one' 2 >>
+erase
+
+# program (3)
+<<
+-> stack size should be 1
+-> stack should be <<  >>
+erase
+
+# program (4)
+<< << << <<
+-> stack size should be 1
+-> stack should be << << << <<  >> >> >> >>
+erase
+
+# program (5)
+<< -> n << n 2 * >> >>
+-> stack size should be 1
+-> stack should be << -> n << n 2 * >> >>
 erase
 
 # program imbrication

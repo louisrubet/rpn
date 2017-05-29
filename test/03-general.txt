@@ -1,4 +1,6 @@
 ## GENERAL
+default
+erase 
 
 # version
 version

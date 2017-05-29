@@ -1,4 +1,4 @@
-#include test/02-entry.txt
+#include test/02-mode.txt
 #include test/03-general.txt
 #include test/04-branch.txt
 #include test/05-stack.txt
