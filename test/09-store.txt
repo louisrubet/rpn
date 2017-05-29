@@ -61,3 +61,79 @@ erase
 'a' purge
 -> error should be 5
 -> stack size should be 0
+
+# sto+ (1)
+2 'a' sto
+2 'a' sto+
+a
+-> stack should be 4
+erase
+
+# sto+ (2)
+'a' sto+
+-> stack size should be 1
+-> error should be 2
+erase
+
+# sto- (1)
+2 'a' sto
+2 'a' sto-
+a
+-> stack should be 0
+erase
+
+# sto- (2)
+'a' sto-
+-> stack size should be 1
+-> error should be 2
+erase
+
+# sto* (1)
+2 'a' sto
+3 'a' sto*
+a
+-> stack should be 6
+erase
+
+# sto* (2)
+'a' sto*
+-> stack size should be 1
+-> error should be 2
+erase
+
+# sto/ (1)
+6 'a' sto
+2 'a' sto/
+a
+-> stack should be 3
+erase
+
+# sto/ (2)
+'a' sto/
+-> stack size should be 1
+-> error should be 2
+erase
+
+# sneg (1)
+7 'a' sto
+'a' sneg
+a
+-> stack should be -7
+erase
+
+# sneg (2)
+sneg
+-> error should be 2
+erase
+
+# sinv (1)
+4 'a' sto
+'a' sneg
+a
+-> stack should be 0.25
+erase
+
+# sinv (2)
+sinv
+-> error should be 2
+erase
