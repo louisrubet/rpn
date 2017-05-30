@@ -19,9 +19,12 @@ void stoadd(void)
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        plus();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            plus();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
     {
@@ -32,10 +35,13 @@ void stoadd(void)
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-        plus();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            plus();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -50,9 +56,12 @@ void stosub(void)
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        minus();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            minus();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
     {
@@ -63,10 +72,13 @@ void stosub(void)
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-        minus();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            minus();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -81,9 +93,12 @@ void stomul(void)
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        mul();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            mul();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
     {
@@ -94,10 +109,13 @@ void stomul(void)
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-        mul();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            mul();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -112,9 +130,12 @@ void stodiv(void)
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        div();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            div();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else if (_stack->get_type(1) == cmd_symbol && _stack->get_type(0) == cmd_number)
     {
@@ -125,10 +146,53 @@ void stodiv(void)
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-        div();
-        _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
-        _stack->pop_back();
+        if (_err == ret_ok)
+        {
+            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            div();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+void stoneg(void)
+{
+    MIN_ARGUMENTS(1);
+
+    if (_stack->get_type(0) == cmd_symbol)
+    {
+        // get variable value on stack level 1, make op then modify variable
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        if (_err == ret_ok)
+        {
+            neg();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+void stoinv(void)
+{
+    MIN_ARGUMENTS(1);
+
+    if (_stack->get_type(0) == cmd_symbol)
+    {
+        // get variable value on stack level 1, make op then modify variable
+        string variable(((symbol*)_stack->back())->_value);
+        rcl();
+        if (_err == ret_ok)
+        {
+            inv();
+            _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
+            _stack->pop_back();
+        }
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -199,14 +263,10 @@ void auto_rcl(symbol* symb)
                 eval();
         }
         else
-        {
             stack::copy_and_push_back(symb, *_stack, symb->size());
-        }
     }
     else
-    {
         stack::copy_and_push_back(symb, *_stack, symb->size());
-    }
 }
 
 void purge(void)
@@ -227,7 +287,7 @@ void vars(void)
     string name;
 
     // heap variables
-    for (int i=0; i<(int)_heap->size(); i++)
+    for (int i=0; i<(int)_heap->count_vars(); i++)
     {
         (void)_heap->get_by_index(i, name, obj, size);
         printf("var %d: name '%s', type %s, value ", i+1, name.c_str(), object::s_cmd_type_string[obj->_type]);
