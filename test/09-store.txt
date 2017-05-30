@@ -1,4 +1,4 @@
-## VARS
+## STORE
 
 # symbol entry
 'test'
@@ -36,6 +36,11 @@ erase
 -> stack should be 2
 erase
 
+# sto (3)
+3 'b' sto b
+-> stack should be 3
+erase
+
 # rcl (1)
 'a' rcl
 -> stack should be 2
@@ -43,8 +48,13 @@ erase
 
 # rcl (2)
 'b' rcl
+-> stack should be 3
+erase
+
+# rcl (2)
+'var' rcl
 -> error should be 5
--> stack should be 'b'
+-> stack should be 'var'
 erase
 
 # sto in prog then rcl
@@ -61,6 +71,11 @@ erase
 'a' purge
 -> error should be 5
 -> stack size should be 0
+erase
+
+# purge (3)
+3 'a' sto a 'a' purge
+-> stack should be 3
 erase
 
 # sto+ (1)
@@ -83,6 +98,12 @@ erase
 -> error should be 2
 erase
 
+# sto+ (4)
+3 'zz' sto+
+-> stack should be 3, 'zz'
+-> error should be 5
+erase
+
 # sto- (1)
 2 'a' sto
 2 'a' sto-
@@ -101,6 +122,12 @@ erase
 'a' sto-
 -> stack size should be 1
 -> error should be 2
+erase
+
+# sto- (4)
+3 'zz' sto-
+-> stack should be 3, 'zz'
+-> error should be 5
 erase
 
 # sto* (1)
@@ -123,6 +150,12 @@ erase
 -> error should be 2
 erase
 
+# sto* (4)
+3 'zz' sto*
+-> stack should be 3, 'zz'
+-> error should be 5
+erase
+
 # sto/ (1)
 2 'a' sto
 6 'a' sto/
@@ -143,6 +176,12 @@ erase
 -> error should be 2
 erase
 
+# sto/ (4)
+3 'zz' sto/
+-> stack should be 3, 'zz'
+-> error should be 5
+erase
+
 # sneg (1)
 7 'a' sto
 'a' sneg
@@ -155,9 +194,15 @@ sneg
 -> error should be 2
 erase
 
+# sneg (3)
+'zz' sneg
+-> error should be 5
+-> stack should be 'zz'
+erase
+
 # sinv (1)
 4 'a' sto
-'a' sneg
+'a' sinv
 a
 -> stack should be 0.25
 erase
@@ -165,4 +210,10 @@ erase
 # sinv (2)
 sinv
 -> error should be 2
+erase
+
+# sinv (3)
+'zz' sinv
+-> error should be 5
+-> stack should be 'zz'
 erase

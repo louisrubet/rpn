@@ -204,7 +204,7 @@ public:
         if (local==NULL || (local!=NULL && size>local->_size))
         {
             copy_and_push_back(obj, *this, size);
-            _map[name] = this->size()-1;
+            _map[name] = ((stack*)this)->size()-1;
         }
         else
         {
@@ -282,13 +282,16 @@ public:
         
         if (i != _map.end())
         {
+            // remove variable from map
             _map.erase(i->first);
             ret = true;
+            
+            // TODO: remove unused stack entries
         }
         return ret;
     }
 
-    unsigned int size() { return _map.size(); }
+    unsigned int count_vars() { return _map.size(); }
 
 private:
     map<string, unsigned int> _map;
