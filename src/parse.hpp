@@ -45,7 +45,8 @@ static ret_value entry(program& prog)
         ret = parse(entry, prog);
 
         // keep history
-        add_history(entry);
+        if (entry[0] != 0)
+            add_history(entry);
     }
     else
         ret = ret_internal;
