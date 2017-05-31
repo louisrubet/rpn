@@ -1,12 +1,35 @@
 void plus()
 {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    // adding strings
+    if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string)
+    {
+        unsigned int left_str_size = ((ostring*)_stack->get_obj(1))->_len;
+        unsigned int right_str_size = ((ostring*)_stack->get_obj(0))->_len;
+
+        stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        (void)_stack->pop_back();
+        (void)_stack->pop_back();
+
+        ostring* str = (ostring*)_stack->allocate_back(left_str_size+right_str_size+1+sizeof(ostring), cmd_string);
+        str->_len = left_str_size+right_str_size;
+
+        strncpy(str->_value, ((ostring*)_branch_stack.get_obj(1))->_value, left_str_size);
+        strncat(str->_value, ((ostring*)_branch_stack.get_obj(0))->_value, right_str_size);
+        _branch_stack.pop_back();
+        _branch_stack.pop_back();
+    }
+    // adding numbers
+    else
+    {
+        ARG_MUST_BE_OF_TYPE(0, cmd_number);
+        ARG_MUST_BE_OF_TYPE(1, cmd_number);
+        number* right = (number*)_stack->pop_back();
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
 }
 
 void minus()
