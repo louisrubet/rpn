@@ -40,6 +40,11 @@ struct floating_t
         mpfr->_mpfr_d = (mp_limb_t*)significand;
     }
 
+    floating_t& operator=(const double val)
+    {
+        mpfr_set_d(mpfr, val, s_mpfr_rnd);
+    }
+
     floating_t& operator=(const long int val)
     {
         mpfr_set_si(mpfr, val, s_mpfr_rnd);

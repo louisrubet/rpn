@@ -90,6 +90,10 @@ rpn>
 |round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
 |fact| n! for integer n or Gamma(x+1) for fractional x
 |sign| 1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
+|mant| mantissa of a real number
+|xpon| exponant of a real number
+|min| min of 2 real numbers
+|max| max of 2 real numbers
 
 #### mode
 
