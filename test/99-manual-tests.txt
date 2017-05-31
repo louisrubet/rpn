@@ -1,0 +1,13 @@
+# Manual tests to be done
+erase
+# GENERAL help
+# GENERAL h
+# GENERAL ?
+# GENERAL quit
+# GENERAL q
+# GENERAL exit
+# STORE vars
+# STORE edit
+
+# not tested yet
+# REAL round
