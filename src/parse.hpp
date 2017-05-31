@@ -62,8 +62,7 @@ static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type)
     unsigned int i = 0;
     while(s_keywords[i].type != cmd_max)
     {
-        if ((strnlen(s_keywords[i].name, sizeof(s_keywords[i].name))>0)
-            && (strncmp(fn_name, s_keywords[i].name, sizeof(s_keywords[i].name)) == 0))
+        if (strncmp(fn_name, s_keywords[i].name, sizeof(s_keywords[i].name)) == 0)
         {
             fn = s_keywords[i].fn;
             type = s_keywords[i].type;
