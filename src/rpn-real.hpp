@@ -150,3 +150,28 @@ void dec()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ((number*)_stack->back())->_representation = number::dec;
 }
+
+void fact()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    // fact(n) = gamma(n+1)
+    number* left = (number*)_stack->back();
+    number* right = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+    right->_value = 1L;
+    plus();
+
+    CHECK_MPFR(mpfr_gamma(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+}
+
+void sign()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    // fact(n) = gamma(n+1)
+    number* left = (number*)_stack->back();
+    int result = mpfr_sgn(left->_value.mpfr);
+    left->_value = (long)result;
+}

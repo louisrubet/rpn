@@ -332,4 +332,30 @@ abs
 -> error should be 2
 erase
 
+# fact (1)
+6 fact
+-> stack should be 720
+erase
+
+# fact (2)
+'r' fact
+-> error should be 3
+-> stack size should be 1
+erase
+
+# fact (3)
+fact
+-> error should be 2
+erase
+
+# sign (1)
+23 sign -34 sign 0 sign
+-> stack should be 1, -1, 0
+erase
+
+# sign (2)
+sign
+-> error should be 2
+erase
+
 default
