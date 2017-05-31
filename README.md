@@ -10,12 +10,11 @@ Quick examples:
 
 - easy calculation with **stacked results**
 ```
-rpn> 1 exp 3 *
-8.1548454853771357061
+rpn> 1 2 +
+3
 rpn> 2 sqrt
-2> 8.1548454853771357061
+2> 3
 1> 1.4142135623730950488
-rpn> 
 ```
 
 - **programs** and **variables**, eg same example as in HP28S Quick Reference:
@@ -67,8 +66,6 @@ rpn>
 |uname |	show rpn complete identification string
 |type |	show type of stack first entry
 |default |	set float representation and precision to default
-|prec |	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
-|round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
 
 #### real
 
@@ -87,14 +84,17 @@ rpn>
 |sq|	(or sqr) square
 |mod|	modulo
 |abs|	absolute value
+|dec|	decimal representation
+|hex|	hexadecimal representation
+|prec |	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
+|round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
+|fact| n! for integer n or Gamma(x+1) for fractional x
+|sign| 1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
 
-#### real representation
+#### mode
 
 |keyword|description|
 |-|-|
-|dec|	decimal representation
-|hex|	hexadecimal representation
-|bin|	binary representation
 |std|	standard floating numbers representation. ex: [25] std
 |fix|	fixed point representation. ex: 6 fix
 |sci|	scientific floating point representation. ex: 20 sci
