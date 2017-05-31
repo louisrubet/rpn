@@ -290,6 +290,15 @@ public:
         }
         return ret;
     }
+    
+    void erase_all(void)
+    {
+        // map
+        _map.erase(_map.begin(), _map.end());
+
+        // and stack
+        ((stack*)this)->erase();
+    }
 
     unsigned int count_vars() { return _map.size(); }
 

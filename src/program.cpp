@@ -115,6 +115,7 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "rcl", &program::rcl, "recall a variable. ex: 'name' rcl" },
     { cmd_keyword, "purge", &program::purge, "delete a variable. ex: 'name' purge" },
     { cmd_keyword, "vars", &program::vars, "list all variables" },
+    { cmd_keyword, "clusr", &program::clusr, "erase all variables" },
     { cmd_keyword, "edit", &program::edit, "edit a variable content" },
     { cmd_keyword, "sto+", &program::stoadd, "add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+" },
     { cmd_keyword, "sto-", &program::stosub, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-" },
