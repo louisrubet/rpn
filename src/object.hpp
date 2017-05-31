@@ -184,7 +184,7 @@ struct ostring : public object
         }
     }
 
-    // length of _value, not includiong the terminal '\0'
+    // length of _value, not including the terminal '\0'
     unsigned int _len;
     char _value[0];
 };
