@@ -70,6 +70,36 @@ drop
 -> error should be 4
 erase default
 
+# round (1)
+"nearest" round
+-> error should be 0
+erase
+
+# round (2)
+"toward zero" round
+-> error should be 0
+erase
+
+# round (3)
+"toward +inf" round
+-> error should be 0
+erase
+
+# round (4)
+"toward -inf" round
+-> error should be 0
+erase
+
+# round (5)
+"away from zero" round
+-> error should be 0
+erase
+
+# round (6)
+round
+-> error should be 2
+erase default
+
 # add (1)
 1.2 2.3 +
 -> stack should be 3.5
