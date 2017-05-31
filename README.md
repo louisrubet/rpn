@@ -146,6 +146,7 @@ rpn>
 |str->|	convert a string into an object
 |chr|	convert ASCII character code in stack level 1 into a string
 |num|	return ASCII code of the first character of the string in stack level 1 as a real number
+|size|	return the length of the string
 
 #### branch
 

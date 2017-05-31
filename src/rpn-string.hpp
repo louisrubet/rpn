@@ -70,3 +70,13 @@ void num()
     number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     numb->_value = the_chr;
 }
+
+void strsize()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_string);
+
+    double len = ((ostring*)_stack->pop_back())->_len;
+    number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+    numb->_value = len;
+}
