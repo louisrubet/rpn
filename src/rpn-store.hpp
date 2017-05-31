@@ -317,3 +317,8 @@ void vars(void)
         printf("\n");
     }
 }
+
+void clusr(void)
+{
+    _heap->erase_all();
+}

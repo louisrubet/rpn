@@ -171,7 +171,14 @@ rpn>
 |rcl|	recall a variable. ex: ```'name' rcl```
 |purge|	delete a variable. ex: ```'name' purge```
 |vars|	list all variables
+|clusr|	erase all variables
 |edit|	edit a variable content
+|sto+|	add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+
+|sto-|	substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-
+|sto*|	multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*
+|sto/|	divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/
+|sneg|	negate a variable. ex: 'name' sneg
+|sinv|	inverse a variable. ex: 1 'name' sinv
 
 #### program
 

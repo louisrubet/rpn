@@ -217,3 +217,9 @@ erase
 -> error should be 5
 -> stack should be 'zz'
 erase
+
+# clusr
+3.14 'abc' sto clusr 'abc' rcl
+-> error should be 5
+-> stack should be 'abc'
+erase
