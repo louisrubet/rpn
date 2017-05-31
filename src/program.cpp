@@ -94,6 +94,7 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "str->", &program::strout, "convert a string into an object" },
     { cmd_keyword, "chr", &program::chr, "convert ASCII character code in stack level 1 into a string" },
     { cmd_keyword, "num", &program::num, "return ASCII code of the first character of the string in stack level 1 as a real number" },
+    { cmd_keyword, "size", &program::strsize, "return the length of the string" },
 
     //BRANCH
     { cmd_undef, "", NULL, "\nBRANCH"},

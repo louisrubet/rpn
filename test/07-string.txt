@@ -142,3 +142,18 @@ erase
 "" num
 -> stack should be 0
 erase
+
+# size (1)
+"hello" size
+-> stack should be 5
+erase
+
+# size (2)
+"" size
+-> stack should be 0
+erase
+
+# size, str->, ->str
+"hello" str-> ->str size
+-> stack should be 7
+erase
