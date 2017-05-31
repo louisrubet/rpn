@@ -173,3 +173,71 @@ drop
 1 1 same
 -> stack should be 1
 drop
+
+# string >
+"a" "b" >
+-> stack should be 0
+drop
+"b" "a" >
+-> stack should be 1
+drop
+"a" "a" >
+-> stack should be 0
+drop
+
+# string >=
+"a" "b" >=
+-> stack should be 0
+drop
+"b" "a" >=
+-> stack should be 1
+drop
+"a" "a" >=
+-> stack should be 1
+drop
+
+# string <
+"a" "b" <
+-> stack should be 1
+drop
+"b" "a" <
+-> stack should be 0
+drop
+"a" "a" <
+-> stack should be 0
+drop
+
+# string <=
+"a" "b" <=
+-> stack should be 1
+drop
+"b" "a" <=
+-> stack should be 0
+drop
+"a" "a" <=
+-> stack should be 1
+drop
+
+# string !=
+"a" "b" !=
+-> stack should be 1
+drop
+"a" "a" !=
+-> stack should be 0
+drop
+
+# string ==
+"a" "b" ==
+-> stack should be 0
+drop
+"a" "a" ==
+-> stack should be 1
+drop
+
+# string same
+"a" "b" same
+-> stack should be 0
+drop
+"a" "a" same
+-> stack should be 1
+drop
