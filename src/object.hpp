@@ -60,6 +60,11 @@ struct floating_t
         return (int)mpfr_get_si(mpfr, s_mpfr_rnd);
     }
     
+    operator long()
+    {
+        return mpfr_get_si(mpfr, s_mpfr_rnd);
+    }
+
     bool operator>(const floating_t right)
     {
         return mpfr_cmp(mpfr, right.mpfr) > 0;
