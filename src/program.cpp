@@ -95,6 +95,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "chr", &program::chr, "convert ASCII character code in stack level 1 into a string" },
     { cmd_keyword, "num", &program::num, "return ASCII code of the first character of the string in stack level 1 as a real number" },
     { cmd_keyword, "size", &program::strsize, "return the length of the string" },
+    { cmd_keyword, "pos", &program::strpos, "seach for the string in level 1 within the string in level 2" },
+    { cmd_keyword, "sub", &program::strsub, "return a substring of the string in level 3" },
 
     //BRANCH
     { cmd_undef, "", NULL, "\nBRANCH"},

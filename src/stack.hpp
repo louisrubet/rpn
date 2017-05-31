@@ -98,7 +98,7 @@ public:
         allocated->_type = type;
         allocated->_size = size;
         if (type == cmd_number)
-            ((number*)allocated)->_value.init(((number*)allocated) + 1);
+            ((number*)allocated)->init(((number*)allocated) + 1);
 
         return allocated;
     }

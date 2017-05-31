@@ -147,6 +147,8 @@ rpn>
 |chr|	convert ASCII character code in stack level 1 into a string
 |num|	return ASCII code of the first character of the string in stack level 1 as a real number
 |size|	return the length of the string
+|pos|	seach for the string in level 1 within the string in level 2
+|sub|	return a substring of the string in level 3
 
 #### branch
 
