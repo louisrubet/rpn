@@ -14,7 +14,7 @@ void instr()
             // reserve the correct size on stack
             unsigned int str_size = (unsigned int)ftell(tmp);
             ostring* str = (ostring*)_stack->allocate_back(str_size+1+sizeof(ostring), cmd_string);
-            str->_size = str_size+1;
+            str->_len = str_size;
 
             // fill the obj
             rewind(tmp);
@@ -79,4 +79,71 @@ void strsize()
     double len = ((ostring*)_stack->pop_back())->_len;
     number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     numb->_value = len;
+}
+
+void strpos()
+{
+    MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(0, cmd_string);
+    ARG_MUST_BE_OF_TYPE(1, cmd_string);
+
+    long pos = 0;
+    char* src = ((ostring*)_stack->get_obj(1))->_value;
+    char* found = strstr(src, ((ostring*)_stack->get_obj(0))->_value);
+    if (found != NULL)
+        pos = (long)(found - src)+1L;
+
+    _stack->pop_back();
+    _stack->pop_back();
+
+    number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+    numb->_value = pos;
+}
+
+void strsub()
+{
+    MIN_ARGUMENTS(3);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+    ARG_MUST_BE_OF_TYPE(2, cmd_string);
+    
+    long first = long(((number*)_stack->get_obj(1))->_value) - 1;
+    long last = long(((number*)_stack->get_obj(0))->_value) - 1;
+    long len = ((ostring*)_stack->get_obj(0))->_len;
+    bool result_is_void = false;
+    
+    _stack->pop_back();
+    _stack->pop_back();
+
+    if (first < 0)
+        first = 0;
+    if (last < 0)
+        last = 0;
+    if (first > len)
+        first = len -1;
+    if (last > len)
+        last = len -1;
+    if (first > last)
+        result_is_void=true;
+
+    if (!result_is_void)
+    {
+        unsigned int str_size = last - first + 1;
+        ostring* str = (ostring*)_branch_stack.allocate_back(str_size+1+sizeof(ostring), cmd_string);
+        str->_len = str_size;
+        
+        memcpy(((ostring*)_branch_stack.back())->_value, ((ostring*)_stack->get_obj(0))->_value+first, str_size);
+        ((ostring*)_branch_stack.back())->_value[str_size] = 0;
+        
+        _stack->pop_back();
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+        _branch_stack.pop_back();
+    }
+    else
+    {
+        _stack->pop_back();
+        ostring* str = (ostring*)_stack->allocate_back(1+sizeof(ostring), cmd_string);
+        str->_len = 0;
+        str->_value[0] = 0;
+    }
 }

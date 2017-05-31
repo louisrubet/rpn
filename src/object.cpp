@@ -31,6 +31,8 @@ void object::show(FILE* stream)
             case number::hex:
                 mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 break;
+            default:
+                fprintf(stream, "< unknown number representation >");
         }
         break;
     case cmd_string:

@@ -157,3 +157,60 @@ erase
 "hello" str-> ->str size
 -> stack should be 7
 erase
+
+# pos (1)
+"my big string" "big" pos
+-> stack should be 4
+erase
+
+# pos (2)
+"my big string" "bOg" pos
+-> stack should be 0
+erase
+
+# pos (3)
+"my big string" pos
+-> error should be 2
+-> stack size should be 1
+erase
+
+# pos (4)
+pos
+-> error should be 2
+erase
+
+# sub (1)
+"my string to sub" 4 6
+sub
+-> stack should be "str"
+erase
+
+# sub (2)
+"my string to sub" -1 -2
+sub
+-> stack should be "m"
+erase
+
+# sub (3)
+"my string to sub" 0 0
+sub
+-> stack should be "m"
+erase
+
+# sub (4)
+"my string to sub" 6 5
+sub
+-> stack should be ""
+erase
+
+# sub (5)
+"my string to sub" 100 101
+sub
+-> stack should be ""
+erase
+
+# sub (6)
+"my string to sub" 14 100
+sub
+-> stack should be "sub"
+erase
