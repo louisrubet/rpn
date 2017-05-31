@@ -1,13 +1,26 @@
-# Manual tests to be done
+## MANUAL TESTS
 erase
-# GENERAL help
-# GENERAL h
-# GENERAL ?
-# GENERAL quit
-# GENERAL q
-# GENERAL exit
-# STORE vars
-# STORE edit
 
-# not tested yet
-# REAL round
+# GENERAL help
+-> error should be 0
+
+# GENERAL h
+-> error should be 0
+
+# GENERAL ?
+-> error should be 0
+
+# GENERAL quit
+-> error should be 0
+
+# GENERAL q
+-> error should be 0
+
+# GENERAL exit
+-> error should be 0
+
+# STORE vars
+-> error should be 0
+
+# STORE edit
+-> error should be 0
