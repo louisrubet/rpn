@@ -106,3 +106,39 @@ erase
 str->
 -> stack should be << -> n << n >> >>
 erase
+
+# add (1)
+12 34 "one" "two" +
+-> stack should be 12, 34, "onetwo"
+erase
+
+# add (2)
+"" "one" + "two" "" +
+-> stack should be "one", "two"
+erase
+
+# add (3)
+"one" +
+-> stack size should be 1
+-> error should be 2
+erase
+
+# chr (1)
+"" 33 40 for i i chr + next
+-> stack should be "!"#$%&'("
+erase
+
+# chr (2)
+-223 chr 0 chr
+-> stack should be "!", "."
+erase
+
+# num (1)
+"!wait" num
+-> stack should be 33
+erase
+
+# num (2)
+"" num
+-> stack should be 0
+erase

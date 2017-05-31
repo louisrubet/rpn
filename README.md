@@ -59,41 +59,41 @@ rpn>
 
 |keyword|description|
 |-|-|
-|nop	| no operation |
-|help |	(or h or ?) this help message
-|quit |	(or q or exit) quit software
+|nop |		no operation |
+|help |		(or h or ?) this help message
+|quit |		(or q or exit) quit software
 |version |	show rpn version
 |uname |	show rpn complete identification string
-|type |	show type of stack first entry
+|type |		show type of stack first entry
 |default |	set float representation and precision to default
 
 #### real
 
 |keyword|description|
 |-|-|
-|+|	addition
-|-|	substraction
+|+|		addition
+|-|		substraction
 |neg|	negation
-|*|	multiplication
-|/|	division
+|*|		multiplication
+|/|		division
 |inv|	inverse
-|%|	purcent
+|%|		purcent
 |%|CH	inverse purcent
-|^|	(or pow) power
+|^|		(or pow) power
 |sqrt|	square root
 |sq|	(or sqr) square
 |mod|	modulo
 |abs|	absolute value
 |dec|	decimal representation
 |hex|	hexadecimal representation
-|prec |	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
+|prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
 |round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
-|fact| n! for integer n or Gamma(x+1) for fractional x
-|sign| 1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
-|mant| mantissa of a real number
-|xpon| exponant of a real number
-|min| min of 2 real numbers
-|max| max of 2 real numbers
+|fact|	n! for integer n or Gamma(x+1) for fractional x
+|sign|	1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
+|mant|	mantissa of a real number
+|xpon|	exponant of a real number
+|min|	min of 2 real numbers
+|max|	max of 2 real numbers
 
 #### mode
 
@@ -107,9 +107,9 @@ rpn>
 
 |keyword|description|
 |-|-|
-|>|	binary operator >
+|>|		binary operator >
 |>=|	binary operator >=
-|<|	binary operator <
+|<|		binary operator <
 |<=|	binary operator <=
 |!=|	binary operator != (different)
 |==|	binary operator == (equal)
@@ -134,9 +134,9 @@ rpn>
 |dupn|	duplicate n first stack entries
 |pick|	push a copy of  the given stack level onto the stack
 |depth|	give stack depth
-|roll| move a stack entry to the top of the stack
-|rolld| move the element on top of the stack to a higher stack position
-|over| push a copy of the element in stack level 2 onto the stack
+|roll|	move a stack entry to the top of the stack
+|rolld|	move the element on top of the stack to a higher stack position
+|over|	push a copy of the element in stack level 2 onto the stack
 
 #### string
 
@@ -144,6 +144,8 @@ rpn>
 |-|-|
 |->str|	convert an object into a string
 |str->|	convert a string into an object
+|chr|	convert ASCII character code in stack level 1 into a string
+|num|	return ASCII code of the first character of the string in stack level 1 as a real number
 
 #### branch
 
