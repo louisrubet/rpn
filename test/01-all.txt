@@ -7,3 +7,4 @@
 #include test/08-test.txt
 #include test/09-store.txt
 #include test/10-program.txt
+#include test/99-manual-tests.txt
