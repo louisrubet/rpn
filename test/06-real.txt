@@ -358,4 +358,72 @@ sign
 -> error should be 2
 erase
 
+# mant (1)
+123.456 mant -123.456 mant 0 mant
+-> stack should be 0.123456, 0.123456, 0
+erase
+
+# mant (2)
+inf mant
+-> error should be 4
+-inf mant
+-> error should be 4
+nan mant
+-> error should be 4
+erase
+
+# xpon (1)
+123.456 xpon -123.456 xpon 0 mant
+-> stack should be 3, 3, 0
+erase
+
+# xpon (2)
+inf xpon
+-> error should be 4
+-inf xpon
+-> error should be 4
+nan xpon
+-> error should be 4
+erase
+
+# min (1)
+1 2 min 4 3 min
+-> stack should be 1, 3
+erase
+
+# min (2)
+'a' 'g' min
+-> error should be 3
+erase
+
+# min (3)
+1 min
+-> error should be 2
+erase
+
+# min (4)
+min
+-> error should be 2
+erase
+
+# max (1)
+1 2 max 4 3 max
+-> stack should be 2, 4
+erase
+
+# max (2)
+'a' 'g' max
+-> error should be 3
+erase
+
+# max (3)
+1 max
+-> error should be 2
+erase
+
+# max (4)
+max
+-> error should be 2
+erase
+
 default
