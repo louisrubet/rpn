@@ -52,6 +52,10 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "round", &program::round, "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward +inf\", \"toward -inf\", \"away from zero\"] round" },
     { cmd_keyword, "fact", &program::fact, "n! for integer n or Gamma(x+1) for fractional x" },
     { cmd_keyword, "sign", &program::sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0" },
+    { cmd_keyword, "mant", &program::mant, "mantissa of a real number" },
+    { cmd_keyword, "xpon", &program::xpon, "exponant of a real number" },
+    { cmd_keyword, "min", &program::rpn_min, "min of 2 real numbers" },
+    { cmd_keyword, "max", &program::rpn_max, "max of 2 real numbers" },
 
     //TEST
     { cmd_undef, "", NULL, "\nTEST"},
