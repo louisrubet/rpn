@@ -46,6 +46,55 @@ void rpn_end(void)
     // nothing
 }
 
+//
+void rpn_ift(void)
+{
+    MIN_ARGUMENTS(2);
+    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+
+    // check ift arg
+    // arg is true if number != 0 or if is nan or +/-inf
+    number* testee = ((number*)_stack->get_obj(1));
+    
+    if (!mpfr_zero_p(testee->_value.mpfr))
+    {
+        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack));
+        (void)_stack->pop_back();
+        (void)_stack->pop_back();
+
+        CHECK_MPFR(stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack));
+        (void)_branch_stack.pop_back();
+    }
+    else
+    {
+        (void)_stack->pop_back();
+        (void)_stack->pop_back();
+    }
+}
+
+void rpn_ifte(void)
+{
+    MIN_ARGUMENTS(3);
+    ARG_MUST_BE_OF_TYPE(2, cmd_number);
+
+    // check ifte arg
+    // arg is true if number != 0 or if is nan or +/-inf
+    number* testee = ((number*)_stack->get_obj(2));
+
+    if (!mpfr_zero_p(testee->_value.mpfr))
+        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack));
+    else
+        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack));
+
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
+
+    CHECK_MPFR(stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack));
+    (void)_branch_stack.pop_back();
+}
+
+//
 int rpn_start(branch& myobj)
 {
     int ret = -1;
