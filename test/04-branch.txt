@@ -80,6 +80,56 @@ erase
 -> error should be 3
 erase
 
+# ift (1)
+1 'ok' ift
+-> stack should be 'ok'
+erase
+
+# ift (2)
+0 'ok' ift
+-> stack size should be 0
+erase
+
+# ift (3)
+'ok' ift
+-> error should be 2
+-> stack size should be 1
+erase
+
+# ift (4)
+ift
+-> error should be 2
+-> stack size should be 0
+erase
+
+# ifte (1)
+1 'ok' 'nok' ifte
+-> stack should be 'ok'
+erase
+
+# ifte (2)
+0 'ok' 'nok' ifte
+-> stack should be 'nok'
+erase
+
+# ifte (3)
+'ok' 'nok' ifte
+-> error should be 2
+-> stack size should be 2
+erase
+
+# ifte (4)
+'nok' ifte
+-> error should be 2
+-> stack size should be 1
+erase
+
+# ifte (5)
+ifte
+-> error should be 2
+-> stack size should be 0
+erase
+
 # start next (1)
 1 2 start 0 next
 -> stack should be 0, 0

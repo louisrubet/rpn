@@ -108,6 +108,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_branch, "for", (program_fn_t)&program::rpn_for, "repeat instructions several times with variable" },
     { cmd_branch, "next", (program_fn_t)&program::rpn_next, "ex: 1 10 start <instructions> next" },
     { cmd_branch, "step", (program_fn_t)&program::rpn_step, "ex: 1 100 start <instructions> 4 step" },
+    { cmd_keyword, "ift", &program::rpn_ift, "similar to if-then-end, <test-instruction> <true-instruction> ift" },
+    { cmd_keyword, "ifte",&program::rpn_ifte, "similar to if-then-else-end, <test-instruction> <true-instruction> <false-instruction> ifte" },
 
     //STORE
     { cmd_undef, "", NULL, "\nSTORE"},

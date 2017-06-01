@@ -158,6 +158,8 @@ rpn>
 |then|	true-instructions
 |else|	false-instructions
 |end|	(end of if structure)
+|ift|	similar to if-then-end, <test-instruction> <true-instruction> ift"
+|ifte|	similar to if-then-else-end, <test-instruction> <true-instruction> <false-instruction> ifte"
 |start|	repeat instructions several times
 |for|	repeat instructions several times with variable
 |next|	ex: ```1 10 start <instructions> next```
