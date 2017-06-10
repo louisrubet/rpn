@@ -58,6 +58,18 @@ rpn>
 
 **rpn** provides a cli interface with an **interactive editor** with autocompletion
 
+```
+rpn> 
+Display all 128 possibilities? (y or n)
+!=       ->       >        acosh    atan     cosh     drop     e        exit     for      ifte     max      not      pos      r->d     rot      sinh     sqrt     sto+     tan      unti     xor      
+%        ->str    >=       alog     atanh    d->r     drop2    edit     exp      h        inv      min      num      pow      rcl      round    sinv     start    sto-     tanh     until    xpon     
+%CH      /        ?        alog2    chr      dec      dropn    else     exp10    help     ln       mod      or       prec     repea    same     size     std      sto/     test     vars     
+*        <        ^        and      chs      default  dup      end      exp2     hex      log      neg      over     purge    repeat   sci      sneg     step     str->    then     version  
++        <=       abs      asin     clusr    depth    dup2     erase    fact     if       log2     next     pi       q        roll     sign     sq       sto      sub      type     whil     
+-        ==       acos     asinh    cos      do       dupn     eval     fix      ift      mant     nop      pick     quit     rolld    sin      sqr      sto*     swap     uname    while    
+rpn> 
+```
+
 ## keywords
 
 ### general
