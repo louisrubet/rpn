@@ -154,16 +154,18 @@ rpn>
 
 |keyword|description|
 |-|-|
-|if|	test-instructions
-|then|	true-instructions
-|else|	false-instructions
-|end|	(end of if structure)
+|if| if <test-instruction> then <true-instructions> else <false-instructions> end
+|then| used with if
+|else| used with if
+|end| used with various branch instructions
 |ift|	similar to if-then-end, <test-instruction> <true-instruction> ift"
 |ifte|	similar to if-then-else-end, <test-instruction> <true-instruction> <false-instruction> ifte"
-|start|	repeat instructions several times
-|for|	repeat instructions several times with variable
-|next|	ex: ```1 10 start <instructions> next```
-|step|	ex: ```1 100 start <instructions> 4 step```
+|start| start> <end> start <instructions> next|<step> step
+|for| start> <end> for <variable> <instructions> next|<step> step
+|next| used with start and for
+|step| used with start and for
+|do| do <instructions> unti <condition> end
+|unti | used with do
 
 #### store
 

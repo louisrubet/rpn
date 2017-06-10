@@ -100,16 +100,18 @@ program::keyword_t program::s_keywords[] =
 
     //BRANCH
     { cmd_undef, "", NULL, "\nBRANCH"},
-    { cmd_branch, "if", (program_fn_t)&program::rpn_if, "<test-instructions>" },
-    { cmd_branch, "then", (program_fn_t)&program::rpn_then, "<true-instructions>" },
-    { cmd_branch, "else", (program_fn_t)&program::rpn_else, "<false-instructions>" },
-    { cmd_keyword, "end", &program::rpn_end, "(end of if structure)" },
-    { cmd_branch, "start", (program_fn_t)&program::rpn_start, "repeat instructions several times" },
-    { cmd_branch, "for", (program_fn_t)&program::rpn_for, "repeat instructions several times with variable" },
-    { cmd_branch, "next", (program_fn_t)&program::rpn_next, "ex: 1 10 start <instructions> next" },
-    { cmd_branch, "step", (program_fn_t)&program::rpn_step, "ex: 1 100 start <instructions> 4 step" },
+    { cmd_branch, "if", (program_fn_t)&program::rpn_if, "if <test-instruction> then <true-instructions> else <false-instructions> end" },
+    { cmd_branch, "then", (program_fn_t)&program::rpn_then, "used with if" },
+    { cmd_branch, "else", (program_fn_t)&program::rpn_else, "used with if" },
+    { cmd_branch, "end", (program_fn_t)&program::rpn_end, "used with various branch instructions" },
+    { cmd_branch, "start", (program_fn_t)&program::rpn_start, "<start> <end> start <instructions> next|<step> step" },
+    { cmd_branch, "for", (program_fn_t)&program::rpn_for, "<start> <end> for <variable> <instructions> next|<step> step" },
+    { cmd_branch, "next", (program_fn_t)&program::rpn_next, "used with start and for" },
+    { cmd_branch, "step", (program_fn_t)&program::rpn_step, "used with start and for" },
     { cmd_keyword, "ift", &program::rpn_ift, "similar to if-then-end, <test-instruction> <true-instruction> ift" },
     { cmd_keyword, "ifte",&program::rpn_ifte, "similar to if-then-else-end, <test-instruction> <true-instruction> <false-instruction> ifte" },
+    { cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> unti <condition> end" },
+    { cmd_branch, "unti", (program_fn_t)&program::rpn_unti, "used with do" },
 
     //STORE
     { cmd_undef, "", NULL, "\nSTORE"},
