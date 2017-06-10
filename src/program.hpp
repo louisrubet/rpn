@@ -28,11 +28,12 @@ using namespace std;
 //
 struct if_layout_t
 {
-    if_layout_t():index_then(-1),index_else(-1),index_end(-1) { }
-    int index_if;
-    int index_then;
+    if_layout_t():index_then_or_unti(-1),index_else(-1),index_end(-1),is_do_unti(false) { }
+    int index_if_or_do;
+    int index_then_or_unti;
     int index_else;
     int index_end;
+    bool is_do_unti;
 };
 
 // program
@@ -168,52 +169,13 @@ public:
         for(int i=0; i<(int)size(); i++)
         {
             int type = seq_type(i);
-            if (type == cmd_keyword)
-            {
-                keyword* k = (keyword*)seq_obj(i);
-                if (compare_keyword(k, "end", 3))
-                {
-                    int next = i + 1;
-                    if (next >= (int)size())
-                        next = -1;
-
-                    if (layout_index<0)
-                    {
-                        // error: show it
-                        show_syntax_error("missing if before end");
-                        return ret_syntax;
-                    }
-                    if (vlayout[layout_index].index_end != -1)
-                    {
-                        // error: show it
-                        show_syntax_error("duplicate end");
-                        return ret_syntax;
-                    }
-                    if (vlayout[layout_index].index_else != -1)
-                        //fill 'end' branch of 'else'
-                        ((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
-                    else
-                    {
-                        //fill 'end' branch of 'then'
-                        if (vlayout[layout_index].index_then != -1)
-                            ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = i;
-                        else
-                        {
-                            // error: show it
-                            show_syntax_error("missing then before end");
-                            return ret_syntax;
-                        }
-                    }
-                    layout_index--;
-                }
-            }
-            else if (type == cmd_branch)
+            if (type == cmd_branch)
             {
                 branch* k = (branch*)seq_obj(i);
                 if (compare_branch(k, "if", 2))
                 {
                     if_layout_t layout;
-                    layout.index_if = i;
+                    layout.index_if_or_do = i;
                     vlayout.push_back(layout);
                     layout_index++;
                 }
@@ -236,15 +198,15 @@ public:
                         show_syntax_error("missing if before then");
                         return ret_syntax;
                     }
-                    if (vlayout[layout_index].index_then != -1)
+                    if (vlayout[layout_index].index_then_or_unti != -1)
                     {
                         // error: show it
                         show_syntax_error("duplicate then");
                         return ret_syntax;
                     }
-                    vlayout[layout_index].index_then = i;
+                    vlayout[layout_index].index_then_or_unti = i;
                     k->arg1 = next;
-                    k->arg3 = vlayout[layout_index].index_if;
+                    k->arg3 = vlayout[layout_index].index_if_or_do;
                 }
                 else if (compare_branch(k, "else", 4))
                 {
@@ -265,7 +227,7 @@ public:
                         show_syntax_error("missing if before else");
                         return ret_syntax;
                     }
-                    if (vlayout[layout_index].index_then == -1)
+                    if (vlayout[layout_index].index_then_or_unti == -1)
                     {
                         // error: show it
                         show_syntax_error("missing then before else");
@@ -279,13 +241,11 @@ public:
                     }
                     vlayout[layout_index].index_else = i;
                     k->arg1 = next;// fill branch1 (if was false) of 'else'
-                    k->arg3 = vlayout[layout_index].index_if;
-                    ((branch*)seq_obj(vlayout[layout_index].index_then))->arg2 = next;// fill branch2 (if was false) of 'then'
+                    k->arg3 = vlayout[layout_index].index_if_or_do;
+                    ((branch*)seq_obj(vlayout[layout_index].index_then_or_unti))->arg2 = next;// fill branch2 (if was false) of 'then'
                 }
                 else if (compare_branch(k, "start", 5))
-                {
                     vstartindex.push_back(i);
-                }
                 else if (compare_branch(k, "for", 3))
                 {
                     vstartindex.push_back(i);
@@ -318,6 +278,95 @@ public:
                 else if (compare_branch(k, "->", 2))
                 {
                     k->arg1 = i;// arg1 is '->' command index in program
+                }
+                else if (compare_branch(k, "do", 2))
+                {
+                    if_layout_t layout;
+                    layout.index_if_or_do = i;
+                    layout.is_do_unti = true;
+                    vlayout.push_back(layout);
+                    layout_index++;
+                }
+                else if (compare_branch(k, "unti", 2))
+                {
+                    int next = i + 1;
+                    if (next >= (int)size())
+                        next = -1;
+
+                    // nothing after 'unti' -> error
+                    if (next == -1)
+                    {
+                        // error: show it
+                        show_syntax_error("missing end after unti");
+                        return ret_syntax;
+                    }
+                    if (layout_index<0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing do before unti");
+                        return ret_syntax;
+                    }
+                    if (vlayout[layout_index].index_then_or_unti != -1)
+                    {
+                        // error: show it
+                        show_syntax_error("duplicate unti");
+                        return ret_syntax;
+                    }
+                }
+                else if (compare_branch(k, "end", 3))
+                {
+                    int next = i + 1;
+                    if (next >= (int)size())
+                        next = -1;
+
+                    if (layout_index<0)
+                    {
+                        // error: show it
+                        show_syntax_error("missing branch instruction before end");
+                        return ret_syntax;
+                    }
+                    else
+                    {
+                        if (vlayout[layout_index].is_do_unti)
+                        {
+                            // this end closes a do..unti
+                            if (vlayout[layout_index].index_end != -1)
+                            {
+                                // error: show it
+                                show_syntax_error("duplicate end");
+                                return ret_syntax;
+                            }
+
+                            k->arg1 = vlayout[layout_index].index_if_or_do + 1;
+                            layout_index--;
+                        }
+                        else
+                        {
+                            // this end closes an if..then..(else)
+                            if (vlayout[layout_index].index_end != -1)
+                            {
+                                // error: show it
+                                show_syntax_error("duplicate end");
+                                return ret_syntax;
+                            }
+                            if (vlayout[layout_index].index_else != -1)
+                                //fill 'end' branch of 'else'
+                                ((branch*)seq_obj(vlayout[layout_index].index_else))->arg2 = i;
+                            else
+                            {
+                                //fill 'end' branch of 'then'
+                                if (vlayout[layout_index].index_then_or_unti != -1)
+                                    ((branch*)seq_obj(vlayout[layout_index].index_then_or_unti))->arg2 = i;
+                                else
+                                {
+                                    // error: show it
+                                    show_syntax_error("missing then before end");
+                                    return ret_syntax;
+                                }
+                            }
+                            layout_index--;
+                        }
+                    }
                 }
             }
         }

@@ -41,9 +41,36 @@ int rpn_else(branch& myobj)
         return myobj.arg1;
 }
 
-void rpn_end(void)
+int rpn_end(branch& myobj)
+{
+    int ret = -1;
+
+    // arg1 = index of do+1 in case of do..unti..end
+    if (myobj.arg1 != -1)
+    {
+        // in a template do..unti..end
+        MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
+        ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
+
+        // check arg
+        number* arg = (number*)_stack->pop_back();
+        if (mpfr_cmp_si(arg->_value.mpfr, 0UL) == 0)
+            ret = myobj.arg1;
+    }
+
+    return ret;
+}
+
+int rpn_do(branch& myobj)
 {
     // nothing
+    return -1;
+}
+
+int rpn_unti(branch& myobj)
+{
+    // nothing
+    return -1;
 }
 
 int rpn_start(branch& myobj)

@@ -74,7 +74,7 @@ public:
             _base = (char*)realloc(_base, _total_size);
 
             _current = _base + (_current - old_base);
-            data_is_reallocated = true;            
+            data_is_reallocated = true;
         }
 
         // manage pointers memory allocation (add one page if needed)
