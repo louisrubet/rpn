@@ -147,7 +147,6 @@ int rpn_repeat(branch& myobj)
     return ret;
 }
 
->>>>>>> #117, #116, #119: added while..repeat, added do..until tests, until in addition to until
 int rpn_start(branch& myobj)
 {
     int ret = -1;
