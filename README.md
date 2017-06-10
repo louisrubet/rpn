@@ -6,9 +6,9 @@
 - brings powerfull calculation facilities on floating point numbers with __arbitrary precision__, provided by **GNU MPFR** library
 - uses that so cool **reverse polish notation**
 
-Quick examples:
+## Quick examples
 
-- easy calculation with **stacked results**
+### easy calculation with **stacked results**
 ```
 rpn> 1 2 +
 3
@@ -17,7 +17,7 @@ rpn> 2 sqrt
 1> 1.4142135623730950488
 ```
 
-- **programs** and **variables**, eg same example as in HP28S Quick Reference:
+### **programs** and **variables**
 ```
 rpn> << rot * swap 2 / chs dup sq rot - sqrt >> 'quadratic_solution' sto
 rpn> 1 2 -3 quadratic_solution
@@ -27,14 +27,15 @@ rpn> vars
 var 1: name 'quadratic_solution', type program, value << rot * swap 2 / chs dup sq rot - sqrt  >>
 ```
 
-- **local variables**, always from the same reference:
+### **local variables**
 ```
 rpn> << -> x y << x y + ln >> >> 'P' sto
 rpn> 1 2 P
 rpn> 1.0986122886681096914
 ```
 
-- **arbitrary precision** (up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR !)
+### **arbitrary precision**
+Precision can be really high, up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR
 ```
 rpn> 256 prec 200 std
 rpn> pi 3 * 4 / cos
@@ -42,7 +43,9 @@ rpn> pi 3 * 4 / cos
 rpn> 
 ```
 
-- Following objects are managed: **floating numbers**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
+### Objects
+
+Following objects are managed: **floating numbers**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
 ```
 4> 'symbol'
 3> "string"
@@ -51,11 +54,13 @@ rpn>
 rpn> 
 ```
 
-- A __GNU-readline__-based interactive editor with autocompletion is provided.
+### Command line
+
+**rpn** provides a cli interface with an **interactive editor** with autocompletion
 
 ## keywords
 
-#### general
+### general
 
 |keyword|description|
 |-|-|
@@ -67,7 +72,7 @@ rpn>
 |type |		show type of stack first entry
 |default |	set float representation and precision to default
 
-#### real
+### real
 
 |keyword|description|
 |-|-|
@@ -95,7 +100,7 @@ rpn>
 |min|	min of 2 real numbers
 |max|	max of 2 real numbers
 
-#### mode
+### mode
 
 |keyword|description|
 |-|-|
@@ -103,7 +108,7 @@ rpn>
 |fix|	fixed point representation. ex: 6 fix
 |sci|	scientific floating point representation. ex: 20 sci
 
-#### test
+### test
 
 |keyword|description|
 |-|-|
@@ -119,7 +124,7 @@ rpn>
 |not|	boolean operator not
 |same|	boolean operator same (equal)
 
-#### stack
+### stack
 
 |keyword|description|
 |-|-|
@@ -138,7 +143,7 @@ rpn>
 |rolld|	move the element on top of the stack to a higher stack position
 |over|	push a copy of the element in stack level 2 onto the stack
 
-#### string
+### string
 
 |keyword|description|
 |-|-|
@@ -150,7 +155,7 @@ rpn>
 |pos|	seach for the string in level 1 within the string in level 2
 |sub|	return a substring of the string in level 3
 
-#### branch
+### branch
 
 |keyword|description|
 |-|-|
@@ -169,7 +174,7 @@ rpn>
 |while| (or whil) while <test-instruction> repeat <loop-instructions> end
 |repeat| (or repea) used with while
 
-#### store
+### store
 
 |keyword|description|
 |-|-|
@@ -186,14 +191,14 @@ rpn>
 |sneg|	negate a variable. ex: 'name' sneg
 |sinv|	inverse a variable. ex: 1 'name' sinv
 
-#### program
+### program
 
 |keyword|description|
 |-|-|
 |eval|	evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
 |->|	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
 
-#### trig
+### trig
 
 |keyword|description|
 |-|-|
@@ -207,7 +212,7 @@ rpn>
 |d|->r	convert degrees to radians
 |r|->d	convert radians to degrees
 
-#### logs
+### logs
 
 |keyword|description|
 |-|-|
@@ -225,7 +230,7 @@ rpn>
 |tanh|	hyperbolic tangent
 |atanh|	inverse hyperbolic tangent
 
-#### default
+### default
 
 Default float mode is 'std' with 20 digits
 
@@ -273,12 +278,18 @@ No binary package is provided, user must compile its version by following these 
 	```
 	# git clone https://github.com/louisrubet/rpn.git
 	```
-- configure and make
+
+- make
+	
+	CMake must be installed on the generation machine
+	
 	```
 	# cd rpn/
-	# ./configure && make
+	# mkdir build
+	# cd build && cmake .. && make
 	```
-- install
+
+- then install
 	```
 	# sudo make install
 	```
