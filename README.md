@@ -162,8 +162,10 @@ rpn>
 |for| start> <end> for <variable> <instructions> next|<step> step
 |next| used with start and for
 |step| used with start and for
-|do| do <instructions> unti <condition> end
-|unti | used with do
+|do| do <instructions> until <condition> end
+|until | (or unti) used with do
+|while| (or whil) while <test-instruction> repeat <loop-instructions> end
+|repeat| (or repea) used with while
 
 #### store
 
