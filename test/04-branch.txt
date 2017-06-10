@@ -303,15 +303,84 @@ erase
 # do..unti error case (1)
 do
 -> error should be 11
+erase
 
 # do..unti error case (2)
-unti
+do 8 end
 -> error should be 11
+erase
 
 # do..unti error case (3)
-do 3 unti
+unti
 -> error should be 11
+erase
 
 # do..unti error case (4)
+do 3 unti
+-> error should be 11
+erase
+
+# do..unti error case (5)
 unti 1 end
 -> error should be 11
+erase
+
+# do..unti error case (6)
+do 3 repeat 8 end
+-> error should be 11
+erase
+
+# do..unti error case (7)
+do 3 until 8 until 9 end
+-> error should be 11
+erase
+
+# while..repeat (1)
+while 0 repeat ok end
+-> stack size should be 0
+erase
+
+# while..repeat (2)
+2 while dup 0.1 > repeat dup 2 / end
+-> stack should be 2, 1, 0.5, 0.25, 0.125, 0.0625
+erase
+
+# while..repeat (3)
+"" 0 'a' sto while a 3 < repeat 'a' 1 sto+ 0 a for b b ->str + next end
+-> stack should be "010120123"
+erase
+
+# while..repeat error case (1)
+while
+-> error should be 11
+erase
+
+# while..repeat error case (2)
+while 3 end
+-> error should be 11
+erase
+
+# while..repeat error case (3)
+repeat
+-> error should be 11
+erase
+
+# while..repeat error case (4)
+while 1 repeat
+-> error should be 11
+erase
+
+# while..repeat error case (5)
+repeat 1 end
+-> error should be 11
+erase
+
+# while..repeat error case (6)
+while 3 repeat 8 repeat 9 end
+-> error should be 11
+erase
+
+# while..repeat error case (7)
+while 3 until 8 end
+-> error should be 11
+erase

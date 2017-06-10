@@ -57,6 +57,9 @@ int rpn_end(branch& myobj)
         if (mpfr_cmp_si(arg->_value.mpfr, 0UL) == 0)
             ret = myobj.arg1;
     }
+    // arg2 = index of while+1 in case of while..repeat..end
+    else if (myobj.arg2 != -1)
+        ret = myobj.arg2;
 
     return ret;
 }
@@ -67,7 +70,7 @@ int rpn_do(branch& myobj)
     return -1;
 }
 
-int rpn_unti(branch& myobj)
+int rpn_until(branch& myobj)
 {
     // nothing
     return -1;
@@ -122,6 +125,29 @@ void rpn_ifte(void)
 }
 
 //
+int rpn_while(branch& myobj)
+{
+    // nothing
+    return -1;
+}
+
+int rpn_repeat(branch& myobj)
+{
+    int ret = -1;
+
+    MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
+    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
+
+    // check arg
+    // myobj.arg1 is end+1
+    number* arg = (number*)_stack->pop_back();
+    if (mpfr_cmp_si(arg->_value.mpfr, 0UL) == 0)
+        ret = myobj.arg1;
+
+    return ret;
+}
+
+>>>>>>> #117, #116, #119: added while..repeat, added do..until tests, until in addition to until
 int rpn_start(branch& myobj)
 {
     int ret = -1;
