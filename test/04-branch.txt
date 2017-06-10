@@ -274,3 +274,44 @@ erase
 step
 -> error should be 11
 erase
+
+# do..unti (1)
+do 'ok' unti 1 end
+-> stack should be 'ok'
+erase
+
+# do..unti (2)
+do unti 1 end
+-> stack size should be 0
+erase
+
+# do..unti (3)
+1 'a' sto do a unti a 0 > end
+-> stack should be 1
+erase
+
+# do..unti (4)
+1 'a' sto do a 'a' 1 sto+ unti a 3 > end
+-> stack should be 1, 2, 3
+erase
+
+# do..unti (5)
+"" 0 'a' sto do 'a' 1 sto+ 0 a for b b ->str + next unti a 3 > end
+-> stack should be "01012012301234"
+erase
+
+# do..unti error case (1)
+do
+-> error should be 11
+
+# do..unti error case (2)
+unti
+-> error should be 11
+
+# do..unti error case (3)
+do 3 unti
+-> error should be 11
+
+# do..unti error case (4)
+unti 1 end
+-> error should be 11
