@@ -108,8 +108,13 @@ program::keyword_t program::s_keywords[] =
     { cmd_branch, "for", (program_fn_t)&program::rpn_for, "<start> <end> for <variable> <instructions> next|<step> step" },
     { cmd_branch, "next", (program_fn_t)&program::rpn_next, "used with start and for" },
     { cmd_branch, "step", (program_fn_t)&program::rpn_step, "used with start and for" },
-    { cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> unti <condition> end" },
-    { cmd_branch, "unti", (program_fn_t)&program::rpn_unti, "used with do" },
+    { cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> until <condition> end" },
+    { cmd_branch, "until", (program_fn_t)&program::rpn_until, "(or unti) used with do" },
+    { cmd_branch, "unti", (program_fn_t)&program::rpn_until, "" },
+    { cmd_branch, "while", (program_fn_t)&program::rpn_while, "(or whil) while <test-instruction> repeat <loop-instructions> end" },
+    { cmd_branch, "whil", (program_fn_t)&program::rpn_while, "" },
+    { cmd_branch, "repeat", (program_fn_t)&program::rpn_repeat, "(or repea) used with while" },
+    { cmd_branch, "repea", (program_fn_t)&program::rpn_repeat, "" },
 
     //STORE
     { cmd_undef, "", NULL, "\nSTORE"},
