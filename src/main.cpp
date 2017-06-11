@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 
     // apply default configuration
     program::apply_default();
-
+    
     // run with interactive prompt
     if (argc == 1)
     {
