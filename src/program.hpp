@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <mpfr.h>
-#include <math.h>
+#include <sys/mman.h>
 
 extern "C" {
 #include <readline/readline.h>
@@ -17,6 +17,8 @@ extern "C" {
 #include <sstream>
 #include <fstream>
 using namespace std;
+
+#include "linenoise.h"
 
 #include "constant.h"
 #include "escape.h"

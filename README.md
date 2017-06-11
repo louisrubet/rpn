@@ -56,7 +56,7 @@ rpn>
 
 ### Command line
 
-**rpn** provides a cli interface with an **interactive editor** with autocompletion
+**rpn** is a cli interface with an **interactive editor** with autocompletion provided by **linenoise-ng**, see https://github.com/arangodb/linenoise-ng
 
 ```
 rpn> 
@@ -276,11 +276,22 @@ At this time the software is proposed for **GNU/Linux** only and provided as a s
 
 No binary package is provided, user must compile its version by following these 3 steps:
 
-#### GNU GMP 6.1.2
+#### Version identification
 
-- download and install **GNU GMP v6.1.2** at [https://gmplib.org/](https://gmplib.org/)
+rpn v2.1 uses
+- GNU GMP v6.1.2
+- GNU MPFR v3.1.5
+- linenoise-ng v1.0.1
 
-#### GNU MPFR 3.1.5
+linenoise is included in rpn as source code. It can be found at https://github.com/arangodb/linenoise-ng
+
+GNU GMP and GNU MPFR must be downloaded and installed
+
+#### GNU GMP v6.1.2
+
+- download and install **GNU GMP v6.1.2** from [https://gmplib.org/](https://gmplib.org/)
+
+#### GNU MPFR v3.1.5
 
 - download and install **GNU MPFR v3.1.5** from [http://www.mpfr.org](http://www.mpfr.org)
 

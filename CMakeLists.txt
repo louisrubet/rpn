@@ -22,7 +22,7 @@ set(RPN_FRIENDLY_STRING "rpn - Reverse Polish Notation language")
 # compiler options
 if(CMAKE_COMPILER_IS_GNUCXX)
   message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
-  set(BASE_COMPILER_OPTIONS "-Wl,--no-as-needed -lreadline -lmpfr")
+  set(BASE_COMPILER_OPTIONS "-std=c++0x -Wl,--no-as-needed -lmpfr")
   set(CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
   set(CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
   set(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer")
@@ -61,6 +61,7 @@ else()
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/linenoise-ng_v1.0.1/include)
 
 # build liblinenoise
 add_executable(
@@ -68,6 +69,9 @@ add_executable(
   src/main.cpp
   src/object.cpp
   src/program.cpp
+  linenoise-ng_v1.0.1/src/ConvertUTF.cpp
+  linenoise-ng_v1.0.1/src/linenoise.cpp
+  linenoise-ng_v1.0.1/src/wcwidth.cpp
 )
 
 # install

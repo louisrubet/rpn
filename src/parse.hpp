@@ -34,11 +34,11 @@ static ret_value entry(program& prog)
     char* entry;
     ret_value ret;
 
-    // declare completion fn (bound to '\t' by default)
-    rl_completion_entry_function = entry_completion_generator;
+    // linenoise for entry
+    linenoiseSetCompletionCallback(program::entry_completion_generator);
 
     // get user entry
-    entry = readline(PROMPT);
+    entry = linenoise(PROMPT);
     if (entry != NULL)
     {
         // parse it
@@ -46,7 +46,7 @@ static ret_value entry(program& prog)
 
         // keep history
         if (entry[0] != 0)
-            add_history(entry);
+            linenoiseHistoryAdd(entry);
     }
     else
         ret = ret_internal;
@@ -452,43 +452,34 @@ static bool _obj_from_string(string& entry, program& prog, string& remaining_ent
     return ret;
 }
 
-static char* entry_completion_generator(const char* text, int state)
+static void entry_completion_generator(const char* text, linenoiseCompletions* lc)
 {
-    static int list_index, len, too_far;
- 
-    if (state == 0)
-    {
-        list_index = 0;
-        too_far = 0;
-        len = strlen(text);
-    }
- 
-    while(too_far == 0)
-    {
-        list_index++;
-        if (s_keywords[list_index].fn != NULL)
-        {
-            // compare list entry with text, return if match
-            if (strncmp(s_keywords[list_index].name, text, len) == 0)
-                return entry_completion_dupstr(s_keywords[list_index].name);
-        }
-        else
-        {
-            // fn=NULL and size=0 = last entry in list -> go out
-            if (s_keywords[list_index].comment.size() == 0)
-                too_far = 1;
-        }
-    }
- 
-    /* If no names matched, then return NULL. */
-    return (char*)NULL;
-}
+    int i = 0;
+    int text_len = strnlen(text, 6);
 
-static char* entry_completion_dupstr(const char* src)
-{
-    int len = strlen(src);
-    char* dst = (char*)malloc(len+1);
-    if (dst != NULL)
-        strcpy(dst, src);
-    return dst;
+    // propose all keywords
+    if (text_len ==0)
+    {
+        while(s_keywords[i].type != cmd_max)
+        {
+            if (s_keywords[i].fn != NULL)
+                // add all keywords
+                linenoiseAddCompletion(lc, s_keywords[i].name);
+            i++;
+        }
+    }
+    // propose keywords matching to text begining
+    else
+    {
+        while(s_keywords[i].type != cmd_max)
+        {
+            if (s_keywords[i].fn != NULL)
+            {
+                // compare list entry with text, return if match
+                if (strncmp(s_keywords[i].name, text, text_len) == 0)
+                    linenoiseAddCompletion(lc, s_keywords[i].name);
+            }
+            i++;
+        }
+    }
 }
