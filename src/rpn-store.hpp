@@ -231,19 +231,22 @@ void edit(void)
         // edit: stuff chars using readline facility
         int len = (int)ftell(tmp);
         rewind(tmp);
-        for(int i=0;i<len;i++)
+
+        // get stream data
+        void* file_data = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fileno(tmp), 0);
+        if (file_data != MAP_FAILED)
         {
-            char readc;
-            if (fread(&readc, 1, 1, tmp) == 1)
-                rl_stuff_char(readc);
-            else
-            {
-                ERR_CONTEXT(ret_runtime_error);
-                break;
-            }
+            // set it as the linenoise line entry
+            linenoisePreloadBuffer((const char*)file_data);
+            munmap(file_data, len);
         }
+        else
+            ERR_CONTEXT(ret_runtime_error);
+
         fclose(tmp);
     }
+    else
+        ERR_CONTEXT(ret_runtime_error);
 }
 
 // carefull : this is not a langage command
