@@ -40,11 +40,11 @@ A reference manual is provided [here](MANUAL.md)
 
 ## Installation
 
-[**download .deb**](../liv/rpn-2.1-amd64.deb)
+[**download .deb**](https://github.com/louisrubet/rpn/liv/rpn-2.1-amd64.deb)
 
-[**download .rpm**](../liv/rpn-2.1-amd64.rpm)
+[**download .rpm**](https://github.com/louisrubet/rpn/liv/rpn-2.1-amd64.rpm)
 
-[**download .tgz**](../liv/rpn-2.1-amd64.tgz)
+[**download .tgz**](https://github.com/louisrubet/rpn/liv/rpn-2.1-amd64.tgz)
 
 ## Generation
 
