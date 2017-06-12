@@ -44,7 +44,7 @@ A reference manual is provided [here](MANUAL.md)
 
 [**download .rpm**]()
 
-[**download .tar.bz2**]()
+[**download .tgz**]()
 
 ## Generation
 
