@@ -25,7 +25,7 @@ rpn v2.1 is statically linked against
 
 - checkout the tag v1.0.1
 
-- apply the following patch to the source code in order to have autocompletion even from a blank line
+- apply the following patch to the source code
 
 ```
 --- ../../../linenoise-ng/src/linenoise.cpp	2017-06-10 18:13:31.752976287 +0200
@@ -50,7 +50,7 @@ rpn v2.1 is statically linked against
 
 ## rpn
 
-- clone this project or download a zipped version from [the release directory](https://github.com/louisrubet/rpn/releases)
+- clone [rpn project](https://github.com/louisrubet/rpn/) or download a zipped version from [the release directory](https://github.com/louisrubet/rpn/releases)
 	```
 	# git clone https://github.com/louisrubet/rpn.git
 	```
