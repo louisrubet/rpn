@@ -40,8 +40,6 @@ A reference manual is provided [here](MANUAL.md)
 
 ## Installation
 
-Installation packages are provided in deb, rpm and tar.bz2 formats
-
 [**download .deb**]()
 
 [**download .rpm**]()

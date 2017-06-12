@@ -1,4 +1,4 @@
-# **rpn** - Generation
+# **rpn** - generation
 
 For now rpn is proposed only for **GNU/Linux**
 
@@ -58,6 +58,8 @@ rpn v2.1 is statically linked against
 - make
 	
 	CMake must be installed on the generation machine
+    
+    To build RPM package you should install CMake 2.6.0 or higher
 	
 	```
 	# cd rpn/
@@ -65,7 +67,26 @@ rpn v2.1 is statically linked against
 	# cd build && cmake .. && make
 	```
 
-- then install
+- install
 	```
+    # cd rpn/build
 	# sudo make install
+	```
+
+- packages
+    - DEB
+	```
+    # cd rpn/build
+	# make package
+	```
+    - RPM
+    rpmbuild must be installed
+	```
+    # cd rpn/build
+    # cpack -G RPM
+	```
+    - TGZ
+	```
+    # cd rpn/build
+    # cpack -G TGZ
 	```
