@@ -40,7 +40,7 @@ A reference manual is provided [here](MANUAL.md)
 
 ## Installation
 
-The delivery directory is [there]()
+The delivery directory is [there](https://github.com/louisrubet/rpn/tree/master/liv)
 
 [download .deb](https://github.com/louisrubet/rpn/blob/master/liv/rpn-2.1-amd64.deb?raw=true)
 
