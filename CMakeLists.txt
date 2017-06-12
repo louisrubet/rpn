@@ -20,37 +20,27 @@ set(RPN_FRIENDLY_STRING "rpn - Reverse Polish Notation language")
 # compiler options
 if(CMAKE_COMPILER_IS_GNUCXX)
   message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
-  set(BASE_COMPILER_OPTIONS "-std=c++0x -Wl,--no-as-needed -lmpfr")
-  set(CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
-  set(CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-  set(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer")
-
-else()
-  # unknown compiler
-  message(STATUS "Compiler type UNKNOWN: ${CMAKE_CXX_COMPILER}")
-  set(BASE_COMPILER_OPTIONS "-std=c++11 -Wall -Wextra")
-  set(CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
-  set(CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-  set(CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_MINSIZEREL} ${BASE_COMPILER_OPTIONS} -Os")
-  set(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer")
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${BASE_COMPILER_OPTIONS} -O3 -g")
-
+  set(BASE_COMPILER_OPTIONS "-std=c++0x -Wl,--no-as-needed")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer -s")
 endif()
 
 # includes
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/linenoise-ng_v1.0.1/include)
 
 # build
+
 add_executable(
   rpn
   src/main.cpp
   src/object.cpp
   src/program.cpp
-  linenoise-ng_v1.0.1/src/ConvertUTF.cpp
-  linenoise-ng_v1.0.1/src/linenoise.cpp
-  linenoise-ng_v1.0.1/src/wcwidth.cpp
 )
+
+target_link_libraries(rpn liblinenoise.a)
+target_link_libraries(rpn libmpfr.a)
+target_link_libraries(rpn libgmp.a)
 
 # install
 install(TARGETS rpn DESTINATION bin)
@@ -71,6 +61,4 @@ SET(CPACK_DEBIAN_PACKAGE_VERSION ${RPN_VERSION})
 SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${SYSTEM_PROCESSOR})
 SET(CPACK_DEBIAN_PACKAGE_SECTION "math")
 SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-#SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3.1-6), libgcc1 (>= 1:3.4.2-12)")
-#SET(DEBIAN_PACKAGE_BUILDS_DEPENDS "debhelper (>> 5.0.0), libncurses5-dev, tcl8.4")
 include(CPack)
