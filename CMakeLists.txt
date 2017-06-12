@@ -4,8 +4,6 @@ cmake_minimum_required(VERSION 2.6)
 
 project(rpn)
 
-set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/build")
-
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE string "Choose the type of build, options are: None Debug Release" FORCE)
 endif()
@@ -13,10 +11,10 @@ endif()
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
 # INFO
-set(RPN_VERSION "2.1" CACHE path "rpn version")
+set(RPN_VERSION "2.1")
 set(RPN_DISPLAY_NAME "rpn")
 set(RPN_URL_INFO_ABOUT "https://github.com/louisrubet/rpn")
-set(RPN_CONTACT "louis@rubet.fr")
+set(RPN_CONTACT "Louis Rubet <louis@rubet.fr>")
 set(RPN_FRIENDLY_STRING "rpn - Reverse Polish Notation language")
 
 # compiler options
@@ -27,27 +25,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
   set(CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer")
 
-#elseif(MSVC) 
-#  message(STATUS "Compiler type MSVC: ${CMAKE_CXX_COMPILER}")
-#  add_definitions("-D_CRT_SECURE_NO_WARNINGS=1")
-#
-#  foreach (flag_var
-#           CMAKE_CXX_FLAGS
-#           CMAKE_CXX_FLAGS_DEBUG
-#           CMAKE_CXX_FLAGS_RELEASE
-#           CMAKE_CXX_FLAGS_MINSIZEREL
-#           CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-#    if (flag_var MATCHES "DEBUG")
-#      set(${flag_var} "${${flag_var}} /MTd")
-#    else ()
-#      set(${flag_var} "${${flag_var}} /MT")
-#    endif ()
-#  endforeach()
-#  # https://msdn.microsoft.com/en-us/library/aa267384%28VS.60%29.aspx
-#  set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /INCREMENTAL:NO /SUBSYSTEM:CONSOLE /LTCG /ignore:4099 /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcd.lib /NODEFAULTLIB:msvcrtd.lib")
-#  set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} /SUBSYSTEM:CONSOLE /ignore:4099 /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcd.lib /NODEFAULTLIB:msvcrtd.lib")
-#  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:CONSOLE /ignore:4099 /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcd.lib /NODEFAULTLIB:msvcrtd.lib")
-#  set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /SUBSYSTEM:CONSOLE /ignore:4099 /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcd.lib /NODEFAULTLIB:msvcrtd.lib")
 else()
   # unknown compiler
   message(STATUS "Compiler type UNKNOWN: ${CMAKE_CXX_COMPILER}")
@@ -60,10 +37,11 @@ else()
 
 endif()
 
+# includes
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/linenoise-ng_v1.0.1/include)
 
-# build liblinenoise
+# build
 add_executable(
   rpn
   src/main.cpp
@@ -77,25 +55,22 @@ add_executable(
 # install
 install(TARGETS rpn DESTINATION bin)
 
-# packaging
+# packages
+SET(CPACK_PACKAGE_FILE_NAME "${RPN_DISPLAY_NAME}-${RPN_VERSION}-amd64")
+SET(CPACK_PACKAGE_NAME ${RPN_DISPLAY_NAME})
+SET(CPACK_PACKAGE_VERSION ${RPN_VERSION})
+SET(CPACK_PACKAGE_CONTACT ${RPN_CONTACT})
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY, ${RPN_FRIENDLY_STRING})
+
+# DEB package
 SET(CPACK_GENERATOR "DEB")
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Louis Rubet")
-SET(CPACK_DEBIAN_PACKAGE_VERSION "${RPN_VERSION}")
-set(CPACK_DEBIAN_PACKAGE_SECTION "math")
+SET(CPACK_DEBIAN_PACKAGE_NAME ${RPN_DISPLAY_NAME})
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION, ${RPN_FRIENDLY_STRING})
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER ${RPN_CONTACT})
+SET(CPACK_DEBIAN_PACKAGE_VERSION ${RPN_VERSION})
+SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${SYSTEM_PROCESSOR})
+SET(CPACK_DEBIAN_PACKAGE_SECTION "math")
+SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+#SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3.1-6), libgcc1 (>= 1:3.4.2-12)")
+#SET(DEBIAN_PACKAGE_BUILDS_DEPENDS "debhelper (>> 5.0.0), libncurses5-dev, tcl8.4")
 include(CPack)
-
-if (MSVC)
-else ()
-  set(CPACK_SET_DESTDIR ON)
-endif ()
-
-#set(CPACK_PACKAGE_VENDOR  "Louis Rubet")
-#set(CPACK_PACKAGE_CONTACT "louis@rubet.fr")
-#set(CPACK_PACKAGE_VERSION "${RPN_VERSION}")
-#
-#set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
-#
-#set(CPACK_STRIP_FILES "ON")
-#
-#set(CPACK_PACKAGE_NAME "rpn")
-#set(CPACK_DEBIAN_PACKAGE_SECTION "utilities")
