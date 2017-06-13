@@ -93,9 +93,9 @@ static bool _cut(const char* entry, vector<string>& entries)
                 //get symbol
                 tmp='\'';
                 i++;
-                while((i < len) && (isalnum(entry[i]) || entry[i]=='_'))
+                while((i < len) && entry[i]!='\'')
                     tmp += entry[i++];
-                if ((i < len) && entry[i] == '\'')
+                if ((i < len) && entry[i] != '\'')
                     tmp += '\'';
                 entries.push_back(tmp);
                 tmp.clear();
@@ -112,12 +112,12 @@ static bool _cut(const char* entry, vector<string>& entries)
                 //get expression
                 tmp='"';
                 i++;
-                while(i < len && entry[i] >= ' ')
-                {
-                    tmp += entry[i];
-                    if (entry[i++] == '"')
-                        break;
-                }
+                while(i < len && entry[i]!='"')
+                    tmp += entry[i++];
+
+                if ((i < len) && entry[i] != '"')
+                    tmp += '"';
+
                 entries.push_back(tmp);
                 tmp.clear();
                 break;
