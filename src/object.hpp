@@ -8,13 +8,13 @@
 ////
 typedef enum {
     cmd_undef,
-    cmd_number,/* floating point number */
-    cmd_complex,/* complex, couple of floating point numbers */
-    cmd_string,/* string like "string" */
-    cmd_symbol,/* symbol like 'symbol' */
-    cmd_program,/* program like << instructions >> */
-    cmd_keyword,/* langage keyword */
-    cmd_branch,/* langage branch keyword */
+    cmd_number,// floating point number
+    cmd_complex,// complex, couple of floating point numbers
+    cmd_string,// string like "string"
+    cmd_symbol,// symbol like 'symbol'
+    cmd_program,// program like << instructions >>
+    cmd_keyword,// langage keyword
+    cmd_branch,// langage branch keyword
     cmd_max
 } cmd_type_t;
 
@@ -28,13 +28,17 @@ typedef int (program::*branch_fn_t)(branch&);
 ////
 struct floating_t
 {
-    mpfr_t mpfr;
+    mpfr_prec_t mpfr_prec;// precision in bits
+    unsigned int mpfr_prec_bytes;// significand storing length in bytes
+    mpfr_t mpfr;//mpfr object
 
     void init()
     {
         void* significand = (void*)(this+1);
+        mpfr_prec = s_mpfr_prec;
+        mpfr_prec_bytes = s_mpfr_prec_bytes;
         mpfr_custom_init(significand, MPFR_DEFAULT_PREC_BITS);
-        mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
+        mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, mpfr_prec, significand);
     }
 
     void move()
@@ -170,7 +174,7 @@ struct complex : public object
 
     // re and im float values are at the end of the object
     floating_t* re() { return &_re; }
-    floating_t* im() { return (floating_t*)((char*)&_re + sizeof(floating_t) + floating_t::s_mpfr_prec_bytes); }
+    floating_t* im() { return (floating_t*)((char*)&_re + sizeof(floating_t) + _re.mpfr_prec_bytes); }
 
     void init()
     {
