@@ -22,47 +22,169 @@ void plus()
         _branch_stack.pop_back();
     }
     // adding numbers
-    else
+    else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number)
     {
-        ARG_MUST_BE_OF_TYPE(0, cmd_number);
-        ARG_MUST_BE_OF_TYPE(1, cmd_number);
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
         CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
     }
+    // adding complexes
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
+    {
+        complex* right = (complex*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_add(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+    }
+    // adding complex+number
+    else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_complex)
+    {
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // adding number+complex
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
+    {
+        swap();
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void minus()
 {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    // substracting numbers
+    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number)
+    {
+        number* right = (number*)_stack->pop_back();
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // substracting complexes
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
+    {
+        complex* right = (complex*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_sub(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_sub(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+    }
+    // substracting complex-number
+    else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_complex)
+    {
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_sub(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // substracting number-complex
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
+    {
+        swap();
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_sub(left->re()->mpfr, right->_value.mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void mul()
 {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    // multiplying numbers
+    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number)
+    {
+        number* right = (number*)_stack->pop_back();
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // multiplying complexes (a+ib)*(x+iy)=(ax-by)+i(ay+bx)=a(x+iy)+b(-y+ix)
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
+    {
+        complex* right = (complex*)_stack->pop_back();//x+iy
+        complex* left = (complex*)_stack->back();//a+ib
+
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        complex* left_sav = (complex*)_branch_stack.back();//a+ib
+
+        // left: (a+ib)->(ax+iay)
+        CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(left->im()->mpfr, left_sav->re()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+        
+        // right: (x+iy)-> (bx-iby)
+        CHECK_MPFR(mpfr_mul(right->im()->mpfr, left_sav->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_neg(right->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(right->re()->mpfr, left_sav->im()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
+
+        //left=left+transpose(right)
+        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_add(left->im()->mpfr, left->im()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
+
+        _branch_stack.pop_back();
+    }
+    // multiplying complex*number
+    else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_complex)
+    {
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(left->im()->mpfr, left->im()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // multiplying number*complex
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
+    {
+        swap();
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(left->im()->mpfr, left->im()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void div()
 {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    // dividing numbers
+    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number)
+    {
+        number* right = (number*)_stack->pop_back();
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // dividing complexes
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
+    {
+        complex* right = (complex*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+    }
+    // dividing complex/number
+    else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_complex)
+    {
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    // dividing number/complex
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
+    {
+        swap();
+        number* right = (number*)_stack->pop_back();
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_div(left->re()->mpfr, right->_value.mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void neg()
