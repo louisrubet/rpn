@@ -8,10 +8,11 @@
 ////
 typedef enum {
     cmd_undef,
-    cmd_number,/* floating value to put in stack */
-    cmd_string,/* string value to put in stack */
-    cmd_symbol,/* symbol value to put in stack */
-    cmd_program,/* program */
+    cmd_number,/* floating point number */
+    cmd_complex,/* complex, couple of floating point numbers */
+    cmd_string,/* string like "string" */
+    cmd_symbol,/* symbol like 'symbol' */
+    cmd_program,/* program like << instructions >> */
     cmd_keyword,/* langage keyword */
     cmd_branch,/* langage branch keyword */
     cmd_max
@@ -29,14 +30,16 @@ struct floating_t
 {
     mpfr_t mpfr;
 
-    void init(void* significand)
+    void init()
     {
+        void* significand = (void*)(this+1);
         mpfr_custom_init(significand, MPFR_DEFAULT_PREC_BITS);
         mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, s_mpfr_prec, significand);
     }
 
-    void set_significand(void* significand)
+    void move()
     {
+        void* significand = (void*)(this+1);
         mpfr->_mpfr_d = (mp_limb_t*)significand;
     }
 
@@ -103,33 +106,28 @@ struct object
 ////
 struct number : public object
 {
-    number() { _type = cmd_number; }
+    // members
+    enum {
+        dec,
+        hex
+    } _representation;
+    // mind that float value is at the end of the object
+    // because its mantissa is just after the obj in memory
     floating_t _value;
 
-    void init(void* significand)
+    // publics
+    number() { _type = cmd_number; }
+
+    void init()
     {
         _type = cmd_number;
         _representation = dec;
-        _value.init(significand);
+        _value.init();
     }
 
-    void copy(number& op)
+    void move()
     {
-        _value = op._value;
-        memcpy(_value.mpfr->_mpfr_d, op._value.mpfr->_mpfr_d, floating_t::s_mpfr_prec_bytes);
-    }
-
-    //
-    void set(const floating_t& value)
-    {
-        _type = cmd_number;
-        _value.mpfr->_mpfr_d = value.mpfr->_mpfr_d;
-    }
-
-    void set(long value)
-    {
-        _type = cmd_number;
-        _value = value;
+        _value.move();
     }
 
     void set(unsigned long value)
@@ -143,14 +141,6 @@ struct number : public object
         return (unsigned int)(sizeof(number)+floating_t::s_mpfr_prec_bytes);
     }
 
-    //
-    number operator=(const number& op)
-    {
-        number num;
-        num.set((const floating_t&)op._value);
-        return num;
-    }
-
     // representation mode
     typedef enum {
         std,
@@ -158,15 +148,48 @@ struct number : public object
         sci
     } mode_enum;
     static mode_enum s_mode;
-    
-    enum {
-        dec,
-        hex
-    } _representation;
 
     // precision
     static int s_current_precision;
     static string s_mpfr_printf_format;
+};
+
+// stack objects derived from object
+////
+struct complex : public object
+{
+    enum {
+        dec,
+        hex
+    } _representation;
+    // mind that re float value is at the end of the object
+    // because its mantissa is just after the obj in memory
+    floating_t _re;
+
+    complex() { _type = cmd_complex; }
+
+    // re and im float values are at the end of the object
+    floating_t* re() { return &_re; }
+    floating_t* im() { return (floating_t*)((char*)&_re + sizeof(floating_t) + floating_t::s_mpfr_prec_bytes); }
+
+    void init()
+    {
+        _type = cmd_complex;
+        _representation = dec;
+        re()->init();
+        im()->init();
+    }
+
+    void move()
+    {
+        re()->move();
+        im()->move();
+    }
+
+    static unsigned int calc_size()
+    {
+        return (unsigned int)(sizeof(complex)+2*(sizeof(floating_t)+floating_t::s_mpfr_prec_bytes));
+    }
 };
 
 struct ostring : public object

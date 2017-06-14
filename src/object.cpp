@@ -32,7 +32,28 @@ void object::show(FILE* stream)
                 mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 break;
             default:
-                fprintf(stream, "< unknown number representation >");
+                fprintf(stream, "<unknown number representation>");
+        }
+        break;
+    case cmd_complex:
+        switch(((complex*)this)->_representation)
+        {
+            case number::dec:
+                fprintf(stream, "(");
+                mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((complex*)this)->re()->mpfr);
+                fprintf(stream, ",");
+                mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((complex*)this)->im()->mpfr);
+                fprintf(stream, ")");
+                break;
+            case number::hex:
+                fprintf(stream, "(");
+                mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((complex*)this)->re()->mpfr);
+                fprintf(stream, ",");
+                mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((complex*)this)->im()->mpfr);
+                fprintf(stream, ")");
+                break;
+            default:
+                fprintf(stream, "<unknown complex representation>");
         }
         break;
     case cmd_string:
