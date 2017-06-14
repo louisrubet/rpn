@@ -67,6 +67,6 @@ typedef enum {
 
 // command types
 //
-#define CMD_TYPE_STRINGS { "undef", "number", "string", "symbol", "program", "keyword", "keyword" }
+#define CMD_TYPE_STRINGS { "undef", "number", "complex", "string", "symbol", "program", "keyword", "keyword" }
 
 #endif
