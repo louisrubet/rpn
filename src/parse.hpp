@@ -447,7 +447,7 @@ static bool get_complex(const string& entry, program& prog, string& remaining_en
             // pre parse RE to avoid doing a useless allocation
             // detect the begining of a number, including nan, inf, @nan@, @inf@
             string re_str = entry.substr(1, comma-1).c_str();
-            if (re_str.find_first_of("+-0123456789.ni@", 0) == 0)
+            if (re_str.find_first_of(" +-0123456789.ni@", 0) == 0)
             {
                 cplx = (complex*)prog.allocate_back(complex::calc_size(), cmd_complex);
 
@@ -470,7 +470,7 @@ static bool get_complex(const string& entry, program& prog, string& remaining_en
             // pre parse IM to avoid doing a useless allocation
             // detect the begining of a number, including nan, inf, @nan@, @inf@
             string im_str = entry.substr(comma+1).c_str();
-            if (ret == true && im_str.find_first_of("+-0123456789.ni@", 0) == 0)
+            if (ret == true && im_str.find_first_of(" +-0123456789.ni@", 0) == 0)
             {
                 ret = false;
                 int mpfr_ret = mpfr_strtofr(cplx->im()->mpfr, im_str.c_str(), &endptr, 0, MPFR_DEFAULT_RND);
