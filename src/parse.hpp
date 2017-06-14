@@ -193,12 +193,30 @@ static bool _cut(const char* entry, vector<string>& entries)
                     tmp = "<";
                 break;
 
+            //complex
+            case '(':
+                //push prec entry if exists
+                if (tmp.size() > 0)
+                {
+                    entries.push_back(tmp);
+                    tmp.clear();
+                }
+                //get complex
+                while((i < len) && entry[i]!=')')
+                    tmp += entry[i++];
+                if ((i < len) && entry[i] != ')')
+                    tmp += ')';
+                if (tmp.size()>0)
+                {
+                    entries.push_back(tmp);
+                    tmp.clear();
+                }
+                break;
+
             //other
             default:
                 if (!isspace(entry[i]))
-                {
                     tmp += entry[i];
-                }
                 else
                 {
                     if (tmp.size()>0)
@@ -414,6 +432,68 @@ static bool get_number(const string& entry, program& prog, string& remaining_ent
     return ret;
 }
 
+static bool get_complex(const string& entry, program& prog, string& remaining_entry)
+{
+    char* endptr;
+    bool ret = false;
+
+    if (entry.size() > 0)
+    {
+        size_t comma = entry.find(',');
+        if (comma != string::npos)
+        {
+            complex* cplx;
+
+            // pre parse RE to avoid doing a useless allocation
+            // detect the begining of a number, including nan, inf, @nan@, @inf@
+            string re_str = entry.substr(1, comma-1).c_str();
+            if (re_str.find_first_of("+-0123456789.ni@", 0) == 0)
+            {
+                cplx = (complex*)prog.allocate_back(complex::calc_size(), cmd_complex);
+
+                int mpfr_ret = mpfr_strtofr(cplx->re()->mpfr, re_str.c_str(), &endptr, 0, MPFR_DEFAULT_RND);
+                if (endptr != NULL && endptr != re_str.c_str())
+                {
+                    // determine representation
+                    string beg = re_str.substr(0, 2);
+                    if (beg == "0x" || beg == "0X")
+                        cplx->_representation = complex::hex;
+                    else
+                        cplx->_representation = complex::dec;
+
+                    ret = true;
+                }
+                else
+                    (void)prog.pop_back();
+            }
+
+            // pre parse IM to avoid doing a useless allocation
+            // detect the begining of a number, including nan, inf, @nan@, @inf@
+            string im_str = entry.substr(comma+1).c_str();
+            if (ret == true && im_str.find_first_of("+-0123456789.ni@", 0) == 0)
+            {
+                ret = false;
+                int mpfr_ret = mpfr_strtofr(cplx->im()->mpfr, im_str.c_str(), &endptr, 0, MPFR_DEFAULT_RND);
+                if (endptr != NULL && endptr != im_str.c_str())
+                {
+                    // determine representation
+                    string beg = im_str.substr(0, 2);
+                    if (beg == "0x" || beg == "0X")
+                        cplx->_representation = complex::hex;
+                    else
+                        cplx->_representation = complex::dec;
+
+                    ret = true;
+                }
+                else
+                    (void)prog.pop_back();
+            }
+        }
+    }
+
+    return ret;
+}
+
 static bool _obj_from_string(string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
@@ -421,33 +501,21 @@ static bool _obj_from_string(string& entry, program& prog, string& remaining_ent
     remaining_entry.erase();
 
     if (get_number(entry, prog, remaining_entry))
-    {
         ret = true;
-    }
     else if (get_symbol(entry, prog, remaining_entry))
-    {
         ret = true;
-    }
     else if (get_string(entry, prog, remaining_entry))
-    {
         ret = true;
-    }
     else if (get_program(entry, prog, remaining_entry))
-    {
         ret = true;
-    }
     else if (get_keyword(entry, prog, remaining_entry))
-    {
         ret = true;
-    }
+    else if (get_complex(entry, prog, remaining_entry))
+        ret = true;
     else
-    {
         // nothing, considered as an auto-evaluated symbol
         if (get_other(entry, prog, remaining_entry))
-        {
             ret = true;
-        }
-    }
 
     return ret;
 }

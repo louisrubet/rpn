@@ -43,7 +43,9 @@ public:
         memcpy(allocated, from.seq_obj(index_from), from.seq_len(index_from));
 
         if (allocated->_type == cmd_number)
-            ((number*)allocated)->_value.set_significand(((number*)allocated) + 1);
+            ((number*)allocated)->move();
+        else if (allocated->_type == cmd_complex)
+            ((complex*)allocated)->move();
     }
 
     //
@@ -54,7 +56,9 @@ public:
         memcpy(allocated, from, size);
 
         if (allocated->_type == cmd_number)
-            ((number*)allocated)->_value.set_significand(((number*)allocated) + 1);
+            ((number*)allocated)->move();
+        else if (allocated->_type == cmd_complex)
+            ((complex*)allocated)->move();
     }
     
     object* allocate_back(unsigned int size, cmd_type_t type)
@@ -98,7 +102,9 @@ public:
         allocated->_type = type;
         allocated->_size = size;
         if (type == cmd_number)
-            ((number*)allocated)->init(((number*)allocated) + 1);
+            ((number*)allocated)->init();
+        else if (type == cmd_complex)
+            ((complex*)allocated)->init();
 
         return allocated;
     }
@@ -212,7 +218,9 @@ public:
             // copy a whole stack entry and push it back to another stack
             memcpy(local, obj, size);
             if (local->_type == cmd_number)
-                ((number*)local)->_value.set_significand(((number*)local)+1);
+                ((number*)local)->move();
+            else if (local->_type == cmd_complex)
+                ((complex*)local)->move();
         }
 
         return local;
@@ -244,7 +252,9 @@ public:
             {
                 (void)memcpy(obj_dst, obj, size);
                 if (obj_dst->_type == cmd_number)
-                    ((number*)obj_dst)->_value.set_significand(((number*)obj_dst)+1);
+                    ((number*)obj_dst)->move();
+                else if (obj_dst->_type == cmd_complex)
+                    ((complex*)obj_dst)->move();
                 ret = true;
             }
         }
