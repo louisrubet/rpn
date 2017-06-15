@@ -27,8 +27,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
     { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
 
-    //REAL
-    { cmd_undef, "", NULL, "\nREAL"},
+    //REAL AND COMPLEX
+    { cmd_undef, "", NULL, "\nREAL AND COMPLEX"},
     { cmd_keyword, "+", &program::plus, "addition" },
     { cmd_keyword, "-", &program::minus, "substraction" },
     { cmd_keyword, "chs", &program::neg , "(or neg) negation" },
@@ -36,26 +36,29 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "*", &program::mul, "multiplication" },
     { cmd_keyword, "/", &program::div, "division" },
     { cmd_keyword, "inv", &program::inv, "inverse" },
-    { cmd_keyword, "%", &program::purcent, "purcent" },
-    { cmd_keyword, "%CH", &program::purcentCH, "inverse purcent" },
     { cmd_keyword, "^", &program::power, "(or pow) power" },
     { cmd_keyword, "pow", &program::power, "" },
     { cmd_keyword, "sqrt", &program::squareroot, "square root" },
     { cmd_keyword, "sq", &program::square, "(or sqr) square" },
     { cmd_keyword, "sqr", &program::square, "" },
-    { cmd_keyword, "mod", &program::modulo, "modulo" },
     { cmd_keyword, "abs", &program::rpn_abs, "absolute value" },
-    { cmd_keyword, "dec", &program::dec, "decimal representation" },
-    { cmd_keyword, "hex", &program::hex, "hexadecimal representation" },
     { cmd_keyword, "prec", &program::precision, "get float precision in bits when first stack is not a number\n\t"
                                                 "set float precision in bits when first stack entry is a number. ex: 256 prec" },
     { cmd_keyword, "round", &program::round, "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward +inf\", \"toward -inf\", \"away from zero\"] round" },
-    { cmd_keyword, "fact", &program::fact, "n! for integer n or Gamma(x+1) for fractional x" },
     { cmd_keyword, "sign", &program::sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0" },
+
+    //REAL
+    { cmd_keyword, "%", &program::purcent, "purcent" },
+    { cmd_keyword, "%CH", &program::purcentCH, "inverse purcent" },
+    { cmd_keyword, "mod", &program::modulo, "modulo" },
+    { cmd_keyword, "fact", &program::fact, "n! for integer n or Gamma(x+1) for fractional x" },
     { cmd_keyword, "mant", &program::mant, "mantissa of a real number" },
     { cmd_keyword, "xpon", &program::xpon, "exponant of a real number" },
     { cmd_keyword, "min", &program::rpn_min, "min of 2 real numbers" },
     { cmd_keyword, "max", &program::rpn_max, "max of 2 real numbers" },
+
+    //COMPLEX
+    { cmd_keyword, "re", &program::re, "complex real part" },
 
     //TEST
     { cmd_undef, "", NULL, "\nTEST"},

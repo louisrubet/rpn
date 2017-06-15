@@ -572,6 +572,7 @@ private:
     // keywords implementation
     #include "rpn-general.hpp"
     #include "rpn-real.hpp"
+    #include "rpn-complex.hpp"
     #include "rpn-test.hpp"
     #include "rpn-stack.hpp"
     #include "rpn-string.hpp"
