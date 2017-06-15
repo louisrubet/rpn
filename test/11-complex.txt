@@ -1,0 +1,108 @@
+## COMPLEX
+
+default erase
+
+# entry (1)
+(1,2) ( 1,2) (1 ,2) (1, 2) (1,2 )
+-> stack should be (1,2), (1,2), (1,2), (1,2), (1,2)
+erase
+
+# entry (2)
+(1.3,2.444555
+-> stack should be (1.3,2.444555)
+erase
+
+# entry (3)
+(1,
+-> stack should be (1,0)
+erase
+
+# entry (4)
+(nan,+inf)
+-> stack should be (nan,inf)
+erase
+
+# entry (5)
+(0x1234,0x10.10)
+-> stack should be (0x1.234p+12,0x1.01p+4)
+drop
+
+# entry (6)
+(0b11,0b101)
+-> stack should be (3,5)
+erase
+
+# add (1)
+(1.2,2.3) (1,2) +
+-> stack should be (2.2,4.3)
+drop
+
+# add (2)
+(1.2,2.3) (1,2)+
+-> stack should be (2.2,4.3)
+drop
+
+# add (3)
+(1.2,2.3) 3+
+-> stack should be (4.2,2.3)
+drop
+
+# add (4)
+3 (1.2,2.3)+
+-> stack should be (4.2,2.3)
+drop
+
+# sub (1)
+(1.2,2.3) (2,2) - 
+-> stack should be (-0.8,0.3)
+drop
+
+# sub (2)
+(1.2,2.3) (1,2)- 
+-> stack should be (0.2,0.3)
+drop
+
+# sub (3)
+(1.2,2.3) 1- 
+-> stack should be (0.2,2.3)
+drop
+
+# sub (4)
+1 (1.2,2.3) -
+-> stack should be (-0.2,2.3)
+drop
+
+# mul (1)
+(1,2) (3,4) *
+-> stack should be (-5,10)
+drop
+
+# mul (2)
+(3,4) (1,2) *
+-> stack should be (-5,10)
+drop
+
+# mul (3)
+(3,4) 2 *
+-> stack should be (6,8)
+drop
+
+# mul (3)
+2 (3,4) *
+-> stack should be (6,8)
+drop
+
+# div (1)
+(1,2) (3,4) /
+-> stack should be (0.44,0.08)
+drop
+
+# div (2)
+(1,2) 2 /
+-> stack should be (0.5,1)
+drop
+
+# div (3)
+2 (3,4) /
+-> stack should be (0.24,-0.32)
+drop
