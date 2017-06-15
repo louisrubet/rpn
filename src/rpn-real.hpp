@@ -149,6 +149,45 @@ void mul()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+void do_divide_complexes()
+{
+    //(a+ib)/(x+iy)=(a+ib)(x-iy)/(x^2+y^2)=(ax+by+i(bx-ay))/(x^2+y^2)
+    complex* right = (complex*)_stack->get_obj(0);//x+iy
+    complex* left = (complex*)_stack->get_obj(1);//a+ib
+    
+    //1. calc (x^2-y^2) in _branch_stack
+    number* ex = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+    CHECK_MPFR(mpfr_mul(ex->_value.mpfr, right->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));//x2
+    number* wy = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+    CHECK_MPFR(mpfr_mul(wy->_value.mpfr, right->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));//y2
+    CHECK_MPFR(mpfr_add(ex->_value.mpfr, ex->_value.mpfr, wy->_value.mpfr, floating_t::s_mpfr_rnd));//ex=x2+y2
+
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);//x+iy
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    complex* left_sav = (complex*)_branch_stack.get_obj(1);//a+ib
+    complex* right_sav = (complex*)_branch_stack.get_obj(0);//x+iy
+
+    //2. left.re=ax+by
+    CHECK_MPFR(mpfr_mul(left->re()->mpfr, left_sav->re()->mpfr, right_sav->re()->mpfr, floating_t::s_mpfr_rnd));//left.re=ax
+    CHECK_MPFR(mpfr_mul(right->re()->mpfr, left_sav->im()->mpfr, right_sav->im()->mpfr, floating_t::s_mpfr_rnd));//right.re=by
+    CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));//left.re=ax+by
+
+    //3. left.im=bx-ay
+    CHECK_MPFR(mpfr_mul(left->im()->mpfr, left_sav->im()->mpfr, right_sav->re()->mpfr, floating_t::s_mpfr_rnd));//left.im=bx
+    CHECK_MPFR(mpfr_mul(right->im()->mpfr, left_sav->re()->mpfr, right_sav->im()->mpfr, floating_t::s_mpfr_rnd));//right.im=ay
+    CHECK_MPFR(mpfr_sub(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));//left.im=bx-ay
+
+    //4. left.re/=(x^2-y^2), left.im/=(x^2+y^2)
+    CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, ex->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, ex->_value.mpfr, floating_t::s_mpfr_rnd));
+
+    _stack->pop_back();
+    _branch_stack.pop_back();
+    _branch_stack.pop_back();
+    _branch_stack.pop_back();
+    _branch_stack.pop_back();
+}
+
 void div()
 {
     MIN_ARGUMENTS(2);
@@ -162,26 +201,34 @@ void div()
     }
     // dividing complexes
     else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
-    {
-        complex* right = (complex*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
-    }
+        do_divide_complexes();
     // dividing complex/number
     else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_complex)
     {
         number* right = (number*)_stack->pop_back();
         complex* left = (complex*)_stack->back();
         CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
     }
     // dividing number/complex
     else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
     {
-        swap();
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_div(left->re()->mpfr, right->_value.mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
+        //1. copy out
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);//complex
+        stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);//number
+        _stack->pop_back();
+        _stack->pop_back();
+        //2. copy back (2 complexes on stack)
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-2, *_stack);//complex back to stack
+        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-2, *_stack);//complex back to stack
+        //3. set complex level 2 to (number,0)
+        complex* new_cplx = (complex*)_stack->get_obj(1);
+        CHECK_MPFR(mpfr_set(new_cplx->re()->mpfr, ((number*)_branch_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_set_ui(new_cplx->im()->mpfr, 0UL, floating_t::s_mpfr_rnd));
+        _branch_stack.pop_back();
+        _branch_stack.pop_back();
+        //4. divide
+        do_divide_complexes();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
