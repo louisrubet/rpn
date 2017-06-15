@@ -106,3 +106,18 @@ drop
 2 (3,4) /
 -> stack should be (0.24,-0.32)
 drop
+
+# re (1)
+(1.2,3.4) re
+-> stack should be 1.2
+drop
+
+# re (2)
+3 re
+-> error should be 3
+drop
+
+# re (3)
+re
+-> error should be 2
+drop

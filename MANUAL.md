@@ -84,7 +84,7 @@ rpn>
 |type |		show type of stack first entry
 |default |	set float representation and precision to default
 
-### real
+### real and complex
 
 |keyword|description|
 |-|-|
@@ -94,23 +94,35 @@ rpn>
 |*|		multiplication
 |/|		division
 |inv|	inverse
-|%|		purcent
-|%|CH	inverse purcent
 |^|		(or pow) power
 |sqrt|	square root
 |sq|	(or sqr) square
-|mod|	modulo
-|abs|	absolute value
+|abs|	absolute value for a number or sqrt(re*re+im*im) for a complex
 |dec|	decimal representation
 |hex|	hexadecimal representation
 |prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
 |round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
-|fact|	n! for integer n or Gamma(x+1) for fractional x
 |sign|	1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
+
+### real
+|%|		purcent
+|%|CH	inverse purcent
+|mod|	modulo
+|fact|	n! for integer n or Gamma(x+1) for fractional x
 |mant|	mantissa of a real number
 |xpon|	exponant of a real number
 |min|	min of 2 real numbers
 |max|	max of 2 real numbers
+
+### complex
+|re| complex real part
+|im| complex imaginary part
+|conj| complex conjugate
+|arg| complex argument in radians
+|r->p| rectangular to polar coordinates
+|p->r| polar to rectangular coordinates
+|r->c| transform 2 reals in a complex
+|c->r| transform a complex in 2 reals
 
 ### mode
 
