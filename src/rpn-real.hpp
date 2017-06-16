@@ -237,19 +237,44 @@ void div()
 void neg()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        complex* left = (complex*)_stack->back();
+        CHECK_MPFR(mpfr_neg(left->re()->mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_neg(left->im()->mpfr, left->im()->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void inv()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_si_div(left->_value.mpfr, 1L, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_si_div(left->_value.mpfr, 1L, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        //1. duplicate
+        dup();
+        //2. set complex level 2 to (1,0)
+        complex* cplx = (complex*)_stack->get_obj(1);
+        CHECK_MPFR(mpfr_set_ui(cplx->re()->mpfr, 1UL, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_set_ui(cplx->im()->mpfr, 0UL, floating_t::s_mpfr_rnd));
+        //3. divide
+        do_divide_complexes();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void purcent()

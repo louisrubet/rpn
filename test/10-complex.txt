@@ -121,3 +121,23 @@ drop
 re
 -> error should be 2
 drop
+
+# chs
+(3.14,6.28) chs
+-> stack should be (-3.14,-6.28)
+drop
+
+# neg
+(-3.14,-6.28) neg
+-> stack should be (3.14,6.28)
+drop
+
+# inv (1)
+(2,4) inv
+-> stack should be (0.1,-0.2)
+drop
+
+# inv (2)
+(0.1,-0.2) inv
+-> stack should be (2,4)
+drop
