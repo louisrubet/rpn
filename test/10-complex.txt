@@ -285,4 +285,19 @@ erase
 # r->p (4)
 '1' '2' r->p
 -> error should be 3
-drop
+erase
+
+# ^ (1)
+(1,2) 2 ^
+-> stack should be (-3,4)
+erase
+
+# ^ (2)
+(1,2) 4 ^
+-> stack should be (-7,-24)
+erase
+
+# sqrt
+(3,4) sqrt
+-> stack should be (2,1)
+erase
