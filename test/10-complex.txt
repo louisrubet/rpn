@@ -186,3 +186,43 @@ drop
 (12,10) sq
 -> stack should be (44,240)
 drop
+
+# arg (1)
+(1,1) arg pi 4 / ==
+-> stack should be 1
+drop
+
+# arg (2)
+(-1,1) arg pi 3 * 4 / ==
+-> stack should be 1
+drop
+
+# arg (3)
+(1,-1) arg -45 d->r ==
+-> stack should be 1
+drop
+
+# arg (4)
+(-1,-1) arg pi -3 * 4 / ==
+-> stack should be 1
+drop
+
+# arg (5)
+(1,0) arg 0 ==
+-> stack should be 1
+drop
+
+# arg (6)
+(0,1) arg pi 2 / ==
+-> stack should be 1
+drop
+
+# arg (7)
+(-1,0) arg pi ==
+-> stack should be 1
+drop
+
+# arg (8)
+(0,-1) arg pi neg 2 / ==
+-> stack should be 1
+drop
