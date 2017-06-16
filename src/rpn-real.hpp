@@ -410,12 +410,23 @@ void fact()
 void sign()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    // fact(n) = gamma(n+1)
-    number* left = (number*)_stack->back();
-    int result = mpfr_sgn(left->_value.mpfr);
-    left->_value = (long)result;
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        // fact(n) = gamma(n+1)
+        number* left = (number*)_stack->back();
+        int result = mpfr_sgn(left->_value.mpfr);
+        left->_value = (long)result;
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        // calc x/sqrt(x*x+y*y) +iy/sqrt(x*x+y*y)
+        dup();
+        rpn_abs();
+        div();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void mant()
