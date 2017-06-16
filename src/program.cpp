@@ -60,6 +60,8 @@ program::keyword_t program::s_keywords[] =
     //COMPLEX
     { cmd_keyword, "re", &program::re, "complex real part" },
     { cmd_keyword, "im", &program::im, "complex imaginary part" },
+    //{ cmd_keyword, "conj", &program::conj, "complex conjugate" },
+    { cmd_keyword, "arg", &program::arg, "complex argument in radians" },
 
     //TEST
     { cmd_undef, "", NULL, "\nTEST"},
