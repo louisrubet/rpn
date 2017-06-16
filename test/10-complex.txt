@@ -230,3 +230,29 @@ drop
 # conj
 (1,2) conj dup conj
 -> stack should be (1,-2), (1,2)
+erase
+
+# r->c (1)
+1 2 r->c
+-> stack should be (1,2)
+erase
+
+# r->c (2)
+1 r->c
+-> error should be 2
+drop
+
+# r->c (3)
+r->c
+-> error should be 2
+drop
+
+# c->r (1)
+(1,2) c->r
+-> stack should be 1, 2
+drop
+
+# c->r (2)
+c->r
+-> error should be 3
+drop
