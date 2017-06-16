@@ -176,3 +176,13 @@ drop
 (3,-4) sign
 -> stack should be (0.6,-0.8)
 drop
+
+# sq (1)
+(12,10) sq
+-> stack should be (44,240)
+drop
+
+# sqr (1)
+(12,10) sq
+-> stack should be (44,240)
+drop

@@ -326,10 +326,19 @@ void squareroot()
 void square()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_sqr(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_sqr(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        dup();
+        mul();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void modulo()
