@@ -102,7 +102,7 @@ rpn>
 |hex|	hexadecimal representation
 |prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
 |round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
-|sign|	1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
+|sign|	sign of a real, unary vector in the same direction for a complex
 
 ### real
 
