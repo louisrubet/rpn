@@ -35,7 +35,7 @@ void arg()
 
     CHECK_MPFR(mpfr_atan2(num->_value.mpfr, cplx->im()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
 
-    stack::copy_and_push_back(_branch_stack, 0, *_stack);
+    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
     _branch_stack.pop_back();
 }
 
