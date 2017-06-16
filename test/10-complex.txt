@@ -141,3 +141,8 @@ drop
 (0.1,-0.2) inv
 -> stack should be (2,4)
 drop
+
+# abs
+(3,4) abs
+-> stack should be 5
+drop

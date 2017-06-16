@@ -347,11 +347,36 @@ void modulo()
 void rpn_abs()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        //1. copy out -> calc x2+iy2
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        _stack->pop_back();
 
-    CHECK_MPFR(mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        //2. calc x2+iy2
+        complex* cplx = (complex*)_branch_stack.back();
+        CHECK_MPFR(mpfr_mul(cplx->re()->mpfr, cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+
+        //3. new real on stack
+        _stack->allocate_back(number::calc_size(), cmd_number);
+        number* module = (number*)_stack->back();
+
+        //4. set it to |x2+y2| then take sqrt
+        CHECK_MPFR(mpfr_set(module->_value.mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_add(module->_value.mpfr, module->_value.mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_sqrt(module->_value.mpfr, module->_value.mpfr, floating_t::s_mpfr_rnd));
+
+        _branch_stack.pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void hex()
