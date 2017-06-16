@@ -1,4 +1,4 @@
-# **rpn** - **R**everse **P**olish **N**otation language
+# **rpn** - **R**everse **P**olish **N**otation language[![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
 ### a lisp-based math language using polish notation
 
