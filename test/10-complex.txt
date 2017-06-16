@@ -122,6 +122,21 @@ re
 -> error should be 2
 drop
 
+# im (1)
+(1.2,3.4) im
+-> stack should be 3.4
+drop
+
+# im (2)
+3 re
+-> error should be 3
+drop
+
+# im (3)
+re
+-> error should be 2
+drop
+
 # chs
 (3.14,6.28) chs
 -> stack should be (-3.14,-6.28)
