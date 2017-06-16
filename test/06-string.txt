@@ -1,7 +1,5 @@
 ## STRING
-
-default
-erase
+default erase
 
 # string entry
 "test string"
@@ -25,33 +23,33 @@ erase
 1
 ->str
 -> stack should be "1"
-drop
+erase
 
 # ->str on real (2)
 1.234
 25 std
 ->str
 -> stack should be "1.234"
-drop
+erase
 
 # ->str on real (3)
 1.234
 20 fix
 ->str
 -> stack should be "1.23400000000000000000"
-drop
+erase
 
 # ->str on symbol (1)
 toto
 ->str
 -> stack should be "'toto'"
-drop
+erase
 
 # ->str on symbol (2)
 'toto'
 ->str
 -> stack should be "'toto'"
-drop
+erase
 
 default
 
@@ -59,7 +57,7 @@ default
 "1"
 str->
 -> stack should be 1
-drop
+erase
 
 # str-> on real (2)
 "1 2.345 3 4.9"

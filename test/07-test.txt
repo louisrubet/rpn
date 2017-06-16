@@ -1,96 +1,98 @@
 ## TESTS
+default erase
+
 # and (1)
 and
 -> error should be 2
 1 and
 -> error should be 2
-drop
+erase
 
 # and (2)
 0 0 and
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # and (3)
 1 0 and
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # and (4)
 0 1 and
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # and (5)
 1 1 and
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # or (1)
 or
 -> error should be 2
 1 or
 -> error should be 2
-drop
+erase
 
 # or (2)
 0 0 or
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # or (3)
 0 1 or
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # or (4)
 1 0 or
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # or (5)
 1 1 or
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # xor (1)
 xor
 -> error should be 2
 1 xor
 -> error should be 2
-drop
+erase
 
 # xor (2)
 0 0 xor
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # xor (3)
 0 1 xor
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # xor (4)
 1 0 xor
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # xor (5)
 1 1 xor
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # not (1)
 not
@@ -98,146 +100,146 @@ not
 1 not
 -> stack size should be 1
 -> stack should be 0
-drop
+erase
 
 # not (2)
 0 not
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # >
 0 0.1 >
 -> stack should be 0
-drop
+erase
 0.1 0 >
 -> stack should be 1
-drop
+erase
 1 1 >
 -> stack should be 0
-drop
+erase
 
 # >=
 0 0.1 >=
 -> stack should be 0
-drop
+erase
 0.1 0 >=
 -> stack should be 1
-drop
+erase
 1 1 >=
 -> stack should be 1
-drop
+erase
 
 # <
 0 0.1 <
 -> stack should be 1
-drop
+erase
 0.1 0 <
 -> stack should be 0
-drop
+erase
 1 1 <
 -> stack should be 0
-drop
+erase
 
 # <=
 0 0.1 <=
 -> stack should be 1
-drop
+erase
 0.1 0 <=
 -> stack should be 0
-drop
+erase
 1 1 <=
 -> stack should be 1
-drop
+erase
 
 # !=
 0 0.1 !=
 -> stack should be 1
-drop
+erase
 1 1 !=
 -> stack should be 0
-drop
+erase
 
 # ==
 0 0.1 ==
 -> stack should be 0
-drop
+erase
 1 1 ==
 -> stack should be 1
-drop
+erase
 
 # same
 0 0.1 same
 -> stack should be 0
-drop
+erase
 1 1 same
 -> stack should be 1
-drop
+erase
 
 # string >
 "a" "b" >
 -> stack should be 0
-drop
+erase
 "b" "a" >
 -> stack should be 1
-drop
+erase
 "a" "a" >
 -> stack should be 0
-drop
+erase
 
 # string >=
 "a" "b" >=
 -> stack should be 0
-drop
+erase
 "b" "a" >=
 -> stack should be 1
-drop
+erase
 "a" "a" >=
 -> stack should be 1
-drop
+erase
 
 # string <
 "a" "b" <
 -> stack should be 1
-drop
+erase
 "b" "a" <
 -> stack should be 0
-drop
+erase
 "a" "a" <
 -> stack should be 0
-drop
+erase
 
 # string <=
 "a" "b" <=
 -> stack should be 1
-drop
+erase
 "b" "a" <=
 -> stack should be 0
-drop
+erase
 "a" "a" <=
 -> stack should be 1
-drop
+erase
 
 # string !=
 "a" "b" !=
 -> stack should be 1
-drop
+erase
 "a" "a" !=
 -> stack should be 0
-drop
+erase
 
 # string ==
 "a" "b" ==
 -> stack should be 0
-drop
+erase
 "a" "a" ==
 -> stack should be 1
-drop
+erase
 
 # string same
 "a" "b" same
 -> stack should be 0
-drop
+erase
 "a" "a" same
 -> stack should be 1
-drop
+erase

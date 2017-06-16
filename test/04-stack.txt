@@ -1,35 +1,38 @@
 ## STACK TEST
+default erase
+
 # entry depth (1)
 1 depth
 -> stack size should be 2
 
 # entry depth (2)
-erase depth
+1 erase depth
 -> stack should be 0
+erase
 
 # swap
-erase
 1 2 swap
 -> stack size should be 2
 -> stack should be 2, 1
+erase
 
 # swap with filled stack
-erase
 5 6 1 2 swap
 -> stack size should be 4
 -> stack should be 5, 6, 2, 1
+erase
 
 # swap error
-erase
 5 swap
 -> stack size should be 1
 -> error should 2
+erase
 
 # drop
-erase
 1 2 3 drop
 -> stack size should be 2
 -> stack should be 1, 2
+erase
 
 # drop2
 3
@@ -41,26 +44,29 @@ erase
 # drop error
 drop
 -> error should be 2
+erase
 
 # drop2 error (1)
 drop2
 -> error should be 2
+erase
 
 # drop2 error (2)
 1 drop2
 -> error should be 2
-drop
+erase
 
 # test dup
 1 dup
 -> stack size should be 2
 -> stack should be 1, 1
+erase
 
 # test dup2
-drop 2 dup2
+1 2 dup2
 -> stack size should be 4
 -> stack should be 1, 2, 1, 2
-drop2 drop2
+erase
 
 # test rot
 1 2 3 rot
@@ -89,7 +95,7 @@ erase
 depth
 -> stack size should be 4
 -> stack should be 1, 2, 3, 3
-erase
+>erase
 
 # test pick
 1 2 3 4 2 pick
@@ -99,74 +105,73 @@ erase
 -> error should be 4
 7 pick
 -> error should be 4
+erase
 
 # test erase
-erase
 -> stack size should be 0
+erase
 
 # test dropn
-erase
 1 2 2 dropn
 -> stack size should be 0
+erase
 
 # test dropn error
-erase
 1 2 3 dropn
 -> stack size should be 3
 -> error should be 2
+erase
 
 # test dupn
-erase
 1 2 3 4 3 dupn
 -> stack should be 1, 2, 3, 4, 2, 3, 4
+erase
 
 # test dupn error
-erase
 1 2 3 4 5 dupn
 -> stack size should be 5
 -> error should be 2
+erase
 
 # test roll
-erase
 1 2 3 4 5 4 roll
 -> stack should be 1, 3, 4, 5, 2
+erase
 
 # test roll with filled stack
-erase
 10 11 1 2 3 4 5 4 roll
 -> stack should be 10, 11, 1, 3, 4, 5, 2
+erase
 
 # test roll error
-erase
 1 2 3 4 5 6 roll
 -> stack size should be 6
 -> error should be 2
+erase
 
 # test rolld
-erase
 10 20 30 40 50 3 rolld
 -> stack should be 10, 20, 50, 30, 40
+erase
 
 # test rolld with filled stack
-erase
 80 90 10 20 30 40 50 3 rolld
 -> stack should be 80, 90, 10, 20, 50, 30, 40
+erase
 
 # test rolld error
-erase
 1 2 3 4 5 6 rolld
 -> stack size should be 6
 -> error should be 2
+erase
 
 # test over
-erase
 3.14 15.16 over
 -> stack should be 3.14, 15.16, 3.14
+erase
 
 # test over error
-erase
 2 over
 -> stack size should be 1
 -> error should be 2
-
 erase

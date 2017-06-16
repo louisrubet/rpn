@@ -1,34 +1,37 @@
 ## GENERAL
-default
-erase 
+default erase 
 
 # version
 version
 -> stack size should be 1
-
-uname
--> stack size should be 2
 erase
 
-# type
-1
-type
+uname
+-> stack size should be 1
+erase
+
+# type (1)
+1 type
 -> stack should be 1, 'number'
 erase
 
-"hey"
-type
+# type (2)
+"hey" type
 -> stack should be "hey", 'string'
 erase
 
-<< -> n << n >> >>
-type
+# type (3)
+<< -> n << n >> >> type
 -> stack should be << -> n << n >> >>, 'program'
 erase
 
+# type (4)
+(1,2) type
+-> stack should be (1,2)), 'complex'
+erase
+
 # default
-2 sci
-1
+2 sci 1
 -> stack should be 1.00e+00
 default
 -> stack should be 1
@@ -38,3 +41,4 @@ erase
 nop
 -> stack size should be 0
 -> error should be 0
+erase

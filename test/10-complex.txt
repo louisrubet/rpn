@@ -25,7 +25,7 @@ erase
 # entry (5)
 (0x1234,0x10.10)
 -> stack should be (0x1.234p+12,0x1.01p+4)
-drop
+erase
 
 # entry (6)
 (0b11,0b101)
@@ -35,197 +35,197 @@ erase
 # add (1)
 (1.2,2.3) (1,2) +
 -> stack should be (2.2,4.3)
-drop
+erase
 
 # add (2)
 (1.2,2.3) (1,2)+
 -> stack should be (2.2,4.3)
-drop
+erase
 
 # add (3)
 (1.2,2.3) 3+
 -> stack should be (4.2,2.3)
-drop
+erase
 
 # add (4)
 3 (1.2,2.3)+
 -> stack should be (4.2,2.3)
-drop
+erase
 
 # sub (1)
 (1.2,2.3) (2,2) - 
 -> stack should be (-0.8,0.3)
-drop
+erase
 
 # sub (2)
 (1.2,2.3) (1,2)- 
 -> stack should be (0.2,0.3)
-drop
+erase
 
 # sub (3)
 (1.2,2.3) 1- 
 -> stack should be (0.2,2.3)
-drop
+erase
 
 # sub (4)
 1 (1.2,2.3) -
 -> stack should be (-0.2,2.3)
-drop
+erase
 
 # mul (1)
 (1,2) (3,4) *
 -> stack should be (-5,10)
-drop
+erase
 
 # mul (2)
 (3,4) (1,2) *
 -> stack should be (-5,10)
-drop
+erase
 
 # mul (3)
 (3,4) 2 *
 -> stack should be (6,8)
-drop
+erase
 
 # mul (3)
 2 (3,4) *
 -> stack should be (6,8)
-drop
+erase
 
 # div (1)
 (1,2) (3,4) /
 -> stack should be (0.44,0.08)
-drop
+erase
 
 # div (2)
 (1,2) 2 /
 -> stack should be (0.5,1)
-drop
+erase
 
 # div (3)
 2 (3,4) /
 -> stack should be (0.24,-0.32)
-drop
+erase
 
 # re (1)
 (1.2,3.4) re
 -> stack should be 1.2
-drop
+erase
 
 # re (2)
 3 re
 -> error should be 3
-drop
+erase
 
 # re (3)
 re
 -> error should be 2
-drop
+erase
 
 # im (1)
 (1.2,3.4) im
 -> stack should be 3.4
-drop
+erase
 
 # im (2)
 3 re
 -> error should be 3
-drop
+erase
 
 # im (3)
 re
 -> error should be 2
-drop
+erase
 
 # chs
 (3.14,6.28) chs
 -> stack should be (-3.14,-6.28)
-drop
+erase
 
 # neg
 (-3.14,-6.28) neg
 -> stack should be (3.14,6.28)
-drop
+erase
 
 # inv (1)
 (2,4) inv
 -> stack should be (0.1,-0.2)
-drop
+erase
 
 # inv (2)
 (0.1,-0.2) inv
 -> stack should be (2,4)
-drop
+erase
 
 # abs
 (3,4) abs
 -> stack should be 5
-drop
+erase
 
 # sign (1)
 (1,0) sign
 -> stack should be (1,0)
-drop
+erase
 
 # sign (2)
 (0,1) sign
 -> stack should be (0,1)
-drop
+erase
 
 # sign (3)
 (3,-4) sign
 -> stack should be (0.6,-0.8)
-drop
+erase
 
 # sq (1)
 (12,10) sq
 -> stack should be (44,240)
-drop
+erase
 
 # sqr (1)
 (12,10) sq
 -> stack should be (44,240)
-drop
+erase
 
 # arg (1)
 (1,1) arg pi 4 / ==
 -> stack should be 1
-drop
+erase
 
 # arg (2)
 (-1,1) arg pi 3 * 4 / ==
 -> stack should be 1
-drop
+erase
 
 # arg (3)
 (1,-1) arg -45 d->r ==
 -> stack should be 1
-drop
+erase
 
 # arg (4)
 (-1,-1) arg pi -3 * 4 / ==
 -> stack should be 1
-drop
+erase
 
 # arg (5)
 (1,0) arg 0 ==
 -> stack should be 1
-drop
+erase
 
 # arg (6)
 (0,1) arg pi 2 / ==
 -> stack should be 1
-drop
+erase
 
 # arg (7)
 (-1,0) arg pi ==
 -> stack should be 1
-drop
+erase
 
 # arg (8)
 (0,-1) arg pi neg 2 / ==
 -> stack should be 1
-drop
+erase
 
 # conj
 (1,2) conj dup conj
@@ -240,12 +240,12 @@ erase
 # r->c (2)
 1 r->c
 -> error should be 2
-drop
+erase
 
 # r->c (3)
 r->c
 -> error should be 2
-drop
+erase
 
 # r->c (3)
 '1' '2' r->c
