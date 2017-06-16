@@ -306,21 +306,57 @@ void purcentCH()
 void power()
 {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(1) == cmd_number)
+    {
+        ARG_MUST_BE_OF_TYPE(0, cmd_number);
+        number* right = (number*)_stack->pop_back();
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(1) == cmd_complex)
+    {
+        ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+        //power on tmp stack
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        _stack->pop_back();
+
+        //switch complex to polar
+        complex* cplx = (complex*)_stack->back();
+        r2p();
+
+        //new abs=abs^exponent
+        number* exponent = (number*)_branch_stack.back();
+        CHECK_MPFR(mpfr_pow(cplx->re()->mpfr, cplx->re()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
+
+        //new arg=arg*exponent
+        CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
+
+        //back to cartesian
+        p2r();
+        _branch_stack.pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void squareroot()
 {
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-    CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        number* left = (number*)_stack->back();
+        CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        // calc cplx^0.5
+        _stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.5, floating_t::s_mpfr_rnd));
+        power();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void square()
