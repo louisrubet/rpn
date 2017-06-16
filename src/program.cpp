@@ -63,7 +63,9 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "conj", &program::conj, "complex conjugate" },
     { cmd_keyword, "arg", &program::arg, "complex argument in radians" },
     { cmd_keyword, "c->r", &program::c2r, "transform a complex in 2 reals" },
-    { cmd_keyword, "r->c", &program::r2c, "transform 2 reals in a complex" },    
+    { cmd_keyword, "r->c", &program::r2c, "transform 2 reals in a complex" },
+    { cmd_keyword, "p->r", &program::p2r, "cartesian to polar" },
+    { cmd_keyword, "r->p", &program::r2p, "polar to cartesian" },
 
     //TEST
     { cmd_undef, "", NULL, "\nTEST"},
