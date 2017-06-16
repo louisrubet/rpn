@@ -247,12 +247,42 @@ r->c
 -> error should be 2
 drop
 
+# r->c (3)
+'1' '2' r->c
+-> error should be 3
+erase
+
 # c->r (1)
 (1,2) c->r
 -> stack should be 1, 2
-drop
+erase
 
 # c->r (2)
 c->r
+-> error should be 2
+erase
+
+# c->r (3)
+'4' c->r
+-> error should be 3
+erase
+
+# r->p (1)
+(1,2) r->p
+-> stack should be (2.2360679774997896964,1.107148717794090503)
+erase
+
+# r->p (2)
+1 r->p
+-> error should be 3
+eras3
+
+# r->p (3)
+r->p
+-> error should be 3
+erase
+
+# r->p (4)
+'1' '2' r->p
 -> error should be 3
 drop

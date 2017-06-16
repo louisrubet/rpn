@@ -81,3 +81,51 @@ void c2r()
     CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_branch_stack.back())->im()->mpfr, floating_t::s_mpfr_rnd));
     _branch_stack.pop_back();
 }
+
+void r2p()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_complex);
+
+    dup();
+    dup();
+    arg();
+
+    complex* cplx = (complex*)_stack->get_obj(1);
+    CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_stack->back())->_value.mpfr, floating_t::s_mpfr_rnd));
+    _stack->pop_back();
+    
+    swap();
+    rpn_abs();
+    cplx = (complex*)_stack->get_obj(1);
+    CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_stack->back())->_value.mpfr, floating_t::s_mpfr_rnd));
+    _stack->pop_back();
+}
+
+void p2r()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_complex);
+
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    _branch_stack.allocate_back(number::calc_size(), cmd_number);
+    
+    // assert complex is polar
+    complex* rhotheta = (complex*)_branch_stack.get_obj(1);
+    number* tmp = (number*)_branch_stack.get_obj(0);
+    complex* result = (complex*)_stack->back();
+
+    //calc cos(theta)
+    CHECK_MPFR(mpfr_set(tmp->_value.mpfr, rhotheta->im()->mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_cos(tmp->_value.mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
+
+    //calc rcos(theta)
+    CHECK_MPFR(mpfr_mul(result->re()->mpfr, rhotheta->re()->mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
+
+    //calc sin(theta)
+    CHECK_MPFR(mpfr_set(tmp->_value.mpfr, rhotheta->im()->mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_sin(tmp->_value.mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
+
+    //calc rsin(theta)
+    CHECK_MPFR(mpfr_mul(result->im()->mpfr, rhotheta->re()->mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
+}
