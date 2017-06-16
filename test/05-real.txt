@@ -6,7 +6,7 @@ default erase
 1
 -> stack size should be 1
 -> stack should be 1
-drop
+erase
 
 # real decimal (2)
 2.345
@@ -22,8 +22,10 @@ erase
 # real hex
 0x1234 0x10.10
 -> stack should be 0x1.234p+12, 0x1.01p+4
+erase
 
 # real hex (2)
+0x1.234p+12, 0x1.01p+4
 dec swap dec swap
 -> stack should be 4660, 16.0625
 erase
@@ -54,16 +56,17 @@ erase
 default
 2 prec pi
 -> stack should be 3
-drop
+erase
 
 # prec (2)
 10 prec pi
 -> stack should be 3.140625
-drop
+erase
 
 # prec error (1)
 1 prec
 -> error should be 4
+erase
 
 # prec error (2)
 0x8000000000000000 prec
@@ -103,91 +106,91 @@ erase default
 # add (1)
 1.2 2.3 +
 -> stack should be 3.5
-drop
+erase
 
 # add (2)
 1.2 2.3+
 -> stack should be 3.5
-drop
+erase
 
 # add (3)
 2.3 +
 -> error should be 2
 -> stack size should be 1
-drop
+erase
 
 # add (4)
 +
 -> error should be 2
-drop
+erase
 
 # sub (1)
 1.2 2.3 -
 -> stack should be -1.1
-drop
+erase
 
 # sub (2)
 1.2 2.3-
 -> stack should be -1.1
-drop
+erase
 
 # sub (3)
 2.3 -
 -> error should be 2
 -> stack size should be 1
-drop
+erase
 
 # sub (4)
 -
 -> error should be 2
-drop
+erase
 
 # mul (1)
 1.2 2.3 *
 -> stack should be 2.76
-drop
+erase
 
 # mul (2)
 1.2 2.3*
 -> stack should be 2.76
-drop
+erase
 
 # mul (3)
 2.3 *
 -> error should be 2
 -> stack size should be 1
-drop
+erase
 
 # mul (4)
 *
 -> error should be 2
-drop
+erase
 
 # div (1)
 1.2 2.3 /
 -> stack should be 0.5217391304347826087
-drop
+erase
 
 # div (2)
 1.2 2.3/
 -> stack should be 0.5217391304347826087
-drop
+erase
 
 # div (3)
 2.3 /
 -> error should be 2
 -> stack size should be 1
-drop
+erase
 
 # div (4)
 /
 -> error should be 2
-drop
+erase
 
 # chs (1)
 3.14 chs
 -> stack should be -3.14
-drop
+erase
 
 # chs (2)
 chs
@@ -196,7 +199,7 @@ chs
 # neg (1)
 3.14 neg
 -> stack should be -3.14
-drop
+erase
 
 # neg (2)
 neg
@@ -205,7 +208,7 @@ neg
 # inv (1)
 2 inv
 -> stack should be 0.5
-drop
+erase
 
 # inv (2)
 inv
@@ -225,12 +228,12 @@ erase
 2 % 
 -> error should be 2
 -> stack size should be 1
-drop
+erase
 
 # % (4)
 % 
 -> error should be 2
-drop
+erase
 
 # %CH (1)
 2 0.6 %CH
@@ -246,12 +249,12 @@ erase
 2 %CH
 -> error should be 2
 -> stack size should be 1
-drop
+erase
 
 # %CH (4)
 %CH
 -> error should be 2
-drop
+erase
 
 # ^ (1)
 2 10 ^
@@ -277,7 +280,7 @@ erase
 # sqrt (1)
 9 sqrt
 -> stack should be 3
-drop
+erase
 
 # sqrt (2)
 sqrt
@@ -286,7 +289,7 @@ sqrt
 # sq (1)
 12 sq
 -> stack should be 144
-drop
+erase
 
 # sq (2)
 sq
@@ -295,7 +298,7 @@ sq
 # sqr (1)
 12 sqr
 -> stack should be 144
-drop
+erase
 
 # sqr (2)
 sqr
