@@ -146,3 +146,18 @@ drop
 (3,4) abs
 -> stack should be 5
 drop
+
+# sign (1)
+(1,0) sign
+-> stack should be (1,0)
+drop
+
+# sign (2)
+(0,1) sign
+-> stack should be (0,1)
+drop
+
+# sign (3)
+(3,-4) sign
+-> stack should be (0.6,-0.8)
+drop
