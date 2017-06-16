@@ -38,3 +38,12 @@ void arg()
     stack::copy_and_push_back(_branch_stack, 0, *_stack);
     _branch_stack.pop_back();
 }
+
+void conj()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_complex);
+
+    complex* cplx = (complex*)_stack->back();
+    CHECK_MPFR(mpfr_neg(cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+}
