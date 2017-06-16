@@ -90,7 +90,7 @@ rpn>
 |-|-|
 |+|		addition
 |-|		substraction
-|neg|	negation
+|neg|	(or chs) negation
 |*|		multiplication
 |/|		division
 |inv|	inverse
@@ -105,6 +105,9 @@ rpn>
 |sign|	1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0
 
 ### real
+
+|keyword|description|
+|-|-|
 |%|		purcent
 |%|CH	inverse purcent
 |mod|	modulo
@@ -115,6 +118,9 @@ rpn>
 |max|	max of 2 real numbers
 
 ### complex
+
+|keyword|description|
+|-|-|
 |re| complex real part
 |im| complex imaginary part
 |conj| complex conjugate
