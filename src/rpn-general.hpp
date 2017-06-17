@@ -134,14 +134,14 @@ void type()
 {
     MIN_ARGUMENTS(1);
 
-    int type = _stack->back()->_type;
+    int type = _stack->pop_back()->_type;
     if (type < 0 || type >= (int)cmd_max)
         type = (int)cmd_undef;
 
     unsigned int string_size = strlen(object::s_cmd_type_string[type]);
     unsigned int size = sizeof(symbol)+string_size+1;
-    symbol* sym = (symbol*)_stack->allocate_back(size, cmd_symbol);
-    sym->set(object::s_cmd_type_string[type], string_size, false);
+    ostring* typ = (ostring*)_stack->allocate_back(size, cmd_string);
+    typ->set(object::s_cmd_type_string[type], string_size);
 }
 
 void rpn_default()

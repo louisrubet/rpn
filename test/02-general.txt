@@ -12,22 +12,27 @@ erase
 
 # type (1)
 1 type
--> stack should be 1, 'number'
+-> stack should be "number"
 erase
 
 # type (2)
 "hey" type
--> stack should be "hey", 'string'
+-> stack should be "string"
 erase
 
 # type (3)
 << -> n << n >> >> type
--> stack should be << -> n << n >> >>, 'program'
+-> stack should be "program"
 erase
 
 # type (4)
 (1,2) type
--> stack should be (1,2)), 'complex'
+-> stack should be "complex"
+erase
+
+# type (5)
+type
+-> error should be 2
 erase
 
 # default
