@@ -109,9 +109,9 @@ void strsub()
     
     long first = long(((number*)_stack->get_obj(1))->_value) - 1;
     long last = long(((number*)_stack->get_obj(0))->_value) - 1;
-    long len = ((ostring*)_stack->get_obj(0))->_len;
+    long len = ((ostring*)_stack->get_obj(2))->_len;
     bool result_is_void = false;
-    
+
     _stack->pop_back();
     _stack->pop_back();
 
@@ -119,12 +119,17 @@ void strsub()
         first = 0;
     if (last < 0)
         last = 0;
-    if (first > len)
-        first = len -1;
-    if (last > len)
-        last = len -1;
-    if (first > last)
+    if (first > len && last > len)
         result_is_void=true;
+    else
+    {
+        if (first > len)
+            first = len -1;
+        if (last > len)
+            last = len -1;
+        if (first > last)
+            result_is_void=true;
+    }
 
     if (!result_is_void)
     {
