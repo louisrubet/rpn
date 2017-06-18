@@ -93,8 +93,7 @@ void strpos()
     if (found != NULL)
         pos = (long)(found - src)+1L;
 
-    _stack->pop_back();
-    _stack->pop_back();
+    _stack->pop_back(2);
 
     number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     numb->_value = pos;
@@ -112,8 +111,7 @@ void strsub()
     long len = ((ostring*)_stack->get_obj(2))->_len;
     bool result_is_void = false;
 
-    _stack->pop_back();
-    _stack->pop_back();
+    _stack->pop_back(2);
 
     if (first < 0)
         first = 0;
