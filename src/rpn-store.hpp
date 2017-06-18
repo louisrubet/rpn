@@ -30,14 +30,14 @@ void stoadd(void)
     {
         // copy value, get variable value on stack level 1, 
         // put back value on stack level 1, make op then modify variable
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
         if (_err == ret_ok)
         {
-            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
             plus();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
@@ -67,14 +67,14 @@ void stosub(void)
     {
         // copy value, get variable value on stack level 1, 
         // put back value on stack level 1, make op then modify variable
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
         if (_err == ret_ok)
         {
-            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
             minus();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
@@ -104,14 +104,14 @@ void stomul(void)
     {
         // copy value, get variable value on stack level 1, 
         // put back value on stack level 1, make op then modify variable
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
         if (_err == ret_ok)
         {
-            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
             mul();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
@@ -141,14 +141,14 @@ void stodiv(void)
     {
         // copy value, get variable value on stack level 1, 
         // put back value on stack level 1, make op then modify variable
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
         rcl();
         if (_err == ret_ok)
         {
-            stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
+            stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
             div();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();

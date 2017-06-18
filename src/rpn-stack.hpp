@@ -2,14 +2,14 @@
 void swap(void)
 {
     MIN_ARGUMENTS(2);
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);
     (void)_stack->pop_back();
     (void)_stack->pop_back();
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-2, *_stack);
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-2, *_stack);
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
 
 }
 void drop(void)
@@ -90,18 +90,18 @@ void rot(void)
 {
     MIN_ARGUMENTS(3);
 
-    stack::copy_and_push_back(*_stack, _stack->size()-3, _branch_stack);
-    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-3, _calc_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
     (void)_stack->pop_back();
     (void)_stack->pop_back();
     (void)_stack->pop_back();
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-2, *_stack);
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-3, *_stack);
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-2, *_stack);
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-3, *_stack);
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
 }
 
 void depth(void)
@@ -122,16 +122,16 @@ void roll(void)
 
     for(int i=0;i<args;i++)
     {
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         (void)_stack->pop_back();
     }
 
     for(int i=1;i<args;i++)
-        stack::copy_and_push_back(_branch_stack, args-1-i, *_stack);
-    stack::copy_and_push_back(_branch_stack, args-1, *_stack);
+        stack::copy_and_push_back(_calc_stack, args-1-i, *_stack);
+    stack::copy_and_push_back(_calc_stack, args-1, *_stack);
 
     for(int i=0;i<args;i++)
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
 }
 
 void rolld(void)
@@ -145,17 +145,17 @@ void rolld(void)
 
     for(int i=0;i<args;i++)
     {
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         (void)_stack->pop_back();
     }
 
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-args, *_stack);
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-args, *_stack);
 
     for(int i=1;i<args;i++)
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-i, *_stack);
+        stack::copy_and_push_back(_calc_stack, _calc_stack.size()-i, *_stack);
 
     for(int i=0;i<args;i++)
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
 }
 
 void over(void)

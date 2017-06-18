@@ -554,8 +554,8 @@ private:
     // local heap for local loop variables (for..next)
     heap _local_heap;
 
-    // local stack internally used by branch commands (start, for, next, ..)
-    stack _branch_stack;
+    // calc stack internally used by branch and calc commands
+    stack _calc_stack;
 
     // parent prog for inheriting heaps
     program* _parent_prog;
