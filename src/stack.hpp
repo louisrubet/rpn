@@ -109,14 +109,18 @@ public:
         return allocated;
     }
 
-    object* pop_back()
+    object* pop_back(int pop_count = 1)
     {
         object* back = NULL;
 
-        if (_count > 0)
+        // pop several entries, return the last
+        while (pop_count-- > 0)
         {
-            _current = (char*)_base_pointer[--_count];
-            back = (object*)_current;
+            if (_count > 0)
+            {
+                _current = (char*)_base_pointer[--_count];
+                back = (object*)_current;
+            }
         }
 
         return back;

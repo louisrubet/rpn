@@ -62,8 +62,7 @@ void r2c()
     complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
     CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_calc_stack.get_obj(1))->_value.mpfr, floating_t::s_mpfr_rnd));
     CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_calc_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
-    _calc_stack.pop_back();
-    _calc_stack.pop_back();
+    _calc_stack.pop_back(2);
 }
 
 void c2r()
