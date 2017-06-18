@@ -429,4 +429,44 @@ max
 -> error should be 2
 erase
 
+# ip (1)
+1.22 ip
+-> stack should be 1
+erase
+
+# ip (2)
+-1.22 ip
+-> stack should be -1
+erase
+
+# fp (1)
+1.22 fp
+-> stack should be 0.22
+erase
+
+# fp (2)
+-1.22 fp
+-> stack should be -0.22
+erase
+
+# floor (1)
+1.22 floor
+-> stack should be 1
+erase
+
+# floor (2)
+-1.22 floor
+-> stack should be -2
+erase
+
+# ceil (1)
+1.22 ceil
+-> stack should be 2
+erase
+
+# ceil (2)
+-1.22 ceil
+-> stack should be -1
+erase
+
 default
