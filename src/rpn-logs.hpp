@@ -5,7 +5,7 @@ void rpn_e(void)
     CHECK_MPFR(mpfr_exp(euler->_value.mpfr, euler->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
-void rpn_log()
+void rpn_log10()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -29,7 +29,7 @@ void rpn_log()
         CHECK_MPFR(mpfr_log10(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
-void rpn_alog()
+void rpn_alog10()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
