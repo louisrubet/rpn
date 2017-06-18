@@ -6,7 +6,7 @@ It can be generated following the steps below
 
 ## version identification
 
-rpn v2.1 is statically linked against
+rpn v2.2 is statically linked against
 - GNU MP v6.1.2
 - GNU MPFR v3.1.5
 - linenoise-ng v1.0.1
