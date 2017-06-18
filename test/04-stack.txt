@@ -35,7 +35,7 @@ erase
 erase
 
 # drop2
-3
+1 2 3
 drop2
 -> stack size should be 1
 -> stack should be 1
@@ -95,7 +95,7 @@ erase
 depth
 -> stack size should be 4
 -> stack should be 1, 2, 3, 3
->erase
+erase
 
 # test pick
 1 2 3 4 2 pick
