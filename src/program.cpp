@@ -56,6 +56,10 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "fact", &program::fact, "n! for integer n or Gamma(x+1) for fractional x" },
     { cmd_keyword, "mant", &program::mant, "mantissa of a real number" },
     { cmd_keyword, "xpon", &program::xpon, "exponant of a real number" },
+    { cmd_keyword, "floor", &program::rpn_floor, "largest number <=" },
+    { cmd_keyword, "ceil", &program::rpn_ceil, "smallest number >=" },
+    { cmd_keyword, "ip", &program::rpn_ip, "integer part" },
+    { cmd_keyword, "fp", &program::rpn_fp, "fractional part" },
     { cmd_keyword, "min", &program::rpn_min, "min of 2 real numbers" },
     { cmd_keyword, "max", &program::rpn_max, "max of 2 real numbers" },
 

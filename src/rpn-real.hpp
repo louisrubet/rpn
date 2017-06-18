@@ -550,6 +550,46 @@ void xpon()
         ERR_CONTEXT(ret_out_of_range);
 }
 
+void rpn_floor()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_floor(left->_value.mpfr, left->_value.mpfr));
+}
+
+void rpn_ceil()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_ceil(left->_value.mpfr, left->_value.mpfr));
+}
+
+void rpn_fp()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_frac(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+}
+
+void rpn_ip()
+{
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+
+    number* left = (number*)_stack->back();
+
+    CHECK_MPFR(mpfr_trunc(left->_value.mpfr, left->_value.mpfr));
+}
+
 void rpn_min()
 {
     MIN_ARGUMENTS(2);
