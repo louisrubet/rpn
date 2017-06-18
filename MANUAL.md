@@ -239,8 +239,8 @@ rpn>
 |acos|	arg cosinus
 |tan|	tangent
 |atan|	arg tangent
-|d|->r	convert degrees to radians
-|r|->d	convert radians to degrees
+|d->r|	convert degrees to radians
+|r->d|	convert radians to degrees
 
 ### logs
 
