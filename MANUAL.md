@@ -247,12 +247,12 @@ rpn>
 |keyword|description|
 |-|-|
 |e|	exp(1) constant
-|log|	logarithm base 10
-|alog|	(or exp10) exponential base 10
-|log2|	logarithm base 2
-|alog2|	(or exp2) exponential base 2
 |ln|	logarithm base e
 |exp|	exponential
+|log10|	logarithm base 10
+|alog10| (or exp10) exponential base 10
+|log2|	logarithm base 2
+|alog2|	(or exp2) exponential base 2
 |sinh|	hyperbolic sine
 |asinh|	inverse hyperbolic sine
 |cosh|	hyperbolic cosine
