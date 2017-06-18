@@ -8,18 +8,18 @@ void plus()
         unsigned int left_str_size = ((ostring*)_stack->get_obj(1))->_len;
         unsigned int right_str_size = ((ostring*)_stack->get_obj(0))->_len;
 
-        stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         (void)_stack->pop_back();
         (void)_stack->pop_back();
 
         ostring* str = (ostring*)_stack->allocate_back(left_str_size+right_str_size+1+sizeof(ostring), cmd_string);
         str->_len = left_str_size+right_str_size;
 
-        strncpy(str->_value, ((ostring*)_branch_stack.get_obj(1))->_value, left_str_size);
-        strncat(str->_value, ((ostring*)_branch_stack.get_obj(0))->_value, right_str_size);
-        _branch_stack.pop_back();
-        _branch_stack.pop_back();
+        strncpy(str->_value, ((ostring*)_calc_stack.get_obj(1))->_value, left_str_size);
+        strncat(str->_value, ((ostring*)_calc_stack.get_obj(0))->_value, right_str_size);
+        _calc_stack.pop_back();
+        _calc_stack.pop_back();
     }
     // adding numbers
     else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number)
@@ -110,8 +110,8 @@ void mul()
         complex* right = (complex*)_stack->pop_back();//x+iy
         complex* left = (complex*)_stack->back();//a+ib
 
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-        complex* left_sav = (complex*)_branch_stack.back();//a+ib
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+        complex* left_sav = (complex*)_calc_stack.back();//a+ib
 
         // left: (a+ib)->(ax+iay)
         CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
@@ -126,7 +126,7 @@ void mul()
         CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_add(left->im()->mpfr, left->im()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
 
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
     }
     // multiplying complex*number
     else if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_complex)
@@ -155,17 +155,17 @@ void do_divide_complexes()
     complex* right = (complex*)_stack->get_obj(0);//x+iy
     complex* left = (complex*)_stack->get_obj(1);//a+ib
     
-    //1. calc (x^2-y^2) in _branch_stack
-    number* ex = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+    //1. calc (x^2-y^2) in _calc_stack
+    number* ex = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
     CHECK_MPFR(mpfr_mul(ex->_value.mpfr, right->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));//x2
-    number* wy = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+    number* wy = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
     CHECK_MPFR(mpfr_mul(wy->_value.mpfr, right->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));//y2
     CHECK_MPFR(mpfr_add(ex->_value.mpfr, ex->_value.mpfr, wy->_value.mpfr, floating_t::s_mpfr_rnd));//ex=x2+y2
 
-    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);//x+iy
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    complex* left_sav = (complex*)_branch_stack.get_obj(1);//a+ib
-    complex* right_sav = (complex*)_branch_stack.get_obj(0);//x+iy
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);//x+iy
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    complex* left_sav = (complex*)_calc_stack.get_obj(1);//a+ib
+    complex* right_sav = (complex*)_calc_stack.get_obj(0);//x+iy
 
     //2. left.re=ax+by
     CHECK_MPFR(mpfr_mul(left->re()->mpfr, left_sav->re()->mpfr, right_sav->re()->mpfr, floating_t::s_mpfr_rnd));//left.re=ax
@@ -182,10 +182,10 @@ void do_divide_complexes()
     CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, ex->_value.mpfr, floating_t::s_mpfr_rnd));
 
     _stack->pop_back();
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
 }
 
 void div()
@@ -214,19 +214,19 @@ void div()
     else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
     {
         //1. copy out
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);//complex
-        stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);//number
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);//complex
+        stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);//number
         _stack->pop_back();
         _stack->pop_back();
         //2. copy back (2 complexes on stack)
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-2, *_stack);//complex back to stack
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-2, *_stack);//complex back to stack
+        stack::copy_and_push_back(_calc_stack, _calc_stack.size()-2, *_stack);//complex back to stack
+        stack::copy_and_push_back(_calc_stack, _calc_stack.size()-2, *_stack);//complex back to stack
         //3. set complex level 2 to (number,0)
         complex* new_cplx = (complex*)_stack->get_obj(1);
-        CHECK_MPFR(mpfr_set(new_cplx->re()->mpfr, ((number*)_branch_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_set(new_cplx->re()->mpfr, ((number*)_calc_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_set_ui(new_cplx->im()->mpfr, 0UL, floating_t::s_mpfr_rnd));
-        _branch_stack.pop_back();
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
+        _calc_stack.pop_back();
         //4. divide
         do_divide_complexes();
     }
@@ -319,7 +319,7 @@ void power()
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
         //power on tmp stack
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         _stack->pop_back();
 
         //switch complex to polar
@@ -327,7 +327,7 @@ void power()
         r2p();
 
         //new abs=abs^exponent
-        number* exponent = (number*)_branch_stack.back();
+        number* exponent = (number*)_calc_stack.back();
         CHECK_MPFR(mpfr_pow(cplx->re()->mpfr, cplx->re()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
 
         //new arg=arg*exponent
@@ -335,7 +335,7 @@ void power()
 
         //back to cartesian
         p2r();
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -401,11 +401,11 @@ void rpn_abs()
     else if (_stack->get_type(0) == cmd_complex)
     {
         //1. copy out -> calc x2+iy2
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
         _stack->pop_back();
 
         //2. calc x2+iy2
-        complex* cplx = (complex*)_branch_stack.back();
+        complex* cplx = (complex*)_calc_stack.back();
         CHECK_MPFR(mpfr_mul(cplx->re()->mpfr, cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
 
@@ -418,7 +418,7 @@ void rpn_abs()
         CHECK_MPFR(mpfr_add(module->_value.mpfr, module->_value.mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_sqrt(module->_value.mpfr, module->_value.mpfr, floating_t::s_mpfr_rnd));
 
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -489,8 +489,8 @@ void mant()
         {
             mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd);
 
-            number* one = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
-            number* ten = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+            number* one = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
+            number* ten = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
             ten->_value = 10L;
 
             one->_value = 1L;
@@ -501,8 +501,8 @@ void mant()
             while (mpfr_less_p(left->_value.mpfr, one->_value.mpfr))
                 mpfr_mul(left->_value.mpfr, left->_value.mpfr, ten->_value.mpfr, floating_t::s_mpfr_rnd);
 
-            _branch_stack.pop_back();
-            _branch_stack.pop_back();
+            _calc_stack.pop_back();
+            _calc_stack.pop_back();
         }
     }
     else
@@ -525,8 +525,8 @@ void xpon()
             double exponant = 0.0;
             mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd);
 
-            number* one = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
-            number* ten = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+            number* one = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
+            number* ten = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
             ten->_value = 10L;
 
             one->_value = 1L;
@@ -545,8 +545,8 @@ void xpon()
 
             left->_value = exponant;
 
-            _branch_stack.pop_back();
-            _branch_stack.pop_back();
+            _calc_stack.pop_back();
+            _calc_stack.pop_back();
         }
     }
     else

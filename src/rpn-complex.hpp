@@ -3,12 +3,12 @@ void re()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
     
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
     _stack->pop_back();
 
     number* re = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    CHECK_MPFR(mpfr_set(re->_value.mpfr, ((complex*)_branch_stack.get_obj(0))->re()->mpfr, floating_t::s_mpfr_rnd));
-    _branch_stack.pop_back();
+    CHECK_MPFR(mpfr_set(re->_value.mpfr, ((complex*)_calc_stack.get_obj(0))->re()->mpfr, floating_t::s_mpfr_rnd));
+    _calc_stack.pop_back();
 }
 
 void im()
@@ -16,12 +16,12 @@ void im()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
     
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
     _stack->pop_back();
 
     number* im = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_branch_stack.get_obj(0))->im()->mpfr, floating_t::s_mpfr_rnd));
-    _branch_stack.pop_back();
+    CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_calc_stack.get_obj(0))->im()->mpfr, floating_t::s_mpfr_rnd));
+    _calc_stack.pop_back();
 }
 
 void arg()
@@ -31,12 +31,12 @@ void arg()
 
     // calc atan2(x/y)
     complex* cplx = (complex*)_stack->pop_back();
-    number* num = (number*)_branch_stack.allocate_back(number::calc_size(), cmd_number);
+    number* num = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
 
     CHECK_MPFR(mpfr_atan2(num->_value.mpfr, cplx->im()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
 
-    stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-    _branch_stack.pop_back();
+    stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
+    _calc_stack.pop_back();
 }
 
 void conj()
@@ -54,16 +54,16 @@ void r2c()
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
     
-    stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack);
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
     _stack->pop_back();
     _stack->pop_back();
 
     complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
-    CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_branch_stack.get_obj(1))->_value.mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_branch_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
-    _branch_stack.pop_back();
-    _branch_stack.pop_back();
+    CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_calc_stack.get_obj(1))->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_calc_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
+    _calc_stack.pop_back();
+    _calc_stack.pop_back();
 }
 
 void c2r()
@@ -71,15 +71,15 @@ void c2r()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
 
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
     _stack->pop_back();
 
     number* re = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     number* im = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
 
-    CHECK_MPFR(mpfr_set(re->_value.mpfr, ((complex*)_branch_stack.back())->re()->mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_branch_stack.back())->im()->mpfr, floating_t::s_mpfr_rnd));
-    _branch_stack.pop_back();
+    CHECK_MPFR(mpfr_set(re->_value.mpfr, ((complex*)_calc_stack.back())->re()->mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_calc_stack.back())->im()->mpfr, floating_t::s_mpfr_rnd));
+    _calc_stack.pop_back();
 }
 
 void r2p()
@@ -107,12 +107,12 @@ void p2r()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
 
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    _branch_stack.allocate_back(number::calc_size(), cmd_number);
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    _calc_stack.allocate_back(number::calc_size(), cmd_number);
     
     // assert complex is polar
-    complex* rhotheta = (complex*)_branch_stack.get_obj(1);
-    number* tmp = (number*)_branch_stack.get_obj(0);
+    complex* rhotheta = (complex*)_calc_stack.get_obj(1);
+    number* tmp = (number*)_calc_stack.get_obj(0);
     complex* result = (complex*)_stack->back();
 
     //calc cos(theta)

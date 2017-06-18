@@ -88,12 +88,12 @@ void rpn_ift(void)
     
     if (!mpfr_zero_p(testee->_value.mpfr))
     {
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack));
+        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack));
         (void)_stack->pop_back();
         (void)_stack->pop_back();
 
-        CHECK_MPFR(stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack));
-        (void)_branch_stack.pop_back();
+        CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack));
+        (void)_calc_stack.pop_back();
     }
     else
     {
@@ -112,16 +112,16 @@ void rpn_ifte(void)
     number* testee = ((number*)_stack->get_obj(2));
 
     if (!mpfr_zero_p(testee->_value.mpfr))
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-2, _branch_stack));
+        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack));
     else
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack));
+        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack));
 
     (void)_stack->pop_back();
     (void)_stack->pop_back();
     (void)_stack->pop_back();
 
-    CHECK_MPFR(stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack));
-    (void)_branch_stack.pop_back();
+    CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack));
+    (void)_calc_stack.pop_back();
 }
 
 //
@@ -156,13 +156,13 @@ int rpn_start(branch& myobj)
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
     // farg2 = last value of start command
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    myobj.farg2 = (number*)_branch_stack.back();
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    myobj.farg2 = (number*)_calc_stack.back();
     _stack->pop_back();
 
     // farg1 = first value of start command
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    myobj.farg1 = (number*)_branch_stack.back();
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    myobj.farg1 = (number*)_calc_stack.back();
     _stack->pop_back();
 
     // test value
@@ -187,13 +187,13 @@ int rpn_for(branch& myobj)
 
     // farg2 = last value of for command
     // arg1 = index of symbol to increase
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    myobj.farg2 = (number*)_branch_stack.back();
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    myobj.farg2 = (number*)_calc_stack.back();
     _stack->pop_back();
 
     // farg1 = first value of for command
-    stack::copy_and_push_back(*_stack, _stack->size()-1, _branch_stack);
-    myobj.farg1 = (number*)_branch_stack.back();
+    stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+    myobj.farg1 = (number*)_calc_stack.back();
     _stack->pop_back();
 
     // test value
@@ -242,8 +242,8 @@ int rpn_next(branch& myobj)
     {
         // end of loop
         myobj.arg_bool = false;// init again next time
-        _branch_stack.pop_back();
-        _branch_stack.pop_back();
+        _calc_stack.pop_back();
+        _calc_stack.pop_back();
         return -1;
     }
     else
@@ -298,8 +298,8 @@ int rpn_step(branch& myobj)
         {
             // end of loop
             myobj.arg_bool = false;// init again next time
-            _branch_stack.pop_back();
-            _branch_stack.pop_back();
+            _calc_stack.pop_back();
+            _calc_stack.pop_back();
             ret = -1;
         }
         else

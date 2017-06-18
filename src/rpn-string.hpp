@@ -134,15 +134,15 @@ void strsub()
     if (!result_is_void)
     {
         unsigned int str_size = last - first + 1;
-        ostring* str = (ostring*)_branch_stack.allocate_back(str_size+1+sizeof(ostring), cmd_string);
+        ostring* str = (ostring*)_calc_stack.allocate_back(str_size+1+sizeof(ostring), cmd_string);
         str->_len = str_size;
         
-        memcpy(((ostring*)_branch_stack.back())->_value, ((ostring*)_stack->get_obj(0))->_value+first, str_size);
-        ((ostring*)_branch_stack.back())->_value[str_size] = 0;
+        memcpy(((ostring*)_calc_stack.back())->_value, ((ostring*)_stack->get_obj(0))->_value+first, str_size);
+        ((ostring*)_calc_stack.back())->_value[str_size] = 0;
         
         _stack->pop_back();
-        stack::copy_and_push_back(_branch_stack, _branch_stack.size()-1, *_stack);
-        _branch_stack.pop_back();
+        stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
+        _calc_stack.pop_back();
     }
     else
     {
