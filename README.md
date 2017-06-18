@@ -24,25 +24,23 @@ rpn> << -> x y << x y + ln >> >> 'P' sto
 ### and a bunch of functions
 ```
 rpn> 
-Display all 128 possibilities? (y or n)
-!=       ->       >        acosh    atan     cosh     drop     e        exit     for      ifte     max      not      pos      r->d     rot      sinh     sqrt     sto+     tan      unti     xor      
-%        ->str    >=       alog     atanh    d->r     drop2    edit     exp      h        inv      min      num      pow      rcl      round    sinv     start    sto-     tanh     until    xpon     
-%CH      /        ?        alog2    chr      dec      dropn    else     exp10    help     ln       mod      or       prec     repea    same     size     std      sto/     test     vars     
-*        <        ^        and      chs      default  dup      end      exp2     hex      log      neg      over     purge    repeat   sci      sneg     step     str->    then     version  
-+        <=       abs      asin     clusr    depth    dup2     erase    fact     if       log2     next     pi       q        roll     sign     sq       sto      sub      type     whil     
--        ==       acos     asinh    cos      do       dupn     eval     fix      ift      mant     nop      pick     quit     rolld    sin      sqr      sto*     swap     uname    while    
-rpn> 
+Display all 140 possibilities? (y or n)
+nop      test     sci      inv      dec      mod      fp       c->r     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       exp2
+?        version  +        ^        hex      fact     min      r->c     !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     exp      sinh
+h        uname    -        pow      prec     mant     max      p->r     ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      log10    asinh
+help     type     chs      sqrt     round    xpon     re       r->p     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     alog10   cosh
+q        default  neg      sq       sign     floor    im       >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     exp10    acosh
+quit     std      *        sqr      %        ceil     conj     >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     log2     tanh
+exit     fix      /        abs      %CH      ip       arg      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        alog2    atanh
 ```
+
+## Download
+
+deb, rpm and tgz files can be found [there](https://github.com/louisrubet/rpn/releases)
 
 ## Manual
 
 A reference manual is provided [here](MANUAL.md)
-
-## Download
-
-The delivery directory is [there](https://github.com/louisrubet/rpn/releases)
-
-deb, rpm and tgz files of all rpn versions can be found there
 
 ## Generation
 
