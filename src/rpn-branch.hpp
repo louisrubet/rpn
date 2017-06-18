@@ -89,17 +89,13 @@ void rpn_ift(void)
     if (!mpfr_zero_p(testee->_value.mpfr))
     {
         CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack));
-        (void)_stack->pop_back();
-        (void)_stack->pop_back();
+        (void)_stack->pop_back(2);
 
         CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack));
         (void)_calc_stack.pop_back();
     }
     else
-    {
-        (void)_stack->pop_back();
-        (void)_stack->pop_back();
-    }
+        (void)_stack->pop_back(2);
 }
 
 void rpn_ifte(void)
@@ -116,9 +112,7 @@ void rpn_ifte(void)
     else
         CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack));
 
-    (void)_stack->pop_back();
-    (void)_stack->pop_back();
-    (void)_stack->pop_back();
+    (void)_stack->pop_back(3);
 
     CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack));
     (void)_calc_stack.pop_back();
@@ -242,8 +236,7 @@ int rpn_next(branch& myobj)
     {
         // end of loop
         myobj.arg_bool = false;// init again next time
-        _calc_stack.pop_back();
-        _calc_stack.pop_back();
+        _calc_stack.pop_back(2);
         return -1;
     }
     else
@@ -298,8 +291,7 @@ int rpn_step(branch& myobj)
         {
             // end of loop
             myobj.arg_bool = false;// init again next time
-            _calc_stack.pop_back();
-            _calc_stack.pop_back();
+            _calc_stack.pop_back(2);
             ret = -1;
         }
         else

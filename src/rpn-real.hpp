@@ -182,10 +182,7 @@ void do_divide_complexes()
     CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, ex->_value.mpfr, floating_t::s_mpfr_rnd));
 
     _stack->pop_back();
-    _calc_stack.pop_back();
-    _calc_stack.pop_back();
-    _calc_stack.pop_back();
-    _calc_stack.pop_back();
+    _calc_stack.pop_back(4);
 }
 
 void div()
@@ -216,17 +213,18 @@ void div()
         //1. copy out
         stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);//complex
         stack::copy_and_push_back(*_stack, _stack->size()-2, _calc_stack);//number
-        _stack->pop_back();
-        _stack->pop_back();
+        _stack->pop_back(2);
+
         //2. copy back (2 complexes on stack)
         stack::copy_and_push_back(_calc_stack, _calc_stack.size()-2, *_stack);//complex back to stack
         stack::copy_and_push_back(_calc_stack, _calc_stack.size()-2, *_stack);//complex back to stack
+
         //3. set complex level 2 to (number,0)
         complex* new_cplx = (complex*)_stack->get_obj(1);
         CHECK_MPFR(mpfr_set(new_cplx->re()->mpfr, ((number*)_calc_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_set_ui(new_cplx->im()->mpfr, 0UL, floating_t::s_mpfr_rnd));
-        _calc_stack.pop_back();
-        _calc_stack.pop_back();
+        _calc_stack.pop_back(2);
+
         //4. divide
         do_divide_complexes();
     }
@@ -501,8 +499,7 @@ void mant()
             while (mpfr_less_p(left->_value.mpfr, one->_value.mpfr))
                 mpfr_mul(left->_value.mpfr, left->_value.mpfr, ten->_value.mpfr, floating_t::s_mpfr_rnd);
 
-            _calc_stack.pop_back();
-            _calc_stack.pop_back();
+            _calc_stack.pop_back(2);
         }
     }
     else
