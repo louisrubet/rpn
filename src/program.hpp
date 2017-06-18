@@ -1,9 +1,9 @@
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
+// std c
 #include <stdlib.h>
 #include <stdint.h>
-#include <mpfr.h>
 #include <sys/mman.h>
 
 extern "C" {
@@ -11,6 +11,7 @@ extern "C" {
 #include <readline/history.h>
 }
 
+// std c++
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -18,8 +19,11 @@ extern "C" {
 #include <fstream>
 using namespace std;
 
+// external libs
+#include <mpfr.h>
 #include "linenoise.h"
 
+// internal includes
 #include "constant.h"
 #include "escape.h"
 #include "version.h"
@@ -43,7 +47,7 @@ struct if_layout_t
 class program : public stack
 {
 public:
-    program(program* parent_prog = NULL) { _parent_prog = parent_prog; }
+    program(program* parent_prog = NULL) { _parent_prog = parent_prog; interrupt_now = false; }
 
     // run this program
     ret_value run(stack& stk, heap& hp)
@@ -67,7 +71,7 @@ public:
             return ret;
 
         // iterate commands
-        for(int i = 0; (go_out==false) && (i<(int)size());)
+        for(int i = 0; (go_out==false) && (interrupt_now==false) && (i<(int)size());)
         {
             type = (cmd_type_t)seq_type(i);
 
@@ -139,8 +143,19 @@ public:
                 i++;
             }
         }
+        
+        if (interrupt_now)
+        {
+            fprintf(stderr, "\nInterrupted\n");
+            interrupt_now = false;
+        }
 
         return ret;
+    }
+    
+    void stop()
+    {
+        interrupt_now = true;
     }
 
     bool compare_keyword(keyword* k, const char* str_to_compare, int len)
@@ -523,6 +538,9 @@ public:
     }
 
 private:
+    
+    bool interrupt_now;
+    
     // current error and its context
     ret_value _err;
     string _err_context;
