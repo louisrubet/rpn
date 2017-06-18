@@ -39,17 +39,24 @@ static ret_value entry(program& prog)
 
     // get user entry
     entry = linenoise(PROMPT);
-    if (entry != NULL)
-    {
-        // parse it
-        ret = parse(entry, prog);
 
-        // keep history
-        if (entry[0] != 0)
-            linenoiseHistoryAdd(entry);
-    }
+    // Ctrl-C
+    if (linenoiseKeyType() == 1)
+        ret = ret_good_bye;
     else
-        ret = ret_internal;
+    {
+        if (entry != NULL)
+        {
+            // parse it
+            ret = parse(entry, prog);
+
+            // keep history
+            if (entry[0] != 0)
+                linenoiseHistoryAdd(entry);
+        }
+        else
+            ret = ret_internal;
+    }
 
     free(entry);
 
