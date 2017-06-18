@@ -54,13 +54,13 @@ erase
 
 # prec (1)
 default
-2 prec pi
--> stack should be 3
+56 prec pi
+-> stack should be 3.1415926535897932825
 erase
 
 # prec (2)
-10 prec pi
--> stack should be 3.140625
+100 prec pi
+-> stack should be 3.1415926535897932385
 erase
 
 # prec error (1)
