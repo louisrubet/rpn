@@ -45,8 +45,9 @@ rpn>
 
 ### Objects
 
-Following objects are managed: **floating numbers**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
+Following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
 ```
+5> (1,-2.33)
 4> 'symbol'
 3> "string"
 2> 12.3456
