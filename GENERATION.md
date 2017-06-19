@@ -59,8 +59,6 @@ rpn v2.2 is statically linked against
 	
 	CMake must be installed on the generation machine
     
-    To build RPM package you should install CMake 2.6.0 or higher
-	
 	```
 	# cd rpn/
 	# mkdir build
@@ -74,19 +72,20 @@ rpn v2.2 is statically linked against
 	```
 
 - packages
-    - DEB
+
+    To build RPM package you should install CMake 2.6.0 or higher
+
 	```
     # cd rpn/build
 	# make package
-	```
-    - RPM
-    rpmbuild must be installed
-	```
-    # cd rpn/build
-    # cpack -G RPM
-	```
-    - TGZ
-	```
-    # cd rpn/build
-    # cpack -G TGZ
-	```
+    [100%] Built target rpn
+    Run CPack packaging tool...
+    CPack: Create package using DEB
+    (...)
+    CPack: Create package using RPM
+    (...)
+    CPack: Create package using TGZ
+    (...)
+    # ls rpn*
+    rpn  rpn-2.1-amd64.deb  rpn-2.1-amd64.rpm  rpn-2.1-amd64.tar.gz
+    ```
