@@ -1,4 +1,4 @@
-# **rpn** - generation
+# **rpn v2.2** - generation
 
 For now rpn is proposed only for **GNU/Linux**
 

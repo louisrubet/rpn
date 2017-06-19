@@ -274,20 +274,22 @@ Default rounding mode is 'nearest'
 
 ## Tests
 
-Unit tests are given as txt files in the test subdirectory.
+Unit tests are given as txt files in the [test](https://github.com/louisrubet/rpn/tree/master/test) subdirectory.
 
-Use the command 'test' to run a test file, eg
+Use the command 'test' to run a test files, eg
 ```
-# cd src_directory/
+# cd <test_directory>/
 # rpn
-rpn> "test/01-all.txt"
+rpn> "all.txt"
 rpn> test
-## ENTRY TEST
+rpn> test
+
+01-mode.txt: MODE
+# std (1) PASSED
+# std (2) PASSED
+# std (3) PASSED
 (...)
-# real decimal PASSED
-# real hex PASSED
-# real binary PASSED
-(...)
+Total: run 386 tests: 386 passed, 0 failed (495 steps: 495 passed, 0 failed)
 ```
 
 Test output is done on stdout and is not stacked in rpn.
