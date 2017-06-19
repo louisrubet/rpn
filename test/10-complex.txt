@@ -193,38 +193,52 @@ erase
 erase
 
 # arg (2)
+1000 prec
 (-1,1) arg pi 3 * 4 / ==
 -> stack should be 1
+default
 erase
 
 # arg (3)
-(1,-1) arg -45 d->r ==
+1000 prec
+(1,-1) arg pi chs 4 / ==
 -> stack should be 1
+default
 erase
 
 # arg (4)
+1000 prec
 (-1,-1) arg pi -3 * 4 / ==
 -> stack should be 1
+default
 erase
 
 # arg (5)
+1000 prec
 (1,0) arg 0 ==
 -> stack should be 1
+default
 erase
 
 # arg (6)
+1000 prec
 (0,1) arg pi 2 / ==
 -> stack should be 1
+default
 erase
 
 # arg (7)
+1000 prec
 (-1,0) arg pi ==
 -> stack should be 1
+default
 erase
 
 # arg (8)
+1000 prec
 (0,-1) arg pi neg 2 / ==
 -> stack should be 1
+default
 erase
 
 # conj
