@@ -8,25 +8,19 @@ void rpn_e(void)
 void rpn_log10()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
+    if (_stack->get_type(0) == cmd_number || _stack->get_type(0) == cmd_complex)
+    {       
+        //log10(z)=ln(z)/ln(10)
+        rpn_ln();
 
-    // x<0 -> log10(x) = log10(-x)+i*pi
-    if (mpfr_cmp_si(left->_value.mpfr, 0) < 0)
-    {
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
-        _stack->pop_back();
-        left = (number*)_calc_stack.back();
-
-        complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
-        CHECK_MPFR(mpfr_neg(cplx->re()->mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_log10(cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_const_pi(cplx->im()->mpfr, floating_t::s_mpfr_rnd));
-        _calc_stack.pop_back();
+        number* ten = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(ten->_value.mpfr, 10.0, floating_t::s_mpfr_rnd));
+        rpn_ln();
+        div();
     }
     else
-        CHECK_MPFR(mpfr_log10(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rpn_alog10()
@@ -41,25 +35,19 @@ void rpn_alog10()
 void rpn_log2()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    number* left = (number*)_stack->back();
-
-    // x<0 -> log2(x) = log2(-x)+i*pi
-    if (mpfr_cmp_si(left->_value.mpfr, 0) < 0)
+    if (_stack->get_type(0) == cmd_number || _stack->get_type(0) == cmd_complex)
     {
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
-        _stack->pop_back();
-        left = (number*)_calc_stack.back();
+        //log2(z)=ln(z)/ln(2)
+        rpn_ln();
 
-        complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
-        CHECK_MPFR(mpfr_neg(cplx->re()->mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_log2(cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_const_pi(cplx->im()->mpfr, floating_t::s_mpfr_rnd));
-        _calc_stack.pop_back();
+        number* two = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(two->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
+        rpn_ln();
+        div();
     }
     else
-        CHECK_MPFR(mpfr_log2(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rpn_alog2()
@@ -74,25 +62,52 @@ void rpn_alog2()
 void rpn_ln()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    
+    if (_stack->get_type(0) == cmd_number)
+    {       
+        number* left = (number*)_stack->back();
 
-    number* left = (number*)_stack->back();
+        // x<0 -> ln(x) = ln(-x)+i*pi
+        if (mpfr_cmp_si(left->_value.mpfr, 0) < 0)
+        {
+            stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+            _stack->pop_back();
+            left = (number*)_calc_stack.back();
 
-    // x<0 -> ln(x) = ln(-x)+i*pi
-    if (mpfr_cmp_si(left->_value.mpfr, 0) < 0)
+            complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
+            CHECK_MPFR(mpfr_neg(cplx->re()->mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+            CHECK_MPFR(mpfr_log(cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
+            CHECK_MPFR(mpfr_const_pi(cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+            _calc_stack.pop_back();
+        }
+        else
+            CHECK_MPFR(mpfr_log(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
     {
+        // ln(x+iy) = 0.5*ln(x*x+y*y) + i atan(x/y)
         stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
-        _stack->pop_back();
-        left = (number*)_calc_stack.back();
 
-        complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
-        CHECK_MPFR(mpfr_neg(cplx->re()->mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_log(cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_const_pi(cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+        floating_t* x = ((complex*)_calc_stack.get_obj(0))->re();
+        floating_t* y = ((complex*)_calc_stack.get_obj(0))->im();
+
+        floating_t* re = ((complex*)_stack->get_obj(0))->re();
+        floating_t* im = ((complex*)_stack->get_obj(0))->im();
+
+        // 1. atan(x/y)
+        CHECK_MPFR(mpfr_atan2(im->mpfr, y->mpfr, x->mpfr, floating_t::s_mpfr_rnd));
+
+        // 2. 0.5*ln(x*x+y*y)
+        CHECK_MPFR(mpfr_mul(x->mpfr, x->mpfr, x->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(y->mpfr, y->mpfr, y->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_add(re->mpfr, x->mpfr, y->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_log(re->mpfr, re->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul_d(re->mpfr, re->mpfr, 0.5, floating_t::s_mpfr_rnd));
+        
         _calc_stack.pop_back();
     }
     else
-        CHECK_MPFR(mpfr_log(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rpn_exp()
