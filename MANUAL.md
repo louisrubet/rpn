@@ -252,7 +252,7 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |keyword|description|
 |-|-|
 |e|	exp(1) constant
-|ln|	logarithm base e
+|ln| (or log) logarithm base e
 |exp|	exponential
 |log10|	logarithm base 10
 |alog10| (or exp10) exponential base 10
