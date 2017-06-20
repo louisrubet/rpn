@@ -26,10 +26,16 @@ void rpn_log10()
 void rpn_alog10()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_exp10(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number || _stack->get_type(0) == cmd_complex)
+    {       
+        floating_t* left = &((number*)_stack->get_obj(0))->_value;
+        number* ten = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(ten->_value.mpfr, 10.0, floating_t::s_mpfr_rnd));
+        rpn_ln();
+        mul();
+        rpn_exp();
+    }
 }
 
 void rpn_log2()
@@ -53,10 +59,16 @@ void rpn_log2()
 void rpn_alog2()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_exp2(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number || _stack->get_type(0) == cmd_complex)
+    {       
+        floating_t* left = &((number*)_stack->get_obj(0))->_value;
+        number* two = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(two->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
+        rpn_ln();
+        mul();
+        rpn_exp();
+    }
 }
 
 void rpn_ln()
@@ -113,10 +125,33 @@ void rpn_ln()
 void rpn_exp()
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    
+    if (_stack->get_type(0) == cmd_number)
+    {       
+        floating_t* left = &((number*)_stack->get_obj(0))->_value;
+        CHECK_MPFR(mpfr_exp(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        // exp(x)*(cos(y)+i sin(y))
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
 
-    floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_exp(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+        floating_t* x = ((complex*)_calc_stack.get_obj(0))->re();
+        floating_t* y = ((complex*)_calc_stack.get_obj(0))->im();
+
+        floating_t* re = ((complex*)_stack->get_obj(0))->re();
+        floating_t* im = ((complex*)_stack->get_obj(0))->im();
+
+        CHECK_MPFR(mpfr_cos(re->mpfr, y->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_sin(im->mpfr, y->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_exp(x->mpfr, x->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(re->mpfr, re->mpfr, x->mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_mul(im->mpfr, im->mpfr, x->mpfr, floating_t::s_mpfr_rnd));
+
+        _calc_stack.pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);    
 }
 
 void rpn_sinh()
