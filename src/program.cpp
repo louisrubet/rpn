@@ -169,7 +169,8 @@ program::keyword_t program::s_keywords[] =
     //LOGS
     { cmd_undef, "", NULL, "\nLOGS"},
     { cmd_keyword, "e", &program::rpn_e, "exp(1) constant" },
-    { cmd_keyword, "ln", &program::rpn_ln, "logarithm base e" },
+    { cmd_keyword, "ln", &program::rpn_ln, "(or log) logarithm base e" },
+    { cmd_keyword, "log", &program::rpn_ln, "" },
     { cmd_keyword, "exp", &program::rpn_exp, "exponential" },
     { cmd_keyword, "log10", &program::rpn_log10, "logarithm base 10" },
     { cmd_keyword, "alog10", &program::rpn_alog10, "(or exp10) exponential base 10" },
