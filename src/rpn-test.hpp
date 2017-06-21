@@ -126,6 +126,22 @@ void diff(void)
         else
             mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
     }
+    // complexes
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
+    {
+        bool diff = false;
+        complex* right =  (complex*)_stack->pop_back();
+        complex* left = (complex*)_stack->pop_back();
+
+        if (mpfr_cmp(left->re()->mpfr, right->re()->mpfr) != 0 || mpfr_cmp(left->im()->mpfr, right->im()->mpfr) != 0)
+            diff = true;
+
+        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        if (diff)
+            mpfr_set_si(num->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        else
+            mpfr_set_si(num->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+    }
     // strings
     else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string)
     {
@@ -151,6 +167,22 @@ void eq(void)
             mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
         else
             mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+    }
+    // complexes
+    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex)
+    {
+        bool diff = false;
+        complex* right =  (complex*)_stack->pop_back();
+        complex* left = (complex*)_stack->pop_back();
+
+        if (mpfr_cmp(left->re()->mpfr, right->re()->mpfr) != 0 || mpfr_cmp(left->im()->mpfr, right->im()->mpfr) != 0)
+            diff = true;
+
+        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        if (diff)
+            mpfr_set_si(num->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+        else
+            mpfr_set_si(num->_value.mpfr, 1, floating_t::s_mpfr_rnd);
     }
     // strings
     else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string)
