@@ -176,6 +176,48 @@ erase
 -> stack should be 1
 erase
 
+# complex !=
+(1,2) (3,4) !=
+-> stack should be 1
+erase
+(1,2) (1,0) !=
+-> stack should be 1
+erase
+(1,2) (0,2) !=
+-> stack should be 1
+erase
+(1,2) (1,2) !=
+-> stack should be 0
+erase
+
+# complex ==
+(1,2) (3,4) ==
+-> stack should be 0
+erase
+(1,2) (1,0) ==
+-> stack should be 0
+erase
+(1,2) (0,2) ==
+-> stack should be 0
+erase
+(1,2) (1,2) ==
+-> stack should be 1
+erase
+
+# complex same
+(1,2) (3,4) same
+-> stack should be 0
+erase
+(1,2) (1,0) same
+-> stack should be 0
+erase
+(1,2) (0,2) same
+-> stack should be 0
+erase
+(1,2) (1,2) same
+-> stack should be 1
+erase
+
 # string >
 "a" "b" >
 -> stack should be 0
