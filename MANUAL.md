@@ -82,10 +82,8 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |quit |		(or q or exit) quit software
 |version |	show rpn version
 |uname |	show rpn complete identification string
-|type |		show type of stack first entry
-|default |	set float representation and precision to default
 
-### real and complex
+### usual operations - real and complex
 
 |keyword|description|
 |-|-|
@@ -101,16 +99,14 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |abs|	absolute value for a number or sqrt(re*re+im*im) for a complex
 |dec|	decimal representation
 |hex|	hexadecimal representation
-|prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
-|round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
 |sign|	sign of a real, unary vector in the same direction for a complex
 
-### real
+### operations on reals
 
 |keyword|description|
 |-|-|
 |%|		purcent
-|%|CH	inverse purcent
+|%CH|	inverse purcent
 |mod|	modulo
 |fact|	n! for integer n or Gamma(x+1) for fractional x
 |mant|	mantissa of a real number
@@ -122,7 +118,7 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |min|	min of 2 real numbers
 |max|	max of 2 real numbers
 
-### complex
+### operations on complexes
 
 |keyword|description|
 |-|-|
@@ -142,6 +138,10 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |std|	standard floating numbers representation. ex: [25] std
 |fix|	fixed point representation. ex: 6 fix
 |sci|	scientific floating point representation. ex: 20 sci
+|prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
+|round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
+|default |	set float representation and precision to default
+|type |		show type of stack first entry
 
 ### test
 
@@ -233,7 +233,7 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |eval|	evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
 |->|	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
 
-### trig
+### trig on reals and complexes
 
 |keyword|description|
 |-|-|
@@ -247,7 +247,7 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 |d->r|	convert degrees to radians
 |r->d|	convert radians to degrees
 
-### logs
+### logs on reals and complexes
 
 |keyword|description|
 |-|-|

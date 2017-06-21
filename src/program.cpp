@@ -18,17 +18,9 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "test", &program::test, "" }, //not seen by user
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
-    { cmd_keyword, "type", &program::type, "show type of stack first entry" },
-    { cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default" },
 
-    //MODE
-    { cmd_undef, "", NULL, "\nMODE"},
-    { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
-    { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
-    { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
-
-    //REAL AND COMPLEX
-    { cmd_undef, "", NULL, "\nREAL AND COMPLEX"},
+    //USUAL OPERATIONS ON REALS AND COMPLEXEXE
+    { cmd_undef, "", NULL, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
     { cmd_keyword, "+", &program::plus, "addition" },
     { cmd_keyword, "-", &program::minus, "substraction" },
     { cmd_keyword, "chs", &program::neg , "(or neg) negation" },
@@ -44,12 +36,10 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "abs", &program::rpn_abs, "absolute value" },
     { cmd_keyword, "dec", &program::dec, "decimal representation" },
     { cmd_keyword, "hex", &program::hex, "hexadecimal representation" },
-    { cmd_keyword, "prec", &program::precision, "get float precision in bits when first stack is not a number\n\t"
-                                                "set float precision in bits when first stack entry is a number. ex: 256 prec" },
-    { cmd_keyword, "round", &program::round, "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward +inf\", \"toward -inf\", \"away from zero\"] round" },
     { cmd_keyword, "sign", &program::sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0" },
 
-    //REAL
+    //OPERATIONS ON REALS
+    { cmd_undef, "", NULL, "\nOPERATIONS ON REALS"},
     { cmd_keyword, "%", &program::purcent, "purcent" },
     { cmd_keyword, "%CH", &program::purcentCH, "inverse purcent" },
     { cmd_keyword, "mod", &program::modulo, "modulo" },
@@ -63,7 +53,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "min", &program::rpn_min, "min of 2 real numbers" },
     { cmd_keyword, "max", &program::rpn_max, "max of 2 real numbers" },
 
-    //COMPLEX
+    //nOPERATIONS ON COMPLEXES
+    { cmd_undef, "", NULL, "\nOPERATIONS ON COMPLEXES"},
     { cmd_keyword, "re", &program::re, "complex real part" },
     { cmd_keyword, "im", &program::im, "complex imaginary part" },
     { cmd_keyword, "conj", &program::conj, "complex conjugate" },
@@ -73,7 +64,18 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "p->r", &program::p2r, "cartesian to polar" },
     { cmd_keyword, "r->p", &program::r2p, "polar to cartesian" },
 
-    //TEST
+    //MODE
+    { cmd_undef, "", NULL, "\nMODE"},
+    { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
+    { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
+    { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
+    { cmd_keyword, "prec", &program::precision, "get float precision in bits when first stack is not a number\n\t"
+                                                "set float precision in bits when first stack entry is a number. ex: 256 prec" },
+    { cmd_keyword, "round", &program::round, "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward +inf\", \"toward -inf\", \"away from zero\"] round" },
+    { cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default" },
+    { cmd_keyword, "type", &program::type, "show type of stack first entry" },
+
+    //TESTS
     { cmd_undef, "", NULL, "\nTEST"},
     { cmd_keyword, ">", &program::sup, "binary operator >" },
     { cmd_keyword, ">=", &program::sup_eq, "binary operator >=" },
@@ -154,8 +156,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "eval", &program::eval, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval" },
     { cmd_branch, "->", (program_fn_t)&program::inprog, "load program local variables. ex: << -> n m << 0 n m for i i + next >> >>" },
 
-    //TRIG
-    { cmd_undef, "", NULL, "\nTRIG"},
+    //TRIG ON REALS AND COMPLEXES
+    { cmd_undef, "", NULL, "\nTRIG ON REALS AND COMPLEXES"},
     { cmd_keyword, "pi", &program::pi, "pi constant" },
     { cmd_keyword, "sin", &program::rpn_sin, "sinus" },
     { cmd_keyword, "asin", &program::rpn_asin, "arg sinus" },
@@ -166,8 +168,8 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "d->r", &program::d2r, "convert degrees to radians" },
     { cmd_keyword, "r->d", &program::r2d, "convert radians to degrees" },    
 
-    //LOGS
-    { cmd_undef, "", NULL, "\nLOGS"},
+    //LOGS ON REALS AND COMPLEXES
+    { cmd_undef, "", NULL, "\nLOGS ON REALS AND COMPLEXES"},
     { cmd_keyword, "e", &program::rpn_e, "exp(1) constant" },
     { cmd_keyword, "ln", &program::rpn_ln, "(or log) logarithm base e" },
     { cmd_keyword, "log", &program::rpn_ln, "" },
