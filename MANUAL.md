@@ -194,19 +194,19 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 
 |keyword|description|
 |-|-|
-|if| if <test-instruction> then <true-instructions> else <false-instructions> end
+|if| if (test-instruction) then (true-instructions) else (false-instructions) end
 |then| used with if
 |else| used with if
 |end| used with various branch instructions
-|ift|	similar to if-then-end, <test-instruction> <true-instruction> ift"
-|ifte|	similar to if-then-else-end, <test-instruction> <true-instruction> <false-instruction> ifte"
-|start| start> <end> start <instructions> next|<step> step
-|for| start> <end> for <variable> <instructions> next|<step> step
+|ift|	similar to if-then-end: (test-instruction) (true-instruction) ift"
+|ifte|	similar to if-then-else-end: (test-instruction) (true-instruction) (false-instruction) ifte"
+|start| (start) (end) start (instructions) next|(step) step
+|for| (start) (end) for (variable) (instructions) next|(step) step
 |next| used with start and for
 |step| used with start and for
-|do| do <instructions> until <condition> end
+|do| do (instructions) until (condition) end
 |until | (or unti) used with do
-|while| (or whil) while <test-instruction> repeat <loop-instructions> end
+|while| (or whil) while (test-instruction) repeat (loop-instructions) end
 |repeat| (or repea) used with while
 
 ### store
@@ -275,22 +275,49 @@ Default rounding mode is 'nearest'
 
 ## Tests
 
-Unit tests are given as txt files in the [test](https://github.com/louisrubet/rpn/tree/master/test) subdirectory.
+- A set of complete test sheets are given in the [test](https://github.com/louisrubet/rpn/tree/master/test) subdirectory. Each version is fully tested before delivery
 
-Use the command 'test' to run a test files, eg
-```
-# cd <test_directory>/
-# rpn
-rpn> "all.txt"
-rpn> test
-rpn> test
+- Test sheets syntax is
 
-01-mode.txt: MODE
-# std (1) PASSED
-# std (2) PASSED
-# std (3) PASSED
-(...)
-Total: run 386 tests: 386 passed, 0 failed (495 steps: 495 passed, 0 failed)
-```
+    ```
+    # cat my_test_sheet.txt
 
-Test output is done on stdout and is not stacked in rpn.
+    ## Test sheet example
+    default erase
+
+    # test step 1
+    1 dup 1 +
+    -> stack size should be 2
+    -> stack should be 1, 2
+    -> error should be 0
+    erase
+
+    # test step 2
+    2 4 / 0.5 ==
+    -> stack should be 1
+    erase
+    ```
+
+- Test sheet can be played with the command `test`
+
+    ```
+    rpn> "my_test_sheet.txt"
+    "my_test_sheet.txt"
+    rpn> test
+
+    my_test_sheet.txt: Test sheet example
+    # test step 1 PASSED
+    # test step 2 PASSED
+    my_test_sheet.txt: run 2 tests: 2 passed, 0 failed (4 steps: 4 passed, 0 failed)
+    Total: run 2 tests: 2 passed, 0 failed (4 steps: 4 passed, 0 failed)
+    rpn> 
+    ```
+
+- Please follow these rules to write correct test sheets:
+  - make the test sheet begin by `default erase`
+
+  - the 3 existing tests are `-> stack size should be (number)` `-> stack should be (values separated by commas)` `-> error should be (error number)`
+
+  - put a command `erase` after each test step
+
+  - test output is done on stdout and is not stacked in rpn.
