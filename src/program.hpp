@@ -169,7 +169,7 @@ public:
     bool compare_branch(branch* b, const char* str_to_compare, int len)
     {
         if (b->_len >= len)
-            return strncmp(b->_value, str_to_compare, len) == 0;
+            return strncasecmp(b->_value, str_to_compare, len) == 0;
         else
             return false;
     }
