@@ -73,10 +73,43 @@ void rpn_sin(void)
 void rpn_asin(void)
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_asin(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        floating_t* left = &((number*)_stack->get_obj(0))->_value;
+        CHECK_MPFR(mpfr_asin(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        number* num;
+        complex* i;
+        
+        //asin(z)=-iln(iz+sqrt(1-z*z))
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+
+        i = (complex*)_calc_stack.get_obj(0);
+        CHECK_MPFR(mpfr_set_d(i->re()->mpfr, 0.0, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_set_d(i->im()->mpfr, 1.0, floating_t::s_mpfr_rnd));
+        
+        dup();
+        square();
+        num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
+        minus();
+        neg();
+        squareroot();
+        swap();
+        stack::copy_and_push_back(_calc_stack, 0, *_stack);
+        mul();
+        plus();
+        rpn_ln();
+        stack::copy_and_push_back(_calc_stack, 0, *_stack);
+        mul();
+        neg();
+        _calc_stack.pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rpn_cos(void)
@@ -118,10 +151,25 @@ void rpn_cos(void)
 void rpn_acos(void)
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_acos(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        floating_t* left = &((number*)_stack->get_obj(0))->_value;
+        CHECK_MPFR(mpfr_acos(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        //acos(z)=pi/2-asin(z)
+        rpn_asin();
+        pi();
+        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
+        div();
+        minus();
+        neg();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rpn_tan(void)
@@ -172,8 +220,44 @@ void rpn_tan(void)
 void rpn_atan(void)
 {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    floating_t* left = &((number*)_stack->get_obj(0))->_value;
-    CHECK_MPFR(mpfr_atan(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    if (_stack->get_type(0) == cmd_number)
+    {        
+        floating_t* left = &((number*)_stack->get_obj(0))->_value;
+        CHECK_MPFR(mpfr_atan(left->mpfr, left->mpfr, floating_t::s_mpfr_rnd));
+    }
+    else if (_stack->get_type(0) == cmd_complex)
+    {
+        number* num;
+        complex* i;
+        
+        //atan(z)=0.5i(ln((1-iz)/(1+iz))
+        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+
+        i = (complex*)_calc_stack.get_obj(0);
+        CHECK_MPFR(mpfr_set_d(i->re()->mpfr, 0.0, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_set_d(i->im()->mpfr, 1.0, floating_t::s_mpfr_rnd));
+        
+        stack::copy_and_push_back(_calc_stack, 0, *_stack);
+        mul();
+        num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
+        minus();//iz-1
+        neg();//1-iz
+        dup();
+        neg();//iz-1
+        num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
+        CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
+        plus();//iz+1
+        div();
+
+        rpn_ln();
+        CHECK_MPFR(mpfr_set_d(i->im()->mpfr, 0.5, floating_t::s_mpfr_rnd));
+        stack::copy_and_push_back(_calc_stack, 0, *_stack);
+        mul();
+
+        _calc_stack.pop_back();
+    }
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
