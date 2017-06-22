@@ -2,6 +2,11 @@
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <linux/limits.h>
 
 // internal includes 
 #include "program.hpp"
@@ -9,6 +14,40 @@
 static heap s_global_heap;
 static stack s_global_stack;
 static program* s_prog_to_interrupt = NULL;
+
+// actions to be done at rpn exit
+void exit_interactive_rpn()
+{
+    struct passwd* pw = getpwuid(getuid());
+    if (pw != NULL)
+    {
+        char history_path[PATH_MAX];
+        sprintf(history_path, "%s/%s", pw->pw_dir, HISTORY_FILE);
+
+        // trunc current history
+        ofstream history(history_path, ios_base::out|ios_base::trunc);
+        history.close();
+
+        // save it
+        if (linenoiseHistorySave(history_path) != 0)
+            fprintf(stderr, "warning, could not save %s (errno=%d, '%s')\n", history_path, errno, strerror(errno));
+    }
+}
+
+// actions to be done at rpn exit
+void init_interactive_rpn()
+{
+    struct passwd* pw = getpwuid(getuid());
+    if (pw != NULL)
+    {
+        char history_path[PATH_MAX];
+        sprintf(history_path, "%s/%s", pw->pw_dir, HISTORY_FILE);
+
+        // don't care about errors
+        linenoiseHistorySetMaxLen(HISTORY_FILE_MAX_LINES);
+        linenoiseHistoryLoad(history_path);
+    }
+}
 
 // handle CtrlC signal
 static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context)
@@ -18,6 +57,8 @@ static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context)
         s_prog_to_interrupt->stop();
         s_prog_to_interrupt = NULL;
     }
+
+    exit_interactive_rpn();
 }
 
 // handle SIGSEGV signal
@@ -54,7 +95,10 @@ int main(int argc, char* argv[])
     // run with interactive prompt
     if (argc == 1)
     {
-        //
+        // init history
+        init_interactive_rpn();
+
+        // entry loop
         for (;;)
         {
             // make program from interactive entry
@@ -73,6 +117,9 @@ int main(int argc, char* argv[])
                     program::show_stack(s_global_stack);
             }
         }
+
+        // manage history and exit
+        exit_interactive_rpn();
     }
     // run with cmd line arguments
     else
