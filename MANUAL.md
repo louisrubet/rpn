@@ -61,14 +61,14 @@ rpn>
 
 ```
 rpn> 
-Display all 140 possibilities? (y or n)
-nop      test     sci      inv      dec      mod      fp       c->r     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       exp2
-?        version  +        ^        hex      fact     min      r->c     !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     exp      sinh
-h        uname    -        pow      prec     mant     max      p->r     ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      log10    asinh
-help     type     chs      sqrt     round    xpon     re       r->p     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     alog10   cosh
-q        default  neg      sq       sign     floor    im       >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     exp10    acosh
-quit     std      *        sqr      %        ceil     conj     >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     log2     tanh
-exit     fix      /        abs      %CH      ip       arg      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        alog2    atanh
+Display all 142 possibilities? (y or n)
+nop      test     neg      sq       %CH      ip       arg      sci      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
+?        version  *        sqr      mod      fp       c->r     prec     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
+h        uname    /        abs      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
+help     history  inv      dec      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
+q        +        ^        hex      xpon     re       r->p     type     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
+quit     -        pow      sign     floor    im       std      >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
+exit     chs      sqrt     %        ceil     conj     fix      >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
 ```
 
 ## keywords
@@ -77,11 +77,12 @@ exit     fix      /        abs      %CH      ip       arg      <        not     
 
 |keyword|description|
 |-|-|
-|nop |		no operation |
-|help |		(or h or ?) this help message
-|quit |		(or q or exit) quit software
-|version |	show rpn version
-|uname |	show rpn complete identification string
+|nop | no operation
+|help |	(or h or ?) this help message
+|quit | (or q or exit) quit software
+|version | show rpn version
+|uname | show rpn complete identification string
+|history| see commands history
 
 ### usual operations - real and complex
 
