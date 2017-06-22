@@ -69,4 +69,8 @@ typedef enum {
 //
 #define CMD_TYPE_STRINGS { "undef", "number", "complex", "string", "symbol", "program", "keyword", "keyword" }
 
+// history
+#define HISTORY_FILE ".rpn_history"
+#define HISTORY_FILE_MAX_LINES (100)
+
 #endif
