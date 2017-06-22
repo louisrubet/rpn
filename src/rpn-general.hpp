@@ -130,6 +130,19 @@ void rpn_uname()
     str->set(uname, naked_entry_len);
 }
 
+void rpn_history()
+{
+    //see command history on stdout
+    int index = 0;
+    char* line = linenoiseHistoryLine(index);
+    while(line != NULL)
+    {
+        cout<<line<<endl;
+        free(line);
+        line = linenoiseHistoryLine(++index);
+    }
+}
+
 void type()
 {
     MIN_ARGUMENTS(1);

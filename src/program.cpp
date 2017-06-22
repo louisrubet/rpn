@@ -18,6 +18,7 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "test", &program::test, "" }, //not seen by user
     { cmd_keyword, "version", &program::rpn_version, "show rpn version" },
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
+    { cmd_keyword, "history", &program::rpn_history, "see commands history" },
 
     //USUAL OPERATIONS ON REALS AND COMPLEXEXE
     { cmd_undef, "", NULL, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
