@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/mman.h>
+#include <math.h>
 
 extern "C" {
 #include <readline/readline.h>
@@ -525,11 +526,11 @@ public:
     {
         //default float precision, float mode
         number::s_mode = DEFAULT_MODE;
-        number::s_current_precision = DEFAULT_PRECISION;
+        number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
 
         // format for mpfr_printf 
         stringstream ss;
-        ss << number::s_current_precision;
+        ss << number::s_decimal_digits;
         number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
 
         // default calc precision for MPFR

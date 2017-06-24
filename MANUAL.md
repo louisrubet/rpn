@@ -37,9 +37,9 @@ rpn> 1.0986122886681096914
 ### **arbitrary precision**
 Precision can be really high, up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR
 ```
-rpn> 256 prec 200 std
-rpn> pi 3 * 4 / cos
--0.707106781186547524400844362104849039284835937688474036588339868995366239(...)
+rpn> 256 prec
+rpn> pi
+3.1415926535897932384626433832795028841971693993751058209749445923078164062862
 rpn> 
 ```
 
@@ -136,7 +136,7 @@ exit     chs      sqrt     %        ceil     conj     fix      >=       xor     
 
 |keyword|description|
 |-|-|
-|std|	standard floating numbers representation. ex: [25] std
+|std|	standard floating numbers representation. ex: std
 |fix|	fixed point representation. ex: 6 fix
 |sci|	scientific floating point representation. ex: 20 sci
 |prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
@@ -268,7 +268,7 @@ exit     chs      sqrt     %        ceil     conj     fix      >=       xor     
 
 ### default
 
-Default float mode is 'std' with 20 digits
+Default float mode is 'std' with 39 digits
 
 Default floating point precision is 128 bits
 
