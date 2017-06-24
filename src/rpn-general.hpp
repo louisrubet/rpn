@@ -47,39 +47,51 @@ void help()
         case number::sci: printf("'sci'"); break;
         default: printf("unknown"); break;
     }
-    printf(" with %d digits\n", number::s_current_precision);
+    printf(" with %d decimal digits shown\n", number::s_decimal_digits);
 
-    // calc precision and rounding mode
-
-    // MPFR_PREC_MAX mpfr_prec_t depends on _MPFR_PREC_FORMAT macro (see mpfr.h)
-    // this could not exceed 63 bits max (0x7FFFFFFFFFFFFFFF)
-    double prec_min = (double)MPFR_PREC_MIN;
-    double prec_max = (double)MPFR_PREC_MAX;
-
-    printf("Current floating point precision is %d bits (min=%ld bits, max=0x%lx bits)\n", (int)floating_t::s_mpfr_prec, (int64_t)prec_min, (int64_t)prec_max);
+    // bits precision, decimal digits and rounding mode
+    printf("Current floating point precision is %d bits\n", (int)floating_t::s_mpfr_prec);
     printf("Current rounding mode is '%s'\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
     printf("\n\n");
 }
 
+int decimal_digits_from_bit_precision(int bit_precision)
+{
+    return (int)ceil(bit_precision * log10(2.0));
+}
+
+string make_digit_format(int decimal_digits, const char* printf_format)
+{
+    stringstream ss;
+    ss << MPFR_FORMAT_BEG;
+    ss << number::s_decimal_digits;
+    ss << printf_format;
+    return ss.str();
+}
+
+bool check_precision_inbound(double precision)
+{
+    bool ret = true;
+
+    // MPFR_PREC_MAX mpfr_prec_t depends on _MPFR_PREC_FORMAT macro (see mpfr.h)
+    // this could not exceed 63 bits max (0x7FFFFFFFFFFFFFFF)
+    double prec_max = (double)MPFR_PREC_MAX;
+    double prec_min = (double)MPFR_PREC_MIN;
+    
+    if (precision < prec_min || precision > prec_max)
+        ret = false;
+    
+    return ret;
+}
+
 void std()
 {
-    int precision = -1;
-
-    if (stack_size()>=1)
-    {
-        ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-        precision = int(((number*)_stack->pop_back())->_value);
-    }
-
-    if (precision != -1)
-        number::s_current_precision = precision;
+    // to std mode
     number::s_mode = number::std;
-
-    // format for mpfr_printf 
-    stringstream ss;
-    ss << number::s_current_precision;
-    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
+    
+    // calc max nb of digits user can see with the current bit precision
+    number::s_decimal_digits = decimal_digits_from_bit_precision(floating_t::s_mpfr_prec);
+    number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
 }
 
 void fix()
@@ -87,15 +99,17 @@ void fix()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int precision = int(((number*)_stack->pop_back())->_value);
-    number::s_current_precision = int(precision);
-
-    number::s_mode = number::fix;
-
-    // format for mpfr_printf 
-    stringstream ss;
-    ss << number::s_current_precision;
-    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_FIX);
+    double precision = double(((number*)_stack->pop_back())->_value);
+    
+    if (check_precision_inbound(precision))
+    {
+        // set mode, precision, decimal digits and print format
+        number::s_mode = number::fix;
+        number::s_decimal_digits = (int)precision;
+        number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_FIX);
+    }
+    else
+        ERR_CONTEXT(ret_out_of_range);
 }
 
 void sci()
@@ -103,15 +117,17 @@ void sci()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int precision = int(((number*)_stack->pop_back())->_value);
-    number::s_current_precision = int(precision);
-
-    number::s_mode = number::sci;
-
-    // format for mpfr_printf 
-    stringstream ss;
-    ss << number::s_current_precision;
-    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_SCI);
+    double precision = double(((number*)_stack->pop_back())->_value);
+    
+    if (check_precision_inbound(precision))
+    {
+        // set mode, precision, decimal digits and print format
+        number::s_mode = number::sci;
+        number::s_decimal_digits = (int)precision;
+        number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_SCI);
+    }
+    else
+        ERR_CONTEXT(ret_out_of_range);
 }
 
 void rpn_version()
@@ -173,6 +189,14 @@ void precision()
     {
         floating_t::s_mpfr_prec = (mpfr_prec_t)prec;
         floating_t::s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
+        
+        // modify digits seen by user if std mode
+        if (number::s_mode == number::std)
+        {
+            // calc max nb of digits user can see with the current bit precision
+            number::s_decimal_digits = decimal_digits_from_bit_precision(floating_t::s_mpfr_prec);
+            number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
+        }
     }
     else
         ERR_CONTEXT(ret_out_of_range);
