@@ -7,8 +7,11 @@
 // default mode and number of printed digits
 //
 #define DEFAULT_MODE number::std
-#define DEFAULT_PRECISION 20
-#define MPFR_DEFAULT_FORMAT "%.20Rg"
+#define MPFR_DEFAULT_FORMAT "%.xxRg"
+
+/* directly calculated from 128 bits precision
+   ceil(128 * log10(2) = 39) */
+#define DEFAULT_DECIMAL_DIGITS 39
 
 // MPFR related defaults
 //

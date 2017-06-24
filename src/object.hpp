@@ -62,6 +62,11 @@ struct floating_t
         mpfr_set_ui(mpfr, val, s_mpfr_rnd);
     }
 
+    operator double()
+    {
+        return mpfr_get_d(mpfr, s_mpfr_rnd);
+    }
+
     operator int()
     {
         return (int)mpfr_get_si(mpfr, s_mpfr_rnd);
@@ -154,7 +159,7 @@ struct number : public object
     static mode_enum s_mode;
 
     // precision
-    static int s_current_precision;
+    static int s_decimal_digits;
     static string s_mpfr_printf_format;
 };
 

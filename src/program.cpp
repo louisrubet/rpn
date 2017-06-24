@@ -67,7 +67,7 @@ program::keyword_t program::s_keywords[] =
 
     //MODE
     { cmd_undef, "", NULL, "\nMODE"},
-    { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: [25] std" },
+    { cmd_keyword, "std", &program::std, "standard floating numbers representation. ex: std" },
     { cmd_keyword, "fix", &program::fix, "fixed point representation. ex: 6 fix" },
     { cmd_keyword, "sci", &program::sci, "scientific floating point representation. ex: 20 sci" },
     { cmd_keyword, "prec", &program::precision, "get float precision in bits when first stack is not a number\n\t"

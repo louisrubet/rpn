@@ -12,7 +12,7 @@ const char* floating_t::s_mpfr_rnd_str[5] = MPFR_RND_STRINGS;
 
 // number statics
 number::mode_enum number::s_mode = DEFAULT_MODE;
-int number::s_current_precision = DEFAULT_PRECISION;
+int number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
 string number::s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
 
 //
