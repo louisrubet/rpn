@@ -252,7 +252,7 @@ exit     chs      sqrt     %        ceil     conj     fix      >=       xor     
 
 |keyword|description|
 |-|-|
-|e|	exp(1) constant
+|e|	Euler constant
 |ln| (or log) logarithm base e
 |exp|	exponential
 |log10|	logarithm base 10
