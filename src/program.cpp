@@ -171,7 +171,7 @@ program::keyword_t program::s_keywords[] =
 
     //LOGS ON REALS AND COMPLEXES
     { cmd_undef, "", NULL, "\nLOGS ON REALS AND COMPLEXES"},
-    { cmd_keyword, "e", &program::rpn_e, "exp(1) constant" },
+    { cmd_keyword, "e", &program::rpn_e, "Euler constant" },
     { cmd_keyword, "ln", &program::rpn_ln, "(or log) logarithm base e" },
     { cmd_keyword, "log", &program::rpn_ln, "" },
     { cmd_keyword, "exp", &program::rpn_exp, "exponential" },
