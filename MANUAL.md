@@ -77,194 +77,194 @@ exit     chs      sqrt     %        ceil     conj     fix      >=       xor     
 
 |keyword|description|
 |-|-|
-|nop | no operation
-|help |	(or h or ?) this help message
-|quit | (or q or exit) quit software
-|version | show rpn version
-|uname | show rpn complete identification string
-|history| see commands history
+|`nop` | no operation
+|`help\|h\|?` | this help message
+|`quit\|q\|exit` | quit software
+|`version` | show rpn version
+|`uname` | show rpn complete identification string
+|`history`| see commands history
 
 ### usual operations - real and complex
 
 |keyword|description|
 |-|-|
-|+|		addition
-|-|		substraction
-|neg|	(or chs) negation
-|*|		multiplication
-|/|		division
-|inv|	inverse
-|^|		(or pow) power
-|sqrt|	square root
-|sq|	(or sqr) square
-|abs|	absolute value for a number or sqrt(re*re+im*im) for a complex
-|dec|	decimal representation
-|hex|	hexadecimal representation
-|sign|	sign of a real, unary vector in the same direction for a complex
+|`+`| addition
+|`-`| substraction
+|`neg\|chs`| negation
+|`*`| multiplication
+|`/`| division
+|`inv`| inverse
+|`^\|pow`| power
+|`sqrt`| square root
+|`sq\|sqr`| square
+|`abs`| absolute value for a number or `sqrt(re*re+im*im)` for a complex
+|`dec`| decimal representation
+|`hex`| hexadecimal representation
+|`sign`| sign of a real, unary vector in the same direction for a complex
 
 ### operations on reals
 
 |keyword|description|
 |-|-|
-|%|		purcent
-|%CH|	inverse purcent
-|mod|	modulo
-|fact|	n! for integer n or Gamma(x+1) for fractional x
-|mant|	mantissa of a real number
-|xpon|	exponant of a real number
-|floor| largest number <=
-|ceil| smallest number >=
-|ip| integer part
-|fp| fractional part
-|min|	min of 2 real numbers
-|max|	max of 2 real numbers
+|`%`| purcent
+|`%CH`| inverse purcent
+|`mod`| modulo
+|`fact`| n! for integer n or Gamma(x+1) for fractional x
+|`mant`| mantissa of a real number
+|`xpon`| exponant of a real number
+|`floor`| largest number <=
+|`ceil`| smallest number >=
+|`ip`| integer part
+|`fp`| fractional part
+|`min`| min of 2 real numbers
+|`max`| max of 2 real numbers
 
 ### operations on complexes
 
 |keyword|description|
 |-|-|
-|re| complex real part
-|im| complex imaginary part
-|conj| complex conjugate
-|arg| complex argument in radians
-|r->p| rectangular to polar coordinates
-|p->r| polar to rectangular coordinates
-|r->c| transform 2 reals in a complex
-|c->r| transform a complex in 2 reals
+|`re`| complex real part
+|`im`| complex imaginary part
+|`conj`| complex conjugate
+|`arg`| complex argument in radians
+|`r->p`| rectangular to polar coordinates
+|`p->r`| polar to rectangular coordinates
+|`r->c`| transform 2 reals in a complex
+|`c->r`| transform a complex in 2 reals
 
 ### mode
 
 |keyword|description|
 |-|-|
-|std|	standard floating numbers representation. ex: std
-|fix|	fixed point representation. ex: 6 fix
-|sci|	scientific floating point representation. ex: 20 sci
-|prec|	get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: ```256 prec```
-|round|	set float rounding mode. Authoerized values are: ```["nearest", "toward zero", "toward +inf", "toward -inf", "away from zero"] round```. ex: ```"nearest" round```
-|default |	set float representation and precision to default
-|type |		show type of stack first entry
+|`std`| standard floating numbers representation. ex: `std`
+|`fix`| fixed point representation. ex: `6 fix`
+|`sci`| scientific floating point representation. ex: `20 sci`
+|`prec`| get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: `256 prec`
+|`round`| set float rounding mode. Authorized values are: ["nearest" \| "toward zero" \| "toward +inf" \| "toward -inf" \| "away from zero"] round`. ex: `"nearest" round`
+|`default` | set float representation and precision to default
+|`type` | show type of stack first entry
 
 ### test
 
 |keyword|description|
 |-|-|
-|>|		binary operator >
-|>=|	binary operator >=
-|<|		binary operator <
-|<=|	binary operator <=
-|!=|	binary operator != (different)
-|==|	binary operator == (equal)
-|and|	boolean operator and
-|or|	boolean operator or
-|xor|	boolean operator xor
-|not|	boolean operator not
-|same|	boolean operator same (equal)
+|`>`| binary operator >
+|`>=`| binary operator >=
+|`<`| binary operator <
+|`<=`| binary operator <=
+|`!=`| binary operator != (different)
+|`==`| binary operator == (equal)
+|`and`| boolean operator and
+|`or`| boolean operator or
+|`xor`| boolean operator xor
+|`not`| boolean operator not
+|`same`| boolean operator same (equal)
 
 ### stack
 
 |keyword|description|
 |-|-|
-|swap|	swap 2 first stack entries
-|drop|	drop first stack entry
-|drop2|	drop 2 first stack entries
-|dropn|	drop n first stack entries
-|erase|	drop all stack entries
-|rot|	rotate 3 first stack entries
-|dup|	duplicate first stack entry
-|dup2|	duplicate 2 first stack entries
-|dupn|	duplicate n first stack entries
-|pick|	push a copy of  the given stack level onto the stack
-|depth|	give stack depth
-|roll|	move a stack entry to the top of the stack
-|rolld|	move the element on top of the stack to a higher stack position
-|over|	push a copy of the element in stack level 2 onto the stack
+|`swap`| swap 2 first stack entries
+|`drop`| drop first stack entry
+|`drop2`| drop 2 first stack entries
+|`dropn`| drop n first stack entries
+|`erase`| drop all stack entries
+|`rot`| rotate 3 first stack entries
+|`dup`| duplicate first stack entry
+|`dup2`| duplicate 2 first stack entries
+|`dupn`| duplicate n first stack entries
+|`pick`| push a copy of  the given stack level onto the stack
+|`depth`| give stack depth
+|`roll`| move a stack entry to the top of the stack
+|`rolld`| move the element on top of the stack to a higher stack position
+|`over`| push a copy of the element in stack level 2 onto the stack
 
 ### string
 
 |keyword|description|
 |-|-|
-|->str|	convert an object into a string
-|str->|	convert a string into an object
-|chr|	convert ASCII character code in stack level 1 into a string
-|num|	return ASCII code of the first character of the string in stack level 1 as a real number
-|size|	return the length of the string
-|pos|	seach for the string in level 1 within the string in level 2
-|sub|	return a substring of the string in level 3
+|`->str`| convert an object into a string
+|`str->`| convert a string into an object
+|`chr`| convert ASCII character code in stack level 1 into a string
+|`num`| return ASCII code of the first character of the string in stack level 1 as a real number
+|`size`| return the length of the string
+|`pos`| seach for the string in level 1 within the string in level 2
+|`sub`| return a substring of the string in level 3
 
 ### branch
 
 |keyword|description|
 |-|-|
-|if| if (test-instruction) then (true-instructions) else (false-instructions) end
-|then| used with if
-|else| used with if
-|end| used with various branch instructions
-|ift|	similar to if-then-end: (test-instruction) (true-instruction) ift"
-|ifte|	similar to if-then-else-end: (test-instruction) (true-instruction) (false-instruction) ifte"
-|start| (start) (end) start (instructions) next|(step) step
-|for| (start) (end) for (variable) (instructions) next|(step) step
-|next| used with start and for
-|step| used with start and for
-|do| do (instructions) until (condition) end
-|until | (or unti) used with do
-|while| (or whil) while (test-instruction) repeat (loop-instructions) end
-|repeat| (or repea) used with while
+|`if`| if (test-instruction) then (true-instructions) else (false-instructions) end
+|`then`| used with if
+|`else`| used with if
+|`end`| used with various branch instructions
+|`ift`| similar to if-then-end: (test-instruction) (true-instruction) ift"
+|`ifte`| similar to if-then-else-end: (test-instruction) (true-instruction) (false-instruction) ifte"
+|`start`| (start) (end) start (instructions) next|(step) step
+|`for`| (start) (end) for (variable) (instructions) next|(step) step
+|`next`| used with start and for
+|`step`| used with start and for
+|`do`| do (instructions) until (condition) end
+|`until\|unti` | used with do
+|`while\|whil`| while (test-instruction) repeat (loop-instructions) end
+|`repeat\|repea`| used with while
 
 ### store
 
 |keyword|description|
 |-|-|
-|sto|	store a variable. ex: ```1 'name' sto```
-|rcl|	recall a variable. ex: ```'name' rcl```
-|purge|	delete a variable. ex: ```'name' purge```
-|vars|	list all variables
-|clusr|	erase all variables
-|edit|	edit a variable content
-|sto+|	add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+
-|sto-|	substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-
-|sto*|	multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*
-|sto/|	divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/
-|sneg|	negate a variable. ex: 'name' sneg
-|sinv|	inverse a variable. ex: 1 'name' sinv
+|`sto`| store a variable. ex: ```1 'name' sto```
+|`rcl`| recall a variable. ex: ```'name' rcl```
+|`purge`| delete a variable. ex: ```'name' purge```
+|`vars`| list all variables
+|`clusr`| erase all variables
+|`edit`| edit a variable content
+|`sto+`| add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+
+|`sto-`| substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-
+|`sto*`| multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*
+|`sto/`| divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/
+|`sneg`| negate a variable. ex: 'name' sneg
+|`sinv`| inverse a variable. ex: 1 'name' sinv
 
 ### program
 
 |keyword|description|
 |-|-|
-|eval|	evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
-|->|	load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
+|`eval`| evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
+|`->`| load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
 
 ### trig on reals and complexes
 
 |keyword|description|
 |-|-|
-|pi|	pi constant
-|sin|	sinus
-|asin|	arg sinus
-|cos|	cosinus
-|acos|	arg cosinus
-|tan|	tangent
-|atan|	arg tangent
-|d->r|	convert degrees to radians
-|r->d|	convert radians to degrees
+|`pi`| pi constant
+|`sin`| sinus
+|`asin`| arg sinus
+|`cos`| cosinus
+|`acos`| arg cosinus
+|`tan`| tangent
+|`atan`| arg tangent
+|`d->r`| convert degrees to radians
+|`r->d`| convert radians to degrees
 
 ### logs on reals and complexes
 
 |keyword|description|
 |-|-|
-|e|	Euler constant
-|ln| (or log) logarithm base e
-|exp|	exponential
-|log10|	logarithm base 10
-|alog10| (or exp10) exponential base 10
-|log2|	logarithm base 2
-|alog2|	(or exp2) exponential base 2
-|sinh|	hyperbolic sine
-|asinh|	inverse hyperbolic sine
-|cosh|	hyperbolic cosine
-|acosh|	inverse hyperbolic cosine
-|tanh|	hyperbolic tangent
-|atanh|	inverse hyperbolic tangent
+|`e`| Euler constant
+|`ln\|log`| logarithm base e
+|`exp`| exponential
+|`log10`| logarithm base 10
+|`alog10\|exp10`| exponential base 10
+|`log2`| logarithm base 2
+|`alog2\|exp2`| exponential base 2
+|`sinh`| hyperbolic sine
+|`asinh`| inverse hyperbolic sine
+|`cosh`| hyperbolic cosine
+|`acosh`| inverse hyperbolic cosine
+|`tanh`| hyperbolic tangent
+|`atanh`| inverse hyperbolic tangent
 
 ### default
 
