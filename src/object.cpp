@@ -79,7 +79,7 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
 {
     // see mpfr_vasprintf code
     mpfr_exp_t exp = mpfr_floor_logn(real, base);
-    int digits = number::s_decimal_digits;
+    int digits = 0 /*number::s_decimal_digits*/;
     int i;
 
     if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(real)))
@@ -98,7 +98,7 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
             if (MPFR_IS_NEG(real))
                 fputc('-', stream);//signed zero is allowed
             fputc('0', stream);
-            if (number::s_decimal_digits > 0)
+            if (digits > 0)
             {
                 fputc('.', stream);
                 for(i = 0; i < digits; i++)
@@ -106,12 +106,12 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
             }
         }
     }
-    else if (exp < -number::s_decimal_digits)
+    else if (exp < -digits)
     {
         if (MPFR_IS_NEG(real))
             fputc('-', stream);
         fputc('0', stream);
-        if (number::s_decimal_digits > 0)
+        if (digits > 0)
         {
             fputc('.', stream);
             for (i = 0; i< digits - 1; i++)
@@ -144,13 +144,13 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
             if (exp < 0)
             {
                 fputc('0', stream);
-                if (number::s_decimal_digits > 0)
+                if (digits > 0)
                 {
                     fputc('.', stream);
                     for (i = 0; i < -(int)exp; i++)
                         fputc('0', stream);
                     fputs(str, stream);
-                    for (i = 0; i < (int)(number::s_decimal_digits - len + exp); i++)
+                    for (i = 0; i < (int)(digits - len + exp); i++)
                         fputc('0', stream);
                 }
             }
@@ -161,7 +161,7 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
                 else
                     for (i = 0; i < (int)exp; i++)
                         fputc(str[i], stream);
-                if (number::s_decimal_digits > 0)
+                if (digits > 0)
                 {
                     fputc('.', stream);
 
@@ -184,14 +184,6 @@ void object::show(FILE* stream)
     switch(_type)
     {
     case cmd_number:
-        switch(number::s_mode)
-        {
-            case number::fix:
-                //printf("OLD: ");
-                //mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
-                print_fix(stream, ((number*)this)->_value.mpfr, 2);
-                break;
-        }
         switch(((number*)this)->_representation)
         {
             case number::dec:
@@ -202,10 +194,10 @@ void object::show(FILE* stream)
                 print_fix(stream, ((number*)this)->_value.mpfr, 16);
                 //mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 break;
-            case number::bin:
+            /*case number::bin:
                 fprintf(stream, "0b");
                 print_fix(stream, ((number*)this)->_value.mpfr, 2);
-                break;
+                break;*/
             default:
                 fprintf(stream, "<unknown number representation>");
                 break;
