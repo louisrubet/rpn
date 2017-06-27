@@ -69,14 +69,14 @@ string make_digit_format(int decimal_digits, const char* printf_format)
     return ss.str();
 }
 
-bool check_precision_inbound(double precision)
+bool check_decimal_digits(double precision)
 {
     bool ret = true;
 
     // MPFR_PREC_MAX mpfr_prec_t depends on _MPFR_PREC_FORMAT macro (see mpfr.h)
     // this could not exceed 63 bits max (0x7FFFFFFFFFFFFFFF)
     double prec_max = (double)MPFR_PREC_MAX;
-    double prec_min = (double)MPFR_PREC_MIN;
+    double prec_min = 0.0;
     
     if (precision < prec_min || precision > prec_max)
         ret = false;
@@ -88,7 +88,7 @@ void std()
 {
     // to std mode
     number::s_mode = number::std;
-    
+
     // calc max nb of digits user can see with the current bit precision
     number::s_decimal_digits = decimal_digits_from_bit_precision(floating_t::s_mpfr_prec);
     number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
@@ -101,7 +101,7 @@ void fix()
 
     double precision = double(((number*)_stack->pop_back())->_value);
     
-    if (check_precision_inbound(precision))
+    if (check_decimal_digits(precision))
     {
         // set mode, precision, decimal digits and print format
         number::s_mode = number::fix;
@@ -119,7 +119,7 @@ void sci()
 
     double precision = double(((number*)_stack->pop_back())->_value);
     
-    if (check_precision_inbound(precision))
+    if (check_decimal_digits(precision))
     {
         // set mode, precision, decimal digits and print format
         number::s_mode = number::sci;

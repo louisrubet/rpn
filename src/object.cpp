@@ -1,6 +1,8 @@
 #include <string>
+#include <math.h>
 using namespace std;
 
+#include "mpfr.h"
 #include "constant.h"
 #include "object.hpp"
 
@@ -18,21 +20,195 @@ string number::s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
 //
 const char* object::s_cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
 
+static bool is_min(mpfr_t p, mpfr_prec_t prec)
+{
+    // see mpfr_vasprintf code
+    bool ret;
+    int round_away;
+    switch (floating_t::s_mpfr_rnd)
+    {
+        case MPFR_RNDA:
+            round_away = 1;
+        break;
+        case MPFR_RNDD:
+            round_away = MPFR_IS_NEG (p);
+        break;
+        case MPFR_RNDU:
+            round_away = MPFR_IS_POS (p);
+        break;
+        case MPFR_RNDN:
+        {
+            /* compare |p| to y = 0.5*10^(-prec) */
+            mpfr_t y;
+            mpfr_exp_t e = MAX (MPFR_PREC (p), 56);
+            mpfr_init2 (y, e + 8);
+            do
+            {
+                /* find a lower approximation of
+                0.5*10^(-prec) different from |p| */
+                e += 8;
+                mpfr_set_prec (y, e);
+                mpfr_set_si (y, -prec, MPFR_RNDN);
+                mpfr_exp10 (y, y, MPFR_RNDD);
+                mpfr_div_2ui (y, y, 1, MPFR_RNDN);
+            } while (mpfr_cmpabs (y, p) == 0);
+
+            round_away = mpfr_cmpabs (y, p) < 0;
+            mpfr_clear (y);
+        }
+        break;
+        default:
+            round_away = 0;
+    }
+
+    if (round_away)
+        /* round away from zero: the last output digit is '1' */
+        ret = true;
+    else
+        /* only zeros in fractional part */
+        ret = false;
+    return ret;
+}
+
+static int base_digits_from_bit_precision(int base, int bit_precision)
+{
+    return (int)ceil(bit_precision * log(2.0) / log((double)base));
+}
+
+static void print_fix(FILE* stream, mpfr_t real, int base)
+{
+    // see mpfr_vasprintf code
+    mpfr_exp_t exp = mpfr_floor_logn(real, base);
+    int digits = number::s_decimal_digits;
+    int i;
+
+    if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(real)))
+    {
+        if (MPFR_IS_NAN(real))
+            fputs("nan", stream);
+        else if (MPFR_IS_INF(real))
+        {
+            if (MPFR_IS_NEG(real))
+                fputc('-', stream);
+            fputs("inf", stream);
+        }
+        else
+        {
+            // zero
+            if (MPFR_IS_NEG(real))
+                fputc('-', stream);//signed zero is allowed
+            fputc('0', stream);
+            if (number::s_decimal_digits > 0)
+            {
+                fputc('.', stream);
+                for(i = 0; i < digits; i++)
+                    fputc('0', stream);
+            }
+        }
+    }
+    else if (exp < -number::s_decimal_digits)
+    {
+        if (MPFR_IS_NEG(real))
+            fputc('-', stream);
+        fputc('0', stream);
+        if (number::s_decimal_digits > 0)
+        {
+            fputc('.', stream);
+            for (i = 0; i< digits - 1; i++)
+                fputc('0', stream);
+
+            if (is_min(real, digits))
+                fputc('1', stream);
+            else
+                fputc('0', stream);
+        }
+    }
+    else
+    {
+        char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real, floating_t::s_mpfr_rnd);
+        int len = strlen(str);
+        
+        if (len > 0)
+        {
+            if (str[0] == '-')
+            {
+                fputc(str[0], stream);
+                len--;
+                str++;
+            }
+            else if (str[0] == '+')
+            {
+                len--;
+                str++;
+            }
+            if (exp < 0)
+            {
+                fputc('0', stream);
+                if (number::s_decimal_digits > 0)
+                {
+                    fputc('.', stream);
+                    for (i = 0; i < -(int)exp; i++)
+                        fputc('0', stream);
+                    fputs(str, stream);
+                    for (i = 0; i < (int)(number::s_decimal_digits - len + exp); i++)
+                        fputc('0', stream);
+                }
+            }
+            else
+            {
+                if (exp == 0)
+                    fputc('0', stream);
+                else
+                    for (i = 0; i < (int)exp; i++)
+                        fputc(str[i], stream);
+                if (number::s_decimal_digits > 0)
+                {
+                    fputc('.', stream);
+
+                    int remaining = (int)MIN(strlen(str) - exp - 1, digits) + 1;
+                    for (i = (int)exp; i < remaining + (int)exp; i++)
+                        fputc(str[i], stream);
+                    for (i = 0; i < (int)(exp + digits - len); i++)
+                        fputc('0', stream);
+                }
+            }
+        }
+    }
+}
+
 void object::show(FILE* stream)
 {
+    int digits;
+    char* str;
+
     switch(_type)
     {
     case cmd_number:
+        switch(number::s_mode)
+        {
+            case number::fix:
+                //printf("OLD: ");
+                //mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
+                print_fix(stream, ((number*)this)->_value.mpfr, 2);
+                break;
+        }
         switch(((number*)this)->_representation)
         {
             case number::dec:
                 mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
                 break;
             case number::hex:
-                mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
+                fprintf(stream, "0x");
+                print_fix(stream, ((number*)this)->_value.mpfr, 16);
+                //mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
+                break;
+            case number::bin:
+                fprintf(stream, "0b");
+                print_fix(stream, ((number*)this)->_value.mpfr, 2);
                 break;
             default:
                 fprintf(stream, "<unknown number representation>");
+                break;
         }
         break;
     case cmd_complex:
