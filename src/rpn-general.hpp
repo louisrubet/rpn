@@ -47,17 +47,17 @@ void help()
         case number::sci: printf("'sci'"); break;
         default: printf("unknown"); break;
     }
-    printf(" with %d decimal digits shown\n", number::s_decimal_digits);
+    printf(" with %d digits after the decimal point\n", number::s_decimal_digits);
 
     // bits precision, decimal digits and rounding mode
     printf("Current floating point precision is %d bits\n", (int)floating_t::s_mpfr_prec);
-    printf("Current rounding mode is '%s'\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
+    printf("Current rounding mode is \"%s\"\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
     printf("\n\n");
 }
 
-int decimal_digits_from_bit_precision(int bit_precision)
+int base_digits_from_bit_precision(int base, int bit_precision)
 {
-    return (int)ceil(bit_precision * log10(2.0));
+    return (int)ceil(bit_precision * log(2.0) / log((double)base));
 }
 
 string make_digit_format(int decimal_digits, const char* printf_format)
@@ -90,7 +90,7 @@ void std()
     number::s_mode = number::std;
 
     // calc max nb of digits user can see with the current bit precision
-    number::s_decimal_digits = decimal_digits_from_bit_precision(floating_t::s_mpfr_prec);
+    number::s_decimal_digits = base_digits_from_bit_precision(floating_t::s_mpfr_prec, 10);
     number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
 }
 
@@ -194,7 +194,7 @@ void precision()
         if (number::s_mode == number::std)
         {
             // calc max nb of digits user can see with the current bit precision
-            number::s_decimal_digits = decimal_digits_from_bit_precision(floating_t::s_mpfr_prec);
+            number::s_decimal_digits = base_digits_from_bit_precision(floating_t::s_mpfr_prec, 10);
             number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
         }
     }

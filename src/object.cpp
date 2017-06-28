@@ -70,16 +70,11 @@ static bool is_min(mpfr_t p, mpfr_prec_t prec)
     return ret;
 }
 
-static int base_digits_from_bit_precision(int base, int bit_precision)
-{
-    return (int)ceil(bit_precision * log(2.0) / log((double)base));
-}
-
 static void print_fix(FILE* stream, mpfr_t real, int base)
 {
     // see mpfr_vasprintf code
-    mpfr_exp_t exp = mpfr_floor_logn(real, base);
-    int digits = 0 /*number::s_decimal_digits*/;
+    mpfr_exp_t exp = mpfr_get_exp(real);
+    int digits = number::s_decimal_digits;
     int i;
 
     if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(real)))
@@ -194,10 +189,10 @@ void object::show(FILE* stream)
                 print_fix(stream, ((number*)this)->_value.mpfr, 16);
                 //mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 break;
-            /*case number::bin:
+            case number::bin:
                 fprintf(stream, "0b");
                 print_fix(stream, ((number*)this)->_value.mpfr, 2);
-                break;*/
+                break;
             default:
                 fprintf(stream, "<unknown number representation>");
                 break;
