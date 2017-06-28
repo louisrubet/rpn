@@ -90,7 +90,7 @@ void std()
     number::s_mode = number::std;
 
     // calc max nb of digits user can see with the current bit precision
-    number::s_decimal_digits = base_digits_from_bit_precision(floating_t::s_mpfr_prec, 10);
+    number::s_decimal_digits = base_digits_from_bit_precision(10, floating_t::s_mpfr_prec);
     number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
 }
 
@@ -194,7 +194,7 @@ void precision()
         if (number::s_mode == number::std)
         {
             // calc max nb of digits user can see with the current bit precision
-            number::s_decimal_digits = base_digits_from_bit_precision(floating_t::s_mpfr_prec, 10);
+            number::s_decimal_digits = base_digits_from_bit_precision(10, floating_t::s_mpfr_prec);
             number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
         }
     }
