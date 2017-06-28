@@ -11,11 +11,11 @@ endif()
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
 # INFO
-set(RPN_VERSION "2.1")
+set(RPN_VERSION "2.3")
 set(RPN_DISPLAY_NAME "rpn")
 set(RPN_URL_INFO_ABOUT "https://github.com/louisrubet/rpn")
 set(RPN_CONTACT "Louis Rubet <louis@rubet.fr>")
-set(RPN_FRIENDLY_STRING "rpn - Reverse Polish Notation language")
+set(RPN_FRIENDLY_STRING "rpn - Reverse Polish Notation cli calculator and language")
 set(RPN_LICENSE "LGPLv3")
 set(RPN_LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE")
 set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
@@ -42,8 +42,7 @@ add_executable(
 )
 
 target_link_libraries(rpn liblinenoise.a)
-target_link_libraries(rpn libmpfr.a)
-target_link_libraries(rpn libgmp.a)
+target_link_libraries(rpn mpfr)
 
 # install
 install(TARGETS rpn DESTINATION bin)
@@ -73,3 +72,4 @@ SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 include(CPack)
 
 # RPM package
+set(CPACK_RPM_PACKAGE_REQUIRES "mpfr")
