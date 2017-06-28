@@ -118,7 +118,8 @@ struct number : public object
     // members
     enum {
         dec,
-        hex
+        hex,
+        bin
     } _representation;
     // mind that float value is at the end of the object
     // because its mantissa is just after the obj in memory
