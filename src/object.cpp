@@ -74,7 +74,7 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
 {
     // see mpfr_vasprintf code
     mpfr_exp_t exp = mpfr_get_exp(real);
-    int digits = number::s_decimal_digits;
+    int digits = 0; //forced 0 digits after separator
     int i;
 
     if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(real)))
@@ -187,7 +187,6 @@ void object::show(FILE* stream)
             case number::hex:
                 fprintf(stream, "0x");
                 print_fix(stream, ((number*)this)->_value.mpfr, 16);
-                //mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((number*)this)->_value.mpfr);                
                 break;
             case number::bin:
                 fprintf(stream, "0b");
