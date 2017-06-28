@@ -1,4 +1,4 @@
-# **rpn v2.2**- reference manual
+# **rpn v2.3**- reference manual
 
 **rpn**
 - is a **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **test**, **trig** and **logs** commands
@@ -100,6 +100,7 @@ exit     chs      sqrt     %        ceil     conj     fix      >=       xor     
 |`abs`| absolute value for a number or `sqrt(re*re+im*im)` for a complex
 |`dec`| decimal representation
 |`hex`| hexadecimal representation
+|`bin`| binary representation
 |`sign`| sign of a real, unary vector in the same direction for a complex
 
 ### operations on reals
