@@ -38,6 +38,7 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "abs", &program::rpn_abs, "absolute value" },
     { cmd_keyword, "dec", &program::dec, "decimal representation" },
     { cmd_keyword, "hex", &program::hex, "hexadecimal representation" },
+    { cmd_keyword, "bin", &program::bin, "decimal representation" },
     { cmd_keyword, "sign", &program::sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0" },
 
     //OPERATIONS ON REALS
