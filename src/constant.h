@@ -10,8 +10,8 @@
 #define MPFR_DEFAULT_FORMAT "%.xxRg"
 
 /* directly calculated from 128 bits precision
-   ceil(128 * log10(2) = 39) */
-#define DEFAULT_DECIMAL_DIGITS 39
+   ceil(128 * log10(2)) - 1 = 38 */
+#define DEFAULT_DECIMAL_DIGITS 38
 
 // MPFR related defaults
 //
