@@ -1,4 +1,4 @@
-# **rpn v2.3**- reference manual
+# **rpn**- reference manual
 
 **rpn**
 - is a **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **test**, **trig** and **logs** commands
@@ -31,7 +31,7 @@ var 1: name 'quadratic_solution', type program, value << rot * swap 2 / chs dup 
 ```
 rpn> << -> x y << x y + ln >> >> 'P' sto
 rpn> 1 2 P
-rpn> 1.0986122886681096914
+rpn> 1.0986122886681096913952452369225257046
 ```
 
 ### **arbitrary precision**
@@ -61,14 +61,15 @@ rpn>
 
 ```
 rpn> 
-Display all 142 possibilities? (y or n)
-nop      test     neg      sq       %CH      ip       arg      sci      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
-?        version  *        sqr      mod      fp       c->r     prec     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
-h        uname    /        abs      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
-help     history  inv      dec      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
-q        +        ^        hex      xpon     re       r->p     type     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
-quit     -        pow      sign     floor    im       std      >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
-exit     chs      sqrt     %        ceil     conj     fix      >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
+Display all 144 possibilities? (y or n)
+nop      exit     chs      sqrt     sign     floor    im       std      >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
+help     test     neg      sq       %        ceil     conj     fix      >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
+h        version  *        sqr      %CH      ip       arg      sci      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
+?        uname    /        abs      mod      fp       c->r     prec     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
+q        history  inv      dec      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
+quit     +        ^        hex      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
+q        -        pow      bin      xpon     re       r->p     type     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
+rpn> 
 ```
 
 ## keywords

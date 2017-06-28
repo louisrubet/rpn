@@ -1,4 +1,4 @@
-# **rpn v2.2** - generation
+# **rpn v2.3** - generation
 
 For now rpn is proposed only for **GNU/Linux**
 
@@ -6,25 +6,23 @@ It can be generated following the steps below
 
 ## version identification
 
-rpn v2.2 is statically linked against
+rpn is dynamically linked against
 - GNU MP v6.1.2
 - GNU MPFR v3.1.5
-- linenoise-ng v1.0.1
 
-## GNU MP v6.1.2
+and embeds the source code of linenoise-ng v1.0.1
 
-- download and install **GNU MP v6.1.2** from https://gmplib.org/
+It is necessary to get MPFR and linenoise-ng to generate rpn.
 
-## GNU MPFR v3.1.5
+## install GNU MPFR v3.1.5-p8 headers
 
-- download and install **GNU MPFR v3.1.5** from http://www.mpfr.org
+- download **GNU MPFR v3.1.5-p8** from http://www.mpfr.org
+- install it with usual autotools commands `./configure && make && make install`
 
-## linenoise-ng v1.0.1
+## install linenoise-ng v1.0.1 source code
 
 - download **linenoise-ng v1.0.1** from https://github.com/arangodb/linenoise-ng
-
 - checkout the tag v1.0.1
-
 - apply the following patch to the source code
 
 ```
@@ -34,7 +32,7 @@ rpn v2.2 is statically linked against
  
      // ctrl-I/tab, command completion, needs to be before switch statement
      if (c == ctrlChar('I') && completionCallback) {
-+      // lru for rpn
++      // rpn #178: enable autocompletion on void entry
 +      #if 0
        if (pos == 0)  // SERVER-4967 -- in earlier versions, you could paste
                       // previous output
@@ -47,8 +45,9 @@ rpn v2.2 is statically linked against
        killRing.lastAction = KillRing::actionOther;
        historyRecallMostRecent = false;
 ```
+- install linenoise-ng with cmake commands `mkdir build && cd build && cmake .. && make install`
 
-## rpn
+## generate rpn
 
 - clone [rpn project](https://github.com/louisrubet/rpn/) or download a zipped version from [the release directory](https://github.com/louisrubet/rpn/releases)
 	```
@@ -86,6 +85,4 @@ rpn v2.2 is statically linked against
     (...)
     CPack: Create package using TGZ
     (...)
-    # ls rpn*
-    rpn  rpn-2.1-amd64.deb  rpn-2.1-amd64.rpm  rpn-2.1-amd64.tar.gz
     ```
