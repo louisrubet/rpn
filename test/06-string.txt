@@ -27,7 +27,6 @@ erase
 
 # ->str on real (2)
 1.234
-25 std
 ->str
 -> stack should be "1.234"
 erase
@@ -76,7 +75,7 @@ default
 # str-> on constant (1)
 "pi"
 str->
--> stack should be 3.1415926535897932385
+-> stack should be 3.1415926535897932384626433832795028842
 erase
 
 # str-> on constant (2)

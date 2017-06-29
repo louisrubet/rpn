@@ -21,7 +21,7 @@ erase
 
 # real hex
 0x1234 0x10.10
--> stack should be 0x1.234p+12, 0x1.01p+4
+-> stack should be 0x1234, 0x10
 erase
 
 # real hex (2)
@@ -55,14 +55,14 @@ erase
 # prec (1)
 default
 56 prec pi
-15 std
--> stack should be 3.14159265358979
+std
+-> stack should be 3.1415926535897933
 erase
 
 # prec (2)
 default
 100 prec pi
--> stack should be 3.1415926535897932385
+-> stack should be 3.141592653589793238462643383282
 erase
 
 # prec error (1)
@@ -170,12 +170,12 @@ erase
 
 # div (1)
 1.2 2.3 /
--> stack should be 0.5217391304347826087
+-> stack should be 0.52173913043478260869565217391304347826
 erase
 
 # div (2)
 1.2 2.3/
--> stack should be 0.5217391304347826087
+-> stack should be 0.52173913043478260869565217391304347826
 erase
 
 # div (3)
