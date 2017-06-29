@@ -121,52 +121,55 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
     else
     {
         char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real, floating_t::s_mpfr_rnd);
-        int len = strlen(str);
-        
-        if (len > 0)
+        if(str != NULL)
         {
-            if (str[0] == '-')
+            int len = strlen(str);
+            if (len > 0)
             {
-                fputc(str[0], stream);
-                len--;
-                str++;
-            }
-            else if (str[0] == '+')
-            {
-                len--;
-                str++;
-            }
-            if (exp < 0)
-            {
-                fputc('0', stream);
-                if (digits > 0)
+                if (str[0] == '-')
                 {
-                    fputc('.', stream);
-                    for (i = 0; i < -(int)exp; i++)
-                        fputc('0', stream);
-                    fputs(str, stream);
-                    for (i = 0; i < (int)(digits - len + exp); i++)
-                        fputc('0', stream);
+                    fputc(str[0], stream);
+                    len--;
+                    str++;
                 }
-            }
-            else
-            {
-                if (exp == 0)
+                else if (str[0] == '+')
+                {
+                    len--;
+                    str++;
+                }
+                if (exp < 0)
+                {
                     fputc('0', stream);
+                    if (digits > 0)
+                    {
+                        fputc('.', stream);
+                        for (i = 0; i < -(int)exp; i++)
+                            fputc('0', stream);
+                        fputs(str, stream);
+                        for (i = 0; i < (int)(digits - len + exp); i++)
+                            fputc('0', stream);
+                    }
+                }
                 else
-                    for (i = 0; i < (int)exp; i++)
-                        fputc(str[i], stream);
-                if (digits > 0)
                 {
-                    fputc('.', stream);
-
-                    int remaining = (int)MIN(strlen(str) - exp - 1, digits) + 1;
-                    for (i = (int)exp; i < remaining + (int)exp; i++)
-                        fputc(str[i], stream);
-                    for (i = 0; i < (int)(exp + digits - len); i++)
+                    if (exp == 0)
                         fputc('0', stream);
+                    else
+                        for (i = 0; i < (int)exp; i++)
+                            fputc(str[i], stream);
+                    if (digits > 0)
+                    {
+                        fputc('.', stream);
+
+                        int remaining = (int)MIN(strlen(str) - exp - 1, digits) + 1;
+                        for (i = (int)exp; i < remaining + (int)exp; i++)
+                            fputc(str[i], stream);
+                        for (i = 0; i < (int)(exp + digits - len); i++)
+                            fputc('0', stream);
+                    }
                 }
             }
+            mpfr_free_str(str);
         }
     }
 }
