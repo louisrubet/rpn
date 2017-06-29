@@ -46,7 +46,7 @@ default
 10
 << -> n << 0 1 n for i i 2 * inv + next >> >>
 eval
--> stack should be 1.4644841269841269841
+-> stack should be 1.4644841269841269841269841269841269841
 erase
 
 # program several args
