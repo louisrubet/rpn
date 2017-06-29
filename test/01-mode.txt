@@ -25,7 +25,7 @@ erase
 erase
 
 # fix (3)
-1 fix
+-1 fix
 -> error should be 4
 erase
 
@@ -40,7 +40,7 @@ erase
 erase
 
 # sci (3)
-1 sci
+-1 sci
 -> error should be 4
 erase
 
