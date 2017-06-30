@@ -435,7 +435,6 @@ void bin()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ((number*)_stack->back())->_representation = number::bin;
-    number::s_decimal_digits = 0;
 }
 
 void dec()
