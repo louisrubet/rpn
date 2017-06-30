@@ -1,0 +1,100 @@
+## fix entry
+default erase
+
+# table for fixed entry, 4 fix output >= 0
+4 fix
+1 0.01 0.0001 0.00006 0.00004 0 0.012 0.001256 100 100.001 100.00006 100.00004 12345678910111213.12355
+-> stack should be 1.0000, 0.0100, 0.0001, 0.0001, 0.0000, 0.0000, 0.0120, 0.0013, 100.0000, 100.0010, 100.0001, 100.0000, 12345678910111213.1236
+erase default
+
+# table for fixed entry, 4 fix output <= 0
+4 fix
+-1 -0.01 -0.0001 -0.00006 -0.00004 -0 -0.012 -0.001256 -100 -100.001 -100.00006 -100.00004 -12345678910111213.12355
+-> stack should be -1.0000, -0.0100, -0.0001, -0.0001, -0.0000, -0.0000, -0.0120, -0.0013, -100.0000, -100.0010, -100.0001, -100.0000, -12345678910111213.1236
+erase default
+
+# table for sci entry, 4 fix output >= 0
+4 fix
+0e100 1e0 1.e0 1.001e0 1.e-3 1.e-4 6.e-5 4.e-5 1.00001e2 1.0000006e2 1.0000004e2 1234.5678917e2
+-> stack should be 0.0000, 1.0000, 1.0000, 1.0010, 0.0010, 0.0001, 0.0001, 0.0000, 100.0010, 100.0001, 100.0000, 123456.7892
+erase default
+
+# table for sci entry, 4 fix output <= 0
+4 fix
+-0e100 -1e0 -1.e0 -1.001e0 -1.e-3 -1.e-4 -6.e-5 -4.e-5 -1.00001e2 -1.0000006e2 -1.0000004e2 -1234.5678917e2
+-> stack should be -0.0000, -1.0000, -1.0000, -1.0010, -0.0010, -0.0001, -0.0001, -0.0000, -100.0010, -100.0001, -100.0000, -123456.7892
+erase default
+
+# table for singularity
+4 fix
+nan @nan@ -nan inf -inf @inf@ -@inf@
+-> stack should be nan, nan, nan, inf, -inf, inf, -inf
+erase default
+
+# some strange behaviour (1)
+0 fix
+1 2 / dup +
+-> stack should be 1
+erase default
+
+# some strange behaviour (2)
+1 fix
+0.6
+-> stack should be 0.6
+erase default
+
+# some strange behaviour (3)
+0 fix
+110.6 0.6
+-> stack should be 111, 1
+erase default
+
+# hex (1)
+0x4000000000000
+-> stack should be 0x4000000000000
+erase default
+
+# hex (2)
+2 50 ^ hex
+-> stack should be 0x4000000000000
+erase default
+
+# hex (3)
+12.34 hex
+-> stack should be 0xc
+erase default
+
+# dec (1)
+2 50 ^
+-> stack should be 1125899906842624
+erase default
+
+# dec (2)
+0x4000000000000 dec
+-> stack should be 1125899906842624
+erase default
+
+# dec (3)
+12.34 dec
+-> stack should be 12.34
+erase default
+
+# bin (1)
+0b100000000000000000000000000000000000000000000000000 bin
+-> stack should be 0b100000000000000000000000000000000000000000000000000
+erase default
+
+# bin (2)
+2 50 ^ bin
+-> stack should be 0b100000000000000000000000000000000000000000000000000
+erase default
+
+# bin (3)
+0x4000000000000 bin
+-> stack should be 0b100000000000000000000000000000000000000000000000000
+erase default
+
+# bin (4)
+12.34 bin
+-> stack should be 0b1100
+erase default
