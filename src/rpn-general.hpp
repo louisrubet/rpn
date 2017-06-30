@@ -86,12 +86,20 @@ bool check_decimal_digits(double precision)
 
 void std()
 {
-    // to std mode
-    number::s_mode = number::std;
+    MIN_ARGUMENTS(1);
+    ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    // calc max nb of digits user can see with the current bit precision
-    number::s_decimal_digits = base_digits_from_bit_precision(10, floating_t::s_mpfr_prec);
-    number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
+    double digits = double(((number*)_stack->pop_back())->_value);
+    
+    if (check_decimal_digits(digits))
+    {
+        // set mode, decimal digits and print format
+        number::s_mode = number::std;
+        number::s_decimal_digits = (int)digits;
+        number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
+    }
+    else
+        ERR_CONTEXT(ret_out_of_range);
 }
 
 void fix()
@@ -99,13 +107,13 @@ void fix()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double precision = double(((number*)_stack->pop_back())->_value);
+    double digits = double(((number*)_stack->pop_back())->_value);
     
-    if (check_decimal_digits(precision))
+    if (check_decimal_digits(digits))
     {
-        // set mode, precision, decimal digits and print format
+        // set mode, decimal digits and print format
         number::s_mode = number::fix;
-        number::s_decimal_digits = (int)precision;
+        number::s_decimal_digits = (int)digits;
         number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_FIX);
     }
     else
@@ -117,13 +125,13 @@ void sci()
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double precision = double(((number*)_stack->pop_back())->_value);
+    double digits = double(((number*)_stack->pop_back())->_value);
     
-    if (check_decimal_digits(precision))
+    if (check_decimal_digits(digits))
     {
-        // set mode, precision, decimal digits and print format
+        // set mode, decimal digits and print format
         number::s_mode = number::sci;
-        number::s_decimal_digits = (int)precision;
+        number::s_decimal_digits = (int)digits;
         number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_SCI);
     }
     else
