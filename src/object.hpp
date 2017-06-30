@@ -44,7 +44,7 @@ struct floating_t
     void move()
     {
         void* significand = (void*)(this+1);
-        mpfr->_mpfr_d = (mp_limb_t*)significand;
+        mpfr_custom_move(mpfr, significand);
     }
 
     floating_t& operator=(const double val)
@@ -119,8 +119,12 @@ struct number : public object
     enum {
         dec,
         hex,
-        bin
+        bin,
+        base
     } _representation;
+    // base
+    // carefull: _base is used only if _representation = base
+    int _base;
     // mind that float value is at the end of the object
     // because its mantissa is just after the obj in memory
     floating_t _value;
