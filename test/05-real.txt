@@ -55,7 +55,6 @@ erase
 # prec (1)
 default
 56 prec pi
-std
 -> stack should be 3.1415926535897933
 erase
 
