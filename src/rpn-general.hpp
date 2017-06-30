@@ -1,15 +1,15 @@
 //
-void nop()
+void rpn_nop()
 {
     // nop
 }
 
-void good_bye()
+void rpn_good_bye()
 {
     ERR_CONTEXT(ret_good_bye);
 }
 
-void help()
+void rpn_help()
 {
     // software name
     printf("\n" ATTR_BOLD "%s" ATTR_OFF "\n", uname);
@@ -84,7 +84,7 @@ bool check_decimal_digits(double precision)
     return ret;
 }
 
-void std()
+void rpn_std()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -102,7 +102,7 @@ void std()
         ERR_CONTEXT(ret_out_of_range);
 }
 
-void fix()
+void rpn_fix()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -120,7 +120,7 @@ void fix()
         ERR_CONTEXT(ret_out_of_range);
 }
 
-void sci()
+void rpn_sci()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -167,7 +167,7 @@ void rpn_history()
     }
 }
 
-void type()
+void rpn_type()
 {
     MIN_ARGUMENTS(1);
 
@@ -186,7 +186,7 @@ void rpn_default()
     program::apply_default();
 }
 
-void precision()
+void rpn_precision()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -210,7 +210,7 @@ void precision()
         ERR_CONTEXT(ret_out_of_range);
 }
 
-void round()
+void rpn_round()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);

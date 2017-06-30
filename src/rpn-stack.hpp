@@ -1,5 +1,5 @@
 //
-void swap(void)
+void rpn_swap(void)
 {
     MIN_ARGUMENTS(2);
     stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
@@ -10,19 +10,19 @@ void swap(void)
     _calc_stack.pop_back(2);
 
 }
-void drop(void)
+void rpn_drop(void)
 {
     MIN_ARGUMENTS(1);
     (void)_stack->pop_back();
 }
 
-void drop2(void)
+void rpn_drop2(void)
 {
     MIN_ARGUMENTS(2);
     (void)_stack->pop_back(2);
 }
 
-void dropn(void)
+void rpn_dropn(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -33,25 +33,25 @@ void dropn(void)
     (void)_stack->pop_back(args+1);
 }
 
-void erase(void)
+void rpn_erase(void)
 {
     (void)_stack->pop_back(_stack->size());
 }
 
-void dup(void)
+void rpn_dup(void)
 {
     MIN_ARGUMENTS(1);
     stack::copy_and_push_back(*_stack, _stack->size()-1, *_stack);
 }
 
-void dup2(void)
+void rpn_dup2(void)
 {
     MIN_ARGUMENTS(2);
     stack::copy_and_push_back(*_stack, _stack->size()-2, *_stack);
     stack::copy_and_push_back(*_stack, _stack->size()-2, *_stack);
 }
 
-void dupn(void)
+void rpn_dupn(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -64,7 +64,7 @@ void dupn(void)
         stack::copy_and_push_back(*_stack, _stack->size()-args, *_stack);
 }
 
-void pick(void)
+void rpn_pick(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -81,7 +81,7 @@ void pick(void)
     stack::copy_and_push_back(*_stack, _stack->size()-to_pick, *_stack);
 }
 
-void rot(void)
+void rpn_rot(void)
 {
     MIN_ARGUMENTS(3);
 
@@ -95,14 +95,14 @@ void rot(void)
     _calc_stack.pop_back(3);
 }
 
-void depth(void)
+void rpn_depth(void)
 {
     unsigned long depth = (unsigned long)_stack->size();
     number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     num->set(depth);
 }
 
-void roll(void)
+void rpn_roll(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -124,7 +124,7 @@ void roll(void)
     _calc_stack.pop_back(args);
 }
 
-void rolld(void)
+void rpn_rolld(void)
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -147,7 +147,7 @@ void rolld(void)
     _calc_stack.pop_back(args);
 }
 
-void over(void)
+void rpn_over(void)
 {
     MIN_ARGUMENTS(2);
 

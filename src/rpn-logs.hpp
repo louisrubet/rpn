@@ -17,7 +17,7 @@ void rpn_log10()
         number* ten = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(ten->_value.mpfr, 10.0, floating_t::s_mpfr_rnd));
         rpn_ln();
-        div();
+        rpn_div();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -33,7 +33,7 @@ void rpn_alog10()
         number* ten = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(ten->_value.mpfr, 10.0, floating_t::s_mpfr_rnd));
         rpn_ln();
-        mul();
+        rpn_mul();
         rpn_exp();
     }
 }
@@ -50,7 +50,7 @@ void rpn_log2()
         number* two = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(two->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
         rpn_ln();
-        div();
+        rpn_div();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -66,7 +66,7 @@ void rpn_alog2()
         number* two = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(two->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
         rpn_ln();
-        mul();
+        rpn_mul();
         rpn_exp();
     }
 }
@@ -201,13 +201,13 @@ void rpn_asinh()
     else if (_stack->get_type(0) == cmd_complex)
     {
         // asinh(z)=ln(z+sqrt(1+z*z))
-        dup();
-        square();
+        rpn_dup();
+        rpn_square();
         number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
-        plus();
-        squareroot();
-        plus();
+        rpn_plus();
+        rpn_squareroot();
+        rpn_plus();
         rpn_ln();
     }
     else
@@ -261,17 +261,17 @@ void rpn_acosh()
     else if (_stack->get_type(0) == cmd_complex)
     {
         // acosh(z)=ln(z+sqrt(z+1)sqrt(z-1))
-        dup();
+        rpn_dup();
         number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
-        plus();
-        dup();
+        rpn_plus();
+        rpn_dup();
         num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
-        minus();
-        mul();
-        squareroot();
-        plus();
+        rpn_minus();
+        rpn_mul();
+        rpn_squareroot();
+        rpn_plus();
         rpn_ln();
     }
     else
@@ -290,7 +290,7 @@ void rpn_tanh()
     else if (_stack->get_type(0) == cmd_complex)
     {
         // tanh(x+iy)=(tanh(x)+itan(y)) / (1 + itanh(x)tan(y))
-        dup();
+        rpn_dup();
 
         floating_t* x = ((complex*)_stack->get_obj(1))->re();
         floating_t* y = ((complex*)_stack->get_obj(1))->im();
@@ -305,7 +305,7 @@ void rpn_tanh()
         CHECK_MPFR(mpfr_tan(y->mpfr, y->mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_mul(y->mpfr, y->mpfr, x->mpfr, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_set_d(x->mpfr, 1.0, floating_t::s_mpfr_rnd));
-        div();
+        rpn_div();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);    
@@ -323,20 +323,20 @@ void rpn_atanh()
     else if (_stack->get_type(0) == cmd_complex)
     {
         // atanh(z)=0.5*ln((1+z)/(1-z))
-        dup();
+        rpn_dup();
         number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
-        plus();
-        swap();
+        rpn_plus();
+        rpn_swap();
         num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
-        minus();
-        neg();
-        div();
+        rpn_minus();
+        rpn_neg();
+        rpn_div();
         rpn_ln();
         num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 0.5, floating_t::s_mpfr_rnd));
-        mul();
+        rpn_mul();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);    

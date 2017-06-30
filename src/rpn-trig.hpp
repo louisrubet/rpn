@@ -1,17 +1,17 @@
 //
-void pi(void)
+void rpn_pi(void)
 {
     number* pi = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     CHECK_MPFR(mpfr_const_pi(pi->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
-void d2r(void)
+void rpn_d2r(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // add pi on stack
-    pi();
+    rpn_pi();
 
     floating_t* pi = &((number*)_stack->pop_back())->_value;
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
@@ -20,13 +20,13 @@ void d2r(void)
     CHECK_MPFR(mpfr_div_si(left->mpfr, left->mpfr, 180, floating_t::s_mpfr_rnd));
 }
 
-void r2d(void)
+void rpn_r2d(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // add pi on stack
-    pi();
+    rpn_pi();
 
     floating_t* pi = &((number*)_stack->pop_back())->_value;
     floating_t* left = &((number*)_stack->get_obj(0))->_value;
@@ -91,21 +91,21 @@ void rpn_asin(void)
         CHECK_MPFR(mpfr_set_d(i->re()->mpfr, 0.0, floating_t::s_mpfr_rnd));
         CHECK_MPFR(mpfr_set_d(i->im()->mpfr, 1.0, floating_t::s_mpfr_rnd));
         
-        dup();
-        square();
+        rpn_dup();
+        rpn_square();
         num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
-        minus();
-        neg();
-        squareroot();
-        swap();
+        rpn_minus();
+        rpn_neg();
+        rpn_squareroot();
+        rpn_swap();
         stack::copy_and_push_back(_calc_stack, 0, *_stack);
-        mul();
-        plus();
+        rpn_mul();
+        rpn_plus();
         rpn_ln();
         stack::copy_and_push_back(_calc_stack, 0, *_stack);
-        mul();
-        neg();
+        rpn_mul();
+        rpn_neg();
         _calc_stack.pop_back();
     }
     else
@@ -161,12 +161,12 @@ void rpn_acos(void)
     {
         //acos(z)=pi/2-asin(z)
         rpn_asin();
-        pi();
+        rpn_pi();
         number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
-        div();
-        minus();
-        neg();
+        rpn_div();
+        rpn_minus();
+        rpn_neg();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -239,22 +239,22 @@ void rpn_atan(void)
         CHECK_MPFR(mpfr_set_d(i->im()->mpfr, 1.0, floating_t::s_mpfr_rnd));
         
         stack::copy_and_push_back(_calc_stack, 0, *_stack);
-        mul();
+        rpn_mul();
         num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 1.0, floating_t::s_mpfr_rnd));
-        minus();//iz-1
-        neg();//1-iz
-        dup();
-        neg();//iz-1
+        rpn_minus();//iz-1
+        rpn_neg();//1-iz
+        rpn_dup();
+        rpn_neg();//iz-1
         num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(num->_value.mpfr, 2.0, floating_t::s_mpfr_rnd));
-        plus();//iz+1
-        div();
+        rpn_plus();//iz+1
+        rpn_div();
 
         rpn_ln();
         CHECK_MPFR(mpfr_set_d(i->im()->mpfr, 0.5, floating_t::s_mpfr_rnd));
         stack::copy_and_push_back(_calc_stack, 0, *_stack);
-        mul();
+        rpn_mul();
 
         _calc_stack.pop_back();
     }

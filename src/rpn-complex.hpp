@@ -1,4 +1,4 @@
-void re()
+void rpn_re()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -11,7 +11,7 @@ void re()
     _calc_stack.pop_back();
 }
 
-void im()
+void rpn_im()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -24,7 +24,7 @@ void im()
     _calc_stack.pop_back();
 }
 
-void arg()
+void rpn_arg()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -39,7 +39,7 @@ void arg()
     _calc_stack.pop_back();
 }
 
-void conj()
+void rpn_conj()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -48,7 +48,7 @@ void conj()
     CHECK_MPFR(mpfr_neg(cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
 }
 
-void r2c()
+void rpn_r2c()
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -65,7 +65,7 @@ void r2c()
     _calc_stack.pop_back(2);
 }
 
-void c2r()
+void rpn_c2r()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -81,27 +81,27 @@ void c2r()
     _calc_stack.pop_back();
 }
 
-void r2p()
+void rpn_r2p()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
 
-    dup();
-    dup();
-    arg();
+    rpn_dup();
+    rpn_dup();
+    rpn_arg();
 
     complex* cplx = (complex*)_stack->get_obj(1);
     CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_stack->back())->_value.mpfr, floating_t::s_mpfr_rnd));
     _stack->pop_back();
     
-    swap();
+    rpn_swap();
     rpn_abs();
     cplx = (complex*)_stack->get_obj(1);
     CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_stack->back())->_value.mpfr, floating_t::s_mpfr_rnd));
     _stack->pop_back();
 }
 
-void p2r()
+void rpn_p2r()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);

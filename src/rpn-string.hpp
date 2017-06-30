@@ -1,4 +1,4 @@
-void instr()
+void rpn_instr()
 {
     MIN_ARGUMENTS(1);
 
@@ -28,7 +28,7 @@ void instr()
     }
 }
 
-void strout()
+void rpn_strout()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -43,7 +43,7 @@ void strout()
         prog.run(*_stack, *_heap);
 }
 
-void chr()
+void rpn_chr()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -61,7 +61,7 @@ void chr()
     str->_value[1] = 0;
 }
 
-void num()
+void rpn_num()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -71,7 +71,7 @@ void num()
     numb->_value = the_chr;
 }
 
-void strsize()
+void rpn_strsize()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -81,7 +81,7 @@ void strsize()
     numb->_value = len;
 }
 
-void strpos()
+void rpn_strpos()
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -99,7 +99,7 @@ void strpos()
     numb->_value = pos;
 }
 
-void strsub()
+void rpn_strsub()
 {
     MIN_ARGUMENTS(3);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);

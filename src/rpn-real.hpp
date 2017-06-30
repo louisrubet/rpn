@@ -1,4 +1,4 @@
-void plus()
+void rpn_plus()
 {
     MIN_ARGUMENTS(2);
 
@@ -46,7 +46,7 @@ void plus()
     // adding number+complex
     else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
     {
-        swap();
+        rpn_swap();
         number* right = (number*)_stack->pop_back();
         complex* left = (complex*)_stack->back();
         CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
@@ -55,7 +55,7 @@ void plus()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void minus()
+void rpn_minus()
 {
     MIN_ARGUMENTS(2);
 
@@ -84,7 +84,7 @@ void minus()
     // substracting number-complex
     else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
     {
-        swap();
+        rpn_swap();
         number* right = (number*)_stack->pop_back();
         complex* left = (complex*)_stack->back();
         CHECK_MPFR(mpfr_sub(left->re()->mpfr, right->_value.mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
@@ -93,7 +93,7 @@ void minus()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void mul()
+void rpn_mul()
 {
     MIN_ARGUMENTS(2);
 
@@ -139,7 +139,7 @@ void mul()
     // multiplying number*complex
     else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_number)
     {
-        swap();
+        rpn_swap();
         number* right = (number*)_stack->pop_back();
         complex* left = (complex*)_stack->back();
         CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
@@ -185,7 +185,7 @@ void do_divide_complexes()
     _calc_stack.pop_back(4);
 }
 
-void div()
+void rpn_div()
 {
     MIN_ARGUMENTS(2);
 
@@ -232,7 +232,7 @@ void div()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void neg()
+void rpn_neg()
 {
     MIN_ARGUMENTS(1);
 
@@ -251,7 +251,7 @@ void neg()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void inv()
+void rpn_inv()
 {
     MIN_ARGUMENTS(1);
 
@@ -263,7 +263,7 @@ void inv()
     else if (_stack->get_type(0) == cmd_complex)
     {
         //1. duplicate
-        dup();
+        rpn_dup();
         //2. set complex level 2 to (1,0)
         complex* cplx = (complex*)_stack->get_obj(1);
         CHECK_MPFR(mpfr_set_ui(cplx->re()->mpfr, 1UL, floating_t::s_mpfr_rnd));
@@ -275,7 +275,7 @@ void inv()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void purcent()
+void rpn_purcent()
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -288,7 +288,7 @@ void purcent()
     CHECK_MPFR(mpfr_div_si(left->_value.mpfr, left->_value.mpfr, 100L, floating_t::s_mpfr_rnd));
 }
 
-void purcentCH()
+void rpn_purcentCH()
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -301,7 +301,7 @@ void purcentCH()
     CHECK_MPFR(mpfr_div(left->_value.mpfr, right->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
-void power()
+void rpn_power()
 {
     MIN_ARGUMENTS(2);
 
@@ -322,7 +322,7 @@ void power()
 
         //switch complex to polar
         complex* cplx = (complex*)_stack->back();
-        r2p();
+        rpn_r2p();
 
         //new abs=abs^exponent
         number* exponent = (number*)_calc_stack.back();
@@ -332,14 +332,14 @@ void power()
         CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
 
         //back to cartesian
-        p2r();
+        rpn_p2r();
         _calc_stack.pop_back();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void squareroot()
+void rpn_squareroot()
 {
     if (_stack->get_type(0) == cmd_number)
     {        
@@ -351,13 +351,13 @@ void squareroot()
         // calc cplx^0.5
         _stack->allocate_back(number::calc_size(), cmd_number);
         CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.5, floating_t::s_mpfr_rnd));
-        power();
+        rpn_power();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void square()
+void rpn_square()
 {
     MIN_ARGUMENTS(1);
 
@@ -368,14 +368,14 @@ void square()
     }
     else if (_stack->get_type(0) == cmd_complex)
     {
-        dup();
-        mul();
+        rpn_dup();
+        rpn_mul();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void modulo()
+void rpn_modulo()
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -422,7 +422,7 @@ void rpn_abs()
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void hex()
+void rpn_hex()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -430,21 +430,21 @@ void hex()
     number::s_decimal_digits = 0;
 }
 
-void bin()
+void rpn_bin()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ((number*)_stack->back())->_representation = number::bin;
 }
 
-void dec()
+void rpn_dec()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ((number*)_stack->back())->_representation = number::dec;
 }
 
-void base()
+void rpn_base()
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -458,7 +458,7 @@ void base()
         ERR_CONTEXT(ret_out_of_range);
 }
 
-void fact()
+void rpn_fact()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -467,12 +467,12 @@ void fact()
     number* left = (number*)_stack->back();
     number* right = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     right->_value = 1L;
-    plus();
+    rpn_plus();
 
     CHECK_MPFR(mpfr_gamma(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
-void sign()
+void rpn_sign()
 {
     MIN_ARGUMENTS(1);
 
@@ -486,15 +486,15 @@ void sign()
     else if (_stack->get_type(0) == cmd_complex)
     {
         // calc x/sqrt(x*x+y*y) +iy/sqrt(x*x+y*y)
-        dup();
+        rpn_dup();
         rpn_abs();
-        div();
+        rpn_div();
     }
     else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void mant()
+void rpn_mant()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -528,7 +528,7 @@ void mant()
         ERR_CONTEXT(ret_out_of_range);
 }
 
-void xpon()
+void rpn_xpon()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
