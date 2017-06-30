@@ -403,7 +403,7 @@ static bool get_program(string& entry, program& prog, string& remaining_entry)
     return ret;
 }
 
-static bool get_number(const string& entry, program& prog, string& remaining_entry)
+static bool get_number(string& entry, program& prog, string& remaining_entry)
 {
     char* endptr;
     bool ret = false;
@@ -411,20 +411,37 @@ static bool get_number(const string& entry, program& prog, string& remaining_ent
     if (entry.size() > 0)
     {
         // pre parse to avoid doing a useless allocation
-        // detect the begining of a number, including nan, inf, @nan@, @inf@
+        // detect the begining of a number including nan, inf, @nan@, @inf@
         if (entry.find_first_of("+-0123456789.ni@", 0) == 0)
         {
+            // detect an arbitrary base entry like 3bXXX or 27bYYY
+            int base = 0;
+            size_t base_detect = entry.find_first_of("b", 0);
+            if (base_detect == 1 || base_detect == 2)
+                if (sscanf(entry.c_str(), "%db", &base) == 1 && base >= 2 && base <= 62)
+                    entry=entry.substr(base_detect+1);
+                else
+                    base = 0;
+
             number* num = (number*)prog.allocate_back(number::calc_size(), cmd_number);
 
-            int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, 0, MPFR_DEFAULT_RND);
+            int mpfr_ret = mpfr_strtofr(num->_value.mpfr, entry.c_str(), &endptr, base, MPFR_DEFAULT_RND);
             if (endptr != NULL && endptr != entry.c_str())
             {
                 // determine representation
-                string beg = entry.substr(0, 2);
-                if (beg == "0x" || beg == "0X")
-                    num->_representation = number::hex;
+                if (base != 0)
+                {
+                    num->_representation = number::base;
+                    num->_base = base;
+                }
                 else
-                    num->_representation = number::dec;
+                {
+                    string beg = entry.substr(0, 2);
+                    if (beg == "0x" || beg == "0X")
+                        num->_representation = number::hex;
+                    else
+                        num->_representation = number::dec;
+                }
 
                 ret = true;
 
