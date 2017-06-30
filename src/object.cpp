@@ -195,6 +195,10 @@ void object::show(FILE* stream)
                 fprintf(stream, "0b");
                 print_fix(stream, ((number*)this)->_value.mpfr, 2);
                 break;
+            case number::base:
+                fprintf(stream, "%db", ((number*)this)->_base);
+                print_fix(stream, ((number*)this)->_value.mpfr, ((number*)this)->_base);
+                break;
             default:
                 fprintf(stream, "<unknown number representation>");
                 break;

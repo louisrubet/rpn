@@ -76,6 +76,10 @@ typedef enum {
 #define HISTORY_FILE ".rpn_history"
 #define HISTORY_FILE_MAX_LINES (100)
 
+// base min and max
+#define BASE_MIN 2
+#define BASE_MAX 62
+
 // some defs for mpfr
 #if _MPFR_EXP_FORMAT == 1
 #define MPFR_EXP_MAX (SHRT_MAX)

@@ -63,14 +63,14 @@ rpn>
 
 ```
 rpn> 
-Display all 144 possibilities? (y or n)
-nop      exit     chs      sqrt     sign     floor    im       std      >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
-help     test     neg      sq       %        ceil     conj     fix      >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
-h        version  *        sqr      %CH      ip       arg      sci      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
-?        uname    /        abs      mod      fp       c->r     prec     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
-q        history  inv      dec      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
-quit     +        ^        hex      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
-q        -        pow      bin      xpon     re       r->p     type     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
+Display all 145 possibilities? (y or n)
+nop      exit     chs      sqrt     base     xpon     re       r->p     type     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
+help     test     neg      sq       sign     floor    im       std      >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
+h        version  *        sqr      %        ceil     conj     fix      >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
+?        uname    /        abs      %CH      ip       arg      sci      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
+q        history  inv      dec      mod      fp       c->r     prec     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
+quit     +        ^        hex      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
+q        -        pow      bin      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
 rpn> 
 ```
 
@@ -104,6 +104,7 @@ rpn>
 |`dec`| decimal representation
 |`hex`| hexadecimal representation
 |`bin`| binary representation
+|`base`| arbitrary base representation
 |`sign`| sign of a real, unary vector in the same direction for a complex
 
 ### operations on reals
