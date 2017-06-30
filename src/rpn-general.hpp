@@ -57,7 +57,7 @@ void help()
 
 int base_digits_from_bit_precision(int base, int bit_precision)
 {
-    return (int)ceil(bit_precision * log(2.0) / log((double)base));
+    return (int)ceil(bit_precision * log(2.0) / log((double)base)) - 1;
 }
 
 string make_digit_format(int decimal_digits, const char* printf_format)
