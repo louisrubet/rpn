@@ -28,7 +28,7 @@ bool find_variable(string& variable, object*& obj, unsigned int& size)
     return found;
 }
 
-void eval(void)
+void rpn_eval(void)
 {
     bool run_prog = false;
     string prog_text;
@@ -84,7 +84,7 @@ void eval(void)
 }
 
 // carefull, this not a command but a branch
-int inprog(branch& myobj)
+int rpn_inprog(branch& myobj)
 {
     string context("->");// for showing errors
     int count_symbols = 0;

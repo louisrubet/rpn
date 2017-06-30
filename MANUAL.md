@@ -144,7 +144,7 @@ rpn>
 |`std`| standard floating numbers representation. ex: `std`
 |`fix`| fixed point representation. ex: `6 fix`
 |`sci`| scientific floating point representation. ex: `20 sci`
-|`prec`| get float precision in bits when first stack is not a number, set float precision in bits when first stack entry is a number. ex: `256 prec`
+|`prec`| set float precision in bits. ex: `256 prec`
 |`round`| set float rounding mode. Authorized values are: ["nearest" \| "toward zero" \| "toward +inf" \| "toward -inf" \| "away from zero"] round`. ex: `"nearest" round`
 |`default` | set float representation and precision to default
 |`type` | show type of stack first entry
