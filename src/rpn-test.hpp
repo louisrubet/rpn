@@ -7,7 +7,7 @@ int cmp_strings_on_stack_top()
     return strncmp(left->_value, right->_value, min(left->_len, right->_len));
 }
 
-void sup(void)
+void rpn_sup(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -33,7 +33,7 @@ void sup(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void sup_eq(void)
+void rpn_sup_eq(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -59,7 +59,7 @@ void sup_eq(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void inf(void)
+void rpn_inf(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -85,7 +85,7 @@ void inf(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void inf_eq(void)
+void rpn_inf_eq(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -111,7 +111,7 @@ void inf_eq(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void diff(void)
+void rpn_diff(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -153,7 +153,7 @@ void diff(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void eq(void)
+void rpn_eq(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -195,7 +195,7 @@ void eq(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void test_and(void)
+void rpn_test_and(void)
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -211,7 +211,7 @@ void test_and(void)
         mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
 }
 
-void test_or(void)
+void rpn_test_or(void)
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -227,7 +227,7 @@ void test_or(void)
         mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
 }
 
-void test_xor(void)
+void rpn_test_xor(void)
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -252,7 +252,7 @@ void test_xor(void)
     }
 }
 
-void test_not(void)
+void rpn_test_not(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -264,7 +264,7 @@ void test_not(void)
         mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);            
 }
 
-void same(void)
+void rpn_same(void)
 {
-    eq();
+    rpn_eq();
 }

@@ -1,5 +1,5 @@
 //
-void sto(void)
+void rpn_sto(void)
 {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
@@ -10,7 +10,7 @@ void sto(void)
 }
 
 //
-void stoadd(void)
+void rpn_stoadd(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -18,10 +18,10 @@ void stoadd(void)
     {
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
-            plus();
+            rpn_plus();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -34,11 +34,11 @@ void stoadd(void)
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
             stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
-            plus();
+            rpn_plus();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -47,7 +47,7 @@ void stoadd(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void stosub(void)
+void rpn_stosub(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -55,10 +55,10 @@ void stosub(void)
     {
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
-            minus();
+            rpn_minus();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -71,11 +71,11 @@ void stosub(void)
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
             stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
-            minus();
+            rpn_minus();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -84,7 +84,7 @@ void stosub(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void stomul(void)
+void rpn_stomul(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -92,10 +92,10 @@ void stomul(void)
     {
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
-            mul();
+            rpn_mul();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -108,11 +108,11 @@ void stomul(void)
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
             stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
-            mul();
+            rpn_mul();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -121,7 +121,7 @@ void stomul(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void stodiv(void)
+void rpn_stodiv(void)
 {
     MIN_ARGUMENTS(2);
 
@@ -129,10 +129,10 @@ void stodiv(void)
     {
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
-            div();
+            rpn_div();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -145,11 +145,11 @@ void stodiv(void)
         _stack->pop_back();
 
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
             stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
-            div();
+            rpn_div();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -158,7 +158,7 @@ void stodiv(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void stoneg(void)
+void rpn_stoneg(void)
 {
     MIN_ARGUMENTS(1);
 
@@ -166,10 +166,10 @@ void stoneg(void)
     {
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
-            neg();
+            rpn_neg();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -178,7 +178,7 @@ void stoneg(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void stoinv(void)
+void rpn_stoinv(void)
 {
     MIN_ARGUMENTS(1);
 
@@ -186,10 +186,10 @@ void stoinv(void)
     {
         // get variable value on stack level 1, make op then modify variable
         string variable(((symbol*)_stack->back())->_value);
-        rcl();
+        rpn_rcl();
         if (_err == ret_ok)
         {
-            inv();
+            rpn_inv();
             _heap->add(variable, _stack->get_obj(0), _stack->get_len(0));
             _stack->pop_back();
         }
@@ -198,7 +198,7 @@ void stoinv(void)
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-void rcl(void)
+void rpn_rcl(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
@@ -218,7 +218,7 @@ void rcl(void)
         ERR_CONTEXT(ret_unknown_variable);
 }
 
-void edit(void)
+void rpn_edit(void)
 {
     MIN_ARGUMENTS(1);
 
@@ -263,7 +263,7 @@ void auto_rcl(symbol* symb)
         {
             stack::copy_and_push_back(obj, *_stack, size);
             if (obj->_type == cmd_program)
-                eval();
+                rpn_eval();
         }
         else
             stack::copy_and_push_back(symb, *_stack, symb->size());
@@ -272,7 +272,7 @@ void auto_rcl(symbol* symb)
         stack::copy_and_push_back(symb, *_stack, symb->size());
 }
 
-void purge(void)
+void rpn_purge(void)
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
@@ -282,7 +282,7 @@ void purge(void)
         ERR_CONTEXT(ret_unknown_variable);
 }
 
-void vars(void)
+void rpn_vars(void)
 {
     object* obj;
     unsigned int size;
@@ -321,7 +321,7 @@ void vars(void)
     }
 }
 
-void clusr(void)
+void rpn_clusr(void)
 {
     _heap->erase_all();
 }

@@ -46,7 +46,7 @@ void test_show_result(string title, int tests, int tests_failed, int steps, int 
     printf(")\n");
 }
 
-void test()
+void rpn_test()
 {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
