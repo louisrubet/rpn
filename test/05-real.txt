@@ -32,12 +32,7 @@ erase
 
 # real binary
 0b11001100
--> stack should be 204
-erase
-
-# real binary (2)
-0b11001100.1101
--> stack should be 204.8125
+-> stack should be 0b11001100
 erase
 
 # real inf, nan
