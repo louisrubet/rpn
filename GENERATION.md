@@ -76,7 +76,7 @@ It is necessary to get MPFR and linenoise-ng to generate rpn.
 
 	```
     # cd rpn/build
-	# make package
+	# sudo make package
     [100%] Built target rpn
     Run CPack packaging tool...
     CPack: Create package using DEB
