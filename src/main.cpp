@@ -65,6 +65,8 @@ static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context)
 static void segv_handler(int sig, siginfo_t* siginfo, void* context)
 {
     fprintf(stderr, "Internal error\n");
+    s_prog_to_interrupt->stop();
+    s_prog_to_interrupt = NULL;
 }
 
 static void catch_signals(program* prog)
