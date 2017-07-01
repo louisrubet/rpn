@@ -21,7 +21,7 @@ program::keyword_t program::s_keywords[] =
     { cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string" },
     { cmd_keyword, "history", &program::rpn_history, "see commands history" },
 
-    //USUAL OPERATIONS ON REALS AND COMPLEXEXE
+    //USUAL OPERATIONS ON REALS AND COMPLEXES
     { cmd_undef, "", NULL, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
     { cmd_keyword, "+", &program::rpn_plus, "addition" },
     { cmd_keyword, "-", &program::rpn_minus, "substraction" },
