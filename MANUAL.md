@@ -1,9 +1,9 @@
 # **rpn** - reference manual
 
 **rpn**
-- is a full-featured **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** user manual is provided as a reference), it includes at least **stack**, **store**, **branch**, **program**, **complex**, **real**, **test**, **trig** and **logs** commands
-- is implemented as a **command-line calculator** for GNU/Linux
-- brings powerfull calculation facilities on floating point numbers with __arbitrary precision__, provided by **GNU MP** and **GNU MPFR** libraries
+- is a structured full-featured **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** and **HP48GX** user manual are provided as references), including **real**, **complex**, **stack**, **store**, **branch**, **program**, **test**, **trig** and **logs** commands and more to come
+- is implemented as a **command-line calculator** for most popular Linux distributions
+- brings powerfull calculation facilities on floating point numbers with __arbitrary precision__ provided by **GNU MP** and **GNU MPFR** libraries
 - uses that so cool **reverse polish notation**
 
 ## Quick examples
@@ -45,7 +45,7 @@ rpn> erase 10000 prec pi
 rpn> 
 ```
 
-### Objects
+### object types
 
 Following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
 ```
@@ -57,7 +57,7 @@ Following objects are managed: **floating numbers**, **complexes**, **symbols**,
 rpn> 
 ```
 
-### Command line
+### command line
 
 **rpn** is a cli interface with an **interactive editor** with autocompletion provided by **linenoise-ng**, see https://github.com/arangodb/linenoise-ng
 
@@ -72,6 +72,21 @@ q        history  inv      dec      mod      fp       c->r     prec     <=      
 quit     +        ^        hex      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
 q        -        pow      bin      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
 rpn> 
+```
+
+## entry
+
+**reals** can be entered in decimal, binary, hexadecimal or arbitrary base from 2 to 62
+
+base is entered with format `<base>b<number>`
+
+ex:
+```
+rpn> 5.6 0xaabb 0b1101 7b1252
+4> 5.6
+3> 0xaabb
+2> 0b1101
+1> 7b1252
 ```
 
 ## keywords
