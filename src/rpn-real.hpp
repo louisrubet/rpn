@@ -304,15 +304,39 @@ void rpn_purcentCH()
 void rpn_power()
 {
     MIN_ARGUMENTS(2);
+    bool done_on_real = false;
 
     if (_stack->get_type(1) == cmd_number)
     {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
-        number* right = (number*)_stack->pop_back();
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->get_obj(0);
+        number* left = (number*)_stack->get_obj(1);
+
+        if (mpfr_cmp_d(left->_value.mpfr, 0.0) >= 0)
+        {
+            CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+            _stack->pop_back();
+            done_on_real = true;
+        }
+        else
+        {
+            // copy power out
+            stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+            _stack->pop_back();
+
+            // negative number -> complex number
+            _stack->allocate_back(number::calc_size(), cmd_number);
+            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.0, floating_t::s_mpfr_rnd));
+            rpn_r2c();
+
+            // copy power back
+            stack::copy_and_push_back(_calc_stack, _calc_stack.size()-1, *_stack);
+            _calc_stack.pop_back();
+        }
     }
-    else if (_stack->get_type(1) == cmd_complex)
+
+    // carrefull, no 'else' here
+    if (!done_on_real && _stack->get_type(1) == cmd_complex)
     {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
@@ -344,7 +368,19 @@ void rpn_squareroot()
     if (_stack->get_type(0) == cmd_number)
     {        
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        
+        if (mpfr_cmp_d(left->_value.mpfr, 0.0) >= 0)
+            CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        else
+        {
+            // negative number -> complex square root
+            _stack->allocate_back(number::calc_size(), cmd_number);
+            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.0, floating_t::s_mpfr_rnd));
+            rpn_r2c();
+            _stack->allocate_back(number::calc_size(), cmd_number);
+            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.5, floating_t::s_mpfr_rnd));
+            rpn_power();
+        }
     }
     else if (_stack->get_type(0) == cmd_complex)
     {
