@@ -78,7 +78,13 @@ rpn>
 
 **reals** can be entered in decimal, binary, hexadecimal or arbitrary base from 2 to 62
 
-base is entered with format `<base>b<number>`
+binaries (base 2) are entered as `0b<number>` or `0B<number>`
+
+hexadecimals (base 16) are entered as `0x<number>` or `0X<number>`
+
+arbitrary base numbers are entered as `<base>b<number>`
+
+representation can be individualy changed with keywords `dec`, `bin`, `hex` and `<n> base`
 
 ex:
 ```
@@ -87,6 +93,9 @@ rpn> 5.6 0xaabb 0b1101 7b1252
 3> 0xaabb
 2> 0b1101
 1> 7b1252
+
+rpn> 7b1252 dec
+1> 478
 ```
 
 ## keywords
