@@ -1,38 +1,38 @@
 ## MANUAL TESTS
-default erase
+default del
 
 # GENERAL help
 -> error should be 0
-erase
+del
 
 # GENERAL h
 -> error should be 0
-erase
+del
 
 # GENERAL ?
 -> error should be 0
-erase
+del
 
 # GENERAL quit
 -> error should be 0
-erase
+del
 
 # GENERAL q
 -> error should be 0
-erase
+del
 
 # GENERAL exit
 -> error should be 0
-erase
+del
 
 # STORE vars
 -> error should be 0
-erase
+del
 
 # STORE edit
 -> error should be 0
-erase
+del
 
 # HISTORY
 -> error should be 0
-erase
+del

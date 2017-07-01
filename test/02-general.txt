@@ -1,49 +1,49 @@
 ## GENERAL
-default erase 
+default del 
 
 # version
 version
 -> stack size should be 1
-erase
+del
 
 uname
 -> stack size should be 1
-erase
+del
 
 # type (1)
 1 type
 -> stack should be "number"
-erase
+del
 
 # type (2)
 "hey" type
 -> stack should be "string"
-erase
+del
 
 # type (3)
 << -> n << n >> >> type
 -> stack should be "program"
-erase
+del
 
 # type (4)
 (1,2) type
 -> stack should be "complex"
-erase
+del
 
 # type (5)
 type
 -> error should be 2
-erase
+del
 
 # default
 2 sci 1
 -> stack should be 1.00e+00
 default
 -> stack should be 1
-erase
+del
 
 # nop
 nop
 -> stack size should be 0
 -> error should be 0
-erase
+del
