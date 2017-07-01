@@ -16,7 +16,6 @@ An help command is provided by rpn:
 
 ```
 rpn> help
-rpn> h
 
 rpn v2.3, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
 
