@@ -61,18 +61,7 @@ rpn>
 
 **rpn** is a cli interface with an **interactive editor** with autocompletion provided by **linenoise-ng**, see https://github.com/arangodb/linenoise-ng
 
-```
-rpn> 
-Display all 145 possibilities? (y or n)
-nop      exit     chs      sqrt     base     xpon     re       r->p     type     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
-help     test     neg      sq       sign     floor    im       std      >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
-h        version  *        sqr      %        ceil     conj     fix      >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
-?        uname    /        abs      %CH      ip       arg      sci      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
-q        history  inv      dec      mod      fp       c->r     prec     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
-quit     +        ^        hex      fact     min      r->c     round    !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
-q        -        pow      bin      mant     max      p->r     default  ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
-rpn> 
-```
+Autocompletion works like those in Linux shells, with keys \<tab\>, Ctrl-R \<search pattern\> etc.
 
 ## entry
 
@@ -197,7 +186,7 @@ rpn> 7b1252 dec
 |`drop`| drop first stack entry
 |`drop2`| drop 2 first stack entries
 |`dropn`| drop n first stack entries
-|`erase`| drop all stack entries
+|`del|erase`| drop all stack entries
 |`rot`| rotate 3 first stack entries
 |`dup`| duplicate first stack entry
 |`dup2`| duplicate 2 first stack entries
