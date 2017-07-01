@@ -1,387 +1,387 @@
 ## BRANCH
-default erase
+default del
 
 # if then else end (1)
 1 if then 'ok' end
 -> stack should be 'ok'
-erase
+del
 
 # if then else end (2)
 1 if 'before' then 'ok' end
 -> stack should be 'before', 'ok'
-erase
+del
 
 # if then else end (3)
 0 if then 'ok' end
 -> stack size should be 0
-erase
+del
 
 # if then else end (4)
 0 if then 'ok' end
 -> stack size should be 0
-erase
+del
 
 # if then else end (5)
 1 if then 'ok' else 'KO' end
 -> stack should be 'ok'
-erase
+del
 
 # if then else end (6)
 1 if then 'ok' 'dokey' else 'KO' end
 -> stack should be 'ok', 'dokey'
-erase
+del
 
 # if then else end (7)
 0 if then 'ok' else 'KO' end
 -> stack should be 'KO'
-erase
+del
 
 # if then else end - error case (1)
 if then end
 -> error should be 2
-erase
+del
 
 # if then else end - error case (2)
 0 if then
 -> error should be 11
-erase
+del
 
 # if then else end - error case (3)
 0 if end
 -> error should be 11
-erase
+del
 
 # if then else end - error case (4)
 0 if end
 -> error should be 11
-erase
+del
 
 # if then else end - error case (5)
 then
 -> error should be 11
-erase
+del
 
 # if then else end - error case (6)
 1 if
 -> error should be 11
-erase
+del
 
 # if then else end - error case (7)
 else
 -> error should be 11
-erase
+del
 
 # if then else end - error case (8)
 end
 -> error should be 11
-erase
+del
 
 # if then else end - error case (9)
 "1" if then end
 -> error should be 3
-erase
+del
 
 # ift (1)
 1 'ok' ift
 -> stack should be 'ok'
-erase
+del
 
 # ift (2)
 0 'ok' ift
 -> stack size should be 0
-erase
+del
 
 # ift (3)
 'ok' ift
 -> error should be 2
 -> stack size should be 1
-erase
+del
 
 # ift (4)
 ift
 -> error should be 2
 -> stack size should be 0
-erase
+del
 
 # ifte (1)
 1 'ok' 'nok' ifte
 -> stack should be 'ok'
-erase
+del
 
 # ifte (2)
 0 'ok' 'nok' ifte
 -> stack should be 'nok'
-erase
+del
 
 # ifte (3)
 'ok' 'nok' ifte
 -> error should be 2
 -> stack size should be 2
-erase
+del
 
 # ifte (4)
 'nok' ifte
 -> error should be 2
 -> stack size should be 1
-erase
+del
 
 # ifte (5)
 ifte
 -> error should be 2
 -> stack size should be 0
-erase
+del
 
 # start next (1)
 1 2 start 0 next
 -> stack should be 0, 0
-erase
+del
 
 # start next (2)
 2 1 start 0 next
 -> stack size should be 0
-erase
+del
 
 # start next (3)
 -2 -1 start 0 next
 -> stack should be 0, 0
-erase
+del
 
 # start next (4)
 -1 -2 start 0 next
 -> stack size should be 0
-erase
+del
 
 # start next (5)
 1 1 start 0 next
 -> stack should be 0
-erase
+del
 
 # start next - error case (1)
 1 start next
 ->error should be 2
-erase
+del
 
 # start next - error case (2)
 start next
 ->error should be 2
-erase
+del
 
 # start next - error case (3)
 start
 ->error should be 11
-erase
+del
 
 # start next - error case (4)
 next
 ->error should be 11
-erase
+del
 
 # start next - error case (5)
 "1" 2 start next
 ->error should be 3
-erase
+del
 
 # start next - error case (5)
 1 "2" start next
 ->error should be 3
-erase
+del
 
 # for next (1)
 23 27 for i i next
 -> stack should be 23, 24, 25, 26, 27
-erase
+del
 
 # for next (2)
 1 1 for i i next
 -> stack should be 1
-erase
+del
 
 # for next (3)
 27 23 for i i next
 -> stack size should be 0
-erase
+del
 
 # for next (4)
 -2 -1 for i i next
 -> stack should be -2, -1
-erase
+del
 
 # for next (5)
 -1 -2 for i i next
 -> stack size should be 0
-erase
+del
 
 # for next - error case (1)
 1 for i i next
 -> error should be 2
-erase
+del
 
 # for next - error case (2)
 for i i next
 -> error should be 2
-erase
+del
 
 # for next - error case (3)
 "1" 2 for i i next
 -> error should be 3
-erase
+del
 
 # for next - error case (4)
 1 "2" for i i next
 -> error should be 3
-erase
+del
 
 # for next - error case (5)
 1 2 for i i
 -> error should be 11
-erase
+del
 
 # for next - error case (6)
 for
 -> error should be 11
-erase
+del
 
 # for step (1)
 23 27 for i i 1 step
 -> stack should be 23, 24, 25, 26, 27
-erase
+del
 
 # for step (2)
 0 1 for i i 0.25 step
 -> stack should be 0, 0.25, 0.5, 0.75, 1
-erase
+del
 
 # for step (3)
 -1 0 for i i 0.25 step
 -> stack should be -1, -0.75, -0.5, -0.25, 0
-erase
+del
 
 # for step (4)
 0 -1 for i i 0.25 step
 -> stack size should be 0
-erase
+del
 
 # for step (5)
 0 -1 for i i -0.25 step
 -> stack size should be 0
-erase
+del
 
 # for step - error case (1)
 0 1 for i i "0.5" step
 -> error should be 3
-erase
+del
 
 # for step - error case (2)
 step
 -> error should be 11
-erase
+del
 
 # do..unti (1)
 do 'ok' unti 1 end
 -> stack should be 'ok'
-erase
+del
 
 # do..unti (2)
 do unti 1 end
 -> stack size should be 0
-erase
+del
 
 # do..unti (3)
 1 'a' sto do a unti a 0 > end
 -> stack should be 1
-erase
+del
 
 # do..unti (4)
 1 'a' sto do a 'a' 1 sto+ unti a 3 > end
 -> stack should be 1, 2, 3
-erase
+del
 
 # do..unti (5)
 "" 0 'a' sto do 'a' 1 sto+ 0 a for b b ->str + next unti a 3 > end
 -> stack should be "01012012301234"
-erase
+del
 
 # do..unti error case (1)
 do
 -> error should be 11
-erase
+del
 
 # do..unti error case (2)
 do 8 end
 -> error should be 11
-erase
+del
 
 # do..unti error case (3)
 unti
 -> error should be 11
-erase
+del
 
 # do..unti error case (4)
 do 3 unti
 -> error should be 11
-erase
+del
 
 # do..unti error case (5)
 unti 1 end
 -> error should be 11
-erase
+del
 
 # do..unti error case (6)
 do 3 repeat 8 end
 -> error should be 11
-erase
+del
 
 # do..unti error case (7)
 do 3 until 8 until 9 end
 -> error should be 11
-erase
+del
 
 # while..repeat (1)
 while 0 repeat ok end
 -> stack size should be 0
-erase
+del
 
 # while..repeat (2)
 2 while dup 0.1 > repeat dup 2 / end
 -> stack should be 2, 1, 0.5, 0.25, 0.125, 0.0625
-erase
+del
 
 # while..repeat (3)
 "" 0 'a' sto while a 3 < repeat 'a' 1 sto+ 0 a for b b ->str + next end
 -> stack should be "010120123"
-erase
+del
 
 # while..repeat error case (1)
 while
 -> error should be 11
-erase
+del
 
 # while..repeat error case (2)
 while 3 end
 -> error should be 11
-erase
+del
 
 # while..repeat error case (3)
 repeat
 -> error should be 11
-erase
+del
 
 # while..repeat error case (4)
 while 1 repeat
 -> error should be 11
-erase
+del
 
 # while..repeat error case (5)
 repeat 1 end
 -> error should be 11
-erase
+del
 
 # while..repeat error case (6)
 while 3 repeat 8 repeat 9 end
 -> error should be 11
-erase
+del
 
 # while..repeat error case (7)
 while 3 until 8 end
 -> error should be 11
-erase
+del
