@@ -25,14 +25,14 @@ rpn> << -> x y << x y + ln >> >> 'P' sto
 ### and a bunch of functions
 ```
 rpn> 
-Display all 140 possibilities? (y or n)
-nop      test     sci      inv      dec      mod      fp       c->r     <=       same     dup      over     sub      next     while    vars     sneg     cos      ln       exp2
-?        version  +        ^        hex      fact     min      r->c     !=       swap     dup2     ->str    if       step     whil     clusr    sinv     acos     exp      sinh
-h        uname    -        pow      prec     mant     max      p->r     ==       drop     dupn     str->    then     ift      repeat   edit     eval     tan      log10    asinh
-help     type     chs      sqrt     round    xpon     re       r->p     and      drop2    pick     chr      else     ifte     repea    sto+     ->       atan     alog10   cosh
-q        default  neg      sq       sign     floor    im       >        or       dropn    depth    num      end      do       sto      sto-     pi       d->r     exp10    acosh
-quit     std      *        sqr      %        ceil     conj     >=       xor      erase    roll     size     start    until    rcl      sto*     sin      r->d     log2     tanh
-exit     fix      /        abs      %CH      ip       arg      <        not      rot      rolld    pos      for      unti     purge    sto/     asin     e        alog2    atanh
+Display all 146 possibilities? (y or n)
+nop      exit     chs      sqrt     base     xpon     re       r->p     type     and      drop2    dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
+help     test     neg      sq       sign     floor    im       std      >        or       dropn    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
+h        version  *        sqr      %        ceil     conj     fix      >=       xor      del      depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
+?        uname    /        abs      %CH      ip       arg      sci      <        not      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
+q        history  inv      dec      mod      fp       c->r     prec     <=       same     rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
+quit     +        ^        hex      fact     min      r->c     round    !=       swap     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
+q        -        pow      bin      mant     max      p->r     default  ==       drop     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
 ```
 
 ## Download
