@@ -336,31 +336,34 @@ void rpn_power()
     }
 
     // carrefull, no 'else' here
-    if (!done_on_real && _stack->get_type(1) == cmd_complex)
+    if (!done_on_real)
     {
-        ARG_MUST_BE_OF_TYPE(0, cmd_number);
+        if (_stack->get_type(1) == cmd_complex)
+        {
+            ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-        //power on tmp stack
-        stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
-        _stack->pop_back();
+            //power on tmp stack
+            stack::copy_and_push_back(*_stack, _stack->size()-1, _calc_stack);
+            _stack->pop_back();
 
-        //switch complex to polar
-        complex* cplx = (complex*)_stack->back();
-        rpn_r2p();
+            //switch complex to polar
+            complex* cplx = (complex*)_stack->back();
+            rpn_r2p();
 
-        //new abs=abs^exponent
-        number* exponent = (number*)_calc_stack.back();
-        CHECK_MPFR(mpfr_pow(cplx->re()->mpfr, cplx->re()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
+            //new abs=abs^exponent
+            number* exponent = (number*)_calc_stack.back();
+            CHECK_MPFR(mpfr_pow(cplx->re()->mpfr, cplx->re()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
 
-        //new arg=arg*exponent
-        CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
+            //new arg=arg*exponent
+            CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
 
-        //back to cartesian
-        rpn_p2r();
-        _calc_stack.pop_back();
+            //back to cartesian
+            rpn_p2r();
+            _calc_stack.pop_back();
+        }
+        else
+            ERR_CONTEXT(ret_bad_operand_type);
     }
-    else
-        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 void rpn_squareroot()

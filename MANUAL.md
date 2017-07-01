@@ -6,6 +6,36 @@
 - brings powerfull calculation facilities on floating point numbers with __arbitrary precision__ provided by **GNU MP** and **GNU MPFR** libraries
 - uses that so cool **reverse polish notation**
 
+## Doc overview
+
+This page gives some examples and lists the commands currently implemented.
+
+For a most complete help, please refer to HP28S and HP48GX manuals provided in the sources
+
+An help command is provided by rpn:
+
+```
+rpn> help
+rpn> h
+
+rpn v2.3, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
+
+Reverse Polish Notation language
+
+using GMP v6.1.2 under GNU LGPL
+MPFR v3.1.5-p8 under GNU LGPL
+and linenoise-ng v1.0.0 under BSD
+
+
+Syntax: rpn [command]
+with optional command = list of commands
+	
+GENERAL
+nop	no operation
+help	this help message
+(...)
+```
+
 ## Quick examples
 
 ### easy calculation with **stacked results**

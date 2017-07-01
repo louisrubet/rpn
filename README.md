@@ -1,6 +1,6 @@
 # **rpn** - **R**everse **P**olish **N**otation language  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
-### a lisp-based math language using polish notation
+### a math language using reverse polish notation
 
 ```
 rpn> 1 2 + 2 sqrt
@@ -8,7 +8,7 @@ rpn> 1 2 + 2 sqrt
 1> 1.4142135623730950488
 ```
 
-### with arbitrary precision
+### arbitrary precision provided by GNU MPFR
 ```
 rpn> 256 prec
 rpn> pi
@@ -16,7 +16,7 @@ rpn> pi
 rpn> 
 ```
 
-### providing variables, programs
+### variables, programs
 ```
 rpn> << rot * swap 2 / chs dup sq rot - sqrt >> 'quad' sto
 rpn> << -> x y << x y + ln >> >> 'P' sto
