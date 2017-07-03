@@ -1,7 +1,7 @@
 # **rpn** - reference manual
 
 **rpn**
-- is a structured full-featured **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** and **HP48GX** user manual are provided as references), including **real**, **complex**, **stack**, **store**, **branch**, **program**, **test**, **trig** and **logs** commands and more to come
+- is a structured full-featured **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** and **HP48GX** user manuals are provided as references), including **real**, **complex**, **stack**, **store**, **branch**, **program**, **test**, **trig** and **logs** commands and more to come
 - is implemented as a **command-line calculator** for most popular Linux distributions
 - brings powerfull calculation facilities on floating point numbers with __arbitrary precision__ provided by **GNU MP** and **GNU MPFR** libraries
 - uses that so cool **reverse polish notation**
@@ -12,7 +12,7 @@ This page gives some examples and lists the commands currently implemented.
 
 For a most complete help, please refer to HP28S and HP48GX manuals provided in the sources
 
-An help command is provided by rpn:
+A help command is provided by rpn:
 
 ```
 rpn> help
