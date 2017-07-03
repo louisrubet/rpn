@@ -90,8 +90,16 @@ public:
 
         // recalc object pointers in case of base reallocation
         if (data_is_reallocated)
+        {
             for(int i = 0; i < _count; i++)
+            {
                 _base_pointer[i] = (object*)(_base + ((char*)_base_pointer[i] - old_base));
+                if (_base_pointer[i]->_type == cmd_number)
+                    ((number*)_base_pointer[i])->move();
+                else if (_base_pointer[i]->_type == cmd_complex)
+                    ((complex*)_base_pointer[i])->move();
+            }
+        }
 
         // manage stack itself
         _base_pointer[_count++] = (object*)_current;
