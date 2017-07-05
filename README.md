@@ -47,8 +47,8 @@ A reference manual is provided [here](MANUAL.md)
 
 Generation instructions can be found [here](GENERATION.md)
 
-## Contact
+## Contact, contribution, bug report
 
 Please email me at [louis@rubet.fr](mailto:louis@rubet.fr)
 
-You can use [github issues](https://github.com/louisrubet/rpn/issues) too
+You can also use [github issues](https://github.com/louisrubet/rpn/issues) and [pull requests](https://github.com/louisrubet/rpn/pulls)
