@@ -88,7 +88,7 @@ rpn>
 
 ### structured programming
 
-Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat** and control keywords are **if..then..[else]..end**, **ift**, **ifte** allow you to do program and algorithms
+Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat** and control keywords **if..then..[else]..end**, **ift**, **ifte** allow you to program powerfull algorithms
 
 
 ### command line
