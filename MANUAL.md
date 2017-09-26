@@ -78,13 +78,18 @@ rpn>
 
 Following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
 ```
-5> (1,-2.33)
-4> 'symbol'
-3> "string"
-2> 12.3456
+5> 12.3456
+4> (1,-2.33)
+3> 'symbol'
+2> "string"
 1> << -> n << 0 1 n for i i 2 * inv + next >> >>
 rpn> 
 ```
+
+### structured programming
+
+Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat** and control keywords are **if..then..[else]..end**, **ift**, **ifte** allow you to do program and algorithms
+
 
 ### command line
 
@@ -215,7 +220,7 @@ rpn> 7b1252 dec
 |`drop`| drop first stack entry
 |`drop2`| drop 2 first stack entries
 |`dropn`| drop n first stack entries
-|`del|erase`| drop all stack entries
+|`del\|erase`| drop all stack entries
 |`rot`| rotate 3 first stack entries
 |`dup`| duplicate first stack entry
 |`dup2`| duplicate 2 first stack entries
