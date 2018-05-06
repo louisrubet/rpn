@@ -53,17 +53,17 @@ del
 del
 
 # sub (1)
-(1.2,2.3) (2,2) - 
+(1.2,2.3) (2,2) -
 -> stack should be (-0.8,0.3)
 del
 
 # sub (2)
-(1.2,2.3) (1,2)- 
+(1.2,2.3) (1,2)-
 -> stack should be (0.2,0.3)
 del
 
 # sub (3)
-(1.2,2.3) 1- 
+(1.2,2.3) 1-
 -> stack should be (0.2,2.3)
 del
 
@@ -326,7 +326,7 @@ del
 
 # sqrt (2)
 -3 sqrt
--> stack should be (-0.000000,1.732051)
+-> stack should be (0.000000,1.732051)
 del
 
 # sin (1)
@@ -469,6 +469,30 @@ del
 -> stack should be (0.804719,2.034444)
 del
 
+# lnp1 (1)
+(1,2) lnp1
+(1,2) 1 + ln ==
+-> stack should be 1.000000
+del
+
+# lnp1 (2)
+(1,-2) lnp1
+(1,-2) 1 + ln ==
+-> stack should be 1.000000
+del
+
+# lnp1 (3)
+(-1,-2) lnp1
+(-1,-2) 1 + ln ==
+-> stack should be 1.000000
+del
+
+# lnp1 (4)
+(-1,2) lnp1
+(-1,2) 1 + ln ==
+-> stack should be 1.000000
+del
+
 # log (1)
 (1,2) log
 -> stack should be (0.804719,1.107149)
@@ -547,6 +571,30 @@ del
 # exp (4)
 (-1,2) exp
 -> stack should be (-0.153092,0.334512)
+del
+
+# expm (1)
+(1,2) expm
+(1,2) exp 1 - ==
+-> stack should be 1.000000
+del
+
+# expm (2)
+(1,-2) expm
+(1,-2) exp 1 - ==
+-> stack should be 1.000000
+del
+
+# expm (3)
+(-1,-2) expm
+(-1,-2) exp 1 - ==
+-> stack should be 1.000000
+del
+
+# expm (4)
+(-1,2) expm
+(-1,2) exp 1 - ==
+-> stack should be 1.000000
 del
 
 # alog2 (1)
