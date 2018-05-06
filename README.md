@@ -13,7 +13,7 @@ rpn> 1 2 + 2 sqrt
 rpn> 256 prec
 rpn> pi
 3.1415926535897932384626433832795028841971693993751058209749445923078164062862
-rpn> 
+rpn>
 ```
 
 ### variables, programs
@@ -24,7 +24,7 @@ rpn> << -> x y << x y + ln >> >> 'P' sto
 
 ### and a bunch of functions
 ```
-rpn> 
+rpn>
 Display all 146 possibilities? (y or n)
 nop      exit     chs      sqrt     base     xpon     re       r->p     type     and      drop2    dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
 help     test     neg      sq       sign     floor    im       std      >        or       dropn    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
@@ -37,11 +37,15 @@ q        -        pow      bin      mant     max      p->r     default  ==      
 
 ## Download
 
-deb, rpm and tgz files can be found [there](https://github.com/louisrubet/rpn/releases)
+deb, rpm and tgz files can be found [there](http://nvie.com/img/git-model@2x.png)
 
 ## Manual
 
 A reference manual is provided [here](MANUAL.md)
+
+## Methods
+
+Development methods are set at [this page](METHODS.md)
 
 ## Generation
 
