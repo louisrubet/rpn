@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 
                     // run it
                     if (prog.run(s_global_stack, s_global_heap) == ret_good_bye)
-                        break;
+                        go_on = false;
                     else
                         program::show_stack(s_global_stack);
                     break;
