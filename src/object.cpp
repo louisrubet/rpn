@@ -70,7 +70,7 @@ static bool is_min(mpfr_t p, mpfr_prec_t prec)
     return ret;
 }
 
-static void print_fix(FILE* stream, mpfr_t real, int base)
+static void print_fix(FILE* stream, mpfr_t real, int base, const char* write_after_sign = NULL)
 {
     // see mpfr_vasprintf code
     mpfr_exp_t exp = mpfr_get_exp(real);
@@ -92,6 +92,8 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
             // zero
             if (MPFR_IS_NEG(real))
                 fputc('-', stream);//signed zero is allowed
+            if (write_after_sign != NULL)
+                fputs(write_after_sign, stream);
             fputc('0', stream);
             if (digits > 0)
             {
@@ -105,6 +107,8 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
     {
         if (MPFR_IS_NEG(real))
             fputc('-', stream);
+        if (write_after_sign != NULL)
+            fputs(write_after_sign, stream);
         fputc('0', stream);
         if (digits > 0)
         {
@@ -121,22 +125,26 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
     else
     {
         char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real, floating_t::s_mpfr_rnd);
+        char* print_from;
         if(str != NULL)
         {
             int len = strlen(str);
+            print_from = str;
             if (len > 0)
             {
-                if (str[0] == '-')
+                if (print_from[0] == '-')
                 {
-                    fputc(str[0], stream);
+                    fputc(print_from[0], stream);
                     len--;
-                    str++;
+                    print_from++;
                 }
-                else if (str[0] == '+')
+                else if (print_from[0] == '+')
                 {
                     len--;
-                    str++;
+                    print_from++;
                 }
+                if (write_after_sign != NULL)
+                    fputs(write_after_sign, stream);
                 if (exp < 0)
                 {
                     fputc('0', stream);
@@ -156,14 +164,14 @@ static void print_fix(FILE* stream, mpfr_t real, int base)
                         fputc('0', stream);
                     else
                         for (i = 0; i < (int)exp; i++)
-                            fputc(str[i], stream);
+                            fputc(print_from[i], stream);
                     if (digits > 0)
                     {
                         fputc('.', stream);
 
-                        int remaining = (int)MIN(strlen(str) - exp - 1, digits) + 1;
+                        int remaining = (int)MIN(strlen(print_from) - exp - 1, digits) + 1;
                         for (i = (int)exp; i < remaining + (int)exp; i++)
-                            fputc(str[i], stream);
+                            fputc(print_from[i], stream);
                         for (i = 0; i < (int)(exp + digits - len); i++)
                             fputc('0', stream);
                     }
@@ -178,6 +186,7 @@ void object::show(FILE* stream)
 {
     int digits;
     char* str;
+    char base[32];
 
     switch(_type)
     {
@@ -188,16 +197,14 @@ void object::show(FILE* stream)
                 mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
                 break;
             case number::hex:
-                fprintf(stream, "0x");
-                print_fix(stream, ((number*)this)->_value.mpfr, 16);
+                print_fix(stream, ((number*)this)->_value.mpfr, 16, "0x");
                 break;
             case number::bin:
-                fprintf(stream, "0b");
-                print_fix(stream, ((number*)this)->_value.mpfr, 2);
+                print_fix(stream, ((number*)this)->_value.mpfr, 2, "0b");
                 break;
             case number::base:
-                fprintf(stream, "%db", ((number*)this)->_base);
-                print_fix(stream, ((number*)this)->_value.mpfr, ((number*)this)->_base);
+                sprintf(base, "%db", ((number*)this)->_base);
+                print_fix(stream, ((number*)this)->_value.mpfr, ((number*)this)->_base, base);
                 break;
             default:
                 fprintf(stream, "<unknown number representation>");
