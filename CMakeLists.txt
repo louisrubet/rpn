@@ -29,25 +29,33 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer -s")
 endif()
 
+# custom linenoise-ng
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
+    execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.0.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
+endif()
+
 # includes
-include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/linenoise-ng/include)
 
 # build
 add_executable(
   rpn
-  src/main.cpp
-  src/object.cpp
-  src/program.cpp
+  ${PROJECT_SOURCE_DIR}/src/main.cpp
+  ${PROJECT_SOURCE_DIR}/src/object.cpp
+  ${PROJECT_SOURCE_DIR}/src/program.cpp
+  ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
+  ${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
+  ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp
 )
-
-target_link_libraries(rpn liblinenoise.a)
 target_link_libraries(rpn mpfr)
 
 # man
 add_custom_target(man ALL)
 add_custom_command(
     TARGET man
-    COMMAND gzip -f -k ${CMAKE_CURRENT_SOURCE_DIR}/rpn.1 
+    COMMAND gzip -f -k ${CMAKE_CURRENT_SOURCE_DIR}/rpn.1
     OUTPUTS ${CMAKE_CURRENT_SOURCE_DIR}/rpn.1.gz
 )
 
