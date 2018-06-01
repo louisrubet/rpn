@@ -36,7 +36,7 @@ void test_show_result(string title, int tests, int tests_failed, int steps, int 
     printf("%d failed", tests_failed);
     if(tests_failed>0)
         printf(COLOR_OFF);
-    
+
     printf(" (%d steps: %d passed, ", steps, steps-steps_failed);
     if(steps_failed>0)
         printf(FG_RED);
@@ -57,6 +57,7 @@ void rpn_test()
     int total_steps_failed=0;
 
     string test_filename = ((ostring*)_stack->pop_back())->_value;
+    printf("\nrpn version is %s\n", version);
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
     test_show_result("Total", total_tests, total_tests_failed, total_steps, total_steps_failed);
 }
@@ -233,12 +234,12 @@ void test(string test_filename, int& total_tests, int& total_tests_failed, int& 
 
         // cerr back
         cerr.rdbuf(cerr_old_buffer);
-        
+
         // conclusion: show and keep for total
         if (tests != 0)
         {
             test_show_result(test_filename, tests, tests_failed, steps, steps_failed);
-            
+
             total_tests += tests;
             total_tests_failed += tests_failed;
             total_steps += steps;
