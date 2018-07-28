@@ -17,12 +17,12 @@ A help command is provided by rpn:
 ```
 rpn> help
 
-rpn v2.3, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
+rpn v2.3.1, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
 
 Reverse Polish Notation language
 
 using GMP v6.1.2 under GNU LGPL
-MPFR v3.1.5-p8 under GNU LGPL
+MPFR v4.0.1 under GNU LGPL
 and linenoise-ng v1.0.0 under BSD
 
 

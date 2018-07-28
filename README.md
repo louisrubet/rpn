@@ -1,6 +1,6 @@
 # **rpn** - **R**everse **P**olish **N**otation language  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
-### a math language using reverse polish notation
+### a math functional language using reverse polish notation
 
 ```
 rpn> 1 2 + 2 sqrt
