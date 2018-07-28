@@ -62,7 +62,7 @@ pi
 del
 
 # prec error (1)
-1 prec
+0 prec
 -> error should be 4
 del
 

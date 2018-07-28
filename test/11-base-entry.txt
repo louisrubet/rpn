@@ -164,3 +164,33 @@ del default
 2345321 57 base dup 62 base == dec
 -> stack should be 1, 1, 1, 1
 del default
+
+# negative base numbers (1)
+1000 hex neg
+-> stack should be -0x3e8
+del default
+
+# negative base numbers (2)
+1000 7 base neg
+-> stack should be -7b2626
+del default
+
+# negative base numbers (3)
+1000 bin neg
+-> stack should be -0b1111101000
+del default
+
+# negative base numbers (4)
+-0b1111101000 3 base
+-> stack should be -3b1101001
+del default
+
+# inf should not be based-represented
+-1 bin 0 bin / 1 3 base 0 3 base /
+-> stack should be -inf, inf
+del default
+
+# nan should not be based-represented
+-0 bin 0 bin / 0 3 base 0 3 base /
+-> stack should be nan, nan
+del default

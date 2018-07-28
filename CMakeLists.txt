@@ -4,14 +4,15 @@ cmake_minimum_required(VERSION 2.6)
 
 project(rpn)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE string "Choose the type of build, options are: None Debug Release" FORCE)
+if((NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    AND (NOT CMAKE_BUILD_TYPE MATCHES Release))
+    set(CMAKE_BUILD_TYPE Release CACHE string "Choose the type of build, options are: None Debug Release" FORCE)
 endif()
 
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
 # INFO
-set(RPN_VERSION "2.3")
+set(RPN_VERSION "2.3.1")
 set(RPN_DISPLAY_NAME "rpn")
 set(RPN_URL_INFO_ABOUT "https://github.com/louisrubet/rpn")
 set(RPN_CONTACT "Louis Rubet <louis@rubet.fr>")
@@ -22,11 +23,18 @@ set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 
 # compiler options
 if(CMAKE_COMPILER_IS_GNUCXX)
-  message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
-  set(BASE_COMPILER_OPTIONS "-std=c++0x -Wl,--no-as-needed")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer -s")
+    message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
+    set(BASE_COMPILER_OPTIONS "-std=c++0x -Wl,--no-as-needed")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer -s")
+endif()
+
+# custom linenoise-ng
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
+    execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.0.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
 endif()
 
 # custom linenoise-ng

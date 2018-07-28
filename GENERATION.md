@@ -1,4 +1,4 @@
-# **rpn v2.3** - generation
+# **rpn v2.3.1** - generation
 
 For now rpn is proposed only for **GNU/Linux**
 
@@ -8,44 +8,16 @@ It can be generated following the steps below
 
 rpn is dynamically linked against
 - GNU MP v6.1.2
-- GNU MPFR v3.1.5
+- GNU MPFR v4.0.1
 
-and embeds the source code of linenoise-ng v1.0.1
+and embeds the source code of linenoise-ng v1.0.1 as a submodule
 
-It is necessary to get MPFR and linenoise-ng to generate rpn.
+It is necessary to get MPFR to generate rpn
 
-## install GNU MPFR v3.1.5-p8 headers
+## install GNU MPFR headers
 
-- download **GNU MPFR v3.1.5-p8** from http://www.mpfr.org
+- download **GNU MPFR** from http://www.mpfr.org
 - install it with usual autotools commands `./configure && make && make install`
-
-## install linenoise-ng v1.0.1 source code
-
-- download **linenoise-ng v1.0.1** from https://github.com/arangodb/linenoise-ng
-- checkout the tag v1.0.1
-- apply the following patch to the source code
-
-```
---- ../../../linenoise-ng/src/linenoise.cpp	2017-06-10 18:13:31.752976287 +0200
-+++ linenoise.cpp	2017-06-12 18:54:50.481794824 +0200
-@@ -2587,12 +2587,15 @@
- 
-     // ctrl-I/tab, command completion, needs to be before switch statement
-     if (c == ctrlChar('I') && completionCallback) {
-+      // rpn #178: enable autocompletion on void entry
-+      #if 0
-       if (pos == 0)  // SERVER-4967 -- in earlier versions, you could paste
-                      // previous output
-         continue;    //  back into the shell ... this output may have leading
-                      //  tabs.
-       // This hack (i.e. what the old code did) prevents command completion
-       //  on an empty line but lets users paste text with leading tabs.
-+      #endif
- 
-       killRing.lastAction = KillRing::actionOther;
-       historyRecallMostRecent = false;
-```
-- install linenoise-ng with cmake commands `mkdir build && cd build && cmake .. && make install`
 
 ## generate rpn
 
