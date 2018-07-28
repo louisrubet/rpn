@@ -490,8 +490,9 @@ void rpn_base()
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
     if (mpfr_cmp_d(((number*)_stack->back())->_value.mpfr, (double)BASE_MIN) >= 0 && mpfr_cmp_d(((number*)_stack->back())->_value.mpfr, (double)BASE_MAX) <= 0)
     {
-        ((number*)_stack->get_obj(1))->_representation = number::base;
-        ((number*)_stack->get_obj(1))->_base = (int)mpfr_get_d(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+        int base = (int)mpfr_get_d(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+        ((number*)_stack->get_obj(0))->_base = base;
+        ((number*)_stack->get_obj(0))->_representation = number::base;
     }
     else
         ERR_CONTEXT(ret_out_of_range);
