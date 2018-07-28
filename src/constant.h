@@ -33,6 +33,7 @@
 #define AUTOCOMPLETE_KEY '\t'
 #define SHOW_STACK_SEPARATOR "> "
 #define PROMPT "rpn> "
+#define MULTILINE_PROMPT "> "
 
 // show formats
 #define MPFR_FORMAT_BEG "%."

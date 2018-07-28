@@ -31,40 +31,58 @@ static ret_value parse(const char* entry, program& prog)
 // interactive entry and decoding
 static ret_value entry(program& prog)
 {
+    string entry_str;
     char* entry;
     int entry_len;
-    ret_value ret;
+    int total_entry_len;
+    ret_value ret = ret_max;
+    bool multiline = false;
 
     // linenoise for entry
     linenoiseSetCompletionCallback(program::entry_completion_generator);
 
-    // get user entry
-    entry = linenoise(PROMPT, &entry_len);
-
-    // Ctrl-C
-    if (linenoiseKeyType() == 1)
+    while(ret == ret_max)
     {
-        if (entry_len > 0)
-            ret = ret_abort_current_entry;
+        // get user entry
+        if (multiline)        
+            entry = linenoise(MULTILINE_PROMPT, &entry_len);
         else
-            ret = ret_good_bye;
-    }
-    else
-    {
-        if (entry != NULL)
-        {
-            // parse it
-            ret = parse(entry, prog);
+            entry = linenoise(PROMPT, &entry_len);
 
-            // keep history
-            if (entry[0] != 0)
-                linenoiseHistoryAdd(entry);
+        // Ctrl-C
+        if (linenoiseKeyType() == 1)
+        {
+            if (entry_len > 0 || multiline)
+                ret = ret_abort_current_entry;
+            else
+                ret = ret_good_bye;
+        }
+        else if (linenoiseKeyType() == 3)
+        {
+            multiline = true;
+            if (entry != NULL)
+                entry_str += entry;
+            entry_str += " ";
         }
         else
-            ret = ret_internal;
-    }
+        {
+            if (entry != NULL)
+            {
+                entry_str += entry;
 
-    free(entry);
+                // parse it
+                ret = parse(entry_str.c_str(), prog);
+
+                // keep history
+                if (entry[0] != 0)
+                    linenoiseHistoryAdd(entry_str.c_str());
+            }
+            else
+                ret = ret_internal;
+        }
+
+        free(entry);
+    }
 
     return ret;
 }
