@@ -12,7 +12,7 @@ endif()
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
 # INFO
-set(RPN_VERSION "2.3")
+set(RPN_VERSION "2.3.1")
 set(RPN_DISPLAY_NAME "rpn")
 set(RPN_URL_INFO_ABOUT "https://github.com/louisrubet/rpn")
 set(RPN_CONTACT "Louis Rubet <louis@rubet.fr>")
