@@ -55,18 +55,18 @@ typedef enum {
     ret_internal,
     ret_deadly,
     ret_good_bye,
-    ret_abort_current_entry,
     ret_not_impl,
     ret_nop,
     ret_syntax,
     ret_div_by_zero,
     ret_runtime_error,
+    ret_abort_current_entry,
     ret_max
 } ret_value;
 
 #define RET_VALUE_STRINGS { \
         "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting", \
-        "deadly", "goodbye", "aborted current entry", "not implemented", "no operation", "syntax error", "division by zero", "runtime error" \
+        "deadly", "goodbye", "not implemented", "no operation", "syntax error", "division by zero", "runtime error", "aborted current entry" \
     }
 
 // command types
