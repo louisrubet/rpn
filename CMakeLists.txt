@@ -56,13 +56,13 @@ target_link_libraries(rpn mpfr)
 add_custom_target(man ALL)
 add_custom_command(
     TARGET man
-    COMMAND gzip -f -k ${CMAKE_CURRENT_SOURCE_DIR}/rpn.1
-    OUTPUTS ${CMAKE_CURRENT_SOURCE_DIR}/rpn.1.gz
+    COMMAND gzip -f -k ${CMAKE_CURRENT_SOURCE_DIR}/doc/rpn.1
+    OUTPUTS ${CMAKE_CURRENT_SOURCE_DIR}/doc/rpn.1.gz
 )
 
 # install
 install(TARGETS rpn DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/rpn.1.gz DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/doc/rpn.1.gz DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1)
 
 # packages (common variables for all packages)
 SET(CPACK_PACKAGE_NAME ${RPN_DISPLAY_NAME})
