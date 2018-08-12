@@ -1,9 +1,9 @@
-#include <string>
 #include <math.h>
+#include <string>
 using namespace std;
 
-#include "mpfr.h"
 #include "constant.h"
+#include "mpfr.h"
 #include "object.hpp"
 
 // floating_t statics
@@ -20,233 +20,198 @@ string number::s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
 //
 const char* object::s_cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
 
-static bool is_min(mpfr_t p, mpfr_prec_t prec)
-{
-    // see mpfr_vasprintf code
-    bool ret;
-    int round_away;
-    switch (floating_t::s_mpfr_rnd)
-    {
-        case MPFR_RNDA:
-            round_away = 1;
-        break;
-        case MPFR_RNDD:
-            round_away = MPFR_IS_NEG (p);
-        break;
-        case MPFR_RNDU:
-            round_away = MPFR_IS_POS (p);
-        break;
-        case MPFR_RNDN:
-        {
-            /* compare |p| to y = 0.5*10^(-prec) */
-            mpfr_t y;
-            mpfr_exp_t e = MAX (MPFR_PREC (p), 56);
-            mpfr_init2 (y, e + 8);
-            do
-            {
-                /* find a lower approximation of
-                0.5*10^(-prec) different from |p| */
-                e += 8;
-                mpfr_set_prec (y, e);
-                mpfr_set_si (y, -prec, MPFR_RNDN);
-                mpfr_exp10 (y, y, MPFR_RNDD);
-                mpfr_div_2ui (y, y, 1, MPFR_RNDN);
-            } while (mpfr_cmpabs (y, p) == 0);
+static bool is_min(mpfr_t p, mpfr_prec_t prec) {
+  // see mpfr_vasprintf code
+  bool ret;
+  int round_away;
+  switch (floating_t::s_mpfr_rnd) {
+    case MPFR_RNDA:
+      round_away = 1;
+      break;
+    case MPFR_RNDD:
+      round_away = MPFR_IS_NEG(p);
+      break;
+    case MPFR_RNDU:
+      round_away = MPFR_IS_POS(p);
+      break;
+    case MPFR_RNDN: {
+      /* compare |p| to y = 0.5*10^(-prec) */
+      mpfr_t y;
+      mpfr_exp_t e = MAX(MPFR_PREC(p), 56);
+      mpfr_init2(y, e + 8);
+      do {
+        /* find a lower approximation of
+        0.5*10^(-prec) different from |p| */
+        e += 8;
+        mpfr_set_prec(y, e);
+        mpfr_set_si(y, -prec, MPFR_RNDN);
+        mpfr_exp10(y, y, MPFR_RNDD);
+        mpfr_div_2ui(y, y, 1, MPFR_RNDN);
+      } while (mpfr_cmpabs(y, p) == 0);
 
-            round_away = mpfr_cmpabs (y, p) < 0;
-            mpfr_clear (y);
-        }
-        break;
-        default:
-            round_away = 0;
-    }
+      round_away = mpfr_cmpabs(y, p) < 0;
+      mpfr_clear(y);
+    } break;
+    default:
+      round_away = 0;
+  }
 
-    if (round_away)
-        /* round away from zero: the last output digit is '1' */
-        ret = true;
-    else
-        /* only zeros in fractional part */
-        ret = false;
-    return ret;
+  if (round_away) /* round away from zero: the last output digit is '1' */
+    ret = true;
+  else
+    /* only zeros in fractional part */
+    ret = false;
+  return ret;
 }
 
-static void print_fix(FILE* stream, mpfr_t real, int base, const char* write_after_sign = NULL)
-{
-    // see mpfr_vasprintf code
-    mpfr_exp_t exp = mpfr_get_exp(real);
-    int digits = 0; //forced 0 digits after separator
-    int i;
+static void print_fix(FILE* stream, mpfr_t real, int base,
+                      const char* write_after_sign = NULL) {
+  // see mpfr_vasprintf code
+  mpfr_exp_t exp = mpfr_get_exp(real);
+  int digits = 0;  // forced 0 digits after separator
+  int i;
 
-    if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(real)))
-    {
-        if (MPFR_IS_NAN(real))
-            fputs("nan", stream);
-        else if (MPFR_IS_INF(real))
-        {
-            if (MPFR_IS_NEG(real))
-                fputc('-', stream);
-            fputs("inf", stream);
-        }
-        else
-        {
-            // zero
-            if (MPFR_IS_NEG(real))
-                fputc('-', stream);//signed zero is allowed
-            if (write_after_sign != NULL)
-                fputs(write_after_sign, stream);
-            fputc('0', stream);
-            if (digits > 0)
-            {
-                fputc('.', stream);
-                for(i = 0; i < digits; i++)
-                    fputc('0', stream);
-            }
-        }
+  if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(real))) {
+    if (MPFR_IS_NAN(real))
+      fputs("nan", stream);
+    else if (MPFR_IS_INF(real)) {
+      if (MPFR_IS_NEG(real)) fputc('-', stream);
+      fputs("inf", stream);
+    } else {
+      // zero
+      if (MPFR_IS_NEG(real)) fputc('-', stream);  // signed zero is allowed
+      if (write_after_sign != NULL) fputs(write_after_sign, stream);
+      fputc('0', stream);
+      if (digits > 0) {
+        fputc('.', stream);
+        for (i = 0; i < digits; i++) fputc('0', stream);
+      }
     }
-    else if (exp < -digits)
-    {
-        if (MPFR_IS_NEG(real))
-            fputc('-', stream);
-        if (write_after_sign != NULL)
-            fputs(write_after_sign, stream);
+  } else if (exp < -digits) {
+    if (MPFR_IS_NEG(real)) fputc('-', stream);
+    if (write_after_sign != NULL) fputs(write_after_sign, stream);
+    fputc('0', stream);
+    if (digits > 0) {
+      fputc('.', stream);
+      for (i = 0; i < digits - 1; i++) fputc('0', stream);
+
+      if (is_min(real, digits))
+        fputc('1', stream);
+      else
         fputc('0', stream);
-        if (digits > 0)
-        {
+    }
+  } else {
+    char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real,
+                             floating_t::s_mpfr_rnd);
+    char* print_from;
+    if (str != NULL) {
+      int len = strlen(str);
+      print_from = str;
+      if (len > 0) {
+        if (print_from[0] == '-') {
+          fputc(print_from[0], stream);
+          len--;
+          print_from++;
+        } else if (print_from[0] == '+') {
+          len--;
+          print_from++;
+        }
+        if (write_after_sign != NULL) fputs(write_after_sign, stream);
+        if (exp < 0) {
+          fputc('0', stream);
+          if (digits > 0) {
             fputc('.', stream);
-            for (i = 0; i< digits - 1; i++)
-                fputc('0', stream);
+            for (i = 0; i < -(int)exp; i++) fputc('0', stream);
+            fputs(str, stream);
+            for (i = 0; i < (int)(digits - len + exp); i++) fputc('0', stream);
+          }
+        } else {
+          if (exp == 0)
+            fputc('0', stream);
+          else
+            for (i = 0; i < (int)exp; i++) fputc(print_from[i], stream);
+          if (digits > 0) {
+            fputc('.', stream);
 
-            if (is_min(real, digits))
-                fputc('1', stream);
-            else
-                fputc('0', stream);
+            int remaining = (int)MIN(strlen(print_from) - exp - 1, digits) + 1;
+            for (i = (int)exp; i < remaining + (int)exp; i++)
+              fputc(print_from[i], stream);
+            for (i = 0; i < (int)(exp + digits - len); i++) fputc('0', stream);
+          }
         }
+      }
+      mpfr_free_str(str);
     }
-    else
-    {
-        char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real, floating_t::s_mpfr_rnd);
-        char* print_from;
-        if(str != NULL)
-        {
-            int len = strlen(str);
-            print_from = str;
-            if (len > 0)
-            {
-                if (print_from[0] == '-')
-                {
-                    fputc(print_from[0], stream);
-                    len--;
-                    print_from++;
-                }
-                else if (print_from[0] == '+')
-                {
-                    len--;
-                    print_from++;
-                }
-                if (write_after_sign != NULL)
-                    fputs(write_after_sign, stream);
-                if (exp < 0)
-                {
-                    fputc('0', stream);
-                    if (digits > 0)
-                    {
-                        fputc('.', stream);
-                        for (i = 0; i < -(int)exp; i++)
-                            fputc('0', stream);
-                        fputs(str, stream);
-                        for (i = 0; i < (int)(digits - len + exp); i++)
-                            fputc('0', stream);
-                    }
-                }
-                else
-                {
-                    if (exp == 0)
-                        fputc('0', stream);
-                    else
-                        for (i = 0; i < (int)exp; i++)
-                            fputc(print_from[i], stream);
-                    if (digits > 0)
-                    {
-                        fputc('.', stream);
-
-                        int remaining = (int)MIN(strlen(print_from) - exp - 1, digits) + 1;
-                        for (i = (int)exp; i < remaining + (int)exp; i++)
-                            fputc(print_from[i], stream);
-                        for (i = 0; i < (int)(exp + digits - len); i++)
-                            fputc('0', stream);
-                    }
-                }
-            }
-            mpfr_free_str(str);
-        }
-    }
+  }
 }
 
-void object::show(FILE* stream)
-{
-    int digits;
-    char* str;
-    char base[32];
+void object::show(FILE* stream) {
+  int digits;
+  char* str;
+  char base[32];
 
-    switch(_type)
-    {
+  switch (_type) {
     case cmd_number:
-        switch(((number*)this)->_representation)
-        {
-            case number::dec:
-                mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
-                break;
-            case number::hex:
-                print_fix(stream, ((number*)this)->_value.mpfr, 16, "0x");
-                break;
-            case number::bin:
-                print_fix(stream, ((number*)this)->_value.mpfr, 2, "0b");
-                break;
-            case number::base:
-                sprintf(base, "%db", ((number*)this)->_base);
-                print_fix(stream, ((number*)this)->_value.mpfr, ((number*)this)->_base, base);
-                break;
-            default:
-                fprintf(stream, "<unknown number representation>");
-                break;
-        }
-        break;
+      switch (((number*)this)->_representation) {
+        case number::dec:
+          mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(),
+                       ((number*)this)->_value.mpfr);
+          break;
+        case number::hex:
+          print_fix(stream, ((number*)this)->_value.mpfr, 16, "0x");
+          break;
+        case number::bin:
+          print_fix(stream, ((number*)this)->_value.mpfr, 2, "0b");
+          break;
+        case number::base:
+          sprintf(base, "%db", ((number*)this)->_base);
+          print_fix(stream, ((number*)this)->_value.mpfr,
+                    ((number*)this)->_base, base);
+          break;
+        default:
+          fprintf(stream, "<unknown number representation>");
+          break;
+      }
+      break;
     case cmd_complex:
-        switch(((complex*)this)->_representation)
-        {
-            case number::dec:
-                fprintf(stream, "(");
-                mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((complex*)this)->re()->mpfr);
-                fprintf(stream, ",");
-                mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((complex*)this)->im()->mpfr);
-                fprintf(stream, ")");
-                break;
-            case number::hex:
-                fprintf(stream, "(");
-                mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((complex*)this)->re()->mpfr);
-                fprintf(stream, ",");
-                mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(), ((complex*)this)->im()->mpfr);
-                fprintf(stream, ")");
-                break;
-            default:
-                fprintf(stream, "<unknown complex representation>");
-        }
-        break;
+      switch (((complex*)this)->_representation) {
+        case number::dec:
+          fprintf(stream, "(");
+          mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(),
+                       ((complex*)this)->re()->mpfr);
+          fprintf(stream, ",");
+          mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(),
+                       ((complex*)this)->im()->mpfr);
+          fprintf(stream, ")");
+          break;
+        case number::hex:
+          fprintf(stream, "(");
+          mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(),
+                       ((complex*)this)->re()->mpfr);
+          fprintf(stream, ",");
+          mpfr_fprintf(stream, string(MPFR_FORMAT_HEX).c_str(),
+                       ((complex*)this)->im()->mpfr);
+          fprintf(stream, ")");
+          break;
+        default:
+          fprintf(stream, "<unknown complex representation>");
+      }
+      break;
     case cmd_string:
-        fprintf(stream, "\"%s\"", ((ostring*)this)->_value);
-        break;
+      fprintf(stream, "\"%s\"", ((ostring*)this)->_value);
+      break;
     case cmd_program:
-        fprintf(stream, "<<%s>>", ((oprogram*)this)->_value);
-        break;
+      fprintf(stream, "<<%s>>", ((oprogram*)this)->_value);
+      break;
     case cmd_symbol:
-        fprintf(stream, "'%s'", ((symbol*)this)->_value);
-        break;
+      fprintf(stream, "'%s'", ((symbol*)this)->_value);
+      break;
     case cmd_keyword:
     case cmd_branch:
-        fprintf(stream, "%s", ((keyword*)this)->_value);
-        break;
+      fprintf(stream, "%s", ((keyword*)this)->_value);
+      break;
     default:
-        fprintf(stream, "< unknown object representation >");
-        break;
-    }
+      fprintf(stream, "< unknown object representation >");
+      break;
+  }
 }
