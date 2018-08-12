@@ -544,6 +544,19 @@ static bool get_complex(const string& entry, program& prog, string& remaining_en
     return ret;
 }
 
+static bool get_comment(string& entry, program& prog, string& remaining_entry)
+{
+    bool ret = false;
+    unsigned int obj_len;
+    int entry_len = entry.size();
+    if (entry_len>=1 && entry[0]=='#')
+    {
+        // entry (complete line) is ignored
+        ret = true;
+    }
+    return ret;
+}
+
 static bool _obj_from_string(string& entry, program& prog, string& remaining_entry)
 {
     bool ret = false;
@@ -561,6 +574,8 @@ static bool _obj_from_string(string& entry, program& prog, string& remaining_ent
     else if (get_keyword(entry, prog, remaining_entry))
         ret = true;
     else if (get_complex(entry, prog, remaining_entry))
+        ret = true;
+    else if (get_comment(entry, prog, remaining_entry))
         ret = true;
     else
         // nothing, considered as an auto-evaluated symbol
