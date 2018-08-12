@@ -1,5 +1,10 @@
 #include "program.hpp"
 
+/// @brief compared 2 strings on top of the stack
+/// 
+/// @return 0 strings are equal
+/// @return !0 strings are not equal (see strcmp output)
+///
 int program::cmp_strings_on_stack_top() {
     // _stack sould have 2 strings at level 1 and 2
     // this function removes these 2 entries
@@ -8,6 +13,8 @@ int program::cmp_strings_on_stack_top() {
     return strncmp(left->_value, right->_value, min(left->_len, right->_len));
 }
 
+/// @brief > keyword implementation
+///
 void program::rpn_sup(void) {
     MIN_ARGUMENTS(2);
 
@@ -30,6 +37,8 @@ void program::rpn_sup(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief >= keyword implementation
+///
 void program::rpn_sup_eq(void) {
     MIN_ARGUMENTS(2);
 
@@ -52,6 +61,8 @@ void program::rpn_sup_eq(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief < keyword implementation
+///
 void program::rpn_inf(void) {
     MIN_ARGUMENTS(2);
 
@@ -74,6 +85,8 @@ void program::rpn_inf(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief <= keyword implementation
+///
 void program::rpn_inf_eq(void) {
     MIN_ARGUMENTS(2);
 
@@ -96,6 +109,8 @@ void program::rpn_inf_eq(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief != keyword implementation
+///
 void program::rpn_diff(void) {
     MIN_ARGUMENTS(2);
 
@@ -133,6 +148,8 @@ void program::rpn_diff(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief == keyword implementation
+///
 void program::rpn_eq(void) {
     MIN_ARGUMENTS(2);
 
@@ -170,6 +187,8 @@ void program::rpn_eq(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief and keyword implementation
+///
 void program::rpn_test_and(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -184,6 +203,8 @@ void program::rpn_test_and(void) {
         mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
 }
 
+/// @brief or keyword implementation
+///
 void program::rpn_test_or(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -198,6 +219,8 @@ void program::rpn_test_or(void) {
         mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
 }
 
+/// @brief xor keyword implementation
+///
 void program::rpn_test_xor(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -219,6 +242,8 @@ void program::rpn_test_xor(void) {
     }
 }
 
+/// @brief not keyword implementation
+///
 void program::rpn_test_not(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -230,4 +255,6 @@ void program::rpn_test_not(void) {
         mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
 }
 
+/// @brief test same implementation
+///
 void program::rpn_same(void) { rpn_eq(); }

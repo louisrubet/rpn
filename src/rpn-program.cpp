@@ -1,11 +1,17 @@
 #include "program.hpp"
 
-//
+/// @brief find variable by its name in local heap, parens heaps, global heap
+/// 
+/// @param variable the variable name to find
+/// @param obj the variable object found
+/// @param size its size
+/// @return true variable was found
+/// @return false variable was not found
+///
 bool program::find_variable(string& variable, object*& obj, unsigned int& size) {
     bool found = false;
     program* parent = _parent_prog;
 
-    // find variable in local heap, parens heaps, global heap
     if (_local_heap.get(variable, obj, size))
         found = true;
     else {
@@ -24,6 +30,8 @@ bool program::find_variable(string& variable, object*& obj, unsigned int& size) 
     return found;
 }
 
+/// @brief eval keyword implementation
+///
 void program::rpn_eval(void) {
     bool run_prog = false;
     string prog_text;
@@ -67,7 +75,8 @@ void program::rpn_eval(void) {
     }
 }
 
-// carefull, this not a command but a branch
+/// @brief -> keyword (branch) implementation
+///
 int program::rpn_inprog(branch& myobj) {
     string context("->");  // for showing errors
     int count_symbols = 0;
