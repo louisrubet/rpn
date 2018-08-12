@@ -200,7 +200,8 @@ int program::rpn_next(branch& myobj) {
     }
 
     // increment then test
-    mpfr_add_si(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, 1UL, MPFR_DEFAULT_RND);
+    // carefull: round toward minus infinity to avoid missing last boundary (because growing step)
+    mpfr_add_si(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, 1UL, MPFR_RNDD);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1) {
@@ -247,7 +248,8 @@ int program::rpn_step(branch& myobj) {
         }
 
         // increment then test
-        mpfr_add(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, step->_value.mpfr, MPFR_DEFAULT_RND);
+        // carefull: round toward minus infinity to avoid missing last boundary (because growing step)
+        mpfr_add(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, step->_value.mpfr, MPFR_RNDD);
 
         // for command: increment symbol too
         if (start_or_for->arg1 != -1) {
