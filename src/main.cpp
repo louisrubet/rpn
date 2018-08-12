@@ -139,7 +139,7 @@ int main(int argc, char* argv[]) {
 
             // run it
             ret = prog.run(s_global_stack, s_global_heap);
-            program::show_stack(s_global_stack, true);
+            program::show_stack(s_global_stack, false);
         }
     }
 
