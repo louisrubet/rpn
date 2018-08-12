@@ -6,11 +6,9 @@ It can be generated following the steps below
 
 ## version identification
 
-rpn is dynamically linked against
-- GNU MP v6.1.2
-- GNU MPFR v4.0.1
+rpn is dynamically linked against GNU MP and GNU MPFR
 
-and embeds the source code of linenoise-ng v1.0.1 as a submodule
+and embeds the source code of linenoise-ng as a submodule
 
 It is necessary to get MPFR to generate rpn
 
