@@ -253,7 +253,7 @@ del
 
 # for step (3)
 -1 0 for i i 0.25 step
--> stack should be -1, -0.75, -0.5, -0.25, 0
+-> stack should be -1, -0.75, -0.5, -0.25, -0
 del
 
 # for step (4)
@@ -264,6 +264,16 @@ del
 # for step (5)
 0 -1 for i i -0.25 step
 -> stack size should be 0
+del
+
+# for step (6) - check boundary integration
+1 2 for i i 0.2 step
+-> stack should be 1, 1.2, 1.4, 1.6, 1.8, 2
+del
+
+# for step (7) - check boundary integration
+1 2 for i i 0.5 step
+-> stack should be 1, 1.5, 2
 del
 
 # for step - error case (1)
