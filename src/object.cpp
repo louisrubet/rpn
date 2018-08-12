@@ -20,6 +20,14 @@ string number::s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
 //
 const char* object::s_cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
 
+/// @brief return if a mpfr is higher to a given precision
+/// this function is directly copied from mpfr 
+///
+/// @param p the mpfr to test
+/// @param prec the precision
+/// @return true p is higher than 10^prec
+/// @return false p is lower than 10^prec
+///
 static bool is_min(mpfr_t p, mpfr_prec_t prec) {
     // see mpfr_vasprintf code
     bool ret;
@@ -64,6 +72,14 @@ static bool is_min(mpfr_t p, mpfr_prec_t prec) {
     return ret;
 }
 
+/// @brief print a mpfr in fixed format according to a base
+/// this function is based copied on mpfr library
+/// 
+/// @param stream the stream to write to
+/// @param real the real to print
+/// @param base the base to print the real
+/// @param write_after_sign substring to write between the sign and the real
+///
 static void print_fix(FILE* stream, mpfr_t real, int base, const char* write_after_sign = NULL) {
     // see mpfr_vasprintf code
     mpfr_exp_t exp = mpfr_get_exp(real);
@@ -142,6 +158,10 @@ static void print_fix(FILE* stream, mpfr_t real, int base, const char* write_aft
     }
 }
 
+/// @brief show an object representation according to its type
+/// 
+/// @param stream the stream to write to
+///
 void object::show(FILE* stream) {
     int digits;
     char* str;

@@ -1,12 +1,18 @@
 #include "program.hpp"
 
-//
+/// @brief nop keyword implementation
+///
 void program::rpn_nop() {
     // nop
 }
 
+/// @brief quit keyword implementation
+///
 void program::rpn_good_bye() { ERR_CONTEXT(ret_good_bye); }
 
+/// @brief nop keyword implementation
+/// the result is written on stdout
+///
 void program::rpn_help() {
     // software name
     printf("\n" ATTR_BOLD "%s" ATTR_OFF "\n", uname);
@@ -55,10 +61,22 @@ void program::rpn_help() {
     printf("\n\n");
 }
 
+/// @brief calculate a number of digits for a given base from a precision in bits
+/// 
+/// @param base the base
+/// @param bit_precision the precision in bits
+/// @return int the number of digits
+///
 static int base_digits_from_bit_precision(int base, int bit_precision) {
     return (int)ceil(bit_precision * log(2.0) / log((double)base)) - 1;
 }
 
+/// @brief print a decimal digit in a given MPFR format
+/// 
+/// @param decimal_digits the number
+/// @param printf_format the format
+/// @return string the result string
+///
 static string make_digit_format(int decimal_digits, const char* printf_format) {
     stringstream ss;
     ss << MPFR_FORMAT_BEG;
@@ -67,6 +85,12 @@ static string make_digit_format(int decimal_digits, const char* printf_format) {
     return ss.str();
 }
 
+/// @brief whether a precision is in the precision min/max
+/// 
+/// @param precision the precision in bits
+/// @return true the precision is good
+/// @return false the precision is not good
+///
 static bool check_decimal_digits(double precision) {
     bool ret = true;
 
@@ -80,6 +104,8 @@ static bool check_decimal_digits(double precision) {
     return ret;
 }
 
+/// @brief std keyword implementation
+///
 void program::rpn_std() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -95,6 +121,8 @@ void program::rpn_std() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief fix keyword implementation
+///
 void program::rpn_fix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -110,6 +138,8 @@ void program::rpn_fix() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief sci keyword implementation
+///
 void program::rpn_sci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -125,6 +155,8 @@ void program::rpn_sci() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief version keyword implementation
+///
 void program::rpn_version() {
     // allocate and set object
     unsigned int naked_entry_len = strlen(version);
@@ -132,6 +164,8 @@ void program::rpn_version() {
     str->set(version, naked_entry_len);
 }
 
+/// @brief uname keyword implementation
+///
 void program::rpn_uname() {
     // allocate and set object
     unsigned int naked_entry_len = strlen(uname);
@@ -139,6 +173,8 @@ void program::rpn_uname() {
     str->set(uname, naked_entry_len);
 }
 
+/// @brief history keyword implementation
+///
 void program::rpn_history() {
     // see command history on stdout
     int index = 0;
@@ -150,6 +186,8 @@ void program::rpn_history() {
     }
 }
 
+/// @brief type keyword implementation
+///
 void program::rpn_type() {
     MIN_ARGUMENTS(1);
 
@@ -162,8 +200,12 @@ void program::rpn_type() {
     typ->set(object::s_cmd_type_string[type], string_size);
 }
 
+/// @brief default keyword implementation
+///
 void program::rpn_default() { program::apply_default(); }
 
+/// @brief prec keyword implementation
+///
 void program::rpn_precision() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -184,6 +226,8 @@ void program::rpn_precision() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief round keyword implementation
+///
 void program::rpn_round() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);

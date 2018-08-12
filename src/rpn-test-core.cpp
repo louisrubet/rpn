@@ -1,7 +1,11 @@
 #include "program.hpp"
 
+/// @brief write stack in a string, each entry separated between commas
+/// 
+/// @param stack_is the output string
+/// @param stk the stack
+///
 void program::test_get_stack(string& stack_is, stack& stk) {
-    // write stack in a string, each entry separated between commas
     for (int i = 0; i < (int)stk.size(); i++) {
         FILE* tmp_file = tmpfile();
         char* line = NULL;
@@ -24,6 +28,14 @@ void program::test_get_stack(string& stack_is, stack& stk) {
     }
 }
 
+/// @brief show the tests results
+/// 
+/// @param title test title
+/// @param tests tests nb
+/// @param tests_failed failed tests nb
+/// @param steps steps nb
+/// @param steps_failed failed steps nb
+///
 void program::test_show_result(string title, int tests, int tests_failed, int steps, int steps_failed) {
     printf("%s: run %d tests: %d passed, ", title.c_str(), tests, tests - tests_failed);
     if (tests_failed > 0) printf(FG_RED);
@@ -37,6 +49,8 @@ void program::test_show_result(string title, int tests, int tests_failed, int st
     printf(")\n");
 }
 
+/// @brief test keyword implementation
+///
 void program::rpn_test() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -52,6 +66,14 @@ void program::rpn_test() {
     test_show_result("Total", total_tests, total_tests_failed, total_steps, total_steps_failed);
 }
 
+/// @brief load a test file and run its tests
+/// 
+/// @param test_filename the test file filename
+/// @param total_tests the total tests nb
+/// @param total_tests_failed the total failed tests nb
+/// @param total_steps the total steps nb
+/// @param total_steps_failed the total failed steps nb
+///
 void program::test(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
                    int& total_steps_failed) {
     const string stack_size("-> stack size should be ");

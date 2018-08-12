@@ -1,5 +1,7 @@
 #include "program.hpp"
 
+/// @brief + keyword implementation
+///
 void program::rpn_plus() {
     MIN_ARGUMENTS(2);
 
@@ -51,6 +53,8 @@ void program::rpn_plus() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief - keyword implementation
+///
 void program::rpn_minus() {
     MIN_ARGUMENTS(2);
 
@@ -83,6 +87,8 @@ void program::rpn_minus() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief * keyword implementation
+///
 void program::rpn_mul() {
     MIN_ARGUMENTS(2);
 
@@ -133,6 +139,9 @@ void program::rpn_mul() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief divide the 2 complexes on stack
+/// result on the prog stack
+///
 void program::do_divide_complexes() {
     //(a+ib)/(x+iy)=(a+ib)(x-iy)/(x^2+y^2)=(ax+by+i(bx-ay))/(x^2+y^2)
     complex* right = (complex*)_stack->get_obj(0);  // x+iy
@@ -177,6 +186,8 @@ void program::do_divide_complexes() {
     _calc_stack.pop_back(4);
 }
 
+/// @brief / keyword implementation
+///
 void program::rpn_div() {
     MIN_ARGUMENTS(2);
 
@@ -224,6 +235,8 @@ void program::rpn_div() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief neg keyword implementation
+///
 void program::rpn_neg() {
     MIN_ARGUMENTS(1);
 
@@ -238,6 +251,8 @@ void program::rpn_neg() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief inv keyword implementation
+///
 void program::rpn_inv() {
     MIN_ARGUMENTS(1);
 
@@ -257,6 +272,8 @@ void program::rpn_inv() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief % (purcent) keyword implementation
+///
 void program::rpn_purcent() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -269,6 +286,8 @@ void program::rpn_purcent() {
     CHECK_MPFR(mpfr_div_si(left->_value.mpfr, left->_value.mpfr, 100L, floating_t::s_mpfr_rnd));
 }
 
+/// @brief %CH keyword implementation
+///
 void program::rpn_purcentCH() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -281,6 +300,8 @@ void program::rpn_purcentCH() {
     CHECK_MPFR(mpfr_div(left->_value.mpfr, right->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief power keyword implementation
+///
 void program::rpn_power() {
     MIN_ARGUMENTS(2);
     bool done_on_real = false;
@@ -338,6 +359,8 @@ void program::rpn_power() {
     }
 }
 
+/// @brief sqrt keyword implementation
+///
 void program::rpn_squareroot() {
     if (_stack->get_type(0) == cmd_number) {
         number* left = (number*)_stack->back();
@@ -362,6 +385,8 @@ void program::rpn_squareroot() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief sq keyword implementation
+///
 void program::rpn_square() {
     MIN_ARGUMENTS(1);
 
@@ -375,6 +400,8 @@ void program::rpn_square() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief mod keyword implementation
+///
 void program::rpn_modulo() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -386,6 +413,8 @@ void program::rpn_modulo() {
     CHECK_MPFR(mpfr_fmod(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief abs keyword implementation
+///
 void program::rpn_abs() {
     MIN_ARGUMENTS(1);
 
@@ -416,6 +445,8 @@ void program::rpn_abs() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief hex keyword implementation
+///
 void program::rpn_hex() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -423,18 +454,24 @@ void program::rpn_hex() {
     number::s_decimal_digits = 0;
 }
 
+/// @brief bin keyword implementation
+///
 void program::rpn_bin() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ((number*)_stack->back())->_representation = number::bin;
 }
 
+/// @brief dec keyword implementation
+///
 void program::rpn_dec() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ((number*)_stack->back())->_representation = number::dec;
 }
 
+/// @brief base keyword implementation
+///
 void program::rpn_base() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -448,6 +485,8 @@ void program::rpn_base() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief fact (factorial) keyword implementation
+///
 void program::rpn_fact() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -461,6 +500,8 @@ void program::rpn_fact() {
     CHECK_MPFR(mpfr_gamma(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief sign keyword implementation
+///
 void program::rpn_sign() {
     MIN_ARGUMENTS(1);
 
@@ -478,6 +519,8 @@ void program::rpn_sign() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief mant keyword implementation
+///
 void program::rpn_mant() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -508,6 +551,8 @@ void program::rpn_mant() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief xpon keyword implementation
+///
 void program::rpn_xpon() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -546,6 +591,8 @@ void program::rpn_xpon() {
         ERR_CONTEXT(ret_out_of_range);
 }
 
+/// @brief floor keyword implementation
+///
 void program::rpn_floor() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -555,6 +602,8 @@ void program::rpn_floor() {
     CHECK_MPFR(mpfr_floor(left->_value.mpfr, left->_value.mpfr));
 }
 
+/// @brief ceil keyword implementation
+///
 void program::rpn_ceil() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -564,6 +613,8 @@ void program::rpn_ceil() {
     CHECK_MPFR(mpfr_ceil(left->_value.mpfr, left->_value.mpfr));
 }
 
+/// @brief fp keyword implementation
+///
 void program::rpn_fp() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -573,6 +624,8 @@ void program::rpn_fp() {
     CHECK_MPFR(mpfr_frac(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief ip keyword implementation
+///
 void program::rpn_ip() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -582,6 +635,8 @@ void program::rpn_ip() {
     CHECK_MPFR(mpfr_trunc(left->_value.mpfr, left->_value.mpfr));
 }
 
+/// @brief min keyword implementation
+///
 void program::rpn_min() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -593,6 +648,8 @@ void program::rpn_min() {
     CHECK_MPFR(mpfr_min(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief max keyword implementation
+///
 void program::rpn_max() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);

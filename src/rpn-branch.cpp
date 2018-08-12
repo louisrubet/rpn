@@ -1,6 +1,11 @@
 #include "program.hpp"
 
-//
+/// @brief if keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_if(branch& myobj) {
     // myobj.arg1 = 'if' condition evaluation value
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
@@ -14,6 +19,11 @@ int program::rpn_if(branch& myobj) {
     return -1;
 }
 
+/// @brief then keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+///
 int program::rpn_then(branch& myobj) {
     // myobj.arg1 = index of then + 1
     // myobj.arg2 = index of else + 1 or end + 1
@@ -27,6 +37,12 @@ int program::rpn_then(branch& myobj) {
         return myobj.arg2;
 }
 
+/// @brief else keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_else(branch& myobj) {
     // myobj.arg1 = index of else + 1
     // myobj.arg2 = index of end + 1
@@ -40,6 +56,12 @@ int program::rpn_else(branch& myobj) {
         return myobj.arg1;
 }
 
+/// @brief end keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_end(branch& myobj) {
     int ret = -1;
 
@@ -60,17 +82,34 @@ int program::rpn_end(branch& myobj) {
     return ret;
 }
 
+/// @brief do keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_do(branch& myobj) {
     // nothing
     return -1;
 }
 
+/// @brief until keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_until(branch& myobj) {
     // nothing
     return -1;
 }
 
-//
+/// @brief ift keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 void program::rpn_ift(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
@@ -89,6 +128,12 @@ void program::rpn_ift(void) {
         (void)_stack->pop_back(2);
 }
 
+/// @brief ifte keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 void program::rpn_ifte(void) {
     MIN_ARGUMENTS(3);
     ARG_MUST_BE_OF_TYPE(2, cmd_number);
@@ -108,12 +153,23 @@ void program::rpn_ifte(void) {
     (void)_calc_stack.pop_back();
 }
 
-//
+/// @brief while keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_while(branch& myobj) {
     // nothing
     return -1;
 }
 
+/// @brief repeat keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_repeat(branch& myobj) {
     int ret = -1;
 
@@ -128,6 +184,12 @@ int program::rpn_repeat(branch& myobj) {
     return ret;
 }
 
+/// @brief start keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_start(branch& myobj) {
     int ret = -1;
 
@@ -155,6 +217,12 @@ int program::rpn_start(branch& myobj) {
     return ret;
 }
 
+/// @brief for keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_for(branch& myobj) {
     int ret;
 
@@ -190,6 +258,12 @@ int program::rpn_for(branch& myobj) {
     return ret;
 }
 
+/// @brief next keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_next(branch& myobj) {
     // arg1 = index of start or for command in program
     // farg1 = current count
@@ -228,6 +302,12 @@ int program::rpn_next(branch& myobj) {
     }
 }
 
+/// @brief step keyword (branch) implementation
+/// 
+/// @param myobj the current branch object
+/// @return int index of the next object to run in the current program
+/// @return -1 the next object index to run in the current program is the current+1
+///
 int program::rpn_step(branch& myobj) {
     int ret;
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);

@@ -1,9 +1,9 @@
 #include "program.hpp"
 
-//
+//< return type strings
 const char* program::s_ret_value_string[ret_max] = RET_VALUE_STRINGS;
 
-//
+//< kanguage reserved keywords (allowed types are cmd_keyword, cmd_branch or cmd_undef)
 program::keyword_t program::s_keywords[] = {
     // GENERAL
     {cmd_undef, "", NULL, "\nGENERAL"},
@@ -206,6 +206,12 @@ program::keyword_t program::s_keywords[] = {
     {cmd_max, "", NULL, ""},
 };
 
+/// @brief run a program on a stack and a heap
+/// 
+/// @param stk the stack, storing prog result
+/// @param hp the heap, storing variables
+/// @return ret_value see this type
+///
 ret_value program::run(stack& stk, heap& hp) {
     bool go_out = false;
     ret_value ret = ret_ok;
@@ -298,15 +304,19 @@ ret_value program::run(stack& stk, heap& hp) {
     return ret;
 }
 
+/// @brief stop a program
+/// 
+///
 void program::stop() { interrupt_now = true; }
 
-bool program::compare_keyword(keyword* k, const char* str_to_compare, int len) {
-    if (k->_len >= len)
-        return strncmp(k->_value, str_to_compare, len) == 0;
-    else
-        return false;
-}
-
+/// @brief return whether a branch object has a given name
+/// 
+/// @param b the branch object
+/// @param str_to_compare the name
+/// @param len the name length
+/// @return true the branch name is str_to_compare
+/// @return false the branch name is NOT str_to_compare
+///
 bool program::compare_branch(branch* b, const char* str_to_compare, int len) {
     if (b->_len >= len)
         return strncasecmp(b->_value, str_to_compare, len) == 0;
@@ -314,6 +324,13 @@ bool program::compare_branch(branch* b, const char* str_to_compare, int len) {
         return false;
 }
 
+/// @brief prepare a program for execution
+/// this is needed before a program can be run
+/// inner members of branch or keyword objects are filled by this function
+/// these inner members store for example the index of the next keyword to execute etc.
+/// 
+/// @return ret_value see this type
+///
 ret_value program::preprocess(void) {
     // for if-then-else-end
     vector<struct if_layout_t> vlayout;
@@ -540,6 +557,10 @@ ret_value program::preprocess(void) {
     return ret_ok;
 }
 
+/// @brief show the last error set
+/// 
+/// @return ret_value see this type
+///
 ret_value program::show_error() {
     ret_value ret;
 
@@ -556,6 +577,12 @@ ret_value program::show_error() {
     return ret;
 }
 
+/// @brief record an error as the last error set and show it
+/// 
+/// @param err the error to record
+/// @param context a context string
+/// @return ret_value see this type
+///
 ret_value program::show_error(ret_value err, string& context) {
     // record error
     _err = err;
@@ -563,6 +590,12 @@ ret_value program::show_error(ret_value err, string& context) {
     return show_error();
 }
 
+/// @brief record an error as the last error set and show it
+/// 
+/// @param err the error to record
+/// @param context a context string
+/// @return ret_value see this type
+///
 ret_value program::show_error(ret_value err, const char* context) {
     // record error
     _err = err;
@@ -570,6 +603,12 @@ ret_value program::show_error(ret_value err, const char* context) {
     return show_error();
 }
 
+/// @brief set the last error as being a syntax error and show it
+/// 
+/// @param err the error to record
+/// @param context a context string
+/// @return ret_value see this type
+///
 void program::show_syntax_error(const char* context) {
     // record error
     _err = ret_syntax;
@@ -577,8 +616,18 @@ void program::show_syntax_error(const char* context) {
     (void)show_error();
 }
 
+/// @brief return the last error set
+/// 
+/// @return ret_value see this type
+///
 ret_value program::get_err(void) { return _err; }
 
+/// @brief show a stack (show its different objects)
+/// generally a stack is associated to a running program
+/// 
+/// @param st the stack to show
+/// @param show_separator whether to show a stack level prefix or not
+///
 void program::show_stack(stack& st, bool show_separator) {
     if (st.size() == 1) {
         ((object*)st.back())->show();
@@ -592,6 +641,8 @@ void program::show_stack(stack& st, bool show_separator) {
     }
 }
 
+/// @brief apply default precision mode and digits
+///
 void program::apply_default() {
     // default float precision, float mode
     number::s_mode = DEFAULT_MODE;

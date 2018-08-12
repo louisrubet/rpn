@@ -1,11 +1,14 @@
 #include "program.hpp"
 
-//
+/// @brief pi keyword implementation
+///
 void program::rpn_pi(void) {
     number* pi = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     CHECK_MPFR(mpfr_const_pi(pi->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief d->r keyword implementation
+///
 void program::rpn_d2r(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -20,6 +23,8 @@ void program::rpn_d2r(void) {
     CHECK_MPFR(mpfr_div_si(left->mpfr, left->mpfr, 180, floating_t::s_mpfr_rnd));
 }
 
+/// @brief r->d keyword implementation
+///
 void program::rpn_r2d(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -34,6 +39,8 @@ void program::rpn_r2d(void) {
     CHECK_MPFR(mpfr_mul_si(left->mpfr, left->mpfr, 180, floating_t::s_mpfr_rnd));
 }
 
+/// @brief sin keyword implementation
+///
 void program::rpn_sin(void) {
     MIN_ARGUMENTS(1);
 
@@ -64,6 +71,8 @@ void program::rpn_sin(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief asin keyword implementation
+///
 void program::rpn_asin(void) {
     MIN_ARGUMENTS(1);
 
@@ -101,6 +110,8 @@ void program::rpn_asin(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief cos keyword implementation
+///
 void program::rpn_cos(void) {
     MIN_ARGUMENTS(1);
 
@@ -132,6 +143,8 @@ void program::rpn_cos(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief acos keyword implementation
+///
 void program::rpn_acos(void) {
     MIN_ARGUMENTS(1);
 
@@ -151,6 +164,8 @@ void program::rpn_acos(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief tan keyword implementation
+///
 void program::rpn_tan(void) {
     MIN_ARGUMENTS(1);
 
@@ -191,6 +206,8 @@ void program::rpn_tan(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief atan keyword implementation
+///
 void program::rpn_atan(void) {
     MIN_ARGUMENTS(1);
 

@@ -8,7 +8,8 @@ using namespace std;
 // allocation base size
 #define ALLOC_STACK_CHUNK (64 * 1024)
 
-//
+/// @brief stack object, parens of program, storing execution stack values or programs
+///
 class stack {
    public:
     stack() {
@@ -24,14 +25,20 @@ class stack {
         if (_base_pointer != NULL) free(_base_pointer);
     }
 
+    /// @brief remove all the stack elements
+    ///
     void erase() {
         _current = _base;
         _count = 0;
     }
 
-    //
+    /// @brief copy a whole stack entry and push it back to another stack
+    ///
+    /// @param from copy from
+    /// @param index_from index t ocopy from
+    /// @param to copy to
+    ///
     static void copy_and_push_back(stack& from, unsigned int index_from, stack& to) {
-        // copy a whole stack entry and push it back to another stack
         object* allocated = to.allocate_back(from.seq_len(index_from), from.seq_type(index_from));
         memcpy(allocated, from.seq_obj(index_from), from.seq_len(index_from));
 
@@ -41,9 +48,13 @@ class stack {
             ((complex*)allocated)->move();
     }
 
-    //
+    /// @brief copy a whole stack entry and push it back to another stack
+    ///
+    /// @param from copy from
+    /// @param index_from index t ocopy from
+    /// @param to copy to
+    ///
     static void copy_and_push_back(object* from, stack& to, unsigned int size) {
-        // copy a whole stack entry and push it back to another stack
         object* allocated = to.allocate_back(size, from->_type);
         memcpy(allocated, from, size);
 
@@ -53,6 +64,14 @@ class stack {
             ((complex*)allocated)->move();
     }
 
+    /// @brief allocate one object back on an already populated (or not) stack
+    /// the object function move is called on every reallocated object on the stack
+    /// the object function init is called on the new allocated object if its type is cmd_number or cmd_complex
+    ///
+    /// @param size the object size in bytes
+    /// @param type the object type
+    /// @return object* the allocated object
+    ///
     object* allocate_back(unsigned int size, cmd_type_t type) {
         object* allocated;
         bool data_is_reallocated = false;
@@ -119,36 +138,77 @@ class stack {
         return back;
     }
 
+    /// @brief the number of objects on stack
+    ///
+    /// @return unsigned int
+    ///
     unsigned int size() { return _count; }
 
-    // stack access (stack_level=0=first out)
+    /// @brief stack access (stack_level=0=first out)
+    ///
+    /// @param stack_level the object stack level
+    /// @return object* pointer on object at this stack level
+    ///
     object* get_obj(unsigned int stack_level) { return seq_obj(_count - stack_level - 1); }
 
+    /// @brief same as get_obj
+    ///
+    /// @param stack_level the object stack level
+    /// @return object* pointer on object at this stack level
+    ///
     object* operator[](unsigned int stack_level) { return seq_obj(_count - stack_level - 1); }
 
+    /// @brief returns the last object on stack
+    ///
+    /// @return object* the object
+    ///
     object* back() {
         object* obj = NULL;
         if (_count > 0) obj = _base_pointer[_count - 1];
         return obj;
     }
 
+    /// @brief get an object len
+    ///
+    /// @param index the object stack level
+    /// @return unsigned int the length in bytes
+    ///
     unsigned int get_len(unsigned int index) { return seq_len(_count - index - 1); }
 
+    /// @brief get an object type
+    ///
+    /// @param index the object stack level
+    /// @return cmd_type_t the object type
+    ///
     cmd_type_t get_type(unsigned int index) { return seq_type(_count - index - 1); }
 
-    // sequential access (index is counted from front)
+    /// @brief sequential object access (index is counted from front)
+    ///
+    /// @param index object index from front
+    /// @return object* the object pointer
+    ///
     object* seq_obj(unsigned int index) {
         object* obj = NULL;
         if (index < _count) obj = _base_pointer[index];
         return obj;
     }
 
+    /// @brief get an object len
+    ///
+    /// @param index the object stack level from front
+    /// @return unsigned int the length in bytes
+    ///
     unsigned int seq_len(unsigned int index) {
         unsigned int len = 0;
         if (index < _count) len = _base_pointer[index]->_size;
         return len;
     }
 
+    /// @brief get an object len
+    ///
+    /// @param index the object stack level from front
+    /// @return cmd_type_t the object type
+    ///
     cmd_type_t seq_type(unsigned int index) {
         cmd_type_t type = cmd_undef;
         if (index < _count) type = _base_pointer[index]->_type;
@@ -160,17 +220,25 @@ class stack {
     char* _current;
     object** _base_pointer;
 
-    unsigned int _count;                // stack count
-    unsigned int _total_count_pointer;  // total number of possible pointers
-    unsigned int _total_size;           // total allocated data size in bytes
+    unsigned int _count;                //< stack count
+    unsigned int _total_count_pointer;  //< total number of possible pointers
+    unsigned int _total_size;           //< total allocated data size in bytes
 };
 
-//
+/// @brief heap object, storing variables (=named object)
+///
 class heap : public stack {
    public:
     heap() {}
     virtual ~heap() {}
 
+    /// @brief add a variable on the heap
+    /// 
+    /// @param name the variable name
+    /// @param obj the variable content
+    /// @param size the variable size in bytes
+    /// @return object* 
+    ///
     object* add(const string name, object* obj, unsigned int size) {
         map<string, unsigned int>::iterator i = _map.find(name);
         object* local = NULL;
@@ -195,6 +263,14 @@ class heap : public stack {
         return local;
     }
 
+    /// @brief get a variable
+    /// 
+    /// @param name the variable name
+    /// @param obj the variable content
+    /// @param size the variable size in bytes
+    /// @return true the variable was found
+    /// @return false the variable was not found
+    ///
     bool get(const string name, object*& obj, unsigned int& size) {
         bool ret = false;
         map<string, unsigned int>::iterator i = _map.find(name);
@@ -207,6 +283,14 @@ class heap : public stack {
         return ret;
     }
 
+    /// @brief replace a variable value by another
+    /// 
+    /// @param name the variable name
+    /// @param obj the new value
+    /// @param size the variable size in bytes
+    /// @return true the variable was found
+    /// @return false the variable was not found
+    ///
     bool replace_value(const string name, object* obj, unsigned int size) {
         bool ret = false;
         map<string, unsigned int>::iterator i = _map.find(name);
@@ -224,8 +308,23 @@ class heap : public stack {
         }
     }
 
+    /// @brief whether a variable exists in heap or not
+    /// 
+    /// @param name the variable name
+    /// @return true the variable exists
+    /// @return false variable does not exist
+    ///
     bool exist(const string name) { return (_map.find(name) != _map.end()); }
 
+    /// @brief get a variable by its index in heap
+    /// 
+    /// @param num the variable index
+    /// @param name the variable name
+    /// @param obj the variable content
+    /// @param size the variable size in bytes
+    /// @return true the variable was found
+    /// @return false the variable was not found
+    ///
     bool get_by_index(int num, string& name, object*& obj, unsigned int& size) {
         if (num >= 0 && num < (int)_map.size()) {
             object* local;
@@ -242,6 +341,12 @@ class heap : public stack {
             return false;
     }
 
+    /// @brief erase a variable
+    /// 
+    /// @param name the variable name
+    /// @return true the variable was found
+    /// @return false the variable was not found
+    ///
     bool erase(const string& name) {
         map<string, unsigned int>::iterator i = _map.find(name);
         bool ret = false;
@@ -256,6 +361,8 @@ class heap : public stack {
         return ret;
     }
 
+    /// @brief erase all variables
+    /// 
     void erase_all(void) {
         // map
         _map.erase(_map.begin(), _map.end());
@@ -264,6 +371,10 @@ class heap : public stack {
         ((stack*)this)->erase();
     }
 
+    /// @brief get the variables nb
+    /// 
+    /// @return unsigned int the variables nb
+    ///
     unsigned int count_vars() { return _map.size(); }
 
    private:

@@ -1,5 +1,7 @@
 #include "program.hpp"
 
+/// @brief ->str keyword implementation
+///
 void program::rpn_instr() {
     MIN_ARGUMENTS(1);
 
@@ -25,6 +27,8 @@ void program::rpn_instr() {
     }
 }
 
+/// @brief str-> keyword implementation
+///
 void program::rpn_strout() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -39,6 +43,8 @@ void program::rpn_strout() {
         prog.run(*_stack, *_heap);
 }
 
+/// @brief chr keyword implementation
+///
 void program::rpn_chr() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -55,6 +61,8 @@ void program::rpn_chr() {
     str->_value[1] = 0;
 }
 
+/// @brief num keyword implementation
+///
 void program::rpn_num() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -64,6 +72,8 @@ void program::rpn_num() {
     numb->_value = the_chr;
 }
 
+/// @brief size keyword implementation
+///
 void program::rpn_strsize() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -73,6 +83,8 @@ void program::rpn_strsize() {
     numb->_value = len;
 }
 
+/// @brief pos keyword implementation
+///
 void program::rpn_strpos() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
@@ -89,6 +101,8 @@ void program::rpn_strpos() {
     numb->_value = pos;
 }
 
+/// @brief sub keyword implementation
+///
 void program::rpn_strsub() {
     MIN_ARGUMENTS(3);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);

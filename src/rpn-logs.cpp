@@ -1,11 +1,15 @@
 #include "program.hpp"
 
+/// @brief e keyword implementation
+///
 void program::rpn_e(void) {
     number* euler = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
     euler->_value = 1L;
     CHECK_MPFR(mpfr_exp(euler->_value.mpfr, euler->_value.mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief log10 keyword implementation
+///
 void program::rpn_log10() {
     MIN_ARGUMENTS(1);
 
@@ -21,6 +25,8 @@ void program::rpn_log10() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief alog10 keyword implementation
+///
 void program::rpn_alog10() {
     MIN_ARGUMENTS(1);
 
@@ -34,6 +40,8 @@ void program::rpn_alog10() {
     }
 }
 
+/// @brief log2 keyword implementation
+///
 void program::rpn_log2() {
     MIN_ARGUMENTS(1);
 
@@ -49,6 +57,8 @@ void program::rpn_log2() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief alog2 keyword implementation
+///
 void program::rpn_alog2() {
     MIN_ARGUMENTS(1);
 
@@ -62,6 +72,8 @@ void program::rpn_alog2() {
     }
 }
 
+/// @brief ln keyword implementation
+///
 void program::rpn_ln() {
     MIN_ARGUMENTS(1);
 
@@ -106,6 +118,8 @@ void program::rpn_ln() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief exp keyword implementation
+///
 void program::rpn_exp() {
     MIN_ARGUMENTS(1);
 
@@ -133,6 +147,8 @@ void program::rpn_exp() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief expm keyword implementation
+///
 void program::rpn_expm() {
     MIN_ARGUMENTS(1);
 
@@ -147,6 +163,8 @@ void program::rpn_expm() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief lnp1 keyword implementation
+///
 void program::rpn_lnp1() {
     MIN_ARGUMENTS(1);
 
@@ -161,6 +179,8 @@ void program::rpn_lnp1() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief sinh keyword implementation
+///
 void program::rpn_sinh() {
     MIN_ARGUMENTS(1);
 
@@ -191,6 +211,8 @@ void program::rpn_sinh() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief asinh keyword implementation
+///
 void program::rpn_asinh() {
     MIN_ARGUMENTS(1);
 
@@ -211,6 +233,8 @@ void program::rpn_asinh() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief cosh keyword implementation
+///
 void program::rpn_cosh() {
     MIN_ARGUMENTS(1);
 
@@ -241,6 +265,8 @@ void program::rpn_cosh() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief acosh keyword implementation
+///
 void program::rpn_acosh() {
     MIN_ARGUMENTS(1);
 
@@ -265,6 +291,8 @@ void program::rpn_acosh() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief tanh keyword implementation
+///
 void program::rpn_tanh() {
     MIN_ARGUMENTS(1);
 
@@ -293,6 +321,8 @@ void program::rpn_tanh() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief atanh keyword implementation
+///
 void program::rpn_atanh() {
     MIN_ARGUMENTS(1);
 
