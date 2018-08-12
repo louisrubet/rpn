@@ -22,7 +22,8 @@
 // 128 bits significand precision
 #define MPFR_DEFAULT_PREC_BITS 128
 
-// 128 bits significand storing length in bytes, result of mpfr_custom_get_size(128)
+// 128 bits significand storing length in bytes, result of
+// mpfr_custom_get_size(128)
 #define MPFR_DEFAULT_STORING_LENGTH_BYTES 16
 
 // constants
@@ -42,37 +43,46 @@
 #define MPFR_FORMAT_SCI "Re"
 #define MPFR_FORMAT_HEX "%Ra"
 
-#define MPFR_RND_STRINGS { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" }
+#define MPFR_RND_STRINGS \
+  { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" }
 
 // return values, used by all classes
 //
 typedef enum {
-    ret_ok,
-    ret_unknown_err,
-    ret_missing_operand,
-    ret_bad_operand_type,
-    ret_out_of_range,
-    ret_unknown_variable,
-    ret_internal,
-    ret_deadly,
-    ret_good_bye,
-    ret_not_impl,
-    ret_nop,
-    ret_syntax,
-    ret_div_by_zero,
-    ret_runtime_error,
-    ret_abort_current_entry,
-    ret_max
+  ret_ok,
+  ret_unknown_err,
+  ret_missing_operand,
+  ret_bad_operand_type,
+  ret_out_of_range,
+  ret_unknown_variable,
+  ret_internal,
+  ret_deadly,
+  ret_good_bye,
+  ret_not_impl,
+  ret_nop,
+  ret_syntax,
+  ret_div_by_zero,
+  ret_runtime_error,
+  ret_abort_current_entry,
+  ret_max
 } ret_value;
 
-#define RET_VALUE_STRINGS { \
-        "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable", "internal error, aborting", \
-        "deadly", "goodbye", "not implemented", "no operation", "syntax error", "division by zero", "runtime error", "aborted current entry" \
-    }
+#define RET_VALUE_STRINGS                                               \
+  {                                                                     \
+    "ok", "unknown command", "missing operand", "bad operand type",     \
+        "out of range", "unknown variable", "internal error, aborting", \
+        "deadly", "goodbye", "not implemented", "no operation",         \
+        "syntax error", "division by zero", "runtime error",            \
+        "aborted current entry"                                         \
+  }
 
 // command types
 //
-#define CMD_TYPE_STRINGS { "undef", "number", "complex", "string", "symbol", "program", "keyword", "keyword" }
+#define CMD_TYPE_STRINGS                                                    \
+  {                                                                         \
+    "undef", "number", "complex", "string", "symbol", "program", "keyword", \
+        "keyword"                                                           \
+  }
 
 // history
 #define HISTORY_FILE ".rpn_history"
@@ -99,14 +109,14 @@ typedef enum {
 #error "Invalid MPFR Exp format"
 #endif
 
-#define MIN(a,b) (((a)<(b))?(a):(b))
-#define MAX(h,i) ((h) > (i) ? (h) : (i))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(h, i) ((h) > (i) ? (h) : (i))
 
-#define MPFR_EXP_INF (MPFR_EXP_MIN+3)
-#define MPFR_EXP_NAN (MPFR_EXP_MIN+2)
+#define MPFR_EXP_INF (MPFR_EXP_MIN + 3)
+#define MPFR_EXP_NAN (MPFR_EXP_MIN + 2)
 #define MPFR_EXP(x) ((x)->_mpfr_exp)
 #define MPFR_IS_SINGULAR(x) (MPFR_EXP(x) <= MPFR_EXP_INF)
-#define MPFR_UNLIKELY(x) (__builtin_expect(!!(x),0))
+#define MPFR_UNLIKELY(x) (__builtin_expect(!!(x), 0))
 #define MPFR_IS_NAN(x) (MPFR_EXP(x) == MPFR_EXP_NAN)
 #define MPFR_IS_INF(x) (MPFR_EXP(x) == MPFR_EXP_INF)
 #define MPFR_IS_NEG(x) (MPFR_SIGN(x) < 0)

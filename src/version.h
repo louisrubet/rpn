@@ -15,8 +15,9 @@ static const char description[] =
     "using " ATTR_BOLD "GMP" ATTR_OFF " v" STRINGIFY(__GNU_MP_VERSION) "." STRINGIFY(__GNU_MP_VERSION_MINOR) "." STRINGIFY(__GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n"
     ATTR_BOLD "MPFR" ATTR_OFF " v" MPFR_VERSION_STRING " under GNU LGPL\n"
     "and " ATTR_BOLD "linenoise-ng" ATTR_OFF " v" LINENOISE_VERSION " under BSD\n";
-    
+
 // syntax
 static const char syntax[] =
-    ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\n"
-    "with optional command = list of commands";
+    ATTR_BOLD "Syntax" ATTR_OFF
+              ": rpn [command]\n"
+              "with optional command = list of commands";
