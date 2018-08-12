@@ -24,8 +24,8 @@ class branch;
 typedef void (program::*program_fn_t)(void);
 typedef int (program::*branch_fn_t)(branch&);
 
-// MPFR object
-////
+/// @brief MPFR (floating point) object
+///
 struct floating_t {
     mpfr_prec_t mpfr_prec;         // precision in bits
     unsigned int mpfr_prec_bytes;  // significand storing length in bytes
@@ -67,8 +67,8 @@ struct floating_t {
     static const char* s_mpfr_rnd_str[5];
 };
 
-// object - a generic stack object
-////
+/// @brief object - a generic stack object
+///
 struct object {
     // object type
     cmd_type_t _type;
@@ -83,8 +83,8 @@ struct object {
     static const char* s_cmd_type_string[cmd_max];
 };
 
-// stack objects derived from object
-////
+/// @brief stack objects derived from object
+///
 struct number : public object {
     // members
     enum { dec, hex, bin, base } _representation;
@@ -122,8 +122,8 @@ struct number : public object {
     static string s_mpfr_printf_format;
 };
 
-// stack objects derived from object
-////
+/// @brief stack objects derived from object
+///
 struct complex : public object {
     enum { dec, hex } _representation;
     // mind that re float value is at the end of the object
@@ -153,6 +153,8 @@ struct complex : public object {
     }
 };
 
+/// @brief object string
+/// 
 struct ostring : public object {
     // ostring may first have been allocated with len+1 bytes
     void set(const char* value, unsigned int len) {
@@ -172,6 +174,8 @@ struct ostring : public object {
     char _value[0];
 };
 
+/// @brief object program
+/// 
 struct oprogram : public object {
     // oprogram may first have been allocated with len+1 bytes
     void set(const char* value, unsigned int len) {
@@ -191,6 +195,8 @@ struct oprogram : public object {
     char _value[0];
 };
 
+/// @brief object symbol
+/// 
 struct symbol : public object {
     // symbol may first have been allocated with len+1 bytes
     void set(const char* value, unsigned int len, bool auto_eval) {
@@ -214,6 +220,8 @@ struct symbol : public object {
     char _value[0];
 };
 
+/// @brief object keyword
+/// 
 struct keyword : public object {
     // keyword may first have been allocated with len+1 bytes
     void set(program_fn_t fn, const char* value, unsigned int len) {
@@ -236,6 +244,8 @@ struct keyword : public object {
     char _value[0];
 };
 
+/// @brief object branch
+/// 
 struct branch : public object {
     //
     void set(branch_fn_t fn, const char* value, unsigned int len) {

@@ -27,7 +27,7 @@ using namespace std;
 #include "stack.hpp"
 #include "version.h"
 
-//
+//< convinient structure to preprocess a program
 struct if_layout_t {
     if_layout_t()
         : index_then_or_unti_or_repeat(-1), index_else(-1), index_end(-1), is_do_unti(false), is_while_repeat(false) {}
@@ -39,7 +39,7 @@ struct if_layout_t {
     bool is_while_repeat;
 };
 
-// program
+//< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public stack {
    public:
     program(program* parent_prog = NULL) {

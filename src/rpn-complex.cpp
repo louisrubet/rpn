@@ -1,5 +1,8 @@
 #include "program.hpp"
 
+/// @brief re keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_re() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -12,6 +15,9 @@ void program::rpn_re() {
     _calc_stack.pop_back();
 }
 
+/// @brief im keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_im() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -24,6 +30,9 @@ void program::rpn_im() {
     _calc_stack.pop_back();
 }
 
+/// @brief arg keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_arg() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -38,6 +47,9 @@ void program::rpn_arg() {
     _calc_stack.pop_back();
 }
 
+/// @brief conj keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_conj() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -46,6 +58,9 @@ void program::rpn_conj() {
     CHECK_MPFR(mpfr_neg(cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
 }
 
+/// @brief r2c keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_r2c() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
@@ -62,6 +77,9 @@ void program::rpn_r2c() {
     _calc_stack.pop_back(2);
 }
 
+/// @brief c2r keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_c2r() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -77,6 +95,9 @@ void program::rpn_c2r() {
     _calc_stack.pop_back();
 }
 
+/// @brief r2p keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_r2p() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
@@ -96,6 +117,9 @@ void program::rpn_r2p() {
     _stack->pop_back();
 }
 
+/// @brief p2r keyword implementation
+/// the result is stacked on current program stack
+///
 void program::rpn_p2r() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);

@@ -15,7 +15,8 @@ static heap s_global_heap;
 static stack s_global_stack;
 static program* s_prog_to_interrupt = NULL;
 
-// actions to be done at rpn exit
+/// @brief actions to be done at rpn exit
+///
 void exit_interactive_rpn() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != NULL) {
@@ -32,7 +33,8 @@ void exit_interactive_rpn() {
     }
 }
 
-// actions to be done at rpn exit
+/// @brief actions to be done at rpn exit
+///
 void init_interactive_rpn() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != NULL) {
@@ -45,7 +47,12 @@ void init_interactive_rpn() {
     }
 }
 
-// handle CtrlC signal
+/// @brief handle CtrlC signal (sigaction handler): exit rpn
+/// 
+/// @param sig signal, see POSIX sigaction
+/// @param siginfo signal info, see POSIX sigaction
+/// @param context see POSIX sigaction
+///
 static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context) {
     if (s_prog_to_interrupt != NULL) {
         s_prog_to_interrupt->stop();
@@ -55,13 +62,22 @@ static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context) {
     exit_interactive_rpn();
 }
 
-// handle SIGSEGV signal
+/// @brief handle SIGSEGV signal (sigaction handler): stop and exit rpn
+/// 
+/// @param sig signal, see POSIX sigaction
+/// @param siginfo signal info, see POSIX sigaction
+/// @param context see POSIX sigaction
+///
 static void segv_handler(int sig, siginfo_t* siginfo, void* context) {
     fprintf(stderr, "Internal error\n");
     s_prog_to_interrupt->stop();
     s_prog_to_interrupt = NULL;
 }
 
+/// @brief setup signals handlers to stop with honours
+/// 
+/// @param prog the prog to catch the signals to, must be checked not NULL by user
+///
 static void catch_signals(program* prog) {
     struct sigaction act;
 
@@ -78,7 +94,12 @@ static void catch_signals(program* prog) {
         (void)fprintf(stderr, "Warning, SIGSEGV cannot be catched [errno=%d '%s']", errno, strerror(errno));
 }
 
-//
+/// @brief rpn entry point
+/// 
+/// @param argc command line args nb
+/// @param argv  command line args nb
+/// @return int 0=ok
+///
 int main(int argc, char* argv[]) {
     int ret = 0;
     bool go_on = true;

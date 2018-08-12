@@ -1,6 +1,7 @@
 #include "program.hpp"
 
-//
+/// @brief sto keyword implementation
+///
 void program::rpn_sto(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
@@ -10,7 +11,8 @@ void program::rpn_sto(void) {
     (void)_stack->pop_back();
 }
 
-//
+/// @brief sto+ keyword implementation
+///
 void program::rpn_stoadd(void) {
     MIN_ARGUMENTS(2);
 
@@ -41,6 +43,8 @@ void program::rpn_stoadd(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief sto- keyword implementation
+///
 void program::rpn_stosub(void) {
     MIN_ARGUMENTS(2);
 
@@ -71,6 +75,8 @@ void program::rpn_stosub(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief sto* keyword implementation
+///
 void program::rpn_stomul(void) {
     MIN_ARGUMENTS(2);
 
@@ -101,6 +107,8 @@ void program::rpn_stomul(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief sto/ keyword implementation
+///
 void program::rpn_stodiv(void) {
     MIN_ARGUMENTS(2);
 
@@ -131,6 +139,8 @@ void program::rpn_stodiv(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief stosneg keyword implementation
+///
 void program::rpn_stoneg(void) {
     MIN_ARGUMENTS(1);
 
@@ -147,6 +157,8 @@ void program::rpn_stoneg(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief sinv keyword implementation
+///
 void program::rpn_stoinv(void) {
     MIN_ARGUMENTS(1);
 
@@ -163,6 +175,8 @@ void program::rpn_stoinv(void) {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
+/// @brief rcl keyword implementation
+///
 void program::rpn_rcl(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
@@ -180,6 +194,8 @@ void program::rpn_rcl(void) {
         ERR_CONTEXT(ret_unknown_variable);
 }
 
+/// @brief edit keyword implementation
+///
 void program::rpn_edit(void) {
     MIN_ARGUMENTS(1);
 
@@ -206,7 +222,10 @@ void program::rpn_edit(void) {
         ERR_CONTEXT(ret_runtime_error);
 }
 
-// carefull : this is not a langage command
+/// @brief recall then eval a symbol variable if it is auto-evaluable
+/// 
+/// @param symb the smlbol to recall and autoeval
+///
 void program::auto_rcl(symbol* symb) {
     if (symb->_auto_eval) {
         object* obj;
@@ -223,6 +242,8 @@ void program::auto_rcl(symbol* symb) {
         stack::copy_and_push_back(symb, *_stack, symb->size());
 }
 
+/// @brief purge keyword implementation
+///
 void program::rpn_purge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
@@ -231,6 +252,8 @@ void program::rpn_purge(void) {
     if (!_heap->erase(name)) ERR_CONTEXT(ret_unknown_variable);
 }
 
+/// @brief vars keyword implementation
+///
 void program::rpn_vars(void) {
     object* obj;
     unsigned int size;
@@ -266,4 +289,6 @@ void program::rpn_vars(void) {
     }
 }
 
+/// @brief clusr keyword implementation
+///
 void program::rpn_clusr(void) { _heap->erase_all(); }
