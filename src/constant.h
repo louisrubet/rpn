@@ -1,6 +1,8 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
+#include <mpfr.h>
+
 // default values
 //
 
@@ -44,45 +46,40 @@
 #define MPFR_FORMAT_HEX "%Ra"
 
 #define MPFR_RND_STRINGS \
-  { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" }
+    { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" }
 
 // return values, used by all classes
 //
 typedef enum {
-  ret_ok,
-  ret_unknown_err,
-  ret_missing_operand,
-  ret_bad_operand_type,
-  ret_out_of_range,
-  ret_unknown_variable,
-  ret_internal,
-  ret_deadly,
-  ret_good_bye,
-  ret_not_impl,
-  ret_nop,
-  ret_syntax,
-  ret_div_by_zero,
-  ret_runtime_error,
-  ret_abort_current_entry,
-  ret_max
+    ret_ok,
+    ret_unknown_err,
+    ret_missing_operand,
+    ret_bad_operand_type,
+    ret_out_of_range,
+    ret_unknown_variable,
+    ret_internal,
+    ret_deadly,
+    ret_good_bye,
+    ret_not_impl,
+    ret_nop,
+    ret_syntax,
+    ret_div_by_zero,
+    ret_runtime_error,
+    ret_abort_current_entry,
+    ret_max
 } ret_value;
 
-#define RET_VALUE_STRINGS                                               \
-  {                                                                     \
-    "ok", "unknown command", "missing operand", "bad operand type",     \
-        "out of range", "unknown variable", "internal error, aborting", \
-        "deadly", "goodbye", "not implemented", "no operation",         \
-        "syntax error", "division by zero", "runtime error",            \
-        "aborted current entry"                                         \
-  }
+#define RET_VALUE_STRINGS                                                                                       \
+    {                                                                                                           \
+        "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable",     \
+            "internal error, aborting", "deadly", "goodbye", "not implemented", "no operation", "syntax error", \
+            "division by zero", "runtime error", "aborted current entry"                                        \
+    }
 
 // command types
 //
-#define CMD_TYPE_STRINGS                                                    \
-  {                                                                         \
-    "undef", "number", "complex", "string", "symbol", "program", "keyword", \
-        "keyword"                                                           \
-  }
+#define CMD_TYPE_STRINGS \
+    { "undef", "number", "complex", "string", "symbol", "program", "keyword", "keyword" }
 
 // history
 #define HISTORY_FILE ".rpn_history"
