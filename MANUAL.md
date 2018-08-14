@@ -306,7 +306,9 @@ rpn> 7b1252 dec
 |-|-|
 |`e`| Euler constant
 |`ln\|log`| logarithm base e
+|`lnp1`| ln(1+x) which is useful when x is close to 0
 |`exp`| exponential
+|`expm`| exp(x)-1 which is useful when x is close to 0
 |`log10`| logarithm base 10
 |`alog10\|exp10`| exponential base 10
 |`log2`| logarithm base 2
