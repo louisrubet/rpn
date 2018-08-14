@@ -24,15 +24,21 @@ rpn> << -> x y << x y + ln >> >> 'P' sto
 
 ### and a bunch of functions
 ```
-rpn>
-Display all 146 possibilities? (y or n)
-nop      exit     chs      sqrt     base     xpon     re       r->p     type     and      drop2    dupn     str->    then     ift      repeat   edit     eval     tan      exp      sinh
-help     test     neg      sq       sign     floor    im       std      >        or       dropn    pick     chr      else     ifte     repea    sto+     ->       atan     log10    asinh
-h        version  *        sqr      %        ceil     conj     fix      >=       xor      del      depth    num      end      do       sto      sto-     pi       d->r     alog10   cosh
-?        uname    /        abs      %CH      ip       arg      sci      <        not      erase    roll     size     start    until    rcl      sto*     sin      r->d     exp10    acosh
-q        history  inv      dec      mod      fp       c->r     prec     <=       same     rot      rolld    pos      for      unti     purge    sto/     asin     e        log2     tanh
-quit     +        ^        hex      fact     min      r->c     round    !=       swap     dup      over     sub      next     while    vars     sneg     cos      ln       alog2    atanh
-q        -        pow      bin      mant     max      p->r     default  ==       drop     dup2     ->str    if       step     whil     clusr    sinv     acos     log      exp2
+rpn> 
+Display all 147 possibilities? (y or n)
+nop      chs      bin      min      prec     not      depth    else     repeat   sinv     ln       cosh
+help     neg      base     max      round    same     roll     end      repea    eval     log      acosh
+h        *        sign     re       default  swap     rolld    start    sto      ->       lnp1     tanh
+?        /        %        im       type     drop     over     for      rcl      pi       exp      atanh
+quit     inv      %CH      conj     >        drop2    ->str    next     purge    sin      expm
+q        ^        mod      arg      >=       dropn    str->    step     vars     asin     log10
+exit     pow      fact     c->r     <        del      chr      ift      clusr    cos      alog10
+test     sqrt     mant     r->c     <=       erase    num      ifte     edit     acos     exp10
+version  sq       xpon     p->r     !=       rot      size     do       sto+     tan      log2
+uname    sqr      floor    r->p     ==       dup      pos      until    sto-     atan     alog2
+history  abs      ceil     std      and      dup2     sub      unti     sto*     d->r     exp2
++        dec      ip       fix      or       dupn     if       while    sto/     r->d     sinh
+-        hex      fp       sci      xor      pick     then     whil     sneg     e        asinh
 ```
 
 ## Download
