@@ -128,8 +128,8 @@ rpn> 7b1252 dec
 |keyword|description|
 |-|-|
 |`nop` | no operation
-|`help\|h\|?` | this help message
-|`quit\|q\|exit` | quit software
+|`help` `h` `?` | this help message
+|`quit` `q` `exit` | quit software
 |`version` | show rpn version
 |`uname` | show rpn complete identification string
 |`history`| see commands history
@@ -140,13 +140,13 @@ rpn> 7b1252 dec
 |-|-|
 |`+`| addition
 |`-`| substraction
-|`neg\|chs`| negation
+|`neg` `chs`| negation
 |`*`| multiplication
 |`/`| division
 |`inv`| inverse
-|`^\|pow`| power
+|`^` `pow`| power
 |`sqrt`| square root
-|`sq\|sqr`| square
+|`sq` `sqr`| square
 |`abs`| absolute value for a number or `sqrt(re*re+im*im)` for a complex
 |`dec`| decimal representation
 |`hex`| hexadecimal representation
@@ -220,7 +220,7 @@ rpn> 7b1252 dec
 |`drop`| drop first stack entry
 |`drop2`| drop 2 first stack entries
 |`dropn`| drop n first stack entries
-|`del\|erase`| drop all stack entries
+|`del` `erase`| drop all stack entries
 |`rot`| rotate 3 first stack entries
 |`dup`| duplicate first stack entry
 |`dup2`| duplicate 2 first stack entries
@@ -258,9 +258,9 @@ rpn> 7b1252 dec
 |`next`| used with start and for
 |`step`| used with start and for
 |`do`| do (instructions) until (condition) end
-|`until\|unti` | used with do
-|`while\|whil`| while (test-instruction) repeat (loop-instructions) end
-|`repeat\|repea`| used with while
+|`until` `unti` | used with do
+|`while` `whil`| while (test-instruction) repeat (loop-instructions) end
+|`repeat` `repea`| used with while
 
 ### store
 
@@ -305,20 +305,23 @@ rpn> 7b1252 dec
 |keyword|description|
 |-|-|
 |`e`| Euler constant
-|`ln\|log`| logarithm base e
+|`ln` `log`| logarithm base e
 |`lnp1`| ln(1+x) which is useful when x is close to 0
 |`exp`| exponential
 |`expm`| exp(x)-1 which is useful when x is close to 0
 |`log10`| logarithm base 10
-|`alog10\|exp10`| exponential base 10
+|`alog10` `exp10`| exponential base 10
 |`log2`| logarithm base 2
-|`alog2\|exp2`| exponential base 2
+|`alog2` `exp2`| exponential base 2
 |`sinh`| hyperbolic sine
 |`asinh`| inverse hyperbolic sine
 |`cosh`| hyperbolic cosine
 |`acosh`| inverse hyperbolic cosine
 |`tanh`| hyperbolic tangent
 |`atanh`| inverse hyperbolic tangent
+|`time`| time in format HH.MMSSssssss
+|`date`| date in format (M)M.DDYYYY
+|`ticks`| system tick in µs
 
 ### default
 
