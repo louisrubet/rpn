@@ -17,7 +17,7 @@ A help command is provided by rpn:
 ```
 rpn> help
 
-rpn v2.3.1, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
+rpn v2.3.2, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
 
 Reverse Polish Notation language
 
@@ -64,7 +64,8 @@ rpn> 1.0986122886681096913952452369225257046
 ```
 
 ### **arbitrary precision**
-Precision can be really high, up to 0x7FFFFFFFFFFFFFFF bits with GNU MPFR
+The number of significant digits can be very large thanks to GNU MPFR
+
 ```
 rpn> 256 prec
 rpn> pi
@@ -76,7 +77,7 @@ rpn>
 
 ### object types
 
-Following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
+The following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
 ```
 5> 12.3456
 4> (1,-2.33)
@@ -89,7 +90,6 @@ rpn>
 ### structured programming
 
 Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat** and control keywords **if..then..[else]..end**, **ift**, **ifte** allow you to program powerfull algorithms
-
 
 ### command line
 
