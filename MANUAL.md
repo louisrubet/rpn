@@ -192,7 +192,7 @@ rpn> 7b1252 dec
 |`fix`| fixed point representation. ex: `6 fix`
 |`sci`| scientific floating point representation. ex: `20 sci`
 |`prec`| set float precision in bits. ex: `256 prec`
-|`round`| set float rounding mode. Authorized values are: ["nearest" \| "toward zero" \| "toward +inf" \| "toward -inf" \| "away from zero"] round`. ex: `"nearest" round`
+|`round`| set float rounding mode. Authorized values are: `"nearest"` `"toward zero"` `"toward +inf"` `"toward -inf"` `"away from zero"`. ex: `"nearest" round`
 |`default` | set float representation and precision to default
 |`type` | show type of stack first entry
 
@@ -247,19 +247,19 @@ rpn> 7b1252 dec
 
 |keyword|description|
 |-|-|
-|`if`| if (test-instruction) then (true-instructions) else (false-instructions) end
+|`if`| `(test-instruction) if then (true-instructions) else (false-instructions) end`
 |`then`| used with if
 |`else`| used with if
 |`end`| used with various branch instructions
-|`ift`| similar to if-then-end: (test-instruction) (true-instruction) ift"
-|`ifte`| similar to if-then-else-end: (test-instruction) (true-instruction) (false-instruction) ifte"
-|`start`| (start) (end) start (instructions) next|(step) step
-|`for`| (start) (end) for (variable) (instructions) next|(step) step
+|`ift`| similar to if-then-end: `(test-instruction) (true-instruction) ift`
+|`ifte`| similar to if-then-else-end: `(test-instruction) (true-instruction) (false-instruction) ifte`
+|`start`| `(start) (end) start (instructions) [next,(step) step]`. ex: `10 20 30 1 2 start + next`
+|`for`| `(start) (end) for (variable) (instructions) [next,(step) step]`. ex: `1 2 for i i 'a' sto+ 0.1 step`
 |`next`| used with start and for
 |`step`| used with start and for
-|`do`| do (instructions) until (condition) end
+|`do`| `do (instructions) until (condition) end`
 |`until` `unti` | used with do
-|`while` `whil`| while (test-instruction) repeat (loop-instructions) end
+|`while` `whil`| `while (test-instruction) repeat (loop-instructions) end`
 |`repeat` `repea`| used with while
 
 ### store
@@ -283,8 +283,8 @@ rpn> 7b1252 dec
 
 |keyword|description|
 |-|-|
-|`eval`| evaluate (run) a program, or recall a variable. ex: ```'my_prog' eval```
-|`->`| load program local variables. ex: ```<< -> n m << 0 n m for i i + next >> >>```
+|`eval`| evaluate (run) a program, or recall a variable. ex: `'my_prog' eval`
+|`->`| load program local variables. ex: `<< -> n m << 0 n m for i i + next >> >>`
 
 ### trig on reals and complexes
 
