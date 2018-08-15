@@ -273,6 +273,11 @@ class program : public stack {
     void rpn_acos(void);
     void rpn_tan(void);
     void rpn_atan(void);
+
+    // time
+    void rpn_time();
+    void rpn_date();
+    void rpn_ticks();
 };
 
 // convinience macros for rpn_xx function

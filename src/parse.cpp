@@ -11,7 +11,7 @@ void program::entry_completion_generator(const char* text, linenoiseCompletions*
     int text_len = strnlen(text, 6);
 
     // propose all keywords
-    if (text_len == 0) {
+        if (text_len == 0) {
         while (program::s_keywords[i].type != cmd_max) {
             if (program::s_keywords[i].fn != NULL)
                 // add all keywords

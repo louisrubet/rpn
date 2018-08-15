@@ -9,4 +9,5 @@
 #include 09-program.txt
 #include 10-complex.txt
 #include 11-base-entry.txt
+#include 12-time.txt
 #include 99-manual-tests.txt

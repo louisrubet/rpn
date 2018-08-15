@@ -202,12 +202,18 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "tanh", &program::rpn_tanh, "hyperbolic tangent"},
     {cmd_keyword, "atanh", &program::rpn_atanh, "inverse hyperbolic tangent"},
 
+    // TIME AND DATE
+    {cmd_undef, "", NULL, "\nTIME AND DATE"},
+    {cmd_keyword, "time", &program::rpn_time, "time in local format"},
+    {cmd_keyword, "date", &program::rpn_date, "date in local format"},
+    {cmd_keyword, "ticks", &program::rpn_ticks, "system tick in µs"},
+
     // end
     {cmd_max, "", NULL, ""},
 };
 
 /// @brief run a program on a stack and a heap
-/// 
+///
 /// @param stk the stack, storing prog result
 /// @param hp the heap, storing variables
 /// @return ret_value see this type
@@ -305,12 +311,12 @@ ret_value program::run(stack& stk, heap& hp) {
 }
 
 /// @brief stop a program
-/// 
+///
 ///
 void program::stop() { interrupt_now = true; }
 
 /// @brief return whether a branch object has a given name
-/// 
+///
 /// @param b the branch object
 /// @param str_to_compare the name
 /// @param len the name length
@@ -328,7 +334,7 @@ bool program::compare_branch(branch* b, const char* str_to_compare, int len) {
 /// this is needed before a program can be run
 /// inner members of branch or keyword objects are filled by this function
 /// these inner members store for example the index of the next keyword to execute etc.
-/// 
+///
 /// @return ret_value see this type
 ///
 ret_value program::preprocess(void) {
@@ -558,7 +564,7 @@ ret_value program::preprocess(void) {
 }
 
 /// @brief show the last error set
-/// 
+///
 /// @return ret_value see this type
 ///
 ret_value program::show_error() {
@@ -578,7 +584,7 @@ ret_value program::show_error() {
 }
 
 /// @brief record an error as the last error set and show it
-/// 
+///
 /// @param err the error to record
 /// @param context a context string
 /// @return ret_value see this type
@@ -591,7 +597,7 @@ ret_value program::show_error(ret_value err, string& context) {
 }
 
 /// @brief record an error as the last error set and show it
-/// 
+///
 /// @param err the error to record
 /// @param context a context string
 /// @return ret_value see this type
@@ -604,7 +610,7 @@ ret_value program::show_error(ret_value err, const char* context) {
 }
 
 /// @brief set the last error as being a syntax error and show it
-/// 
+///
 /// @param err the error to record
 /// @param context a context string
 /// @return ret_value see this type
@@ -617,14 +623,14 @@ void program::show_syntax_error(const char* context) {
 }
 
 /// @brief return the last error set
-/// 
+///
 /// @return ret_value see this type
 ///
 ret_value program::get_err(void) { return _err; }
 
 /// @brief show a stack (show its different objects)
 /// generally a stack is associated to a running program
-/// 
+///
 /// @param st the stack to show
 /// @param show_separator whether to show a stack level prefix or not
 ///
