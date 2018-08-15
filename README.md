@@ -25,25 +25,31 @@ rpn> << -> x y << x y + ln >> >> 'P' sto
 ### and a bunch of functions
 ```
 rpn> 
-Display all 147 possibilities? (y or n)
-nop      chs      bin      min      prec     not      depth    else     repeat   sinv     ln       cosh
-help     neg      base     max      round    same     roll     end      repea    eval     log      acosh
-h        *        sign     re       default  swap     rolld    start    sto      ->       lnp1     tanh
-?        /        %        im       type     drop     over     for      rcl      pi       exp      atanh
-quit     inv      %CH      conj     >        drop2    ->str    next     purge    sin      expm
-q        ^        mod      arg      >=       dropn    str->    step     vars     asin     log10
-exit     pow      fact     c->r     <        del      chr      ift      clusr    cos      alog10
-test     sqrt     mant     r->c     <=       erase    num      ifte     edit     acos     exp10
-version  sq       xpon     p->r     !=       rot      size     do       sto+     tan      log2
-uname    sqr      floor    r->p     ==       dup      pos      until    sto-     atan     alog2
-history  abs      ceil     std      and      dup2     sub      unti     sto*     d->r     exp2
-+        dec      ip       fix      or       dupn     if       while    sto/     r->d     sinh
--        hex      fp       sci      xor      pick     then     whil     sneg     e        asinh
+Display all 150 possibilities? (y or n)
+nop      pow      fp       >=       dupn     next     sto*     exp
+help     sqrt     min      <        pick     step     sto/     expm
+h        sq       max      <=       depth    ift      sneg     log10
+?        sqr      re       !=       roll     ifte     sinv     alog10
+quit     abs      im       ==       rolld    do       eval     exp10
+q        dec      conj     and      over     until    ->       log2
+exit     hex      arg      or       ->str    unti     pi       alog2
+test     bin      c->r     xor      str->    while    sin      exp2
+version  base     r->c     not      chr      whil     asin     sinh
+uname    sign     p->r     same     num      repeat   cos      asinh
+history  %        r->p     swap     size     repea    acos     cosh
++        %CH      std      drop     pos      sto      tan      acosh
+-        mod      fix      drop2    sub      rcl      atan     tanh
+chs      fact     sci      dropn    if       purge    d->r     atanh
+neg      mant     prec     del      then     vars     r->d     time
+*        xpon     round    erase    else     clusr    e        date
+/        floor    default  rot      end      edit     ln       ticks
+inv      ceil     type     dup      start    sto+     log
+^        ip       >        dup2     for      sto-     lnp1
 ```
 
 ## Download
 
-deb, rpm and tgz files can be found [there](http://nvie.com/img/git-model@2x.png)
+deb, rpm and tgz files can be found [there](liv/)
 
 ## Manual
 
