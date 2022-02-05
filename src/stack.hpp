@@ -306,6 +306,8 @@ class heap : public stack {
                 ret = true;
             }
         }
+
+        return ret;
     }
 
     /// @brief whether a variable exists in heap or not
