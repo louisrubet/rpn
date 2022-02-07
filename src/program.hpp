@@ -11,12 +11,15 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <vector>
 using namespace std;
 
 // external libs
+#define MPFR_USE_NO_MACRO
 #include <mpfr.h>
+
 #include "linenoise.h"
 
 // internal includes
@@ -40,7 +43,7 @@ struct if_layout_t {
 };
 
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
-class program : public stack {
+class program : public vector<object*> {
    public:
     program(program* parent_prog = NULL) {
         _parent_prog = parent_prog;
@@ -48,15 +51,15 @@ class program : public stack {
     }
 
     // parser
-    static ret_value parse(const char* entry, program& prog);
+    static ret_value parse(string& entry, program& prog);
     static ret_value entry(program& prog);
     static void entry_completion_generator(const char* text, linenoiseCompletions* lc);
     static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type);
 
     // running
-    ret_value run(stack& stk, heap& hp);
+    ret_value run(rpnstack& stk, heap& hp);
     void stop();
-    bool compare_keyword(keyword* k, const char* str_to_compare, int len);
+    // bool compare_keyword(keyword* k, const char* str_to_compare, int len);
     bool compare_branch(branch* b, const char* str_to_compare, int len);
     ret_value preprocess(void);
 
@@ -66,7 +69,7 @@ class program : public stack {
     void show_syntax_error(const char* context);
     ret_value get_err(void);
 
-    static void show_stack(stack& st, bool show_separator = true);
+    static void show_stack(rpnstack& st, bool show_separator = true);
 
     static void apply_default();
 
@@ -78,7 +81,7 @@ class program : public stack {
     string _err_context;
 
     // global stack holding results for user
-    stack* _stack;
+    rpnstack* _stack;
 
     // global heap (sto, rcl)
     heap* _heap;
@@ -87,7 +90,7 @@ class program : public stack {
     heap _local_heap;
 
     // calc stack internally used by branch and calc commands
-    stack _calc_stack;
+    rpnstack _calc_stack;
 
     // parent prog for inheriting heaps
     program* _parent_prog;
@@ -168,7 +171,7 @@ class program : public stack {
     void rpn_atanh();
 
     // program
-    bool find_variable(string& variable, object*& obj, unsigned int& size);
+    bool find_variable(string& variable, object*& obj);
     void rpn_eval(void);
     int rpn_inprog(branch& myobj);
 
@@ -243,14 +246,14 @@ class program : public stack {
     void rpn_strsub();
 
     // test-core
-    void test_get_stack(string& stack_is, stack& stk);
+    void test_get_stack(string& stack_is, rpnstack& stk);
     void test_show_result(string title, int tests, int tests_failed, int steps, int steps_failed);
     void rpn_test();
     void test(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
               int& total_steps_failed);
 
     // test
-    int cmp_strings_on_stack_top();
+    long cmp_strings_on_stack_top();
     void rpn_sup(void);
     void rpn_sup_eq(void);
     void rpn_inf(void);
@@ -304,23 +307,23 @@ class program : public stack {
         }                                     \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE(num, type)         \
-    do {                                       \
-        if (_stack->get_type(num) != (type)) { \
-            ERR_CONTEXT(ret_bad_operand_type); \
-            return;                            \
-        }                                      \
+#define ARG_MUST_BE_OF_TYPE(num, type)          \
+    do {                                        \
+        if (_stack->at(num)->_type != (type)) { \
+            ERR_CONTEXT(ret_bad_operand_type);  \
+            return;                             \
+        }                                       \
     } while (0)
 
 #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) \
     do {                                        \
-        if (_stack->get_type(num) != (type)) {  \
+        if (_stack->at(num)->_type != (type)) { \
             ERR_CONTEXT(ret_bad_operand_type);  \
             return (ret);                       \
         }                                       \
     } while (0)
 
-#define IS_ARG_TYPE(num, type) (_stack->get_type(num) == (type))
+#define IS_ARG_TYPE(num, type) (_stack->at(num)->_type == (type))
 
 #define CHECK_MPFR(op) \
     do {               \

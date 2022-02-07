@@ -5,12 +5,13 @@
 /// @return 0 strings are equal
 /// @return !0 strings are not equal (see strcmp output)
 ///
-int program::cmp_strings_on_stack_top() {
+long program::cmp_strings_on_stack_top() {
     // _stack sould have 2 strings at level 1 and 2
     // this function removes these 2 entries
-    ostring* right = (ostring*)_stack->pop_back();
-    ostring* left = (ostring*)_stack->pop_back();
-    return strncmp(left->_value, right->_value, min(left->_len, right->_len));
+    long res = (long)static_cast<ostring*>(_stack->at(0))->_value.compare(static_cast<ostring*>(_stack->at(1))->_value);
+    (void)_stack->pop_back();
+    (void)_stack->pop_back();
+    return res;
 }
 
 /// @brief > keyword implementation
@@ -19,21 +20,19 @@ void program::rpn_sup(void) {
     MIN_ARGUMENTS(2);
 
     // numbers
-    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) > 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp(left->_value.mpfr_ptr(), right->_value.mpfr_ptr()) > 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
     // strings
-    else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string) {
-        int res_cmp = cmp_strings_on_stack_top();
-        number* res = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        res->_value = (res_cmp > 0) ? 1L : 0L;
-    } else
+    else if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string)
+        _stack->push_back(new number(cmp_strings_on_stack_top()));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -43,21 +42,19 @@ void program::rpn_sup_eq(void) {
     MIN_ARGUMENTS(2);
 
     // numbers
-    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) >= 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp(left->_value.mpfr_ptr(), right->_value.mpfr_ptr()) >= 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
     // strings
-    else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string) {
-        int res_cmp = cmp_strings_on_stack_top();
-        number* res = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        res->_value = (res_cmp >= 0) ? 1L : 0L;
-    } else
+    else if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string)
+        _stack->push_back(new number(cmp_strings_on_stack_top()));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -67,21 +64,19 @@ void program::rpn_inf(void) {
     MIN_ARGUMENTS(2);
 
     // numbers
-    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) < 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp(left->_value.mpfr_ptr(), right->_value.mpfr_ptr()) < 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
     // strings
-    else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string) {
-        int res_cmp = cmp_strings_on_stack_top();
-        number* res = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        res->_value = (res_cmp < 0) ? 1L : 0L;
-    } else
+    else if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string)
+        _stack->push_back(new number(cmp_strings_on_stack_top()));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -91,21 +86,19 @@ void program::rpn_inf_eq(void) {
     MIN_ARGUMENTS(2);
 
     // numbers
-    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) <= 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp(left->_value.mpfr_ptr(), right->_value.mpfr_ptr()) <= 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
     // strings
-    else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string) {
-        int res_cmp = cmp_strings_on_stack_top();
-        number* res = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        res->_value = (res_cmp <= 0) ? 1L : 0L;
-    } else
+    else if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string)
+        _stack->push_back(new number(cmp_strings_on_stack_top()));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -115,36 +108,30 @@ void program::rpn_diff(void) {
     MIN_ARGUMENTS(2);
 
     // numbers
-    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) != 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp(left->_value.mpfr_ptr(), right->_value.mpfr_ptr()) != 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
     // complexes
-    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex) {
+    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
         bool diff = false;
-        complex* right = (complex*)_stack->pop_back();
-        complex* left = (complex*)_stack->pop_back();
+        ocomplex* right = (ocomplex*)_stack->pop_back();
+        ocomplex* left = (ocomplex*)_stack->pop_back();
 
-        if (mpfr_cmp(left->re()->mpfr, right->re()->mpfr) != 0 || mpfr_cmp(left->im()->mpfr, right->im()->mpfr) != 0)
+        if (mpfr_cmp(left->re()->mpfr_ptr(), right->re()->mpfr_ptr()) != 0 || mpfr_cmp(left->im()->mpfr_ptr(), right->im()->mpfr_ptr()) != 0)
             diff = true;
 
-        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        if (diff)
-            mpfr_set_si(num->_value.mpfr, 1, floating_t::s_mpfr_rnd);
-        else
-            mpfr_set_si(num->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+        _stack->push_back(new number(diff?1L:0L));
     }
     // strings
-    else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string) {
-        int res_cmp = cmp_strings_on_stack_top();
-        number* res = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        res->_value = (res_cmp != 0) ? 1L : 0L;
-    } else
+    else if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string)
+        _stack->push_back(new number(cmp_strings_on_stack_top()));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -154,36 +141,30 @@ void program::rpn_eq(void) {
     MIN_ARGUMENTS(2);
 
     // numbers
-    if (_stack->get_type(0) == cmd_number && _stack->get_type(1) == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         number* right = (number*)_stack->pop_back();
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp(left->_value.mpfr, right->_value.mpfr) == 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp(left->_value.mpfr_ptr(), right->_value.mpfr_ptr()) == 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
     // complexes
-    else if (_stack->get_type(0) == cmd_complex && _stack->get_type(1) == cmd_complex) {
+    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
         bool diff = false;
-        complex* right = (complex*)_stack->pop_back();
-        complex* left = (complex*)_stack->pop_back();
+        ocomplex* right = (ocomplex*)_stack->pop_back();
+        ocomplex* left = (ocomplex*)_stack->pop_back();
 
-        if (mpfr_cmp(left->re()->mpfr, right->re()->mpfr) != 0 || mpfr_cmp(left->im()->mpfr, right->im()->mpfr) != 0)
+        if (mpfr_cmp(left->re()->mpfr_ptr(), right->re()->mpfr_ptr()) != 0 || mpfr_cmp(left->im()->mpfr_ptr(), right->im()->mpfr_ptr()) != 0)
             diff = true;
 
-        number* num = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        if (diff)
-            mpfr_set_si(num->_value.mpfr, 0, floating_t::s_mpfr_rnd);
-        else
-            mpfr_set_si(num->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        _stack->push_back(new number(diff?0L:1L));
     }
     // strings
-    else if (_stack->get_type(0) == cmd_string && _stack->get_type(1) == cmd_string) {
-        int res_cmp = cmp_strings_on_stack_top();
-        number* res = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-        res->_value = (res_cmp == 0) ? 1L : 0L;
-    } else
+    else if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string)
+        _stack->push_back(new number(cmp_strings_on_stack_top()));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -197,10 +178,10 @@ void program::rpn_test_and(void) {
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if ((mpfr_cmp_si(left->_value.mpfr, 0) != 0) && (mpfr_cmp_si(right->_value.mpfr, 0) != 0))
-        mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+    if ((mpfr_cmp_si(left->_value.mpfr_ptr(), 0) != 0) && (mpfr_cmp_si(right->_value.mpfr_ptr(), 0) != 0))
+        mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
     else
-        mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
 }
 
 /// @brief or keyword implementation
@@ -213,10 +194,10 @@ void program::rpn_test_or(void) {
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if ((mpfr_cmp_si(left->_value.mpfr, 0) != 0) || (mpfr_cmp_si(right->_value.mpfr, 0) != 0))
-        mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+    if ((mpfr_cmp_si(left->_value.mpfr_ptr(), 0) != 0) || (mpfr_cmp_si(right->_value.mpfr_ptr(), 0) != 0))
+        mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
     else
-        mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
 }
 
 /// @brief xor keyword implementation
@@ -229,16 +210,16 @@ void program::rpn_test_xor(void) {
     number* right = (number*)_stack->pop_back();
     number* left = (number*)_stack->back();
 
-    if (mpfr_cmp_si(left->_value.mpfr, 0) == 0) {
-        if (mpfr_cmp_si(right->_value.mpfr, 0) != 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+    if (mpfr_cmp_si(left->_value.mpfr_ptr(), 0) == 0) {
+        if (mpfr_cmp_si(right->_value.mpfr_ptr(), 0) != 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     } else {
-        if (mpfr_cmp_si(right->_value.mpfr, 0) == 0)
-            mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+        if (mpfr_cmp_si(right->_value.mpfr_ptr(), 0) == 0)
+            mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
         else
-            mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+            mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
     }
 }
 
@@ -249,10 +230,10 @@ void program::rpn_test_not(void) {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     number* left = (number*)_stack->back();
-    if (mpfr_cmp_si(left->_value.mpfr, 0) == 0)
-        mpfr_set_si(left->_value.mpfr, 1, floating_t::s_mpfr_rnd);
+    if (mpfr_cmp_si(left->_value.mpfr_ptr(), 0) == 0)
+        mpfr_set_si(left->_value.mpfr_ptr(), 1, number::s_mpfr_rnd);
     else
-        mpfr_set_si(left->_value.mpfr, 0, floating_t::s_mpfr_rnd);
+        mpfr_set_si(left->_value.mpfr_ptr(), 0, number::s_mpfr_rnd);
 }
 
 /// @brief test same implementation
