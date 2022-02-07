@@ -83,6 +83,4 @@ static void chrono_print(int chrono) {
     }
 }
 
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-
 #endif

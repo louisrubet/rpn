@@ -12,7 +12,7 @@
 #include "program.hpp"
 
 static heap s_global_heap;
-static stack s_global_stack;
+static rpnstack s_global_stack;
 static program* s_prog_to_interrupt = NULL;
 
 /// @brief actions to be done at rpn exit
@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
         }
 
         // make program
-        ret = program::parse(entry.c_str(), prog);
+        ret = program::parse(entry, prog);
         if (ret == ret_ok) {
             string separator = "";
 

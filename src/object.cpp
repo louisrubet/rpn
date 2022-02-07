@@ -3,23 +3,27 @@
 using namespace std;
 
 #include "constant.h"
-#include "mpfr.h"
+#define MPFR_USE_NO_MACRO
+#include <mpfr.h>
 #include "object.hpp"
 
-// floating_t statics
-mpfr_prec_t floating_t::s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
-mpfr_rnd_t floating_t::s_mpfr_rnd = MPFR_DEFAULT_RND;
-unsigned int floating_t::s_mpfr_prec_bytes = MPFR_DEFAULT_STORING_LENGTH_BYTES;
-const char* floating_t::s_mpfr_rnd_str[5] = MPFR_RND_STRINGS;
+// TODO remove
+// some statics
+// mpfr_prec_t floating_t::s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
+// mpfr_rnd_t floating_t::s_mpfr_rnd = MPFR_DEFAULT_RND;
 
 // number statics
 number::mode_enum number::s_mode = DEFAULT_MODE;
 int number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
+mpfr_prec_t number::s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
+mpfr_rnd_t number::s_mpfr_rnd = MPFR_DEFAULT_RND;
 string number::s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
+const char* number::s_mpfr_rnd_str[5] = MPFR_RND_STRINGS;
 
 //
 const char* object::s_cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
 
+#if 0
 /// @brief return if a mpfr is higher to a given precision
 /// this function is directly copied from mpfr 
 ///
@@ -226,3 +230,4 @@ void object::show(FILE* stream) {
             break;
     }
 }
+#endif
