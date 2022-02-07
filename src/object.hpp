@@ -1,11 +1,15 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
-#include <mpfr.h>
-#include <string.h>
+#include <mpreal.h>
+using namespace mpfr;
+
+#include <ostream>
+#include <iomanip>
+using namespace std;
 
 // definitions for objects
-////
+///
 typedef enum {
     cmd_undef,
     cmd_number,   // floating point number
@@ -24,60 +28,20 @@ class branch;
 typedef void (program::*program_fn_t)(void);
 typedef int (program::*branch_fn_t)(branch&);
 
-/// @brief MPFR (floating point) object
-///
-struct floating_t {
-    mpfr_prec_t mpfr_prec;         // precision in bits
-    unsigned int mpfr_prec_bytes;  // significand storing length in bytes
-    mpfr_t mpfr;                   // mpfr object
-
-    void init() {
-        void* significand = (void*)(this + 1);
-        mpfr_prec = s_mpfr_prec;
-        mpfr_prec_bytes = s_mpfr_prec_bytes;
-        mpfr_custom_init(significand, MPFR_DEFAULT_PREC_BITS);
-        mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, mpfr_prec, significand);
-    }
-
-    void move() {
-        void* significand = (void*)(this + 1);
-        mpfr_custom_move(mpfr, significand);
-    }
-
-    floating_t& operator=(const double val) { mpfr_set_d(mpfr, val, s_mpfr_rnd); return *this; }
-
-    floating_t& operator=(const long int val) { mpfr_set_si(mpfr, val, s_mpfr_rnd); return *this; }
-
-    floating_t& operator=(const unsigned long val) { mpfr_set_ui(mpfr, val, s_mpfr_rnd); return *this; }
-
-    operator double() { return mpfr_get_d(mpfr, s_mpfr_rnd); }
-
-    operator int() { return (int)mpfr_get_si(mpfr, s_mpfr_rnd); }
-
-    operator long() { return mpfr_get_si(mpfr, s_mpfr_rnd); }
-
-    bool operator>(const floating_t right) { return mpfr_cmp(mpfr, right.mpfr) > 0; }
-
-    bool operator<(const floating_t right) { return mpfr_cmp(mpfr, right.mpfr) < 0; }
-
-    // default precision in bits, precision length in bytes, rounding mode
-    static mpfr_prec_t s_mpfr_prec;
-    static unsigned int s_mpfr_prec_bytes;
-    static mpfr_rnd_t s_mpfr_rnd;
-    static const char* s_mpfr_rnd_str[5];
-};
-
 /// @brief object - a generic stack object
 ///
 struct object {
+    object(cmd_type_t type = cmd_undef) : _type(type) {}
     // object type
     cmd_type_t _type;
-    unsigned int _size;
-
     //
-    unsigned int size() { return _size; }
-
-    void show(FILE* stream = stdout);
+    auto duplicate() {
+        cout << "typeid(this).name()=" << typeid(this).name() << endl;
+        return *new decltype(this);
+    }
+    virtual string name() { return string("object"); }
+    virtual void show(ostream& out) { out << "(" << name() << " - unknown representation)"; }
+    unsigned int size() { return sizeof(*this); }
 
     //
     static const char* s_cmd_type_string[cmd_max];
@@ -85,33 +49,45 @@ struct object {
 
 /// @brief stack objects derived from object
 ///
-struct number : public object {
-    // members
-    enum { dec, hex, bin, base } _representation;
-    // base
-    // carefull: _base is used only if _representation = base
-    int _base;
-    // mind that float value is at the end of the object
-    // because its mantissa is just after the obj in memory
-    floating_t _value;
+struct number : object {
+    typedef enum { dec, hex, bin, base } repr_enum;
+    number(repr_enum representation = dec) : object(cmd_number), _representation(representation) { _value = 0L; }
+    number(mpreal& value, repr_enum representation = dec) : number(representation) { _value = value; }
+    number(long value, repr_enum representation = dec) : number(representation) { _value = value; }
+    number(unsigned long value, repr_enum representation = dec) : number(representation) { _value = value; }
+    number(double value, repr_enum representation = dec) : number(representation) { _value = value; }
 
-    // publics
-    number() { _type = cmd_number; }
+    repr_enum _representation;
+    int _base;  // carefull: _base is used only if _representation = base
 
-    void init() {
-        _type = cmd_number;
-        _representation = dec;
-        _value.init();
+    mpreal _value;
+
+    void init() {}
+
+    void set(unsigned long value) { _value = value; }
+
+    virtual string name() { return string("number"); }
+    virtual void show(ostream& out) {
+        if (_representation != number::dec) {
+            object::show(out);
+            return;
+        }
+        switch (number::s_mode) {
+            case number::std:
+                out.unsetf(ios::floatfield);
+                out << setprecision(s_decimal_digits) << _value;
+                break;
+            case number::fix:
+                out << fixed << setprecision(s_decimal_digits) << _value;
+                break;
+            case number::sci:
+                out << scientific << setprecision(s_decimal_digits) << _value;
+                break;
+            default:
+                object::show(out);
+                break;
+        }
     }
-
-    void move() { _value.move(); }
-
-    void set(unsigned long value) {
-        _type = cmd_number;
-        _value = value;
-    }
-
-    static unsigned int calc_size() { return (unsigned int)(sizeof(number) + floating_t::s_mpfr_prec_bytes); }
 
     // representation mode
     typedef enum { std, fix, sci } mode_enum;
@@ -119,137 +95,115 @@ struct number : public object {
 
     // precision
     static int s_decimal_digits;
+    static mpfr_prec_t s_mpfr_prec;
+    static mpfr_rnd_t s_mpfr_rnd;
     static string s_mpfr_printf_format;
+    static const char* s_mpfr_rnd_str[5];
 };
 
 /// @brief stack objects derived from object
 ///
-struct complex : public object {
-    enum { dec, hex } _representation;
-    // mind that re float value is at the end of the object
-    // because its mantissa is just after the obj in memory
-    floating_t _re;
+struct ocomplex : object {
+    number::repr_enum _representation;
+    ocomplex() : object(cmd_complex) { init(); }
 
-    complex() { _type = cmd_complex; }
+    mpreal _re;
+    mpreal _im;
 
     // re and im float values are at the end of the object
-    floating_t* re() { return &_re; }
-    floating_t* im() { return (floating_t*)((char*)&_re + sizeof(floating_t) + _re.mpfr_prec_bytes); }
+    mpreal* re() { return &_re; }
+    mpreal* im() { return &_im; }
 
-    void init() {
-        _type = cmd_complex;
-        _representation = dec;
-        re()->init();
-        im()->init();
-    }
+    void init() {}
 
-    void move() {
-        re()->move();
-        im()->move();
-    }
-
-    static unsigned int calc_size() {
-        return (unsigned int)(sizeof(complex) + 2 * (sizeof(floating_t) + floating_t::s_mpfr_prec_bytes));
+    virtual string name() { return string("complex"); }
+    virtual void show(ostream& out) {
+        if (_representation != number::dec) {
+            object::show(out);
+            return;
+        }
+        switch (number::s_mode) {
+            case number::std:
+                out.unsetf(ios::floatfield);
+                out << setprecision(number::s_decimal_digits) << "(" << _re << ", " << _im << ")";
+            case number::fix:
+                out << fixed << setprecision(number::s_decimal_digits) << "(" << _re << ", " << _im << ")";
+                break;
+            case number::sci:
+                out << scientific << setprecision(number::s_decimal_digits) << "(" << _re << ", " << _im << ")";
+                break;
+            default:
+                object::show(out);
+                break;
+        }
     }
 };
 
 /// @brief object string
-/// 
-struct ostring : public object {
-    // ostring may first have been allocated with len+1 bytes
-    void set(const char* value, unsigned int len) {
-        _type = cmd_string;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[_len] = 0;
-            _len = 0;
-        }
-    }
+///
+struct ostring : object {
+    ostring() : object(cmd_string) {}
+    ostring(const string& value) : object(cmd_string) { set(value); }
+    ostring(const char* value) : object(cmd_string) { _value = string(value); }
+    void set(const string& value) { _value = value; }
+    virtual string name() { return string("complex"); }
+    virtual void show(ostream& out) { out << "\"" << _value << "\""; }
 
-    // length of _value, not including the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+    string _value;
 };
 
 /// @brief object program
-/// 
-struct oprogram : public object {
-    // oprogram may first have been allocated with len+1 bytes
-    void set(const char* value, unsigned int len) {
-        _type = cmd_program;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
-    }
-
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+///
+struct oprogram : object {
+    oprogram() : object(cmd_program) {}
+    oprogram(const string& value) : object(cmd_program) { set(value); }
+    void set(const string& value) { _value = value; }
+    virtual string name() { return string("program"); }
+    virtual void show(ostream& out) { out << "<< " << _value << " >>"; }
+    string _value;
 };
 
 /// @brief object symbol
-/// 
-struct symbol : public object {
-    // symbol may first have been allocated with len+1 bytes
-    void set(const char* value, unsigned int len, bool auto_eval) {
-        _type = cmd_symbol;
+///
+struct symbol : object {
+    symbol(bool auto_eval = true) : object(cmd_symbol), _auto_eval(auto_eval) {}
+    symbol(const string& value, bool auto_eval = true) : object(cmd_symbol) { set(value, auto_eval); }
+    void set(string& value, bool auto_eval) {
+        _value = value;
         _auto_eval = auto_eval;
-
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
     }
-
-    //
+    void set(const string& value, bool auto_eval) {
+        _value = value;
+        _auto_eval = auto_eval;
+    }
+    virtual string name() { return string("symbol"); }
+    virtual void show(ostream& out) { out << "'" << _value << "'"; }
     bool _auto_eval;
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+    string _value;
 };
 
 /// @brief object keyword
-/// 
-struct keyword : public object {
-    // keyword may first have been allocated with len+1 bytes
-    void set(program_fn_t fn, const char* value, unsigned int len) {
-        _type = cmd_keyword;
+///
+struct keyword : object {
+    keyword() : object(cmd_keyword) {}
+    keyword(program_fn_t fn, const string& value) : object(cmd_keyword) { set(fn, value); }
+    void set(program_fn_t fn, const string& value) {
         _fn = fn;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
+        _value = value;
     }
-
-    //
+    virtual string name() { return string("keyword"); }
     program_fn_t _fn;
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+    string _value;
 };
 
 /// @brief object branch
-/// 
-struct branch : public object {
+///
+struct branch : object {
+    branch() : object(cmd_branch) {}
+    branch(branch_fn_t fn, const string& value) : object(cmd_branch) { set(fn, value); }
+    virtual string name() { return string("branch"); }
     //
-    void set(branch_fn_t fn, const char* value, unsigned int len) {
-        _type = cmd_branch;
+    void set(branch_fn_t fn, const string& value) {
         _fn = fn;
         arg1 = -1;
         arg2 = -1;
@@ -257,26 +211,13 @@ struct branch : public object {
         farg1 = NULL;
         farg2 = NULL;
         arg_bool = 0;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
+        _value = value;
     }
-
-    // branch function
     branch_fn_t _fn;
-    // args used by cmd_branch cmds
     int arg1, arg2, arg3;
     number *farg1, *farg2;
     bool arg_bool;
-
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+    string _value;
 };
 
 #endif

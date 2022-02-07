@@ -56,8 +56,8 @@ void program::rpn_help() {
     printf(" with %d digits after the decimal point\n", number::s_decimal_digits);
 
     // bits precision, decimal digits and rounding mode
-    printf("Current floating point precision is %d bits\n", (int)floating_t::s_mpfr_prec);
-    printf("Current rounding mode is \"%s\"\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
+    printf("Current floating point precision is %d bits\n", (int)number::s_mpfr_prec);
+    printf("Current rounding mode is \"%s\"\n", number::s_mpfr_rnd_str[number::s_mpfr_rnd]);
     printf("\n\n");
 }
 
@@ -158,19 +158,13 @@ void program::rpn_sci() {
 /// @brief version keyword implementation
 ///
 void program::rpn_version() {
-    // allocate and set object
-    unsigned int naked_entry_len = strlen(version);
-    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring) + naked_entry_len + 1, cmd_string);
-    str->set(version, naked_entry_len);
+    _stack->push_back(new ostring(version));
 }
 
 /// @brief uname keyword implementation
 ///
 void program::rpn_uname() {
-    // allocate and set object
-    unsigned int naked_entry_len = strlen(uname);
-    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring) + naked_entry_len + 1, cmd_string);
-    str->set(uname, naked_entry_len);
+    _stack->push_back(new ostring(uname));
 }
 
 /// @brief history keyword implementation
@@ -193,11 +187,7 @@ void program::rpn_type() {
 
     int type = _stack->pop_back()->_type;
     if (type < 0 || type >= (int)cmd_max) type = (int)cmd_undef;
-
-    unsigned int string_size = strlen(object::s_cmd_type_string[type]);
-    unsigned int size = sizeof(symbol) + string_size + 1;
-    ostring* typ = (ostring*)_stack->allocate_back(size, cmd_string);
-    typ->set(object::s_cmd_type_string[type], string_size);
+    _stack->push_back(new ostring(object::s_cmd_type_string[type]));
 }
 
 /// @brief default keyword implementation
@@ -211,15 +201,14 @@ void program::rpn_precision() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // set precision
-    unsigned long prec = mpfr_get_ui(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+    unsigned long prec = static_cast<number*>(_stack->pop_back())->_value.toULong();
     if (prec >= (unsigned long)MPFR_PREC_MIN && prec <= (unsigned long)MPFR_PREC_MAX) {
-        floating_t::s_mpfr_prec = (mpfr_prec_t)prec;
-        floating_t::s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
+        number::s_mpfr_prec = (mpfr_prec_t)prec;
 
         // modify digits seen by user if std mode
         if (number::s_mode == number::std) {
             // calc max nb of digits user can see with the current bit precision
-            number::s_decimal_digits = base_digits_from_bit_precision(10, floating_t::s_mpfr_prec);
+            number::s_decimal_digits = base_digits_from_bit_precision(10, number::s_mpfr_prec);
             number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
         }
     } else
@@ -235,8 +224,8 @@ void program::rpn_round() {
     ostring* str = (ostring*)_stack->pop_back();
     bool done = false;
     for (int rnd = (int)MPFR_DEFAULT_RND; rnd <= (int)MPFR_RNDA; rnd++) {
-        if (string(floating_t::s_mpfr_rnd_str[rnd]) == str->_value) {
-            floating_t::s_mpfr_rnd = (mpfr_rnd_t)rnd;
+        if (string(number::s_mpfr_rnd_str[rnd]) == str->_value) {
+            number::s_mpfr_rnd = (mpfr_rnd_t)rnd;
             done = true;
         }
     }

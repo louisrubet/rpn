@@ -1,6 +1,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
+#define MPFR_USE_NO_MACRO
 #include <mpfr.h>
 
 // default values
@@ -66,6 +67,7 @@ typedef enum {
     ret_div_by_zero,
     ret_runtime_error,
     ret_abort_current_entry,
+    ret_out_of_memory,
     ret_max
 } ret_value;
 
@@ -73,7 +75,7 @@ typedef enum {
     {                                                                                                           \
         "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable",     \
             "internal error, aborting", "deadly", "goodbye", "not implemented", "no operation", "syntax error", \
-            "division by zero", "runtime error", "aborted current entry"                                        \
+            "division by zero", "runtime error", "aborted current entry", "out of memory"                       \
     }
 
 // command types

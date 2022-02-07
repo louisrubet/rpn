@@ -5,26 +5,13 @@
 /// @param stack_is the output string
 /// @param stk the stack
 ///
-void program::test_get_stack(string& stack_is, stack& stk) {
+void program::test_get_stack(string& stack_is, rpnstack& stk) {
     for (int i = 0; i < (int)stk.size(); i++) {
-        FILE* tmp_file = tmpfile();
-        char* line = NULL;
-        size_t len;
-
         if (i > 0) stack_is += ", ";
 
-        if (tmp_file != NULL) {
-            ((object*)stk.seq_obj(i))->show(tmp_file);
-
-            // write stack in a tmp file
-            (void)rewind(tmp_file);
-            if (getline(&line, &len, tmp_file) >= 0) {
-                stack_is += line;
-                free(line);
-            }
-            (void)fclose(tmp_file);
-        } else
-            ERR_CONTEXT(ret_runtime_error);
+        ostringstream st;
+        stk[stk.size() - i - 1]->show(st);
+        stack_is += st.str();
     }
 }
 
@@ -91,7 +78,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
         string test_title;
         string entry;
         ret_value ret;
-        stack stk;
+        rpnstack stk;
         heap hp;
         bool failed = false;
         bool is_first_step;
@@ -209,7 +196,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
             } else if (entry.size() > 0) {
                 // parse entry and run line
                 program prog;
-                ret = program::parse(entry.c_str(), prog);
+                ret = program::parse(entry, prog);
                 if (ret == ret_ok) {
                     // run it
                     (void)prog.run(stk, hp);

@@ -4,26 +4,25 @@
 /// 
 /// @param variable the variable name to find
 /// @param obj the variable object found
-/// @param size its size
 /// @return true variable was found
 /// @return false variable was not found
 ///
-bool program::find_variable(string& variable, object*& obj, unsigned int& size) {
+bool program::find_variable(string& variable, object*& obj) {
     bool found = false;
     program* parent = _parent_prog;
 
-    if (_local_heap.get(variable, obj, size))
+    if (_local_heap.get(variable, obj))
         found = true;
     else {
         while (parent != NULL) {
-            if (parent->_local_heap.get(variable, obj, size)) {
+            if (parent->_local_heap.get(variable, obj)) {
                 found = true;
                 break;
             }
             parent = parent->_parent_prog;
         }
         if (!found) {
-            if (_heap->get(variable, obj, size)) found = true;
+            if (_heap->get(variable, obj)) found = true;
         }
     }
 
@@ -40,11 +39,10 @@ void program::rpn_eval(void) {
     if (IS_ARG_TYPE(0, cmd_symbol)) {
         // recall a variable
         object* obj;
-        unsigned int size;
         string variable(((symbol*)_stack->back())->_value);
 
         // if variable holds a program, run this program
-        if (find_variable(variable, obj, size)) {
+        if (find_variable(variable, obj)) {
             if (obj->_type == cmd_program) {
                 prog_text = ((oprogram*)obj)->_value;
                 (void)_stack->pop_back();
@@ -52,7 +50,7 @@ void program::rpn_eval(void) {
             } else {
                 // else recall this variable (i.e. stack its content)
                 (void)_stack->pop_back();
-                stack::copy_and_push_back(obj, *_stack, size);
+                _stack->push_back(obj);
             }
         } else
             ERR_CONTEXT(ret_unknown_variable);
@@ -68,7 +66,7 @@ void program::rpn_eval(void) {
         program prog(this);
 
         // make program from entry
-        if (program::parse(prog_text.c_str(), prog) == ret_ok) {
+        if (program::parse(prog_text, prog) == ret_ok) {
             // run it
             prog.run(*_stack, *_heap);
         }
@@ -93,9 +91,9 @@ int program::rpn_inprog(branch& myobj) {
     // find next oprogram object
     for (unsigned int i = myobj.arg1 + 1; i < size(); i++) {
         // count symbol
-        if (seq_type(i) == cmd_symbol) count_symbols++;
+        if ((*this)[i]->_type == cmd_symbol) count_symbols++;
         // stop if prog
-        else if (seq_type(i) == cmd_program) {
+        else if ((*this)[i]->_type == cmd_program) {
             prog_found = true;
             break;
         }
@@ -130,16 +128,16 @@ int program::rpn_inprog(branch& myobj) {
 
     // load variables
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--) {
-        _local_heap.add(string(((symbol*)seq_obj(i))->_value), _stack->get_obj(0), _stack->get_len(0));
+        _local_heap[string(((symbol*)(*this)[i])->_value)] = _stack->at(0);
         (void)_stack->pop_back();
     }
 
     // run the program
-    string entry(((oprogram*)seq_obj(myobj.arg1 + count_symbols + 1))->_value);
+    string entry(((oprogram*)(*this)[myobj.arg1 + count_symbols + 1])->_value);
     program prog(this);
 
     // make the program from entry
-    if (program::parse(entry.c_str(), prog) == ret_ok) {
+    if (program::parse(entry, prog) == ret_ok) {
         // run it
         prog.run(*_stack, *_heap);
     }

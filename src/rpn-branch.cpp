@@ -11,7 +11,7 @@ int program::rpn_if(branch& myobj) {
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    if (mpfr_cmp_si(((number*)_stack->get_obj(0))->_value.mpfr, 0UL) != 0)
+    if (mpfr_cmp_si(((number*)_stack->at(0))->_value.mpfr, 0UL) != 0)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
@@ -30,7 +30,7 @@ int program::rpn_then(branch& myobj) {
     // myobj.arg3 = index of if
     // if condition is true -> arg1 (= jump to then + 1)
     // else -> arg2 (= jump to else + 1 or end + 1)
-    branch* if_cmd = (branch*)seq_obj(myobj.arg3);
+    branch* if_cmd = (branch*)(*this)[myobj.arg3];
     if (if_cmd->arg1 == 1)
         return myobj.arg1;
     else
@@ -49,7 +49,7 @@ int program::rpn_else(branch& myobj) {
     // myobj.arg3 = index of if
     // if condition was false -> arg1 (= jump to else + 1)
     // if condition was true -> arg2 (= jump to end + 1)
-    branch* if_cmd = (branch*)seq_obj(myobj.arg3);
+    branch* if_cmd = (branch*)(*this)[myobj.arg3];
     if (if_cmd->arg1 == 1)
         return myobj.arg2;
     else
@@ -116,13 +116,13 @@ void program::rpn_ift(void) {
 
     // check ift arg
     // arg is true if number != 0 or if is nan or +/-inf
-    number* testee = ((number*)_stack->get_obj(1));
+    number* testee = ((number*)_stack->at(1));
 
     if (!mpfr_zero_p(testee->_value.mpfr)) {
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack));
+        CHECK_MPFR(rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack));
         (void)_stack->pop_back(2);
 
-        CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack));
+        CHECK_MPFR(rpnstack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack));
         (void)_calc_stack.pop_back();
     } else
         (void)_stack->pop_back(2);
@@ -140,16 +140,16 @@ void program::rpn_ifte(void) {
 
     // check ifte arg
     // arg is true if number != 0 or if is nan or +/-inf
-    number* testee = ((number*)_stack->get_obj(2));
+    number* testee = ((number*)_stack->at(2));
 
     if (!mpfr_zero_p(testee->_value.mpfr))
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size() - 2, _calc_stack));
+        CHECK_MPFR(rpnstack::copy_and_push_back(*_stack, _stack->size() - 2, _calc_stack));
     else
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack));
+        CHECK_MPFR(rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack));
 
     (void)_stack->pop_back(3);
 
-    CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack));
+    CHECK_MPFR(rpnstack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack));
     (void)_calc_stack.pop_back();
 }
 
@@ -198,12 +198,12 @@ int program::rpn_start(branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
     // farg2 = last value of start command
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
+    rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
     myobj.farg2 = (number*)_calc_stack.back();
     _stack->pop_back();
 
     // farg1 = first value of start command
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
+    rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
     myobj.farg1 = (number*)_calc_stack.back();
     _stack->pop_back();
 
@@ -230,16 +230,16 @@ int program::rpn_for(branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
-    symbol* sym = ((symbol*)seq_obj(myobj.arg1));
+    symbol* sym = (symbol*)(*this)[myobj.arg1];
 
     // farg2 = last value of for command
     // arg1 = index of symbol to increase
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
+    rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
     myobj.farg2 = (number*)_calc_stack.back();
     _stack->pop_back();
 
     // farg1 = first value of for command
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
+    rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
     myobj.farg1 = (number*)_calc_stack.back();
     _stack->pop_back();
 
@@ -251,7 +251,7 @@ int program::rpn_for(branch& myobj) {
         ret = myobj.arg2 + 1;
     else {
         // store symbol with first value
-        _local_heap.add(sym->_value, (object*)myobj.farg1, myobj.farg1->size());
+        _local_heap[sym->_value] = myobj.farg1;
         ret = myobj.arg1 + 1;
     }
 
@@ -267,7 +267,7 @@ int program::rpn_for(branch& myobj) {
 int program::rpn_next(branch& myobj) {
     // arg1 = index of start or for command in program
     // farg1 = current count
-    branch* start_or_for = (branch*)seq_obj(myobj.arg1);
+    branch* start_or_for = (branch*)(*this)[myobj.arg1];
     if (!myobj.arg_bool) {
         myobj.arg_bool = true;
         myobj.farg1 = start_or_for->farg1;
@@ -281,10 +281,10 @@ int program::rpn_next(branch& myobj) {
     if (start_or_for->arg1 != -1) {
         object* obj;
         unsigned int size;
-        symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+        symbol* var = (symbol*)(*this)[start_or_for->arg1];
 
         // increase symbol variable
-        _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
+        _local_heap[var->_value] = myobj.farg1;
     }
 
     // test value
@@ -321,7 +321,7 @@ int program::rpn_step(branch& myobj) {
     else {
         // arg1 = index of start or for command in program
         // farg1 = current count
-        branch* start_or_for = (branch*)seq_obj(myobj.arg1);
+        branch* start_or_for = (branch*)(*this)[myobj.arg1];
         if (!myobj.arg_bool) {
             myobj.arg_bool = true;
             myobj.farg1 = start_or_for->farg1;
@@ -335,10 +335,10 @@ int program::rpn_step(branch& myobj) {
         if (start_or_for->arg1 != -1) {
             object* obj;
             unsigned int size;
-            symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+            symbol* var = (symbol*)(*this)[start_or_for->arg1];
 
             // increase symbol variable
-            _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
+            _local_heap[var->_value] = myobj.farg1;
         }
 
         // test loop value is out of range
