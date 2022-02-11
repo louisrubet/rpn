@@ -109,9 +109,14 @@ struct ReservedWord {
 
 static map<string, ReservedWord> _keywordsMap;
 
+static void trim(string& s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
+}
+
 static bool parseString(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                         vector<SynElement>& elements) {
-    // here we are sure that entry[0] is '"'
+    // here we are sure that entry[0] is at least '"'
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '"') {
             if (entry[i] - 1 != '\\') {
@@ -121,13 +126,14 @@ static bool parseString(string& entry, size_t idx, size_t& nextIdx, vector<SynEr
             }
         }
     }
-    errors.push_back({entry.size(), "unterminated string"});
-    return false;
+    elements.push_back({cmd_string, .value = entry.substr(idx + 1, entry.size() - idx - 1)});
+    nextIdx = entry.size();
+    return true;
 }
 
 static bool parseSymbol(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                         vector<SynElement>& elements) {
-    // here we are sure that entry[0] is '\''
+    // here we are sure that entry[0] is at least '\''
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '\'') {
             elements.push_back({cmd_symbol, .value = entry.substr(idx + 1, i - idx - 1)});
@@ -135,27 +141,35 @@ static bool parseSymbol(string& entry, size_t idx, size_t& nextIdx, vector<SynEr
             return true;
         }
     }
-    errors.push_back({entry.size(), "unterminated symbol"});
-    return false;
+    elements.push_back({cmd_symbol, .value = entry.substr(idx + 1, entry.size() - idx - 1)});
+    nextIdx = entry.size();
+    return true;
 }
 
 static bool parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                          vector<SynElement>& elements) {
-    // here we are sure that entry is at least "<<""
+    // here we are sure that entry is at least "<<"
+    // find last ">>" or "»"
+    int countNested = 0;
     for (size_t i = idx + 2; i < entry.size() - 1; i++) {
-        if ((entry[i] == '>' && entry[i + 1] == '>') || (entry.substr(i, 2) == "»")) {
-            elements.push_back({cmd_program, .value = entry.substr(idx + 2, i - idx - 2)});
-            nextIdx = i + 2;
-            return true;
+        if ((entry[i] == '<' && entry[i + 1] == '<') || (entry.substr(i, 2) == "«"))
+            countNested++;
+        else if ((entry[i] == '>' && entry[i + 1] == '>') || (entry.substr(i, 2) == "»")) {
+            if (countNested == 0) {
+                string prg = entry.substr(idx + 2, i - idx - 2);
+                trim(prg);
+                elements.push_back({cmd_program, .value = prg});
+                nextIdx = i + 2;
+                return true;
+            } else
+                countNested--;
         }
     }
-    errors.push_back({entry.size(), "unterminated program"});
-    return false;
-}
-
-static void trim(string& s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
+    string prg = entry.substr(idx + 2, entry.size() - idx - 2);
+    trim(prg);
+    elements.push_back({cmd_program, .value = prg});
+    nextIdx = entry.size();
+    return true;
 }
 
 static bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, mpreal& r, char delim = ' ') {
@@ -205,27 +219,28 @@ static bool parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynE
                          vector<SynElement>& elements) {
     mpreal re, im;
     if (idx + 1 == entry.size()) {
-        errors.push_back({entry.size(), "unterminated complex"});
-        return false;
+        elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
+        nextIdx = entry.size();
+        return true;  // complex format error, return a symbol
     }
     if (!getNumberAt(entry, idx + 1, nextIdx, re, ',')) {
-        errors.push_back({entry.size(), "unterminated complex"});
-        return false;
+        elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
+        nextIdx = entry.size();
+        return true;  // complex format error, return a symbol
     }
 
     size_t i = nextIdx;
     while (i < entry.size() && entry[i] != ',') i++;
     if (i == entry.size()) {
-        errors.push_back({entry.size(), "unterminated complex"});
-        return false;
+        elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
+        nextIdx = entry.size();
+        return true;  // complex format error, return a symbol
     }
+
     if (!getNumberAt(entry, i + 1, nextIdx, im, ')')) {
-        errors.push_back({entry.size(), "unterminated complex"});
-        return false;
-    }
-    if (nextIdx == entry.size() || entry[nextIdx] != ')') {
-        errors.push_back({entry.size(), "unterminated complex"});
-        return false;
+        elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
+        nextIdx = entry.size();
+        return true;  // complex format error, return a symbol
     }
     elements.push_back({cmd_complex, .re = re, .im = im});
     nextIdx++;
@@ -283,24 +298,20 @@ static bool lexer(string& entry, vector<SynElement>& elements, vector<SynError>&
                 if (!parseComplex(entry, i, jump, errors, elements)) return false;
                 i = jump - 1;
                 continue;
-            // clang-format off
-            case '.': case '+': case '-':
-                // clang-format on
-                // inf, +inf, -inf and nan are treated as reserved keywords
-                if (i < entry.size() - 1 && entry[i + 1] < '0' && entry[i + 1] > '9') break;
-            case '0' ... '9':
-                if (!parseNumber(entry, i, jump, errors, elements)) return false;
-                i = jump - 1;
-                continue;
         }
         if (i < entry.size() - 1 && (entry.substr(i, 2) == "<<" || entry.substr(i, 2) == "«")) {
             if (!parseProgram(entry, i, jump, errors, elements)) return false;
             i = jump - 1;
             continue;
-        } else if (parseReserved(entry, i, jump, elements, keywords))
+        } else if (parseReserved(entry, i, jump, elements, keywords)) {
             // found a keywords word, add it with its correct type
             i = jump - 1;
-        else if (parseUnknown(entry, i, jump, elements))
+            continue;
+        } else if (parseNumber(entry, i, jump, errors, elements)) {
+            i = jump - 1;
+            continue;
+        }
+        if (parseUnknown(entry, i, jump, elements))
             // last chance, this unknown entry is treated as a symbol
             i = jump - 1;
     }
@@ -309,37 +320,41 @@ static bool lexer(string& entry, vector<SynElement>& elements, vector<SynError>&
 }
 
 static bool progFromElements(vector<SynElement>& elements, program& prog) {
-    for_each(elements.begin(), elements.end(), [&](SynElement& element) {
+    // TODO control elements creation
+    for (SynElement& element : elements) {
         switch (element.type) {
             case cmd_number:
-                prog.insert(prog.begin(), 1, new number(element.re));
+                prog.push_back(new number(element.re));
                 break;
-            // case cmd_complex: prog.insert(prog.begin(), 1, new ocomplex(element.re, element.im)); break;
+            case cmd_complex:
+                prog.push_back(new ocomplex(element.re, element.im));
+                break;
             case cmd_string:
-                prog.insert(prog.begin(), 1, new ostring(element.value));
+                prog.push_back(new ostring(element.value));
                 break;
             case cmd_symbol:
-                prog.insert(prog.begin(), 1, new symbol(element.value));
+                prog.push_back(new symbol(element.value));
                 break;
-            // case cmd_program: prog.insert(prog.begin(), 1, new program(element.value)); break;
+            case cmd_program:
+                prog.push_back(new oprogram(element.value));
+                break;
             case cmd_keyword:
-                prog.insert(prog.begin(), 1, new keyword(element.fn, element.value));
+                prog.push_back(new keyword(element.fn, element.value));
                 break;
             case cmd_branch:
-                prog.insert(prog.begin(), 1, new branch((branch_fn_t)element.fn, element.value));
+                prog.push_back(new branch((branch_fn_t)element.fn, element.value));
                 break;
             default:
                 return false;
         }
-        return true;
-    });
+    }
     return true;
 }
 
 /// @brief parse an entry string: cut it into objects chunks and add them to a program
 ///
 /// @param entry the entry string
-/// @param prog the program
+/// @param prog the program to be filled
 /// @return ret_value see this type
 ///
 ret_value program::parse(string& entry, program& prog) {
@@ -356,10 +371,8 @@ ret_value program::parse(string& entry, program& prog) {
     if (lexer(entry, elements, errors, _keywordsMap)) {
         // make objects from parsed elements
         if (!progFromElements(elements, prog)) prog.show_error(ret_unknown_err, "error creating program from entry");
-    } else {
-        for(SynError& err: errors)
-            prog.show_syntax_error(err.err.c_str());
-    }
+    } else
+        for (SynError& err : errors) prog.show_syntax_error(err.err.c_str());
 
     return ret;
 }

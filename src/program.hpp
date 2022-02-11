@@ -43,7 +43,7 @@ struct if_layout_t {
 };
 
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
-class program : public vector<object*> {
+class program : public deque<object*> {
    public:
     program(program* parent_prog = NULL) {
         _parent_prog = parent_prog;

@@ -4,8 +4,9 @@
 #include <mpreal.h>
 using namespace mpfr;
 
-#include <ostream>
+#include <complex>
 #include <iomanip>
+#include <ostream>
 using namespace std;
 
 // definitions for objects
@@ -35,10 +36,7 @@ struct object {
     // object type
     cmd_type_t _type;
     //
-    auto duplicate() {
-        cout << "typeid(this).name()=" << typeid(this).name() << endl;
-        return *new decltype(this);
-    }
+    auto duplicate() { return *new decltype(this); }
     virtual string name() { return string("object"); }
     virtual void show(ostream& out) { out << "(" << name() << " - unknown representation)"; }
     unsigned int size() { return sizeof(*this); }
@@ -51,20 +49,18 @@ struct object {
 ///
 struct number : object {
     typedef enum { dec, hex, bin, base } repr_enum;
-    number(repr_enum representation = dec) : object(cmd_number), _representation(representation) { _value = 0L; }
-    number(mpreal& value, repr_enum representation = dec) : number(representation) { _value = value; }
-    number(long value, repr_enum representation = dec) : number(representation) { _value = value; }
-    number(unsigned long value, repr_enum representation = dec) : number(representation) { _value = value; }
-    number(double value, repr_enum representation = dec) : number(representation) { _value = value; }
+    number(repr_enum representation = dec) : object(cmd_number), _representation(representation) { value = 0L; }
+    number(mpreal& value_, repr_enum representation = dec) : number(representation) { value = value_; }
+    number(long value_, repr_enum representation = dec) : number(representation) { value = value_; }
+    number(unsigned long value_, repr_enum representation = dec) : number(representation) { value = value_; }
+    number(double value_, repr_enum representation = dec) : number(representation) { value = value_; }
 
     repr_enum _representation;
     int _base;  // carefull: _base is used only if _representation = base
 
-    mpreal _value;
+    mpreal value;
 
-    void init() {}
-
-    void set(unsigned long value) { _value = value; }
+    void set(unsigned long value_) { value = value_; }
 
     virtual string name() { return string("number"); }
     virtual void show(ostream& out) {
@@ -75,13 +71,13 @@ struct number : object {
         switch (number::s_mode) {
             case number::std:
                 out.unsetf(ios::floatfield);
-                out << setprecision(s_decimal_digits) << _value;
+                out << setprecision(s_decimal_digits) << value;
                 break;
             case number::fix:
-                out << fixed << setprecision(s_decimal_digits) << _value;
+                out << fixed << setprecision(s_decimal_digits) << value;
                 break;
             case number::sci:
-                out << scientific << setprecision(s_decimal_digits) << _value;
+                out << scientific << setprecision(s_decimal_digits) << value;
                 break;
             default:
                 object::show(out);
@@ -95,27 +91,18 @@ struct number : object {
 
     // precision
     static int s_decimal_digits;
-    static mpfr_prec_t s_mpfr_prec;
-    static mpfr_rnd_t s_mpfr_rnd;
-    static string s_mpfr_printf_format;
-    static const char* s_mpfr_rnd_str[5];
 };
 
 /// @brief stack objects derived from object
 ///
 struct ocomplex : object {
     number::repr_enum _representation;
-    ocomplex() : object(cmd_complex) { init(); }
-
-    mpreal _re;
-    mpreal _im;
-
-    // re and im float values are at the end of the object
-    mpreal* re() { return &_re; }
-    mpreal* im() { return &_im; }
-
-    void init() {}
-
+    ocomplex() : object(cmd_complex) {}
+    ocomplex(mpreal& re_, mpreal& im_) : object(cmd_complex) {
+        value.real(re_);
+        value.imag(im_);
+    }
+    complex<mpreal> value;
     virtual string name() { return string("complex"); }
     virtual void show(ostream& out) {
         if (_representation != number::dec) {
@@ -125,12 +112,15 @@ struct ocomplex : object {
         switch (number::s_mode) {
             case number::std:
                 out.unsetf(ios::floatfield);
-                out << setprecision(number::s_decimal_digits) << "(" << _re << ", " << _im << ")";
+                out << setprecision(number::s_decimal_digits) << "(" << value.real() << "," << value.imag() << ")";
+                break;
             case number::fix:
-                out << fixed << setprecision(number::s_decimal_digits) << "(" << _re << ", " << _im << ")";
+                out << fixed << setprecision(number::s_decimal_digits) << "(" << value.real() << "," << value.imag()
+                    << ")";
                 break;
             case number::sci:
-                out << scientific << setprecision(number::s_decimal_digits) << "(" << _re << ", " << _im << ")";
+                out << scientific << setprecision(number::s_decimal_digits) << "(" << value.real() << ","
+                    << value.imag() << ")";
                 break;
             default:
                 object::show(out);
@@ -143,81 +133,80 @@ struct ocomplex : object {
 ///
 struct ostring : object {
     ostring() : object(cmd_string) {}
-    ostring(const string& value) : object(cmd_string) { set(value); }
-    ostring(const char* value) : object(cmd_string) { _value = string(value); }
-    void set(const string& value) { _value = value; }
+    ostring(const string& value_) : object(cmd_string) { set(value_); }
+    ostring(const char* value_) : object(cmd_string) { value = string(value_); }
+    void set(const string& value_) { value = value_; }
     virtual string name() { return string("complex"); }
-    virtual void show(ostream& out) { out << "\"" << _value << "\""; }
-
-    string _value;
+    virtual void show(ostream& out) { out << "\"" << value << "\""; }
+    string value;
 };
 
 /// @brief object program
 ///
 struct oprogram : object {
     oprogram() : object(cmd_program) {}
-    oprogram(const string& value) : object(cmd_program) { set(value); }
-    void set(const string& value) { _value = value; }
+    oprogram(const string& value_) : object(cmd_program) { set(value_); }
+    void set(const string& value_) { value = value_; }
     virtual string name() { return string("program"); }
-    virtual void show(ostream& out) { out << "<< " << _value << " >>"; }
-    string _value;
+    virtual void show(ostream& out) { out << "«" << value << "»"; }
+    string value;
 };
 
 /// @brief object symbol
 ///
 struct symbol : object {
-    symbol(bool auto_eval = true) : object(cmd_symbol), _auto_eval(auto_eval) {}
-    symbol(const string& value, bool auto_eval = true) : object(cmd_symbol) { set(value, auto_eval); }
-    void set(string& value, bool auto_eval) {
-        _value = value;
-        _auto_eval = auto_eval;
+    symbol(bool auto_eval_ = true) : object(cmd_symbol), auto_eval(auto_eval_) {}
+    symbol(const string& value_, bool auto_eval_ = true) : object(cmd_symbol) { set(value_, auto_eval_); }
+    void set(string& value_, bool auto_eval_) {
+        value = value_;
+        auto_eval = auto_eval_;
     }
-    void set(const string& value, bool auto_eval) {
-        _value = value;
-        _auto_eval = auto_eval;
+    void set(const string& value_, bool auto_eval_) {
+        value = value_;
+        auto_eval = auto_eval_;
     }
     virtual string name() { return string("symbol"); }
-    virtual void show(ostream& out) { out << "'" << _value << "'"; }
-    bool _auto_eval;
-    string _value;
+    virtual void show(ostream& out) { out << "'" << value << "'"; }
+    bool auto_eval;
+    string value;
 };
 
 /// @brief object keyword
 ///
 struct keyword : object {
     keyword() : object(cmd_keyword) {}
-    keyword(program_fn_t fn, const string& value) : object(cmd_keyword) { set(fn, value); }
-    void set(program_fn_t fn, const string& value) {
-        _fn = fn;
-        _value = value;
+    keyword(program_fn_t fn_, const string& value_) : object(cmd_keyword) { set(fn_, value_); }
+    void set(program_fn_t fn_, const string& value_) {
+        fn = fn_;
+        value = value_;
     }
     virtual string name() { return string("keyword"); }
-    program_fn_t _fn;
-    string _value;
+    program_fn_t fn;
+    string value;
 };
 
 /// @brief object branch
 ///
 struct branch : object {
     branch() : object(cmd_branch) {}
-    branch(branch_fn_t fn, const string& value) : object(cmd_branch) { set(fn, value); }
+    branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) { set(fn_, value_); }
     virtual string name() { return string("branch"); }
     //
-    void set(branch_fn_t fn, const string& value) {
-        _fn = fn;
+    void set(branch_fn_t fn_, const string& value_) {
+        fn = fn_;
         arg1 = -1;
         arg2 = -1;
         arg3 = -1;
         farg1 = NULL;
         farg2 = NULL;
         arg_bool = 0;
-        _value = value;
+        value = value_;
     }
-    branch_fn_t _fn;
+    branch_fn_t fn;
     int arg1, arg2, arg3;
     number *farg1, *farg2;
     bool arg_bool;
-    string _value;
+    string value;
 };
 
 #endif
