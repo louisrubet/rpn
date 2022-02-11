@@ -8,17 +8,10 @@ using namespace std;
 #include "object.hpp"
 
 // TODO remove
-// some statics
-// mpfr_prec_t floating_t::s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
-// mpfr_rnd_t floating_t::s_mpfr_rnd = MPFR_DEFAULT_RND;
 
 // number statics
 number::mode_enum number::s_mode = DEFAULT_MODE;
 int number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
-mpfr_prec_t number::s_mpfr_prec = MPFR_DEFAULT_PREC_BITS;
-mpfr_rnd_t number::s_mpfr_rnd = MPFR_DEFAULT_RND;
-string number::s_mpfr_printf_format = string(MPFR_DEFAULT_FORMAT);
-const char* number::s_mpfr_rnd_str[5] = MPFR_RND_STRINGS;
 
 //
 const char* object::s_cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
@@ -36,7 +29,7 @@ static bool is_min(mpfr_t p, mpfr_prec_t prec) {
     // see mpfr_vasprintf code
     bool ret;
     int round_away;
-    switch (floating_t::s_mpfr_rnd) {
+    switch (mpreal::get_default_rnd()) {
         case MPFR_RNDA:
             round_away = 1;
             break;
@@ -120,7 +113,7 @@ static void print_fix(FILE* stream, mpfr_t real, int base, const char* write_aft
                 fputc('0', stream);
         }
     } else {
-        char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real, floating_t::s_mpfr_rnd);
+        char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, real, mpreal::get_default_rnd());
         char* print_from;
         if (str != NULL) {
             int len = strlen(str);

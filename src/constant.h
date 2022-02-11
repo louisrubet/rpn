@@ -21,13 +21,14 @@
 
 // rounding method
 #define MPFR_DEFAULT_RND MPFR_RNDN
+#define MPFR_ROUND_STRINGS                                                                                             \
+    {"nearest (even)", MPFR_RNDN}, {"toward zero", MPFR_RNDZ}, {"toward +inf", MPFR_RNDU}, {"toward -inf", MPFR_RNDD}, \
+        {"away from zero", MPFR_RNDA}, {"faithful rounding", MPFR_RNDF}, {                                             \
+        "nearest (away from zero)", MPFR_RNDNA                                                                         \
+    }
 
 // 128 bits significand precision
 #define MPFR_DEFAULT_PREC_BITS 128
-
-// 128 bits significand storing length in bytes, result of
-// mpfr_custom_get_size(128)
-#define MPFR_DEFAULT_STORING_LENGTH_BYTES 16
 
 // constants
 //
@@ -46,9 +47,6 @@
 #define MPFR_FORMAT_SCI "Re"
 #define MPFR_FORMAT_HEX "%Ra"
 
-#define MPFR_RND_STRINGS \
-    { "nearest", "toward zero", "toward +inf", "toward -inf", "away from zero" }
-
 // return values, used by all classes
 //
 typedef enum {
@@ -57,6 +55,7 @@ typedef enum {
     ret_missing_operand,
     ret_bad_operand_type,
     ret_out_of_range,
+    ret_bad_value,
     ret_unknown_variable,
     ret_internal,
     ret_deadly,
@@ -71,11 +70,11 @@ typedef enum {
     ret_max
 } ret_value;
 
-#define RET_VALUE_STRINGS                                                                                       \
-    {                                                                                                           \
-        "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable",     \
-            "internal error, aborting", "deadly", "goodbye", "not implemented", "no operation", "syntax error", \
-            "division by zero", "runtime error", "aborted current entry", "out of memory"                       \
+#define RET_VALUE_STRINGS                                                                                           \
+    {                                                                                                               \
+        "ok", "unknown command", "missing operand", "bad operand type", "out of range", "bad value",                \
+            "unknown variable", "internal error, aborting", "deadly", "goodbye", "not implemented", "no operation", \
+            "syntax error", "division by zero", "runtime error", "aborted current entry", "out of memory"           \
     }
 
 // command types

@@ -55,12 +55,12 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/object.cpp
   ${PROJECT_SOURCE_DIR}/src/program.cpp
   ${PROJECT_SOURCE_DIR}/src/parse.cpp
-  #${PROJECT_SOURCE_DIR}/src/rpn-branch.cpp
+  ${PROJECT_SOURCE_DIR}/src/rpn-branch.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-complex.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-general.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-logs.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-program.cpp
-  #${PROJECT_SOURCE_DIR}/src/rpn-real.cpp
+  ${PROJECT_SOURCE_DIR}/src/rpn-real.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-stack.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-store.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-string.cpp
