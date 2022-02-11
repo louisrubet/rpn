@@ -1,22 +1,23 @@
 #include "program.hpp"
 
 /// @brief write stack in a string, each entry separated between commas
-/// 
+///
 /// @param stack_is the output string
 /// @param stk the stack
 ///
 void program::test_get_stack(string& stack_is, rpnstack& stk) {
-    for (int i = 0; i < (int)stk.size(); i++) {
-        if (i > 0) stack_is += ", ";
-
+    ostringstream st;
+    stk[stk.size() - 1]->show(st);
+    stack_is += st.str();
+    for (int i = (int)stk.size() - 2; i >= 0; i--) {
         ostringstream st;
-        stk[stk.size() - i - 1]->show(st);
-        stack_is += st.str();
+        stk[i]->show(st);
+        stack_is += ", " + st.str();
     }
 }
 
 /// @brief show the tests results
-/// 
+///
 /// @param title test title
 /// @param tests tests nb
 /// @param tests_failed failed tests nb
@@ -47,14 +48,14 @@ void program::rpn_test() {
     int total_steps = 0;
     int total_steps_failed = 0;
 
-    string test_filename = ((ostring*)_stack->pop_back())->_value;
-    printf("\nrpn version is %s\n", version);
+    string test_filename = ((ostring*)_stack->pop_front())->value;
+    printf("\nrpn version is %s\n", version.c_str());
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
     test_show_result("Total", total_tests, total_tests_failed, total_steps, total_steps_failed);
 }
 
 /// @brief load a test file and run its tests
-/// 
+///
 /// @param test_filename the test file filename
 /// @param total_tests the total tests nb
 /// @param total_tests_failed the total failed tests nb

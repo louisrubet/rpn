@@ -7,36 +7,34 @@ void program::rpn_plus() {
 
     // adding strings
     if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string) {
-        string str =
-            static_cast<ostring*>(_stack->at(1))->_value + static_cast<ostring*>(_stack->at(0))->_value;
-        _stack->pop_back(2);
-        _stack->push_back(new ostring(str));
+        ostring* right = (ostring*)_stack->pop_front();
+        ostring* left = (ostring*)_stack->front();
+        left->value += right->value;
     }
     // adding numbers
     else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_back();
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_add(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        number* left = (number*)_stack->front();
+        left->value += right->value;
     }
     // adding complexes
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        complex* right = (complex*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_add(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+        ocomplex* right = (ocomplex*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->front();
+        left->value += right->value;
     }
     // adding complex+number
     else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value += right->value;
     }
     // adding number+complex
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value += right->value;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -48,29 +46,28 @@ void program::rpn_minus() {
 
     // substracting numbers
     if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_back();
+        number* right = (number*)_stack->pop_front();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sub(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        left->value -= right->value;
     }
     // substracting complexes
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        complex* right = (complex*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_sub(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_sub(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
+        ocomplex* right = (ocomplex*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value -= right->value;
     }
     // substracting complex-number
     else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_sub(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value -= right->value;
     }
     // substracting number-complex
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_sub(left->re()->mpfr, right->_value.mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value -= right->value;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -82,98 +79,30 @@ void program::rpn_mul() {
 
     // multiplying numbers
     if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_back();
+        number* right = (number*)_stack->pop_front();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        left->value *= right->value;
     }
-    // multiplying complexes (a+ib)*(x+iy)=(ax-by)+i(ay+bx)=a(x+iy)+b(-y+ix)
+    // multiplying complexes
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        complex* right = (complex*)_stack->pop_back();  // x+iy
-        complex* left = (complex*)_stack->back();       // a+ib
-
-        rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-        complex* left_sav = (complex*)_calc_stack.back();  // a+ib
-
-        // left: (a+ib)->(ax+iay)
-        CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_mul(left->im()->mpfr, left_sav->re()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
-
-        // right: (x+iy)-> (bx-iby)
-        CHECK_MPFR(mpfr_mul(right->im()->mpfr, left_sav->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_neg(right->im()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_mul(right->re()->mpfr, left_sav->im()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
-
-        // left=left+transpose(right)
-        CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->im()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_add(left->im()->mpfr, left->im()->mpfr, right->re()->mpfr, floating_t::s_mpfr_rnd));
-
-        _calc_stack.pop_back();
+        ocomplex* right = (ocomplex*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value *= right->value;
     }
     // multiplying complex*number
     else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_mul(left->im()->mpfr, left->im()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value *= right->value;
     }
     // multiplying number*complex
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_mul(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_mul(left->im()->mpfr, left->im()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value *= right->value;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
-}
-
-/// @brief divide the 2 complexes on stack
-/// result on the prog stack
-///
-void program::do_divide_complexes() {
-    //(a+ib)/(x+iy)=(a+ib)(x-iy)/(x^2+y^2)=(ax+by+i(bx-ay))/(x^2+y^2)
-    complex* right = (complex*)_stack->at(0);  // x+iy
-    complex* left = (complex*)_stack->at(1);   // a+ib
-
-    // 1. calc (x^2-y^2) in _calc_stack
-    number* ex;
-    _calc_stack.push_back(ex = new number);
-    CHECK_MPFR(mpfr_mul(ex->_value.mpfr, right->re()->mpfr, right->re()->mpfr,
-                        floating_t::s_mpfr_rnd));  // x2
-    number* wy;
-    _calc_stack.push_back(wy = new number);
-    CHECK_MPFR(mpfr_mul(wy->_value.mpfr, right->im()->mpfr, right->im()->mpfr,
-                        floating_t::s_mpfr_rnd));  // y2
-    CHECK_MPFR(mpfr_add(ex->_value.mpfr, ex->_value.mpfr, wy->_value.mpfr,
-                        floating_t::s_mpfr_rnd));  // ex=x2+y2
-
-    rpnstack::copy_and_push_back(*_stack, _stack->size() - 2, _calc_stack);  // x+iy
-    rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    complex* left_sav = (complex*)_calc_stack.at(1);   // a+ib
-    complex* right_sav = (complex*)_calc_stack.at(0);  // x+iy
-
-    // 2. left.re=ax+by
-    CHECK_MPFR(mpfr_mul(left->re()->mpfr, left_sav->re()->mpfr, right_sav->re()->mpfr,
-                        floating_t::s_mpfr_rnd));  // left.re=ax
-    CHECK_MPFR(mpfr_mul(right->re()->mpfr, left_sav->im()->mpfr, right_sav->im()->mpfr,
-                        floating_t::s_mpfr_rnd));  // right.re=by
-    CHECK_MPFR(mpfr_add(left->re()->mpfr, left->re()->mpfr, right->re()->mpfr,
-                        floating_t::s_mpfr_rnd));  // left.re=ax+by
-
-    // 3. left.im=bx-ay
-    CHECK_MPFR(mpfr_mul(left->im()->mpfr, left_sav->im()->mpfr, right_sav->re()->mpfr,
-                        floating_t::s_mpfr_rnd));  // left.im=bx
-    CHECK_MPFR(mpfr_mul(right->im()->mpfr, left_sav->re()->mpfr, right_sav->im()->mpfr,
-                        floating_t::s_mpfr_rnd));  // right.im=ay
-    CHECK_MPFR(mpfr_sub(left->im()->mpfr, left->im()->mpfr, right->im()->mpfr,
-                        floating_t::s_mpfr_rnd));  // left.im=bx-ay
-
-    // 4. left.re/=(x^2-y^2), left.im/=(x^2+y^2)
-    CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, ex->_value.mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, ex->_value.mpfr, floating_t::s_mpfr_rnd));
-
-    _stack->pop_back();
-    _calc_stack.pop_back(4);
 }
 
 /// @brief / keyword implementation
@@ -183,44 +112,28 @@ void program::rpn_div() {
 
     // dividing numbers
     if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_back();
+        number* right = (number*)_stack->pop_front();
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_div(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        left->value /= right->value;
     }
     // dividing complexes
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex)
-        do_divide_complexes();
+    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
+        number* right = (number*)_stack->pop_front();
+        number* left = (number*)_stack->back();
+        left->value /= right->value;
+    }
     // dividing complex/number
     else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_back();
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_div(left->re()->mpfr, left->re()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_div(left->im()->mpfr, left->im()->mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value /= right->value;
     }
     // dividing number/complex
     else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
-        // 1. copy out
-        rpnstack::copy_and_push_back(*_stack, _stack->size() - 1,
-                                     _calc_stack);  // complex
-        rpnstack::copy_and_push_back(*_stack, _stack->size() - 2,
-                                     _calc_stack);  // number
-        _stack->pop_back(2);
-
-        // 2. copy back (2 complexes on stack)
-        rpnstack::copy_and_push_back(_calc_stack, _calc_stack.size() - 2,
-                                     *_stack);  // complex back to stack
-        rpnstack::copy_and_push_back(_calc_stack, _calc_stack.size() - 2,
-                                     *_stack);  // complex back to stack
-
-        // 3. set complex level 2 to (number,0)
-        complex* new_cplx = (complex*)_stack->at(1);
-        CHECK_MPFR(
-            mpfr_set(new_cplx->re()->mpfr, ((number*)_calc_stack.at(0))->_value.mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_set_ui(new_cplx->im()->mpfr, 0UL, floating_t::s_mpfr_rnd));
-        _calc_stack.pop_back(2);
-
-        // 4. divide
-        do_divide_complexes();
+        rpn_swap();
+        number* right = (number*)_stack->pop_front();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value /= right->value;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -232,11 +145,10 @@ void program::rpn_neg() {
 
     if (_stack->at(0)->_type == cmd_number) {
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_neg(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        left->value = -left->value;
     } else if (_stack->at(0)->_type == cmd_complex) {
-        complex* left = (complex*)_stack->back();
-        CHECK_MPFR(mpfr_neg(left->re()->mpfr, left->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_neg(left->im()->mpfr, left->im()->mpfr, floating_t::s_mpfr_rnd));
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value = -left->value;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -248,16 +160,10 @@ void program::rpn_inv() {
 
     if (_stack->at(0)->_type == cmd_number) {
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_si_div(left->_value.mpfr, 1L, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        left->value = 1 / left->value;
     } else if (_stack->at(0)->_type == cmd_complex) {
-        // 1. duplicate
-        rpn_dup();
-        // 2. set complex level 2 to (1,0)
-        complex* cplx = (complex*)_stack->at(1);
-        CHECK_MPFR(mpfr_set_ui(cplx->re()->mpfr, 1UL, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_set_ui(cplx->im()->mpfr, 0UL, floating_t::s_mpfr_rnd));
-        // 3. divide
-        do_divide_complexes();
+        ocomplex* left = (ocomplex*)_stack->back();
+        left->value = mpreal{1} / left->value;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -268,12 +174,10 @@ void program::rpn_purcent() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-    number* right = (number*)_stack->pop_back();
+    number* right = (number*)_stack->pop_front();
     number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_mul(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_div_si(left->_value.mpfr, left->_value.mpfr, 100L, floating_t::s_mpfr_rnd));
+    left->value *= right->value;
+    left->value /= 100;
 }
 
 /// @brief %CH keyword implementation
@@ -282,12 +186,10 @@ void program::rpn_purcentCH() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-    number* right = (number*)_stack->pop_back();
+    number* right = (number*)_stack->pop_front();
     number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_mul_si(right->_value.mpfr, right->_value.mpfr, 100L, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_div(left->_value.mpfr, right->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    right->value *= 100;
+    left->value /= right->value;
 }
 
 /// @brief power keyword implementation
@@ -296,80 +198,40 @@ void program::rpn_power() {
     MIN_ARGUMENTS(2);
     bool done_on_real = false;
 
-    if (_stack->at(1)->_type == cmd_number) {
+    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
         ARG_MUST_BE_OF_TYPE(0, cmd_number);
-        number* right = (number*)_stack->at(0);
-        number* left = (number*)_stack->at(1);
-
-        if (mpfr_cmp_d(left->_value.mpfr, 0.0) >= 0) {
-            CHECK_MPFR(mpfr_pow(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
-            _stack->pop_back();
-            done_on_real = true;
-        } else {
-            // copy power out
-            rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-            _stack->pop_back();
-
-            // negative number -> complex number
-            _stack->push_back(new number);
-            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.0, floating_t::s_mpfr_rnd));
-            rpn_r2c();
-
-            // copy power back
-            rpnstack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack);
-            _calc_stack.pop_back();
-        }
-    }
-
-    // carrefull, no 'else' here
-    if (!done_on_real) {
-        if (_stack->at(1)->_type == cmd_complex) {
-            ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-            // power on tmp stack
-            rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-            _stack->pop_back();
-
-            // switch complex to polar
-            complex* cplx = (complex*)_stack->back();
-            rpn_r2p();
-
-            // new abs=abs^exponent
-            number* exponent = (number*)_calc_stack.back();
-            CHECK_MPFR(mpfr_pow(cplx->re()->mpfr, cplx->re()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
-
-            // new arg=arg*exponent
-            CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, exponent->_value.mpfr, floating_t::s_mpfr_rnd));
-
-            // back to cartesian
-            rpn_p2r();
-            _calc_stack.pop_back();
-        } else
-            ERR_CONTEXT(ret_bad_operand_type);
-    }
+        number* right = (number*)_stack->pop_front();
+        number* left = (number*)_stack->back();
+        // TODO pow seems not to be a friend of mpreal
+        //left->value.mpfr_ptr = pow(right->value);
+        mpfr_pow(left->value.mpfr_ptr(), left->value.mpfr_ptr(), right->value.mpfr_ptr(), mpreal::get_default_rnd());
+    } else
+        ERR_CONTEXT(ret_bad_operand_type);
+    // TODO manage complex case
 }
 
+#if 0
 /// @brief sqrt keyword implementation
 ///
 void program::rpn_squareroot() {
     if (_stack->at(0)->_type == cmd_number) {
         number* left = (number*)_stack->back();
 
-        if (mpfr_cmp_d(left->_value.mpfr, 0.0) >= 0)
-            CHECK_MPFR(mpfr_sqrt(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        if (left->value >= 0)
+            left->value = rec_sqrt(left->value);
         else {
             // negative number -> complex square root
-            _stack->push_back(new number);
-            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.0, floating_t::s_mpfr_rnd));
+            _stack->push_front(new number);
+            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->value.mpfr, 0.0, mpreal::get_default_rnd()));
             rpn_r2c();
-            _stack->push_back(new number);
-            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.5, floating_t::s_mpfr_rnd));
+            _stack->push_front(new number);
+            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->value.mpfr, 0.5, mpreal::get_default_rnd()));
             rpn_power();
         }
     } else if (_stack->at(0)->_type == cmd_complex) {
         // calc cplx^0.5
-        _stack->push_back(new number);
-        CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->_value.mpfr, 0.5, floating_t::s_mpfr_rnd));
+        _stack->push_front(new number);
+        CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->value.mpfr, 0.5, mpreal::get_default_rnd()));
         rpn_power();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -382,7 +244,7 @@ void program::rpn_square() {
 
     if (_stack->at(0)->_type == cmd_number) {
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sqr(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_sqr(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
     } else if (_stack->at(0)->_type == cmd_complex) {
         rpn_dup();
         rpn_mul();
@@ -397,12 +259,14 @@ void program::rpn_modulo() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
+    number* right = (number*)_stack->pop_front();
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_fmod(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_fmod(left->value.mpfr, left->value.mpfr, right->value.mpfr, mpreal::get_default_rnd()));
 }
+#endif
 
+#if 0
 /// @brief abs keyword implementation
 ///
 void program::rpn_abs() {
@@ -410,27 +274,27 @@ void program::rpn_abs() {
 
     if (_stack->at(0)->_type == cmd_number) {
         number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
     } else if (_stack->at(0)->_type == cmd_complex) {
         // 1. copy out -> calc x2+iy2
-        rpnstack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-        _stack->pop_back();
+        rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack);
+        _stack->pop_front();
 
         // 2. calc x2+iy2
-        complex* cplx = (complex*)_calc_stack.back();
-        CHECK_MPFR(mpfr_mul(cplx->re()->mpfr, cplx->re()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_mul(cplx->im()->mpfr, cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+        ocomplex* cplx = (ocomplex*)_calc_stack.back();
+        CHECK_MPFR(mpfr_mul(cplx->re.mpfr, cplx->re.mpfr, cplx->re.mpfr, mpreal::get_default_rnd()));
+        CHECK_MPFR(mpfr_mul(cplx->im.mpfr, cplx->im.mpfr, cplx->im.mpfr, mpreal::get_default_rnd()));
 
         // 3. new real on stack
-        _stack->push_back(new number);
+        _stack->push_front(new number);
         number* module = (number*)_stack->back();
 
         // 4. set it to |x2+y2| then take sqrt
-        CHECK_MPFR(mpfr_set(module->_value.mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_add(module->_value.mpfr, module->_value.mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
-        CHECK_MPFR(mpfr_sqrt(module->_value.mpfr, module->_value.mpfr, floating_t::s_mpfr_rnd));
+        CHECK_MPFR(mpfr_set(module->value.mpfr, cplx->re.mpfr, mpreal::get_default_rnd()));
+        CHECK_MPFR(mpfr_add(module->value.mpfr, module->value.mpfr, cplx->im.mpfr, mpreal::get_default_rnd()));
+        CHECK_MPFR(mpfr_sqrt(module->value.mpfr, module->value.mpfr, mpreal::get_default_rnd()));
 
-        _calc_stack.pop_back();
+        _calc_stack.pop_front();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -466,9 +330,9 @@ void program::rpn_base() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    if (mpfr_cmp_d(((number*)_stack->back())->_value.mpfr, (double)BASE_MIN) >= 0 &&
-        mpfr_cmp_d(((number*)_stack->back())->_value.mpfr, (double)BASE_MAX) <= 0) {
-        int base = (int)mpfr_get_d(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+    if (mpfr_cmp_d(((number*)_stack->back())->value.mpfr, (double)BASE_MIN) >= 0 &&
+        mpfr_cmp_d(((number*)_stack->back())->value.mpfr, (double)BASE_MAX) <= 0) {
+        int base = (int)mpfr_get_d(((number*)_stack->pop_front())->value.mpfr, mpreal::get_default_rnd());
         ((number*)_stack->at(0))->_base = base;
         ((number*)_stack->at(0))->_representation = number::base;
     } else
@@ -484,11 +348,11 @@ void program::rpn_fact() {
     // fact(n) = gamma(n+1)
     number* left = (number*)_stack->back();
     number* right;
-    _stack->push_back(right = new number);
-    right->_value = 1L;
+    _stack->push_front(right = new number);
+    right->value = 1L;
     rpn_plus();
 
-    CHECK_MPFR(mpfr_gamma(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_gamma(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
 }
 
 /// @brief sign keyword implementation
@@ -499,8 +363,8 @@ void program::rpn_sign() {
     if (_stack->at(0)->_type == cmd_number) {
         // fact(n) = gamma(n+1)
         number* left = (number*)_stack->back();
-        int result = mpfr_sgn(left->_value.mpfr);
-        left->_value = (long)result;
+        int result = mpfr_sgn(left->value.mpfr);
+        left->value = (long)result;
     } else if (_stack->at(0)->_type == cmd_complex) {
         // calc x/sqrt(x*x+y*y) +iy/sqrt(x*x+y*y)
         rpn_dup();
@@ -518,27 +382,27 @@ void program::rpn_mant() {
 
     number* left = (number*)_stack->back();
 
-    if (mpfr_number_p(left->_value.mpfr)) {
-        if (mpfr_zero_p(left->_value.mpfr))
-            left->_value = 0.0;
+    if (mpfr_number_p(left->value.mpfr)) {
+        if (mpfr_zero_p(left->value.mpfr))
+            left->value = 0.0;
         else {
-            mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd);
+            mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd());
 
             number* one;
-            _stack->push_back(one = new number);
+            _stack->push_front(one = new number);
             number* ten;
-            _stack->push_back(ten = new number);
-            ten->_value = 10L;
+            _stack->push_front(ten = new number);
+            ten->value = 10L;
 
-            one->_value = 1L;
-            while (mpfr_greaterequal_p(left->_value.mpfr, one->_value.mpfr))
-                mpfr_div(left->_value.mpfr, left->_value.mpfr, ten->_value.mpfr, floating_t::s_mpfr_rnd);
+            one->value = 1L;
+            while (mpfr_greaterequal_p(left->value.mpfr, one->value.mpfr))
+                mpfr_div(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
 
-            one->_value = 0.1;
-            while (mpfr_less_p(left->_value.mpfr, one->_value.mpfr))
-                mpfr_mul(left->_value.mpfr, left->_value.mpfr, ten->_value.mpfr, floating_t::s_mpfr_rnd);
+            one->value = 0.1;
+            while (mpfr_less_p(left->value.mpfr, one->value.mpfr))
+                mpfr_mul(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
 
-            _calc_stack.pop_back(2);
+            _calc_stack.pop_front(2);
         }
     } else
         ERR_CONTEXT(ret_out_of_range);
@@ -552,35 +416,35 @@ void program::rpn_xpon() {
 
     number* left = (number*)_stack->back();
 
-    if (mpfr_number_p(left->_value.mpfr)) {
-        if (mpfr_zero_p(left->_value.mpfr))
-            left->_value = 0.0;
+    if (mpfr_number_p(left->value.mpfr)) {
+        if (mpfr_zero_p(left->value.mpfr))
+            left->value = 0.0;
         else {
             double exponant = 0.0;
-            mpfr_abs(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd);
+            mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd());
 
             number* one;
-            _stack->push_back(one = new number);
+            _stack->push_front(one = new number);
             number* ten;
-            _stack->push_back(ten = new number);
-            ten->_value = 10L;
+            _stack->push_front(ten = new number);
+            ten->value = 10L;
 
-            one->_value = 1L;
-            while (mpfr_greaterequal_p(left->_value.mpfr, one->_value.mpfr)) {
-                mpfr_div(left->_value.mpfr, left->_value.mpfr, ten->_value.mpfr, floating_t::s_mpfr_rnd);
+            one->value = 1L;
+            while (mpfr_greaterequal_p(left->value.mpfr, one->value.mpfr)) {
+                mpfr_div(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
                 exponant += 1.0;
             }
 
-            one->_value = 0.1;
-            while (mpfr_less_p(left->_value.mpfr, one->_value.mpfr)) {
-                mpfr_mul(left->_value.mpfr, left->_value.mpfr, ten->_value.mpfr, floating_t::s_mpfr_rnd);
+            one->value = 0.1;
+            while (mpfr_less_p(left->value.mpfr, one->value.mpfr)) {
+                mpfr_mul(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
                 exponant -= 1.0;
             }
 
-            left->_value = exponant;
+            left->value = exponant;
 
-            _calc_stack.pop_back();
-            _calc_stack.pop_back();
+            _calc_stack.pop_front();
+            _calc_stack.pop_front();
         }
     } else
         ERR_CONTEXT(ret_out_of_range);
@@ -594,7 +458,7 @@ void program::rpn_floor() {
 
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_floor(left->_value.mpfr, left->_value.mpfr));
+    CHECK_MPFR(mpfr_floor(left->value.mpfr, left->value.mpfr));
 }
 
 /// @brief ceil keyword implementation
@@ -605,7 +469,7 @@ void program::rpn_ceil() {
 
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_ceil(left->_value.mpfr, left->_value.mpfr));
+    CHECK_MPFR(mpfr_ceil(left->value.mpfr, left->value.mpfr));
 }
 
 /// @brief fp keyword implementation
@@ -616,7 +480,7 @@ void program::rpn_fp() {
 
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_frac(left->_value.mpfr, left->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_frac(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
 }
 
 /// @brief ip keyword implementation
@@ -627,7 +491,7 @@ void program::rpn_ip() {
 
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_trunc(left->_value.mpfr, left->_value.mpfr));
+    CHECK_MPFR(mpfr_trunc(left->value.mpfr, left->value.mpfr));
 }
 
 /// @brief min keyword implementation
@@ -637,10 +501,10 @@ void program::rpn_min() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
+    number* right = (number*)_stack->pop_front();
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_min(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_min(left->value.mpfr, left->value.mpfr, right->value.mpfr, mpreal::get_default_rnd()));
 }
 
 /// @brief max keyword implementation
@@ -650,8 +514,9 @@ void program::rpn_max() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
-    number* right = (number*)_stack->pop_back();
+    number* right = (number*)_stack->pop_front();
     number* left = (number*)_stack->back();
 
-    CHECK_MPFR(mpfr_max(left->_value.mpfr, left->_value.mpfr, right->_value.mpfr, floating_t::s_mpfr_rnd));
+    CHECK_MPFR(mpfr_max(left->value.mpfr, left->value.mpfr, right->value.mpfr, mpreal::get_default_rnd()));
 }
+#endif

@@ -13,7 +13,7 @@ void program::rpn_instr() {
         // write the object in stack(0) in a string and remove this obj
         FILE* tmp = tmpfile();
         if (tmp != NULL) {
-            ((object*)_stack->pop_back())->show(tmp);
+            ((object*)_stack->pop_front())->show(tmp);
 
             // reserve the correct size on stack
             unsigned int str_size = (unsigned int)ftell(tmp);
@@ -26,7 +26,7 @@ void program::rpn_instr() {
             // fill the obj
             rewind(tmp);
             if (fread(buf, str_size, 1, tmp) != 1) ERR_CONTEXT(ret_runtime_error);
-            _stack->push_back(new ostring(buf));
+            _stack->push_front(new ostring(buf));
 
         destroy_file:
             char filePath[PATH_MAX];
@@ -43,7 +43,7 @@ void program::rpn_strout() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    string entry(((ostring*)_stack->pop_back())->_value);
+    string entry(((ostring*)_stack->pop_front())->_value);
 
     program prog;
 
@@ -60,9 +60,9 @@ void program::rpn_chr() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // get arg as number % 256
-    char the_chr = (char)mpfr_get_d(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+    char the_chr = (char)mpfr_get_d(((number*)_stack->pop_front())->_value.mpfr, mpreal::get_default_rnd());
     if (the_chr < 32 || the_chr > 126) the_chr = '.';
-    _stack->push_back(new ostring(string(1, the_chr)));
+    _stack->push_front(new ostring(string(1, the_chr)));
 }
 
 /// @brief num keyword implementation
@@ -71,8 +71,8 @@ void program::rpn_num() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    double the_chr = (double)((ostring*)_stack->pop_back())->_value[0];
-    _stack->push_back(new number(the_chr));
+    double the_chr = (double)((ostring*)_stack->pop_front())->_value[0];
+    _stack->push_front(new number(the_chr));
 }
 
 /// @brief size keyword implementation
@@ -81,8 +81,8 @@ void program::rpn_strsize() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    double len = ((ostring*)_stack->pop_back())->_value.size();
-    _stack->push_back(new number(len));
+    double len = ((ostring*)_stack->pop_front())->_value.size();
+    _stack->push_front(new number(len));
 }
 
 /// @brief pos keyword implementation
@@ -93,8 +93,8 @@ void program::rpn_strpos() {
     ARG_MUST_BE_OF_TYPE(1, cmd_string);
 
     size_t pos = static_cast<ostring*>(_stack->at(1))->_value.find(((ostring*)_stack->at(0))->_value);
-    _stack->pop_back(2);
-    _stack->push_back(new number(pos));
+    _stack->pop_front(2);
+    _stack->push_front(new number(pos));
 }
 
 /// @brief sub keyword implementation
@@ -111,7 +111,7 @@ void program::rpn_strsub() {
     long len = ((ostring*)_stack->at(2))->_len;
     bool result_is_void = false;
 
-    _stack->pop_back(2);
+    _stack->pop_front(2);
 
     if (first < 0) first = 0;
     if (last < 0) last = 0;
@@ -131,11 +131,11 @@ void program::rpn_strsub() {
         memcpy(((ostring*)_calc_stack.back())->_value, ((ostring*)_stack->at(0))->_value + first, str_size);
         ((ostring*)_calc_stack.back())->_value[str_size] = 0;
 
-        _stack->pop_back();
-        rpnstack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack);
-        _calc_stack.pop_back();
+        _stack->pop_front();
+        rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack);
+        _calc_stack.pop_front();
     } else {
-        _stack->pop_back();
+        _stack->pop_front();
         ostring* str = (ostring*)_stack->allocate_back(1 + sizeof(ostring), cmd_string);
         str->_len = 0;
         str->_value[0] = 0;

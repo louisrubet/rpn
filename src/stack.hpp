@@ -23,29 +23,39 @@ class rpnstack : public deque<object*> {
     /// @param index_from index t ocopy from
     /// @param to copy to
     ///
-    static void copy_and_push_back(rpnstack& from, unsigned int index_from, rpnstack& to) {
-        to.push_back(from[index_from]);
-    }
-
     static void copy_and_push_front(rpnstack& from, unsigned int index_from, rpnstack& to) {
         to.push_front(from[index_from]);
+    }
+
+    /// @brief erase a stack entry from it index
+    ///
+    /// @param first index to start
+    /// @param last index to stop
+    ///
+    void del(int first = 0, int last = -1) {
+        if (size() >0) {
+            if (last == -1)
+                erase(begin() + first);
+            else if (last >= first)
+                erase(begin() + first, begin() + last + 1);  // carefull, deque::erase doesn't include the last element
+        }
     }
 
     /// @brief pop back several entries
     ///
     /// @param levels nb of entries
     ///
-    void pop_back(int levels) {
-        for (int i = 0; i < levels; i++) deque::pop_back();
+    void pop_front(int levels) {
+        for (int i = 0; i < levels; i++) deque::pop_front();
     }
 
     /// @brief pop back 1 entry
     ///
     /// @return retrieved object
     ///
-    object* pop_back() {
-        object* o = back();
-        pop_back(1);
+    object* pop_front() {
+        object* o = front();
+        pop_front(1);
         return o;
     }
 };

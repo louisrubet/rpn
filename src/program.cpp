@@ -3,7 +3,7 @@
 //< return type strings
 const char* program::s_ret_value_string[ret_max] = RET_VALUE_STRINGS;
 
-//< kanguage reserved keywords (allowed types are cmd_keyword, cmd_branch or cmd_undef)
+//< language reserved keywords (allowed types are cmd_keyword, cmd_branch or cmd_undef)
 program::keyword_t program::s_keywords[] = {
     // GENERAL
     {cmd_undef, "", NULL, "\nGENERAL"},
@@ -20,16 +20,16 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "history", &program::rpn_history, "see commands history"},
 
     // USUAL OPERATIONS ON REALS AND COMPLEXES
-    // {cmd_undef, "", NULL, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
-    // {cmd_keyword, "+", &program::rpn_plus, "addition"},
-    // {cmd_keyword, "-", &program::rpn_minus, "substraction"},
-    // {cmd_keyword, "chs", &program::rpn_neg, "negation"},
-    // {cmd_keyword, "neg", &program::rpn_neg, ""},
-    // {cmd_keyword, "*", &program::rpn_mul, "multiplication"},
-    // {cmd_keyword, "/", &program::rpn_div, "division"},
-    // {cmd_keyword, "inv", &program::rpn_inv, "inverse"},
-    // {cmd_keyword, "^", &program::rpn_power, "power"},
-    // {cmd_keyword, "pow", &program::rpn_power, ""},
+    {cmd_undef, "", NULL, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
+    {cmd_keyword, "+", &program::rpn_plus, "addition"},
+    {cmd_keyword, "-", &program::rpn_minus, "substraction"},
+    {cmd_keyword, "chs", &program::rpn_neg, "negation"},
+    {cmd_keyword, "neg", &program::rpn_neg, ""},
+    {cmd_keyword, "*", &program::rpn_mul, "multiplication"},
+    {cmd_keyword, "/", &program::rpn_div, "division"},
+    {cmd_keyword, "inv", &program::rpn_inv, "inverse"},
+    {cmd_keyword, "^", &program::rpn_power, "power"},
+    {cmd_keyword, "pow", &program::rpn_power, ""},
     // {cmd_keyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
     // {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
     // {cmd_keyword, "sqr", &program::rpn_square, ""},
@@ -39,15 +39,11 @@ program::keyword_t program::s_keywords[] = {
     // {cmd_keyword, "bin", &program::rpn_bin, "decimal representation"},
     // {cmd_keyword, "base", &program::rpn_base, "arbitrary base representation"},
     // {cmd_keyword, "sign", &program::rpn_sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0"},
-    // {cmd_keyword, "inf", &program::rpn_inf, "positive infinite"},
-    // {cmd_keyword, "+inf", &program::rpn_inf, "positive infinite"},
-    // {cmd_keyword, "-inf", &program::rpn_minf, "negative infinite"},
-    // {cmd_keyword, "nan", &program::rpn_nan, "not a number"},
 
     // OPERATIONS ON REALS
-    // {cmd_undef, "", NULL, "\nOPERATIONS ON REALS"},
-    // {cmd_keyword, "%", &program::rpn_purcent, "purcent"},
-    // {cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
+    {cmd_undef, "", NULL, "\nOPERATIONS ON REALS"},
+    {cmd_keyword, "%", &program::rpn_purcent, "purcent"},
+    {cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
     // {cmd_keyword, "mod", &program::rpn_modulo, "modulo"},
     // {cmd_keyword, "fact", &program::rpn_fact, "n! for integer n or Gamma(x+1) for fractional x"},
     // {cmd_keyword, "mant", &program::rpn_mant, "mantissa of a real number"},
@@ -127,30 +123,29 @@ program::keyword_t program::s_keywords[] = {
     // {cmd_keyword, "sub", &program::rpn_strsub, "return a substring of the string in level 3"},
 
     // BRANCH
-    // {cmd_undef, "", NULL, "\nBRANCH"},
-    // {cmd_branch, "if", (program_fn_t)&program::rpn_if,
-    //  "if <test-instruction> then <true-instructions> else <false-instructions> "
-    //  "end"},
-    // {cmd_branch, "then", (program_fn_t)&program::rpn_then, "used with if"},
-    // {cmd_branch, "else", (program_fn_t)&program::rpn_else, "used with if"},
-    // {cmd_branch, "end", (program_fn_t)&program::rpn_end, "used with various branch instructions"},
-    // {cmd_branch, "start", (program_fn_t)&program::rpn_start, "<start> <end> start <instructions> next|<step> step"},
-    // {cmd_branch, "for", (program_fn_t)&program::rpn_for,
-    //  "<start> <end> for <variable> <instructions> next|<step> step"},
-    // {cmd_branch, "next", (program_fn_t)&program::rpn_next, "used with start and for"},
-    // {cmd_branch, "step", (program_fn_t)&program::rpn_step, "used with start and for"},
-    // {cmd_keyword, "ift", &program::rpn_ift, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
-    // {cmd_keyword, "ifte", &program::rpn_ifte,
-    //  "similar to if-then-else-end, <test-instruction> <true-instruction> "
-    //  "<false-instruction> ifte"},
-    // {cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> until <condition> end"},
-    // {cmd_branch, "until", (program_fn_t)&program::rpn_until, "used with do"},
-    // {cmd_branch, "unti", (program_fn_t)&program::rpn_until, ""},
-    // {cmd_branch, "while", (program_fn_t)&program::rpn_while, "while <test-instruction> repeat <loop-instructions>
-    // end"},
-    // {cmd_branch, "whil", (program_fn_t)&program::rpn_while, ""},
-    // {cmd_branch, "repeat", (program_fn_t)&program::rpn_repeat, "used with while"},
-    // {cmd_branch, "repea", (program_fn_t)&program::rpn_repeat, ""},
+    {cmd_undef, "", NULL, "\nBRANCH"},
+    {cmd_branch, "if", (program_fn_t)&program::rpn_if,
+     "if <test-instruction> then <true-instructions> else <false-instructions> "
+     "end"},
+    {cmd_branch, "then", (program_fn_t)&program::rpn_then, "used with if"},
+    {cmd_branch, "else", (program_fn_t)&program::rpn_else, "used with if"},
+    {cmd_branch, "end", (program_fn_t)&program::rpn_end, "used with various branch instructions"},
+    {cmd_branch, "start", (program_fn_t)&program::rpn_start, "<start> <end> start <instructions> next|<step> step"},
+    {cmd_branch, "for", (program_fn_t)&program::rpn_for,
+     "<start> <end> for <variable> <instructions> next|<step> step"},
+    {cmd_branch, "next", (program_fn_t)&program::rpn_next, "used with start and for"},
+    {cmd_branch, "step", (program_fn_t)&program::rpn_step, "used with start and for"},
+    {cmd_keyword, "ift", &program::rpn_ift, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
+    {cmd_keyword, "ifte", &program::rpn_ifte,
+     "similar to if-then-else-end, <test-instruction> <true-instruction> "
+     "<false-instruction> ifte"},
+    {cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> until <condition> end"},
+    {cmd_branch, "until", (program_fn_t)&program::rpn_until, "used with do"},
+    {cmd_branch, "unti", (program_fn_t)&program::rpn_until, ""},
+    {cmd_branch, "while", (program_fn_t)&program::rpn_while, "while <test-instruction> repeat <loop-instructions> end"},
+    {cmd_branch, "whil", (program_fn_t)&program::rpn_while, ""},
+    {cmd_branch, "repeat", (program_fn_t)&program::rpn_repeat, "used with while"},
+    {cmd_branch, "repea", (program_fn_t)&program::rpn_repeat, ""},
 
     // STORE
     {cmd_undef, "", NULL, "\nSTORE"},
@@ -242,7 +237,7 @@ ret_value program::run(rpnstack& stk, heap& hp) {
 
     // iterate commands
     for (int i = 0; (go_out == false) && (interrupt_now == false) && (i < (int)size());) {
-        switch((cmd_type_t)(*this)[i]->_type) {
+        switch ((cmd_type_t)(*this)[i]->_type) {
             // could be an auto-evaluated symbol
             case cmd_symbol:
                 auto_rcl((symbol*)(*this)[i]);
@@ -253,7 +248,7 @@ ret_value program::run(rpnstack& stk, heap& hp) {
             case cmd_keyword: {
                 keyword* k = (keyword*)(*this)[i];
                 // call the matching function
-                (this->*(k->_fn))();
+                (this->*(k->fn))();
                 switch (_err) {
                     // no pb -> go on
                     case ret_ok:
@@ -282,7 +277,7 @@ ret_value program::run(rpnstack& stk, heap& hp) {
             case cmd_branch: {
                 // call matching function
                 branch* b = (branch*)(*this)[i];
-                int next_cmd = (this->*(b->_fn))(*b);
+                int next_cmd = (this->*(b->fn))(*b);
                 switch (next_cmd) {
                     case -1:
                         i++;  // meaning 'next command'
@@ -302,7 +297,7 @@ ret_value program::run(rpnstack& stk, heap& hp) {
             default:
                 // not a command, but a stack entry, manage it
                 // copy the program stack entry to the running stack
-                stk.push_back((*this)[i]);
+                stk.push_front((*this)[i]);
                 i++;
                 break;
         }
@@ -331,7 +326,7 @@ void program::stop() { interrupt_now = true; }
 ///
 bool program::compare_branch(branch* b, const char* str_to_compare, int len) {
     if (str_to_compare != nullptr)
-        return b->_value == str_to_compare;
+        return b->value == str_to_compare;
     else
         return false;
 }
@@ -644,8 +639,8 @@ void program::show_stack(rpnstack& st, bool show_separator) {
         st.front()->show(cout);
         cout << endl;
     } else {
-        for (int i = 0; i < st.size(); i++) {
-            if (show_separator) cout << st.size() - i << SHOW_STACK_SEPARATOR;
+        for (int i = st.size() - 1; i >= 0; i--) {
+            if (show_separator) cout << i + 1 << SHOW_STACK_SEPARATOR;
             st[i]->show(cout);
             cout << endl;
         }
@@ -658,9 +653,5 @@ void program::apply_default() {
     // default float precision, float mode
     number::s_mode = DEFAULT_MODE;
     number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
-
-    // format for mpfr_printf
-    stringstream ss;
-    ss << number::s_decimal_digits;
-    number::s_mpfr_printf_format = string(MPFR_FORMAT_BEG) + ss.str() + string(MPFR_FORMAT_STD);
+    mpreal::set_default_prec(MPFR_DEFAULT_PREC_BITS);
 }
