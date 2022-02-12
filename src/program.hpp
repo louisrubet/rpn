@@ -283,51 +283,30 @@ class program : public deque<object*> {
     void rpn_ticks();
 };
 
-// convinience macros for rpn_xx function
+// clang-format off
+
+// convenience macros for rpn_xx function
 // carefull : some of these macros modify program flow
-#define ERR_CONTEXT(err)             \
-    do {                             \
-        _err = (err);                \
-        _err_context = __FUNCTION__; \
+#define ERR_CONTEXT(err) do { _err = (err); _err_context = __FUNCTION__; } while (0)
+
+#define MIN_ARGUMENTS(num) do { \
+        if (stack_size() < (num)) { ERR_CONTEXT(ret_missing_operand); return; } \
     } while (0)
 
-#define MIN_ARGUMENTS(num)                    \
-    do {                                      \
-        if (stack_size() < (num)) {           \
-            ERR_CONTEXT(ret_missing_operand); \
-            return;                           \
-        }                                     \
+#define MIN_ARGUMENTS_RET(num, ret) do { \
+        if (stack_size() < (num)) { ERR_CONTEXT(ret_missing_operand); return (ret); } \
     } while (0)
 
-#define MIN_ARGUMENTS_RET(num, ret)           \
-    do {                                      \
-        if (stack_size() < (num)) {           \
-            ERR_CONTEXT(ret_missing_operand); \
-            return (ret);                     \
-        }                                     \
+#define ARG_MUST_BE_OF_TYPE(num, type) do { \
+        if (_stack->at(num)->_type != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE(num, type)          \
-    do {                                        \
-        if (_stack->at(num)->_type != (type)) { \
-            ERR_CONTEXT(ret_bad_operand_type);  \
-            return;                             \
-        }                                       \
-    } while (0)
-
-#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) \
-    do {                                        \
-        if (_stack->at(num)->_type != (type)) { \
-            ERR_CONTEXT(ret_bad_operand_type);  \
-            return (ret);                       \
-        }                                       \
+#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { \
+        if (_stack->at(num)->_type != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } \
     } while (0)
 
 #define IS_ARG_TYPE(num, type) (_stack->at(num)->_type == (type))
 
-#define CHECK_MPFR(op) \
-    do {               \
-        (void)(op);    \
-    } while (0)
+#define CHECK_MPFR(op) do { (void)(op); } while (0)
 
 #endif

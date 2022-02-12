@@ -209,7 +209,7 @@ void program::rpn_edit(void) {
 }
 
 /// @brief recall then eval a symbol variable if it is auto-evaluable
-/// 
+///
 /// @param symb the smlbol to recall and autoeval
 ///
 void program::auto_rcl(symbol* symb) {
@@ -247,7 +247,7 @@ void program::rpn_vars(void) {
     // heap variables
     for (int i = 0; i < (int)_heap->size(); i++) {
         (void)_heap->get_by_index(i, name, obj);
-        printf("var %d: name '%s', type %s, value ", i + 1, name.c_str(), object::s_cmd_type_string[obj->_type]);
+        printf("var %d: name '%s', type %s, value ", i + 1, name.c_str(), obj->name());
         obj->show(cout);
         printf("\n");
     }
@@ -256,8 +256,7 @@ void program::rpn_vars(void) {
     while (parent != NULL) {
         for (int i = 0; i < (int)parent->_local_heap.size(); i++) {
             (void)parent->_local_heap.get_by_index(i, name, obj);
-            printf("local var %d: name '%s', type %s, value ", i + 1, name.c_str(),
-                   object::s_cmd_type_string[obj->_type]);
+            printf("local var %d: name '%s', type %s, value ", i + 1, name.c_str(), obj->name());
             obj->show(cout);
             printf("\n");
         }
@@ -267,7 +266,7 @@ void program::rpn_vars(void) {
     // local variables
     for (int i = 0; i < (int)_local_heap.size(); i++) {
         (void)_local_heap.get_by_index(i, name, obj);
-        printf("local var %d: name '%s', type %s, value ", i + 1, name.c_str(), object::s_cmd_type_string[obj->_type]);
+        printf("local var %d: name '%s', type %s, value ", i + 1, name.c_str(), obj->name());
         obj->show(cout);
         printf("\n");
     }
