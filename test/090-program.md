@@ -1,0 +1,93 @@
+# PROGRAM
+
+`default del`
+
+## program
+
+`<< 'one' >>`
+
+-> stack size should be 1
+
+-> stack should be << 'one' >>
+
+`del`
+
+## program (2)
+
+`<< 'one' 2`
+
+-> stack size should be 1
+
+-> stack should be << 'one' 2 >>
+
+`del`
+
+## program (3)
+
+`<<`
+
+-> stack size should be 1
+
+-> stack should be <<  >>
+
+`del`
+
+## program (4)
+
+`<< << << <<`
+
+-> stack size should be 1
+
+-> stack should be << << << <<  >> >> >> >>
+
+`del`
+
+## program (5)
+
+`<< -> n << n 2 * >> >>`
+
+-> stack size should be 1
+
+-> stack should be << -> n << n 2 * >> >>
+
+`del`
+
+## program imbrication
+
+`<< 1 << 2 >> >>`
+
+-> stack should be << 1 << 2 >> >>
+
+`del`
+
+## program evaluation
+
+`<< 1 << 2 >> >> dup eval`
+
+-> stack should be << 1 << 2 >> >>, 1, << 2 >>
+
+`del`
+
+## program 1 arg
+
+`default`
+
+`10`
+
+`<< -> n << 0 1 n for i i 2 * inv + next >> >>`
+
+`eval`
+
+-> stack should be 1.4644841269841269841269841269841269841
+
+`del`
+
+## program several args
+
+`0 1 10 << -> u0 u1 n << u0 u1 1 n start dup2 + rot drop next swap drop >> >> eval`
+
+`eval`
+
+-> stack should be 89
+
+`del`

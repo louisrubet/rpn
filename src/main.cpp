@@ -30,6 +30,7 @@ void exit_interactive_rpn() {
         // save it
         if (linenoiseHistorySave(history_path) != 0)
             fprintf(stderr, "warning, could not save %s (errno=%d, '%s')\n", history_path, errno, strerror(errno));
+        linenoiseHistoryFree();
     }
 }
 
@@ -48,7 +49,7 @@ void init_interactive_rpn() {
 }
 
 /// @brief handle CtrlC signal (sigaction handler): exit rpn
-/// 
+///
 /// @param sig signal, see POSIX sigaction
 /// @param siginfo signal info, see POSIX sigaction
 /// @param context see POSIX sigaction
@@ -63,7 +64,7 @@ static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context) {
 }
 
 /// @brief handle SIGSEGV signal (sigaction handler): stop and exit rpn
-/// 
+///
 /// @param sig signal, see POSIX sigaction
 /// @param siginfo signal info, see POSIX sigaction
 /// @param context see POSIX sigaction
@@ -75,11 +76,11 @@ static void segv_handler(int sig, siginfo_t* siginfo, void* context) {
 }
 
 /// @brief setup signals handlers to stop with honours
-/// 
+///
 /// @param prog the prog to catch the signals to, must be checked not NULL by user
 ///
 static void catch_signals(program* prog) {
-    struct sigaction act;
+    struct sigaction act = {0};
 
     s_prog_to_interrupt = prog;
 
@@ -95,7 +96,7 @@ static void catch_signals(program* prog) {
 }
 
 /// @brief rpn entry point
-/// 
+///
 /// @param argc command line args nb
 /// @param argv  command line args nb
 /// @return int 0=ok

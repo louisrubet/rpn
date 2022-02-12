@@ -13,9 +13,6 @@ using namespace std;
 number::mode_enum number::s_mode = DEFAULT_MODE;
 int number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
 
-//
-const char* object::s_cmd_type_string[cmd_max] = CMD_TYPE_STRINGS;
-
 #if 0
 /// @brief return if a mpfr is higher to a given precision
 /// this function is directly copied from mpfr 
@@ -166,7 +163,7 @@ void object::show(FILE* stream) {
 
     switch (_type) {
         case cmd_number:
-            switch (((number*)this)->_representation) {
+            switch (((number*)this)->repr) {
                 case number::dec:
                     mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((number*)this)->_value.mpfr);
                     break;
@@ -186,7 +183,7 @@ void object::show(FILE* stream) {
             }
             break;
         case cmd_complex:
-            switch (((complex*)this)->_representation) {
+            switch (((complex*)this)->repr) {
                 case number::dec:
                     fprintf(stream, "(");
                     mpfr_fprintf(stream, number::s_mpfr_printf_format.c_str(), ((complex*)this)->re()->mpfr);
