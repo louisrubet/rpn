@@ -15,7 +15,10 @@ using namespace std;
 class rpnstack : public deque<object*> {
    public:
     rpnstack() {}
-    virtual ~rpnstack() {}
+    virtual ~rpnstack() {
+        for_each(begin(), end(), [](object* o) { delete o; });
+        erase(begin(), end());
+    }
 
     /// @brief copy a whole stack entry and push it back to another stack
     ///
@@ -24,7 +27,10 @@ class rpnstack : public deque<object*> {
     /// @param to copy to
     ///
     static void copy_and_push_front(rpnstack& from, unsigned int index_from, rpnstack& to) {
-        to.push_front(from[index_from]);
+        // carefull: caller must ensure that index_from is correct
+        auto newObj = from[index_from]->clone();
+        if (newObj != nullptr)
+            to.push_front(newObj);
     }
 
     /// @brief erase a stack entry from it index
@@ -33,7 +39,7 @@ class rpnstack : public deque<object*> {
     /// @param last index to stop
     ///
     void del(int first = 0, int last = -1) {
-        if (size() >0) {
+        if (size() > 0) {
             if (last == -1)
                 erase(begin() + first);
             else if (last >= first)
@@ -41,15 +47,19 @@ class rpnstack : public deque<object*> {
         }
     }
 
-    /// @brief pop back several entries
+    /// @brief pop front several entries
     ///
     /// @param levels nb of entries
     ///
-    void pop_front(int levels) {
-        for (int i = 0; i < levels; i++) deque::pop_front();
+    void pop_front(int levels, bool del = true) {
+        for (int i = 0; i < levels; i++) {
+            if (del)
+                delete deque::front();
+            deque::pop_front();
+        }
     }
 
-    /// @brief pop back 1 entry
+    /// @brief pop front 1 entry
     ///
     /// @return retrieved object
     ///
@@ -57,6 +67,30 @@ class rpnstack : public deque<object*> {
         object* o = front();
         pop_front(1);
         return o;
+    }
+
+    // access helpers
+    cmd_type_t type(int level) {
+        // carefull: caller must ensure that level is correct
+        return at(level)->_type;
+    }
+
+    template<class objectType> auto obj(int level) {
+        // carefull: caller must ensure that level is correct
+        return static_cast<objectType*>(at(level));
+    }
+
+    template<class objectType> auto& value(int level) {
+        // carefull: caller must ensure that level is correct
+        return static_cast<objectType*>(at(level))->value;
+    }
+
+    void pop() {
+        (void)rpnstack::pop_front(1);
+    }
+
+    void push(object* o) {
+        deque<object*>::push_front(o);
     }
 };
 

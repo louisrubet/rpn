@@ -23,27 +23,24 @@ program::keyword_t program::s_keywords[] = {
     {cmd_undef, "", NULL, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
     {cmd_keyword, "+", &program::rpn_plus, "addition"},
     {cmd_keyword, "-", &program::rpn_minus, "substraction"},
-    {cmd_keyword, "chs", &program::rpn_neg, "negation"},
-    {cmd_keyword, "neg", &program::rpn_neg, ""},
     {cmd_keyword, "*", &program::rpn_mul, "multiplication"},
     {cmd_keyword, "/", &program::rpn_div, "division"},
     {cmd_keyword, "inv", &program::rpn_inv, "inverse"},
+    {cmd_keyword, "chs", &program::rpn_neg, "negation"},
+    {cmd_keyword, "neg", &program::rpn_neg, ""},
     {cmd_keyword, "^", &program::rpn_power, "power"},
     {cmd_keyword, "pow", &program::rpn_power, ""},
-    // {cmd_keyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
+    {cmd_keyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
     // {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
     // {cmd_keyword, "sqr", &program::rpn_square, ""},
     // {cmd_keyword, "abs", &program::rpn_abs, "absolute value"},
-    // {cmd_keyword, "dec", &program::rpn_dec, "decimal representation"},
-    // {cmd_keyword, "hex", &program::rpn_hex, "hexadecimal representation"},
-    // {cmd_keyword, "bin", &program::rpn_bin, "decimal representation"},
     // {cmd_keyword, "base", &program::rpn_base, "arbitrary base representation"},
     // {cmd_keyword, "sign", &program::rpn_sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0"},
 
     // OPERATIONS ON REALS
     {cmd_undef, "", NULL, "\nOPERATIONS ON REALS"},
-    {cmd_keyword, "%", &program::rpn_purcent, "purcent"},
-    {cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
+    //{cmd_keyword, "%", &program::rpn_purcent, "purcent"},
+    //{cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
     // {cmd_keyword, "mod", &program::rpn_modulo, "modulo"},
     // {cmd_keyword, "fact", &program::rpn_fact, "n! for integer n or Gamma(x+1) for fractional x"},
     // {cmd_keyword, "mant", &program::rpn_mant, "mantissa of a real number"},
@@ -77,6 +74,9 @@ program::keyword_t program::s_keywords[] = {
      "+inf\", \"toward -inf\", \"away from zero\"] round"},
     {cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default"},
     {cmd_keyword, "type", &program::rpn_type, "show type of stack first entry"},
+    {cmd_keyword, "hex", &program::rpn_hex, "hexadecimal representation"},
+    // {cmd_keyword, "dec", &program::rpn_dec, "decimal representation"},
+    // {cmd_keyword, "bin", &program::rpn_bin, "decimal representation"},
 
     // TESTS
     {cmd_undef, "", NULL, "\nTEST"},
@@ -237,16 +237,17 @@ ret_value program::run(rpnstack& stk, heap& hp) {
 
     // iterate commands
     for (int i = 0; (go_out == false) && (interrupt_now == false) && (i < (int)size());) {
-        switch ((cmd_type_t)(*this)[i]->_type) {
+        object* o = (*this)[i];
+        switch (o->_type) {
             // could be an auto-evaluated symbol
             case cmd_symbol:
-                auto_rcl((symbol*)(*this)[i]);
+                auto_rcl((symbol*)o);
                 i++;
                 break;
 
             // a keyword
             case cmd_keyword: {
-                keyword* k = (keyword*)(*this)[i];
+                keyword* k = (keyword*)o;
                 // call the matching function
                 (this->*(k->fn))();
                 switch (_err) {
@@ -270,13 +271,14 @@ ret_value program::run(rpnstack& stk, heap& hp) {
                         break;
                 }
                 i++;
+                delete o;
                 break;
             }
 
             // a branch keyword
             case cmd_branch: {
                 // call matching function
-                branch* b = (branch*)(*this)[i];
+                branch* b = (branch*)o;
                 int next_cmd = (this->*(b->fn))(*b);
                 switch (next_cmd) {
                     case -1:
@@ -291,13 +293,14 @@ ret_value program::run(rpnstack& stk, heap& hp) {
                         i = next_cmd;  // new direction
                         break;
                 }
+                delete o;
                 break;
             }
 
             default:
                 // not a command, but a stack entry, manage it
                 // copy the program stack entry to the running stack
-                stk.push_front((*this)[i]);
+                stk.push_front(o);
                 i++;
                 break;
         }

@@ -1,24 +1,41 @@
-## GENERAL
-default del 
+# GENERAL
 
-# version
-version
+`default del `
+
+## version
+
+`version`
+
 -> stack size should be 1
-del
 
-uname
+`del`
+
+## uname
+
+`uname`
+
 -> stack size should be 1
-del
 
-# default
-2 sci 1
+`del`
+
+## default
+
+`2 sci 1`
+
 -> stack should be 1.00e+00
-default
--> stack should be 1
-del
 
-# nop
-nop
+`default`
+
+-> stack should be 1
+
+`del`
+
+## nop
+
+`nop`
+
 -> stack size should be 0
+
 -> error should be 0
-del
+
+`del`

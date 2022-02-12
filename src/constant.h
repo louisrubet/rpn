@@ -79,8 +79,6 @@ typedef enum {
 
 // command types
 //
-#define CMD_TYPE_STRINGS \
-    { "undef", "number", "complex", "string", "symbol", "program", "keyword", "keyword" }
 
 // history
 #define HISTORY_FILE ".rpn_history"

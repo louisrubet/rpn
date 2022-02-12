@@ -5,36 +5,31 @@
 void program::rpn_plus() {
     MIN_ARGUMENTS(2);
 
-    // adding strings
-    if (_stack->at(0)->_type == cmd_string && _stack->at(1)->_type == cmd_string) {
-        ostring* right = (ostring*)_stack->pop_front();
-        ostring* left = (ostring*)_stack->front();
-        left->value += right->value;
+    // strings
+    if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
+        _stack->value<ostring>(1) += _stack->value<ostring>(0);
+        _stack->pop();
     }
-    // adding numbers
-    else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_front();
-        number* left = (number*)_stack->front();
-        left->value += right->value;
+    // numbers
+    else if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
+        _stack->value<number>(1) += _stack->value<number>(0);
+        _stack->pop();
     }
-    // adding complexes
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        ocomplex* right = (ocomplex*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->front();
-        left->value += right->value;
+    // complexes
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) += _stack->value<ocomplex>(0);
+        _stack->pop();
     }
-    // adding complex+number
-    else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value += right->value;
+    // complex+number
+    else if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) += _stack->value<number>(0);
+        _stack->pop();
     }
-    // adding number+complex
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
+    // number+complex
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value += right->value;
+        _stack->value<ocomplex>(1) += _stack->value<number>(0);
+        _stack->pop();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -44,30 +39,26 @@ void program::rpn_plus() {
 void program::rpn_minus() {
     MIN_ARGUMENTS(2);
 
-    // substracting numbers
-    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_front();
-        number* left = (number*)_stack->back();
-        left->value -= right->value;
+    // numbers
+    if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
+        _stack->value<number>(1) -= _stack->value<number>(0);
+        _stack->pop();
     }
-    // substracting complexes
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        ocomplex* right = (ocomplex*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value -= right->value;
+    // complexes
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) -= _stack->value<ocomplex>(0);
+        _stack->pop();
     }
-    // substracting complex-number
-    else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value -= right->value;
+    // subbing complex-number
+    else if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) -= _stack->value<number>(0);
+        _stack->pop();
     }
-    // substracting number-complex
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
+    // number-complex
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value -= right->value;
+        _stack->value<ocomplex>(1) = _stack->value<number>(0) - _stack->value<ocomplex>(1);
+        _stack->pop();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -77,30 +68,26 @@ void program::rpn_minus() {
 void program::rpn_mul() {
     MIN_ARGUMENTS(2);
 
-    // multiplying numbers
-    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_front();
-        number* left = (number*)_stack->back();
-        left->value *= right->value;
+    // mutiplying numbers
+    if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
+        _stack->value<number>(1) *= _stack->value<number>(0);
+        _stack->pop();
     }
-    // multiplying complexes
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        ocomplex* right = (ocomplex*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value *= right->value;
+    // mutiplying complexes
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) *= _stack->value<ocomplex>(0);
+        _stack->pop();
     }
-    // multiplying complex*number
-    else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value *= right->value;
+    // mutiplying complex*number
+    else if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) *= _stack->value<number>(0);
+        _stack->pop();
     }
-    // multiplying number*complex
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
+    // mutiplying number*complex
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value *= right->value;
+        _stack->value<ocomplex>(1) *= _stack->value<number>(0);
+        _stack->pop();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -111,29 +98,25 @@ void program::rpn_div() {
     MIN_ARGUMENTS(2);
 
     // dividing numbers
-    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        number* right = (number*)_stack->pop_front();
-        number* left = (number*)_stack->back();
-        left->value /= right->value;
+    if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
+        _stack->value<number>(1) /= _stack->value<number>(0);
+        _stack->pop();
     }
     // dividing complexes
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_front();
-        number* left = (number*)_stack->back();
-        left->value /= right->value;
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) /= _stack->value<ocomplex>(0);
+        _stack->pop();
     }
     // dividing complex/number
-    else if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_complex) {
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value /= right->value;
+    else if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) /= _stack->value<number>(0);
+        _stack->pop();
     }
     // dividing number/complex
-    else if (_stack->at(0)->_type == cmd_complex && _stack->at(1)->_type == cmd_number) {
+    else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_number) {
         rpn_swap();
-        number* right = (number*)_stack->pop_front();
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value /= right->value;
+        _stack->value<ocomplex>(1) = _stack->value<number>(0) / _stack->value<ocomplex>(1);
+        _stack->pop();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -143,13 +126,11 @@ void program::rpn_div() {
 void program::rpn_neg() {
     MIN_ARGUMENTS(1);
 
-    if (_stack->at(0)->_type == cmd_number) {
-        number* left = (number*)_stack->back();
-        left->value = -left->value;
-    } else if (_stack->at(0)->_type == cmd_complex) {
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value = -left->value;
-    } else
+    if (_stack->type(0) == cmd_number)
+        _stack->value<number>(0) = -_stack->value<number>(0);
+    else if (_stack->type(0) == cmd_complex)
+        _stack->value<ocomplex>(0) = -_stack->value<ocomplex>(0);
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -158,12 +139,80 @@ void program::rpn_neg() {
 void program::rpn_inv() {
     MIN_ARGUMENTS(1);
 
+    if (_stack->type(0) == cmd_number)
+        _stack->value<number>(0) = 1 / _stack->value<number>(0);
+    else if (_stack->type(0) == cmd_complex)
+        _stack->value<ocomplex>(0) = mpreal{1} / _stack->value<ocomplex>(0);
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+/// @brief power keyword implementation
+///
+void program::rpn_power() {
+    if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
+        _stack->value<number>(1) = pow(_stack->value<number>(1), _stack->value<number>(0));
+        _stack->pop();
+    } else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) = pow(_stack->value<ocomplex>(1), _stack->value<ocomplex>(0));
+        _stack->pop();
+    } else if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_complex) {
+        _stack->value<ocomplex>(1) = pow(_stack->value<ocomplex>(1), _stack->value<number>(0));
+        _stack->pop();
+    } else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_number) {
+        rpn_swap();
+        _stack->value<ocomplex>(1) = pow(_stack->value<number>(0), _stack->value<ocomplex>(1));
+        _stack->pop();
+    } else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+/// @brief sqrt keyword implementation
+///
+void program::rpn_squareroot() {
+    if (_stack->type(0) == cmd_number) {
+        if (_stack->value<number>(0) >= 0) {
+            _stack->value<number>(0) = rec_sqrt(_stack->value<number>(0));
+        } else {
+            // negative number -> square root is compl ex
+            _stack->push(new ocomplex);// TODO manage new errors
+            _stack->value<ocomplex>(0) = sqrt(_stack->value<number>(1));
+            _stack->pop_front(1);
+        }
+    } else if (_stack->type(0) == cmd_complex)
+        _stack->value<ocomplex>(0) = sqrt(_stack->value<ocomplex>(0));
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+/// @brief hex keyword implementation
+///
+void program::rpn_hex() {
+    MIN_ARGUMENTS(1);
+    if (_stack->type(0) == cmd_number)
+        _stack->obj<number>(0)->repr = number::hex;
+    else if (_stack->type(0) == cmd_complex)
+        _stack->obj<ocomplex>(0)->repr = number::hex;
+    else {
+        ERR_CONTEXT(ret_bad_operand_type);
+        return;
+    }
+    number::s_decimal_digits = 0;
+}
+
+#if 0
+
+/// @brief sq keyword implementation
+///
+void program::rpn_square() {
+    MIN_ARGUMENTS(1);
+
     if (_stack->at(0)->_type == cmd_number) {
         number* left = (number*)_stack->back();
-        left->value = 1 / left->value;
+        CHECK_MPFR(mpfr_sqr(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
     } else if (_stack->at(0)->_type == cmd_complex) {
-        ocomplex* left = (ocomplex*)_stack->back();
-        left->value = mpreal{1} / left->value;
+        rpn_dup();
+        rpn_mul();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -190,66 +239,6 @@ void program::rpn_purcentCH() {
     number* left = (number*)_stack->back();
     right->value *= 100;
     left->value /= right->value;
-}
-
-/// @brief power keyword implementation
-///
-void program::rpn_power() {
-    MIN_ARGUMENTS(2);
-    bool done_on_real = false;
-
-    if (_stack->at(0)->_type == cmd_number && _stack->at(1)->_type == cmd_number) {
-        ARG_MUST_BE_OF_TYPE(0, cmd_number);
-        number* right = (number*)_stack->pop_front();
-        number* left = (number*)_stack->back();
-        // TODO pow seems not to be a friend of mpreal
-        //left->value.mpfr_ptr = pow(right->value);
-        mpfr_pow(left->value.mpfr_ptr(), left->value.mpfr_ptr(), right->value.mpfr_ptr(), mpreal::get_default_rnd());
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
-    // TODO manage complex case
-}
-
-#if 0
-/// @brief sqrt keyword implementation
-///
-void program::rpn_squareroot() {
-    if (_stack->at(0)->_type == cmd_number) {
-        number* left = (number*)_stack->back();
-
-        if (left->value >= 0)
-            left->value = rec_sqrt(left->value);
-        else {
-            // negative number -> complex square root
-            _stack->push_front(new number);
-            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->value.mpfr, 0.0, mpreal::get_default_rnd()));
-            rpn_r2c();
-            _stack->push_front(new number);
-            CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->value.mpfr, 0.5, mpreal::get_default_rnd()));
-            rpn_power();
-        }
-    } else if (_stack->at(0)->_type == cmd_complex) {
-        // calc cplx^0.5
-        _stack->push_front(new number);
-        CHECK_MPFR(mpfr_set_d(((number*)_stack->back())->value.mpfr, 0.5, mpreal::get_default_rnd()));
-        rpn_power();
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
-}
-
-/// @brief sq keyword implementation
-///
-void program::rpn_square() {
-    MIN_ARGUMENTS(1);
-
-    if (_stack->at(0)->_type == cmd_number) {
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sqr(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
-    } else if (_stack->at(0)->_type == cmd_complex) {
-        rpn_dup();
-        rpn_mul();
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 /// @brief mod keyword implementation
@@ -299,21 +288,12 @@ void program::rpn_abs() {
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
-/// @brief hex keyword implementation
-///
-void program::rpn_hex() {
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ((number*)_stack->back())->_representation = number::hex;
-    number::s_decimal_digits = 0;
-}
-
 /// @brief bin keyword implementation
 ///
 void program::rpn_bin() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ((number*)_stack->back())->_representation = number::bin;
+    ((number*)_stack->back())->repr = number::bin;
 }
 
 /// @brief dec keyword implementation
@@ -321,7 +301,7 @@ void program::rpn_bin() {
 void program::rpn_dec() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ((number*)_stack->back())->_representation = number::dec;
+    ((number*)_stack->back())->repr = number::dec;
 }
 
 /// @brief base keyword implementation
@@ -334,7 +314,7 @@ void program::rpn_base() {
         mpfr_cmp_d(((number*)_stack->back())->value.mpfr, (double)BASE_MAX) <= 0) {
         int base = (int)mpfr_get_d(((number*)_stack->pop_front())->value.mpfr, mpreal::get_default_rnd());
         ((number*)_stack->at(0))->_base = base;
-        ((number*)_stack->at(0))->_representation = number::base;
+        ((number*)_stack->at(0))->repr = number::base;
     } else
         ERR_CONTEXT(ret_out_of_range);
 }
