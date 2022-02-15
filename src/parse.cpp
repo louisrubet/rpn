@@ -89,6 +89,8 @@ struct SynElement {
     string value;
     mpreal re;
     mpreal im;
+    int reBase;
+    int imBase;
     program_fn_t fn;
     bool operator==(SynElement& other) {
         return type == other.type && value == other.value && (re == other.re || (isnan(re) && isnan(other.re))) &&
@@ -172,42 +174,62 @@ static bool parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     return true;
 }
 
-static bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, mpreal& r, char delim = ' ') {
-    stringstream ss;
-    string token;
-    string input;
-    int base;
+static int getBase(string& entry, int idxStart, int& idxNumber) {
+    stringstream ss(entry.substr(idxStart, 2));
 
-    string baseStr = entry.substr(idx, 2);
+    string baseStr = entry.substr(idxStart, 2);
     if (baseStr == "0x" || baseStr == "0X") {
-        input = entry.substr(idx + 2);
-        base = 16;
+        idxNumber = 2;
+        return 16;
     } else if (baseStr == "0b") {
-        input = entry.substr(idx + 2);
-        base = 2;
-    } else {
-        input = entry.substr(idx);
-        base = 10;
+        idxNumber = 2;
+        return 2;
+    } else if (entry.size() >= idxStart + 2 && baseStr[1] == 'b') {
+        int base = stoi(baseStr.substr(0, 1));
+        if (base >= BASE_MIN && base <= BASE_MAX) {
+            idxNumber = 2;
+            return base;
+        }
     }
+    if (entry.size() >= idxStart + 3) {
+        baseStr = entry.substr(idxStart, 3);
+        if (isdigit(baseStr[0]) && isdigit(baseStr[1]) && baseStr[2] == 'b') {
+            int base = stoi(baseStr.substr(0, 2));
+            if (base >= BASE_MIN && base <= BASE_MAX) {
+                idxNumber = 3;
+                return base;
+            }
+        }
+    }
+    return 10;
+}
 
-    ss.str(input);
+static bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal& r, char delim = ' ') {
+    stringstream ss;
+    int idxNumber = 0;
+    string token;
+
+    base = getBase(entry, idx, idxNumber);
+
+    ss.str(entry.substr(idx + idxNumber));
     if (getline(ss, token, delim)) {
-        nextIdx = token.size() + idx + (base != 10 ? 2 : 0);
+        nextIdx = token.size() + idx + idxNumber;
         trim(token);
         if (mpfr_set_str(r.mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0)
             return true;
         else
             return false;
     }
-    nextIdx = token.size() + idx + (base != 10 ? 2 : 0);
+    nextIdx = token.size() + idx + idxNumber + 1;
     return false;
 }
 
 static bool parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                         vector<SynElement>& elements) {
     mpreal r;
-    if (getNumberAt(entry, idx, nextIdx, r)) {
-        elements.push_back({cmd_number, .re = r});
+    int base = 10;
+    if (getNumberAt(entry, idx, nextIdx, base, r)) {
+        elements.push_back({cmd_number, .re = r, .reBase = base});
         return true;
     } else {
         errors.push_back({entry.size(), "unterminated number"});
@@ -218,12 +240,13 @@ static bool parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynEr
 static bool parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                          vector<SynElement>& elements) {
     mpreal re, im;
+    int reBase, imBase = 10;
     if (idx + 1 == entry.size()) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
     }
-    if (!getNumberAt(entry, idx + 1, nextIdx, re, ',')) {
+    if (!getNumberAt(entry, idx + 1, nextIdx, reBase, re, ',')) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
@@ -237,12 +260,12 @@ static bool parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynE
         return true;  // complex format error, return a symbol
     }
 
-    if (!getNumberAt(entry, i + 1, nextIdx, im, ')')) {
+    if (!getNumberAt(entry, i + 1, nextIdx, imBase, im, ')')) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
     }
-    elements.push_back({cmd_complex, .re = re, .im = im});
+    elements.push_back({cmd_complex, .re = re, .im = im, .reBase = reBase, .imBase = imBase});
     nextIdx++;
     return true;
 }
@@ -324,10 +347,10 @@ static bool progFromElements(vector<SynElement>& elements, program& prog) {
     for (SynElement& element : elements) {
         switch (element.type) {
             case cmd_number:
-                prog.push_back(new number(element.re));
+                prog.push_back(new number(element.re, element.reBase));
                 break;
             case cmd_complex:
-                prog.push_back(new ocomplex(element.re, element.im));
+                prog.push_back(new ocomplex(element.re, element.im, element.reBase, element.imBase));
                 break;
             case cmd_string:
                 prog.push_back(new ostring(element.value));

@@ -40,7 +40,7 @@ void program::rpn_arg() {
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
 
     // calc atan2(x/y)
-    complex* cplx = (complex*)_stack->pop_front();
+    complex* cplx = (complex*)_stack->front();
     number* num = new number();
     _calc_stack.push_back(num);
 

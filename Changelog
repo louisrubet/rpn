@@ -1,0 +1,15 @@
+Changelog
+
+TODO
+- savoir si lorsque erreur il faut enlever ou pas l'argument en erreur de la stack
+  - normalement non, c'est bon?
+
+Compatibility is broken on these points
+- `<< <<` doesn't input as `<< << >> >>` but as `<< << >>`
+- `1 2+` not allowed anymore, keep `1 2 +`
+  - this correct bad behaviors like `3b114` giving `3b11` and `4`
+- complexes are written in the form `(1,2)` instead of `(1, 2)` (the space was removed)
+
+New
+- `« »` are valid as program delimiters. `<<` and `>>` are still valid
+- enhanced code quality and memory usage checks

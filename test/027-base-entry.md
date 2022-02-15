@@ -182,7 +182,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `3b114`
 
--> stack should be 3b11, 4
+-> stack should be '3b114'
 
 `del default`
 
@@ -190,7 +190,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `1b0`
 
--> stack should be 1, 'b0'
+-> stack should be '1b0'
 
 `del default`
 
@@ -206,7 +206,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `63b20`
 
--> stack should be 63, 'b20'
+-> stack should be '63b20'
 
 `del default`
 
@@ -214,7 +214,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `2b11001100 0b11001100 ==`
 
--> stack should be 2b1
+-> stack should be 1
 
 `del default`
 
@@ -222,7 +222,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `10b1234 1234 ==`
 
--> stack should be 10b1
+-> stack should be 1
 
 `del default`
 
@@ -230,7 +230,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `16b1234 0x1234 ==`
 
--> stack should be 16b1
+-> stack should be 1
 
 `del default`
 
@@ -275,6 +275,10 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 -> stack should be 1, 1, 1, 1
 
 `del default`
+
+## base on complexes
+
+-> stack should be TODO
 
 ## negative base numbers (1)
 
@@ -323,3 +327,33 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 -> stack should be nan, nan
 
 `del default`
+
+## complex base 16
+
+`(0x10,0x20)`
+
+-> stack should be (0x10,0x20)
+
+## complex base 16 (2)
+
+`del (16,32) hex`
+
+-> stack should be (0x10,0x20)
+
+## complex base 2
+
+`del (0b111,0b110)`
+
+-> stack should be (0b111,0b110)
+
+## complex base 2 (2)
+
+`del (7,6) bin`
+
+-> stack should be (0b111,0b110)
+
+## complex multiple bases re / im
+
+`del (0x10,0b111) dup dup hex swap dec`
+
+-> stack should be (0x10,0b111), (0x10,0x7), (16,7)

@@ -15,7 +15,7 @@ int program::rpn_if(branch& myobj) {
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
-    (void)_stack->pop_front();
+    _stack->pop_front();
     return -1;
 }
 
@@ -72,8 +72,8 @@ int program::rpn_end(branch& myobj) {
         ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
         // check arg
-        number* arg = (number*)_stack->pop_front();
-        if (arg->value == 0) ret = myobj.arg1;
+        if (_stack->value<number>(0) == 0) ret = myobj.arg1;
+        _stack->pop();
     }
     // arg2 = index of while+1 in case of while..repeat..end
     else if (myobj.arg2 != -1)
@@ -120,12 +120,12 @@ void program::rpn_ift(void) {
 
     if (testee->value != 0) {
         CHECK_MPFR(rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack));
-        (void)_stack->pop_front(2);
+        _stack->pop_front(2);
 
         CHECK_MPFR(rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack));
-        (void)_calc_stack.pop_front();
+        _calc_stack.pop_front();
     } else
-        (void)_stack->pop_front(2);
+        _stack->pop_front(2);
 }
 
 /// @brief ifte keyword (branch) implementation
@@ -150,7 +150,7 @@ void program::rpn_ifte(void) {
     (void)_stack->pop_front(3);
 
     CHECK_MPFR(rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack));
-    (void)_calc_stack.pop_front();
+    _calc_stack.pop_front();
 }
 
 /// @brief while keyword (branch) implementation
@@ -178,8 +178,8 @@ int program::rpn_repeat(branch& myobj) {
 
     // check arg
     // myobj.arg1 is end+1
-    number* arg = (number*)_stack->pop_front();
-    if (arg->value == 0) ret = myobj.arg1;
+    if (_stack->value<number>(0) == 0) ret = myobj.arg1;
+    _stack->pop();
 
     return ret;
 }
@@ -313,10 +313,10 @@ int program::rpn_step(branch& myobj) {
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    number* step = (number*)_stack->pop_front();
+    mpreal step = _stack->value<number>(0);
 
     // end of loop if step is negative or zero
-    if (step->value <= 0)
+    if (step.toLong() <= 0)
         ret = -1;
     else {
         // arg1 = index of start or for command in program
@@ -329,7 +329,8 @@ int program::rpn_step(branch& myobj) {
 
         // increment then test
         // carefull: round toward minus infinity to avoid missing last boundary (because growing step)
-        mpfr_add(myobj.farg1->value.mpfr_ptr(), myobj.farg1->value.mpfr_ptr(), step->value.mpfr_ptr(), MPFR_RNDD);
+        myobj.farg1->value+=step.mpfr_ptr();
+        mpfr_add(myobj.farg1->value.mpfr_ptr(), myobj.farg1->value.mpfr_ptr(), step.mpfr_ptr(), MPFR_RNDD);
 
         // for command: increment symbol too
         if (start_or_for->arg1 != -1) {

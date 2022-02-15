@@ -5,21 +5,21 @@
 void program::rpn_swap(void) {
     MIN_ARGUMENTS(2);
     rpnstack::copy_and_push_front(*_stack, 1, *_stack);
-    (void)_stack->del(2);
+    _stack->erase(2);
 }
 
 /// @brief drop keyword implementation
 ///
 void program::rpn_drop(void) {
     MIN_ARGUMENTS(1);
-    (void)_stack->pop_front();
+    _stack->pop_front();
 }
 
 /// @brief drop2 keyword implementation
 ///
 void program::rpn_drop2(void) {
     MIN_ARGUMENTS(2);
-    (void)_stack->pop_front(2);
+    _stack->pop_front(2);
 }
 
 /// @brief dropn keyword implementation
@@ -28,15 +28,14 @@ void program::rpn_dropn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)((number*)_stack->front())->value.toLong();
+    int args = (int)_stack->value<number>(0).toLong();
     MIN_ARGUMENTS(args + 1);
-
-    _stack->del(0, args);
+    _stack->erase(0, args + 1);
 }
 
 /// @brief erase / del keyword implementation
 ///
-void program::rpn_erase(void) { (void)_stack->del(0, _stack->size() - 1); }
+void program::rpn_erase(void) { _stack->erase(0, _stack->size()); }
 
 /// @brief dup keyword implementation
 ///
@@ -72,7 +71,8 @@ void program::rpn_pick(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    unsigned int to_pick = (unsigned int)int(((number*)_stack->pop_front())->value);
+    unsigned int to_pick = (unsigned int)_stack->value<number>(0);
+    _stack->pop();
 
     // treat stack depth errors
     if ((to_pick == 0) || (to_pick > _stack->size())) {
@@ -114,7 +114,7 @@ void program::rpn_roll(void) {
 
     for (int i = 0; i < args; i++) {
         rpnstack::copy_and_push_front(*_stack, 0, _calc_stack);
-        (void)_stack->pop_front();
+        _stack->pop_front();
     }
 
     for (int i = 1; i < args; i++) rpnstack::copy_and_push_front(_calc_stack, args - 1 - i, *_stack);
@@ -135,7 +135,7 @@ void program::rpn_rolld(void) {
 
     for (int i = 0; i < args; i++) {
         rpnstack::copy_and_push_front(*_stack, 0, _calc_stack);
-        (void)_stack->pop_front();
+        _stack->pop_front();
     }
 
     rpnstack::copy_and_push_front(_calc_stack, args - 1, *_stack);
