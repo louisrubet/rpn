@@ -6,9 +6,8 @@ void program::rpn_sto(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    string name(((symbol*)_stack->pop_front())->value);
-    (*_heap)[name] = _stack->at(0);
-    (void)_stack->pop_front();
+    (*_heap)[_stack->value<ostring>(0)] = _stack->at(1);
+    _stack->pop_front(2);
 }
 
 /// @brief sto+ keyword implementation
@@ -201,8 +200,10 @@ void program::rpn_edit(void) {
     MIN_ARGUMENTS(1);
 
     ostringstream st;
+
     // re-write stack objet in a stream
-    ((object*)_stack->pop_front())->show(st);
+    _stack->at(1)->show(st);
+    _stack->pop();
 
     // set it as the linenoise line entry
     linenoisePreloadBuffer((const char*)st.str().c_str());
@@ -233,8 +234,9 @@ void program::rpn_purge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    string name(((symbol*)_stack->pop_front())->value);
-    if (!_heap->erase(name)) ERR_CONTEXT(ret_unknown_variable);
+    //if (_heap->erase(_stack->value<string>(0)) == 0)
+    //    ERR_CONTEXT(ret_unknown_variable);
+    _stack->pop();
 }
 
 /// @brief vars keyword implementation

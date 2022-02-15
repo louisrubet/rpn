@@ -10,17 +10,19 @@ using namespace mpfr;
 #include <ostream>
 using namespace std;
 
+#include "mpreal-out.hpp"
+
 // definitions for objects
 ///
 typedef enum {
     cmd_undef,
-    cmd_number,  // floating point number
-    cmd_complex, // complex, couple of floating point numbers
-    cmd_string,  // string like "string"
-    cmd_symbol,  // symbol like 'symbol'
-    cmd_program, // program like << instructions >>
-    cmd_keyword, // langage keyword
-    cmd_branch,  // langage branch keyword
+    cmd_number,   // floating point number
+    cmd_complex,  // complex, couple of floating point numbers
+    cmd_string,   // string like "string"
+    cmd_symbol,   // symbol like 'symbol'
+    cmd_program,  // program like << instructions >>
+    cmd_keyword,  // langage keyword
+    cmd_branch,   // langage branch keyword
     cmd_max
 } cmd_type_t;
 
@@ -38,96 +40,85 @@ struct object {
     cmd_type_t _type;
     virtual object* clone() {
         object* o = new object();
-        if (o != nullptr)
-            *o = *this;
+        if (o != nullptr) *o = *this;
         return o;
     }
 
     virtual string name() { return string("object"); }
-    virtual void show(ostream& out) { out << "(" << name() << " - unknown representation)"; }
+    virtual ostream& show(ostream& out) {
+        out << "(" << name() << " - unknown representation)";
+        return out;
+    }
+    friend ostream& operator<<(ostream& os, object* o) { return o->show(os); }
+
     unsigned int size() { return sizeof(*this); }
 };
 
 /// @brief stack objects derived from object
 ///
 struct number : object {
-    typedef enum { dec, hex, bin, base } repr_enum;
-    number(repr_enum repr_ = dec, int base_ = 10) : object(cmd_number), repr(repr_), _base(base_) {}
-    number(mpreal& value_, repr_enum repr_ = dec, int base_ = 10) : number(repr_, base_) { value = value_; }
-    number(long value_, repr_enum repr_ = dec, int base_ = 10) : number(repr_, base_) { value = value_; }
-    number(unsigned long value_, repr_enum repr_ = dec, int base_ = 10) : number(repr_, base_) { value = value_; }
-    number(double value_, repr_enum repr_ = dec, int base_ = 10) : number(repr_, base_) { value = value_; }
+    number() : object(cmd_number), base(10) {}
+    number(mpreal& value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
+    number(long value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
 
-    repr_enum repr;
-    int _base; // carefull: _base is used only if repr = base
+    int base;
     mpreal value;
 
-    virtual object* clone() { return new number(this->value, repr, _base); }
+    virtual object* clone() { return new number(this->value, base); }
     virtual string name() { return string("number"); }
-    virtual void show(ostream& out) {
-        switch (number::s_mode) {
-        case number::std: // std + precision + base
-            out << value;
-            break;
-        case number::fix: // fixed + precision + base
-            out << fixed << setprecision(s_decimal_digits) << value;
-            break;
-        case number::sci: // sci + precision
-            out << scientific << setprecision(s_decimal_digits) << value;
-            break;
-        default:
-            object::show(out);
-            break;
-        }
-    }
+    virtual ostream& show(ostream& out) { return showValue(out, value, s_mode, s_digits, base); }
 
     // representation mode
     typedef enum { std, fix, sci } mode_enum;
     static mode_enum s_mode;
 
     // precision
-    static int s_decimal_digits;
+    static int s_digits;
+
+    // clang-format off
+    static string _makeNumberFormat(mode_enum mode, int digits) {
+        stringstream format;
+        format<<"%."<<digits;
+        switch(mode) {
+            case std: format<<"R*g"; break;
+            case fix: format<<"R*f"; break;
+            case sci: format<<"R*e"; break;
+        }
+        return format.str();
+    }
+    // clang-format on
+
+    static ostream& showValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
+        if (base == 10)
+            return mpreal_output10base(out, _makeNumberFormat(s_mode, s_digits), value);
+        else
+            return mpreal_outputNbase(out, base, value);
+    }
 };
 
 /// @brief stack objects derived from object
 ///
 struct ocomplex : object {
-    ocomplex(number::repr_enum repr_ = number::dec, int base_ = 10) : object(cmd_complex), repr(repr_), _base(base_) {}
-    ocomplex(complex<mpreal>& value_, number::repr_enum repr_ = number::dec, int base_ = 10) : ocomplex(repr_, base_) {
+    ocomplex() : object(cmd_complex), reBase(10), imBase(10) {}
+    ocomplex(complex<mpreal>& value_, int reb = 10, int imb = 10) : object(cmd_complex), reBase(reb), imBase(imb) {
         value = value_;
     }
-    ocomplex(mpreal& re_, mpreal& im_, number::repr_enum repr_ = number::dec, int base_ = 10) : ocomplex(repr_, base_) {
+    ocomplex(mpreal& re_, mpreal& im_, int reb = 10, int imb = 10) : object(cmd_complex), reBase(reb), imBase(imb) {
         value.real(re_);
         value.imag(im_);
     }
 
-    number::repr_enum repr;
-    int _base;
+    int reBase, imBase;
     complex<mpreal> value;
 
-    virtual object* clone() { return new ocomplex(this->value, repr, _base); }
+    virtual object* clone() { return new ocomplex(this->value, reBase, imBase); }
     virtual string name() { return string("complex"); }
-    virtual void show(ostream& out) {
-        if (repr != number::dec) {
-            object::show(out);
-            return;
-        }
-        switch (number::s_mode) {
-        case number::std:
-            out.unsetf(ios::floatfield);
-            out << setprecision(number::s_decimal_digits) << "(" << value.real() << "," << value.imag() << ")";
-            break;
-        case number::fix:
-            out << fixed << setprecision(number::s_decimal_digits) << "(" << value.real() << "," << value.imag() << ")";
-            break;
-        case number::sci:
-            out << scientific << setprecision(number::s_decimal_digits) << "(" << value.real() << "," << value.imag()
-                << ")";
-            break;
-        default:
-            object::show(out);
-            break;
-        }
+    virtual ostream& show(ostream& out) {
+        out << '(';
+        number::showValue(out, value.real(), number::s_mode, number::s_digits, reBase);
+        out << ',';
+        number::showValue(out, value.imag(), number::s_mode, number::s_digits, imBase);
+        return out << ')';
     }
 };
 
@@ -135,11 +126,13 @@ struct ocomplex : object {
 ///
 struct ostring : object {
     ostring() : object(cmd_string) {}
-    ostring(const string& value_) : object(cmd_string) { set(value_); }
+    ostring(const string& value_) : object(cmd_string), value(value_) {}
     ostring(const char* value_) : object(cmd_string) { value = string(value_); }
-    void set(const string& value_) { value = value_; }
     virtual string name() { return string("string"); }
-    virtual void show(ostream& out) { out << "\"" << value << "\""; }
+    virtual ostream& show(ostream& out) {
+        out << "\"" << value << "\"";
+        return out;
+    }
     string value;
 };
 
@@ -150,7 +143,10 @@ struct oprogram : object {
     oprogram(const string& value_) : object(cmd_program) { set(value_); }
     void set(const string& value_) { value = value_; }
     virtual string name() { return string("program"); }
-    virtual void show(ostream& out) { out << "«" << value << "»"; }
+    virtual ostream& show(ostream& out) {
+        out << "«" << value << "»";
+        return out;
+    }
     string value;
 };
 
@@ -168,7 +164,10 @@ struct symbol : object {
         auto_eval = auto_eval_;
     }
     virtual string name() { return string("symbol"); }
-    virtual void show(ostream& out) { out << "'" << value << "'"; }
+    virtual ostream& show(ostream& out) {
+        out << "'" << value << "'";
+        return out;
+    }
     bool auto_eval;
     string value;
 };
