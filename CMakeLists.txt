@@ -53,6 +53,7 @@ add_executable(
   rpn
   ${PROJECT_SOURCE_DIR}/src/main.cpp
   ${PROJECT_SOURCE_DIR}/src/object.cpp
+  ${PROJECT_SOURCE_DIR}/src/mpreal-out.cpp
   ${PROJECT_SOURCE_DIR}/src/program.cpp
   ${PROJECT_SOURCE_DIR}/src/parse.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-branch.cpp

@@ -13,7 +13,8 @@ void program::rpn_instr() {
         // write the object in stack(0) in a string and remove this obj
         FILE* tmp = tmpfile();
         if (tmp != NULL) {
-            ((object*)_stack->pop_front())->show(tmp);
+            _stack->front()->show(tmp);
+            _stack->pop();
 
             // reserve the correct size on stack
             unsigned int str_size = (unsigned int)ftell(tmp);

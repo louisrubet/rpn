@@ -55,7 +55,7 @@ void program::rpn_help() {
     }
 
     // bits precision, decimal digits and rounding mode
-    cout << " with " << number::s_decimal_digits << " digits after the decimal point" << endl;
+    cout << " with " << number::s_digits << " digits after the decimal point" << endl;
     cout << "Current floating point precision is " << (int)mpreal::get_default_prec() << " bits" << endl;
     struct RndStrings {
         string name;
@@ -100,7 +100,7 @@ void program::rpn_std() {
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::std;
-        number::s_decimal_digits = (int)digits;
+        number::s_digits = (int)digits;
         _stack->pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
@@ -117,7 +117,7 @@ void program::rpn_fix() {
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::fix;
-        number::s_decimal_digits = (int)digits;
+        number::s_digits = (int)digits;
         _stack->pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
@@ -134,7 +134,7 @@ void program::rpn_sci() {
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::sci;
-        number::s_decimal_digits = (int)digits;
+        number::s_digits = (int)digits;
         _stack->pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
@@ -166,7 +166,7 @@ void program::rpn_history() {
 void program::rpn_type() {
     MIN_ARGUMENTS(1);
     _stack->push(new ostring(_stack->at(0)->name()));
-    _stack->del(1);
+    _stack->erase(1);
 }
 
 /// @brief default keyword implementation
@@ -187,7 +187,7 @@ void program::rpn_precision() {
         // modify digits seen by user if std mode
         if (number::s_mode == number::std) {
             // calc max nb of digits user can see with the current bit precision
-            number::s_decimal_digits = bits2digits(mpreal::get_default_prec());
+            number::s_digits = bits2digits(mpreal::get_default_prec());
         }
         _stack->pop();
     } else

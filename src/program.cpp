@@ -34,7 +34,6 @@ program::keyword_t program::s_keywords[] = {
     // {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
     // {cmd_keyword, "sqr", &program::rpn_square, ""},
     // {cmd_keyword, "abs", &program::rpn_abs, "absolute value"},
-    // {cmd_keyword, "base", &program::rpn_base, "arbitrary base representation"},
     // {cmd_keyword, "sign", &program::rpn_sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0"},
 
     // OPERATIONS ON REALS
@@ -74,9 +73,10 @@ program::keyword_t program::s_keywords[] = {
      "+inf\", \"toward -inf\", \"away from zero\"] round"},
     {cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default"},
     {cmd_keyword, "type", &program::rpn_type, "show type of stack first entry"},
-    {cmd_keyword, "hex", &program::rpn_hex, "hexadecimal representation"},
-    // {cmd_keyword, "dec", &program::rpn_dec, "decimal representation"},
-    // {cmd_keyword, "bin", &program::rpn_bin, "decimal representation"},
+    {cmd_keyword, "hex", &program::rpn_hex, "hexadecimal representation, applies on stack level 0 only"},
+    {cmd_keyword, "dec", &program::rpn_dec, "decimal representation, applies on stack level 0 only"},
+    {cmd_keyword, "bin", &program::rpn_bin, "binary representation, applies on stack level 0 only"},
+    {cmd_keyword, "base", &program::rpn_base, "arbitrary base representation, applies on stack level 0 only"},
 
     // TESTS
     {cmd_undef, "", NULL, "\nTEST"},
@@ -638,15 +638,9 @@ ret_value program::get_err(void) { return _err; }
 /// @param show_separator whether to show a stack level prefix or not
 ///
 void program::show_stack(rpnstack& st, bool show_separator) {
-    if (st.size() == 1) {
-        st.front()->show(cout);
-        cout << endl;
-    } else {
-        for (int i = st.size() - 1; i >= 0; i--) {
-            if (show_separator) cout << i + 1 << SHOW_STACK_SEPARATOR;
-            st[i]->show(cout);
-            cout << endl;
-        }
+    for (int i = st.size() - 1; i >= 0; i--) {
+        if (show_separator) cout << i + 1 << SHOW_STACK_SEPARATOR;
+        cout << st[i] << endl;
     }
 }
 
@@ -655,6 +649,6 @@ void program::show_stack(rpnstack& st, bool show_separator) {
 void program::apply_default() {
     // default float precision, float mode
     number::s_mode = DEFAULT_MODE;
-    number::s_decimal_digits = DEFAULT_DECIMAL_DIGITS;
+    number::s_digits = DEFAULT_DECIMAL_DIGITS;
     mpreal::set_default_prec(MPFR_DEFAULT_PREC_BITS);
 }

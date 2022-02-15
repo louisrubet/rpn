@@ -175,7 +175,7 @@ void program::rpn_squareroot() {
             _stack->value<number>(0) = rec_sqrt(_stack->value<number>(0));
         } else {
             // negative number -> square root is compl ex
-            _stack->push(new ocomplex);// TODO manage new errors
+            _stack->push(new ocomplex);  // TODO manage new errors
             _stack->value<ocomplex>(0) = sqrt(_stack->value<number>(1));
             _stack->pop_front(1);
         }
@@ -190,14 +190,60 @@ void program::rpn_squareroot() {
 void program::rpn_hex() {
     MIN_ARGUMENTS(1);
     if (_stack->type(0) == cmd_number)
-        _stack->obj<number>(0)->repr = number::hex;
-    else if (_stack->type(0) == cmd_complex)
-        _stack->obj<ocomplex>(0)->repr = number::hex;
-    else {
+        _stack->obj<number>(0)->base = 16;
+    else if (_stack->type(0) == cmd_complex) {
+        _stack->obj<ocomplex>(0)->reBase = 16;
+        _stack->obj<ocomplex>(0)->imBase = 16;
+    } else
         ERR_CONTEXT(ret_bad_operand_type);
-        return;
-    }
-    number::s_decimal_digits = 0;
+}
+
+/// @brief bin keyword implementation
+///
+void program::rpn_bin() {
+    MIN_ARGUMENTS(1);
+    if (_stack->type(0) == cmd_number)
+        _stack->obj<number>(0)->base = 2;
+    else if (_stack->type(0) == cmd_complex) {
+        _stack->obj<ocomplex>(0)->reBase = 2;
+        _stack->obj<ocomplex>(0)->imBase = 2;
+    } else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+/// @brief dec keyword implementation
+///
+void program::rpn_dec() {
+    MIN_ARGUMENTS(1);
+    if (_stack->type(0) == cmd_number)
+        _stack->obj<number>(0)->base = 10;
+    else if (_stack->type(0) == cmd_complex) {
+        _stack->obj<ocomplex>(0)->reBase = 10;
+        _stack->obj<ocomplex>(0)->imBase = 10;
+    } else
+        ERR_CONTEXT(ret_bad_operand_type);
+}
+
+/// @brief base keyword implementation
+///
+void program::rpn_base() {
+    MIN_ARGUMENTS(2);
+
+    if (_stack->type(1) == cmd_number || _stack->type(1) == cmd_complex) {
+        int base = (int)_stack->value<number>(0).toLong();
+        _stack->pop();
+        if (base >= BASE_MIN && base <= BASE_MAX) {
+            if (_stack->type(0) == cmd_number)
+                _stack->obj<number>(0)->base = base;
+            else {
+                _stack->obj<ocomplex>(0)->reBase = base;
+                _stack->obj<ocomplex>(0)->imBase = base;
+            }
+        }
+        else
+            ERR_CONTEXT(ret_out_of_range);
+    } else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 #if 0
@@ -286,37 +332,6 @@ void program::rpn_abs() {
         _calc_stack.pop_front();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
-}
-
-/// @brief bin keyword implementation
-///
-void program::rpn_bin() {
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ((number*)_stack->back())->repr = number::bin;
-}
-
-/// @brief dec keyword implementation
-///
-void program::rpn_dec() {
-    MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ((number*)_stack->back())->repr = number::dec;
-}
-
-/// @brief base keyword implementation
-///
-void program::rpn_base() {
-    MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    if (mpfr_cmp_d(((number*)_stack->back())->value.mpfr, (double)BASE_MIN) >= 0 &&
-        mpfr_cmp_d(((number*)_stack->back())->value.mpfr, (double)BASE_MAX) <= 0) {
-        int base = (int)mpfr_get_d(((number*)_stack->pop_front())->value.mpfr, mpreal::get_default_rnd());
-        ((number*)_stack->at(0))->_base = base;
-        ((number*)_stack->at(0))->repr = number::base;
-    } else
-        ERR_CONTEXT(ret_out_of_range);
 }
 
 /// @brief fact (factorial) keyword implementation

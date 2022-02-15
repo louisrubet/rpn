@@ -17,7 +17,7 @@ class rpnstack : public deque<object*> {
     rpnstack() {}
     virtual ~rpnstack() {
         for_each(begin(), end(), [](object* o) { delete o; });
-        erase(begin(), end());
+        deque::erase(begin(), end());
     }
 
     /// @brief copy a whole stack entry and push it back to another stack
@@ -29,8 +29,7 @@ class rpnstack : public deque<object*> {
     static void copy_and_push_front(rpnstack& from, unsigned int index_from, rpnstack& to) {
         // carefull: caller must ensure that index_from is correct
         auto newObj = from[index_from]->clone();
-        if (newObj != nullptr)
-            to.push_front(newObj);
+        if (newObj != nullptr) to.push_front(newObj);
     }
 
     /// @brief erase a stack entry from it index
@@ -38,36 +37,18 @@ class rpnstack : public deque<object*> {
     /// @param first index to start
     /// @param last index to stop
     ///
-    void del(int first = 0, int last = -1) {
-        if (size() > 0) {
-            if (last == -1)
-                erase(begin() + first);
-            else if (last >= first)
-                erase(begin() + first, begin() + last + 1);  // carefull, deque::erase doesn't include the last element
-        }
+    void erase(size_t first = 0, size_t nb = 1) {
+        size_t last = std::min(first + nb, size());
+        for_each(begin() + first, begin() + last, [](object* o) { delete o; });
+        deque::erase(begin() + first, begin() + last);
     }
 
     /// @brief pop front several entries
     ///
     /// @param levels nb of entries
     ///
-    void pop_front(int levels, bool del = true) {
-        for (int i = 0; i < levels; i++) {
-            if (del)
-                delete deque::front();
-            deque::pop_front();
-        }
-    }
-
-    /// @brief pop front 1 entry
-    ///
-    /// @return retrieved object
-    ///
-    object* pop_front() {
-        object* o = front();
-        pop_front(1);
-        return o;
-    }
+    void pop_front(size_t levels = 1) { erase(0, levels); }
+    void pop() { erase(); }
 
     // access helpers
     cmd_type_t type(int level) {
@@ -75,23 +56,19 @@ class rpnstack : public deque<object*> {
         return at(level)->_type;
     }
 
-    template<class objectType> auto obj(int level) {
+    template <class objectType>
+    auto obj(int level) {
         // carefull: caller must ensure that level is correct
         return static_cast<objectType*>(at(level));
     }
 
-    template<class objectType> auto& value(int level) {
+    template <class objectType>
+    auto& value(int level) {
         // carefull: caller must ensure that level is correct
         return static_cast<objectType*>(at(level))->value;
     }
 
-    void pop() {
-        (void)rpnstack::pop_front(1);
-    }
-
-    void push(object* o) {
-        deque<object*>::push_front(o);
-    }
+    void push(object* o) { deque<object*>::push_front(o); }
 };
 
 /// @brief heap object, storing variables (=named object)
