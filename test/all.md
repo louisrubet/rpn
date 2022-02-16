@@ -10,7 +10,7 @@
 @include 025-parse-other.md
 @include 026-parse-program.md
 @include 027-base-entry.md
-# @include 030-branch.md
+@include 030-branch.md
 # @include 040-stack.md
 # @include 050-real.md
 # @include 060-string.md

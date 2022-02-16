@@ -64,7 +64,7 @@ struct number : object {
     int base;
     mpreal value;
 
-    virtual object* clone() { return new number(this->value, base); }
+    virtual object* clone() { return new number(value, base); }
     virtual string name() { return string("number"); }
     virtual ostream& show(ostream& out) { return showValue(out, value, s_mode, s_digits, base); }
 
@@ -111,7 +111,7 @@ struct ocomplex : object {
     int reBase, imBase;
     complex<mpreal> value;
 
-    virtual object* clone() { return new ocomplex(this->value, reBase, imBase); }
+    virtual object* clone() { return new ocomplex(value, reBase, imBase); }
     virtual string name() { return string("complex"); }
     virtual ostream& show(ostream& out) {
         out << '(';
@@ -128,6 +128,7 @@ struct ostring : object {
     ostring() : object(cmd_string) {}
     ostring(const string& value_) : object(cmd_string), value(value_) {}
     ostring(const char* value_) : object(cmd_string) { value = string(value_); }
+    virtual object* clone() { return new ostring(value); }
     virtual string name() { return string("string"); }
     virtual ostream& show(ostream& out) {
         out << "\"" << value << "\"";
@@ -140,8 +141,8 @@ struct ostring : object {
 ///
 struct oprogram : object {
     oprogram() : object(cmd_program) {}
-    oprogram(const string& value_) : object(cmd_program) { set(value_); }
-    void set(const string& value_) { value = value_; }
+    oprogram(const string& value_) : object(cmd_program), value(value_) {}
+    virtual object* clone() { return new oprogram(value); }
     virtual string name() { return string("program"); }
     virtual ostream& show(ostream& out) {
         out << "«" << value << "»";
@@ -153,22 +154,15 @@ struct oprogram : object {
 /// @brief object symbol
 ///
 struct symbol : object {
-    symbol(bool auto_eval_ = true) : object(cmd_symbol), auto_eval(auto_eval_) {}
-    symbol(const string& value_, bool auto_eval_ = true) : object(cmd_symbol) { set(value_, auto_eval_); }
-    void set(string& value_, bool auto_eval_) {
-        value = value_;
-        auto_eval = auto_eval_;
-    }
-    void set(const string& value_, bool auto_eval_) {
-        value = value_;
-        auto_eval = auto_eval_;
-    }
+    symbol(bool autoEval_ = true) : object(cmd_symbol), autoEval(autoEval_) {}
+    symbol(const string& value_, bool autoEval_ = true) : object(cmd_symbol), value(value_), autoEval(autoEval_) {}
+    virtual object* clone() { return new symbol(value, autoEval); }
     virtual string name() { return string("symbol"); }
     virtual ostream& show(ostream& out) {
         out << "'" << value << "'";
         return out;
     }
-    bool auto_eval;
+    bool autoEval;
     string value;
 };
 
@@ -176,11 +170,8 @@ struct symbol : object {
 ///
 struct keyword : object {
     keyword() : object(cmd_keyword) {}
-    keyword(program_fn_t fn_, const string& value_) : object(cmd_keyword) { set(fn_, value_); }
-    void set(program_fn_t fn_, const string& value_) {
-        fn = fn_;
-        value = value_;
-    }
+    keyword(program_fn_t fn_, const string& value_) : object(cmd_keyword), fn(fn_), value(value_) {}
+    virtual object* clone() { return new keyword(fn, value); }
     virtual string name() { return string("keyword"); }
     program_fn_t fn;
     string value;
@@ -190,22 +181,27 @@ struct keyword : object {
 ///
 struct branch : object {
     branch() : object(cmd_branch) {}
-    branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) { set(fn_, value_); }
-    virtual string name() { return string("branch"); }
-    //
-    void set(branch_fn_t fn_, const string& value_) {
+    branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) {
         fn = fn_;
         arg1 = -1;
         arg2 = -1;
         arg3 = -1;
-        farg1 = NULL;
-        farg2 = NULL;
         arg_bool = 0;
         value = value_;
     }
+    branch(branch& other) : object(cmd_branch) {
+        fn = other.fn;
+        arg1 = other.arg1;
+        arg2 = other.arg2;
+        arg3 = other.arg3;
+        arg_bool = other.arg_bool;
+        value = other.value;
+    }
+    virtual object* clone() { return new branch(*this); }
+    virtual string name() { return string("branch"); }
     branch_fn_t fn;
     int arg1, arg2, arg3;
-    number *farg1, *farg2;
+    mpreal firstIndex, lastIndex;
     bool arg_bool;
     string value;
 };
