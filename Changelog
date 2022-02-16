@@ -19,3 +19,4 @@ Compatibility is broken on these points
 New
 - `« »` are valid as program delimiters. `<<` and `>>` are still valid
 - enhanced code quality and memory usage checks
+- some bugs (dupn, roll, rolld wrongly leaving the front arg in case of error)
