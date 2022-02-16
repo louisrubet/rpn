@@ -69,7 +69,7 @@
 
 `0 if then`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -77,7 +77,7 @@
 
 `0 if end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -85,7 +85,7 @@
 
 `0 if end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -93,7 +93,7 @@
 
 `then`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -101,7 +101,7 @@
 
 `1 if`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -109,7 +109,7 @@
 
 `else`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -118,7 +118,7 @@
 
 `end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -252,11 +252,51 @@
 
 `del`
 
+## start next - cloning objects (1)
+
+`1 2 start 'ok' next`
+
+-> stack should be 'ok', 'ok'
+
+`del`
+
+## start next - cloning objects (2)
+
+`1 2 start ok next`
+
+-> stack should be 'ok', 'ok'
+
+`del`
+
+## start next - cloning objects (3)
+
+`1 2 start "ok" next`
+
+-> stack should be "ok", "ok"
+
+`del`
+
+## start next - cloning objects (4)
+
+`1 2 start (1,2) next`
+
+-> stack should be (1,2), (1,2)
+
+`del`
+
+## start next - cloning objects (5)
+
+`1 2 start «ok» next`
+
+-> stack should be «ok», «ok»
+
+`del`
+
 ## start next - error case (1)
 
 `1 start next`
 
-->error should be 2
+-> error should be 2
 
 `del`
 
@@ -264,7 +304,7 @@
 
 `start next`
 
-->error should be 2
+-> error should be 2
 
 `del`
 
@@ -272,7 +312,7 @@
 
 `start`
 
-->error should be 11
+-> error should be 12
 
 `del`
 
@@ -280,7 +320,7 @@
 
 `next`
 
-->error should be 11
+-> error should be 12
 
 `del`
 
@@ -288,15 +328,15 @@
 
 `"1" 2 start next`
 
-->error should be 3
+-> error should be 3
 
 `del`
 
-## start next - error case (5)
+## start next - error case (6)
 
 `1 "2" start next`
 
-->error should be 3
+-> error should be 3
 
 `del`
 
@@ -340,6 +380,14 @@
 
 `del`
 
+## for next - loop variable overwrite
+
+`123 'i' sto 1 2 for i i next`
+
+-> stack should be 1, 2
+
+`del`
+
 ## for next - error case (1)
 
 `1 for i i next`
@@ -376,7 +424,7 @@
 
 `1 2 for i i`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -384,7 +432,7 @@
 
 `for`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -456,103 +504,95 @@
 
 `step`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
-## do..unti (1)
+## do..until (1)
 
-`do 'ok' unti 1 end`
+`do 'ok' until 1 end`
 
 -> stack should be 'ok'
 
 `del`
 
-## do..unti (2)
+## do..until (2)
 
-`do unti 1 end`
+`do until 1 end`
 
 -> stack size should be 0
 
 `del`
 
-## do..unti (3)
+## do..until (3)
 
-`1 'a' sto do a unti a 0 > end`
+`3 do 1 - 'ok' swap dup until 0 == end drop`
 
--> stack should be 1
-
-`del`
-
-## do..unti (4)
-
-`1 'a' sto do a 'a' 1 sto+ unti a 3 > end`
-
--> stack should be 1, 2, 3
+-> stack should be 'ok', 'ok', 'ok'
 
 `del`
 
-## do..unti (5)
+## do..until (4)
 
-`"" 0 'a' sto do 'a' 1 sto+ 0 a for b b ->str + next unti a 3 > end`
+`1 'a' sto do a 1 + 'a' sto until a 3 > end a`
 
--> stack should be "01012012301234"
+-> stack should be 4
 
 `del`
 
-## do..unti error case (1)
+## do..until error case (1)
 
 `do`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
-## do..unti error case (2)
+## do..until error case (2)
 
 `do 8 end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
-## do..unti error case (3)
+## do..until error case (3)
 
-`unti`
+`until`
 
--> error should be 11
-
-`del`
-
-## do..unti error case (4)
-
-`do 3 unti`
-
--> error should be 11
+-> error should be 12
 
 `del`
 
-## do..unti error case (5)
+## do..until error case (4)
 
-`unti 1 end`
+`do 3 until`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
-## do..unti error case (6)
+## do..until error case (5)
+
+`until 1 end`
+
+-> error should be 12
+
+`del`
+
+## do..until error case (6)
 
 `do 3 repeat 8 end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
-## do..unti error case (7)
+## do..until error case (7)
 
 `do 3 until 8 until 9 end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -574,9 +614,9 @@
 
 ## while..repeat (3)
 
-`"" 0 'a' sto while a 3 < repeat 'a' 1 sto+ 0 a for b b ->str + next end`
+`0 'a' sto while a 3 < repeat a 1 + 'a' sto 100 0 a for b b + next end`
 
--> stack should be "010120123"
+-> stack should be 101, 103, 106
 
 `del`
 
@@ -584,7 +624,7 @@
 
 `while`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -592,7 +632,7 @@
 
 `while 3 end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -600,7 +640,7 @@
 
 `repeat`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -608,7 +648,7 @@
 
 `while 1 repeat`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -616,7 +656,7 @@
 
 `repeat 1 end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -624,7 +664,7 @@
 
 `while 3 repeat 8 repeat 9 end`
 
--> error should be 11
+-> error should be 12
 
 `del`
 
@@ -632,6 +672,6 @@
 
 `while 3 until 8 end`
 
--> error should be 11
+-> error should be 12
 
 `del`

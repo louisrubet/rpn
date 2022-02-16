@@ -49,6 +49,10 @@ class program : public deque<object*> {
         _parent_prog = parent_prog;
         interrupt_now = false;
     }
+    virtual ~program() {
+        _local_heap.clear();
+        clear();
+    }
 
     // parser
     static ret_value parse(string& entry, program& prog);

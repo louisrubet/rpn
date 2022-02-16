@@ -6,7 +6,13 @@ void program::rpn_sto(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    (*_heap)[_stack->value<ostring>(0)] = _stack->at(1);
+    // store symbol with first value
+    auto it = _heap->find(_stack->value<ostring>(0));
+    if (it != _heap->end()) {
+        delete it->second;
+        _heap->erase(it);
+    }
+    (*_heap)[_stack->value<ostring>(0)] = _stack->at(1)->clone();
     _stack->pop_front(2);
 }
 
@@ -214,18 +220,18 @@ void program::rpn_edit(void) {
 /// @param symb the smlbol to recall and autoeval
 ///
 void program::auto_rcl(symbol* symb) {
-    if (symb->auto_eval) {
+    if (symb->autoEval) {
         object* obj;
         string variable(symb->value);
 
         // mind the order of heaps
         if (find_variable(variable, obj)) {
-            _stack->push_front(obj);
+            _stack->push_front(obj->clone());
             if (obj->_type == cmd_program) rpn_eval();
         } else
-            _stack->push_front(symb);
+            _stack->push_front(symb->clone());
     } else
-        _stack->push_front(symb);
+        _stack->push_front(symb->clone());
 }
 
 /// @brief purge keyword implementation

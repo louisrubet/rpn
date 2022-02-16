@@ -92,16 +92,12 @@ struct SynElement {
     int reBase;
     int imBase;
     program_fn_t fn;
-    bool operator==(SynElement& other) {
-        return type == other.type && value == other.value && (re == other.re || (isnan(re) && isnan(other.re))) &&
-               (im == other.im || (isnan(im) && isnan(other.im)));
-    }
+    bool autoEval;
 };
 
 struct SynError {
     size_t indx;
     string err;
-    bool operator==(SynError& other) { return err == other.err; }
 };
 
 struct ReservedWord {
@@ -138,7 +134,7 @@ static bool parseSymbol(string& entry, size_t idx, size_t& nextIdx, vector<SynEr
     // here we are sure that entry[0] is at least '\''
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '\'') {
-            elements.push_back({cmd_symbol, .value = entry.substr(idx + 1, i - idx - 1)});
+            elements.push_back({cmd_symbol, .value = entry.substr(idx + 1, i - idx - 1), .autoEval = false});
             nextIdx = i + 1;
             return true;
         }
@@ -289,7 +285,7 @@ static bool parseUnknown(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     stringstream ss(entry.substr(idx));
     string token;
     ss >> token;
-    elements.push_back({cmd_symbol, token});
+    elements.push_back({cmd_symbol, .value = token, .autoEval = true});
     nextIdx = token.size() + idx;
     return true;
 }
@@ -356,7 +352,7 @@ static bool progFromElements(vector<SynElement>& elements, program& prog) {
                 prog.push_back(new ostring(element.value));
                 break;
             case cmd_symbol:
-                prog.push_back(new symbol(element.value));
+                prog.push_back(new symbol(element.value, element.autoEval));
                 break;
             case cmd_program:
                 prog.push_back(new oprogram(element.value));

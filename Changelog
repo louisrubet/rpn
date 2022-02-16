@@ -9,6 +9,12 @@ Compatibility is broken on these points
 - `1 2+` not allowed anymore, keep `1 2 +`
   - this correct bad behaviors like `3b114` giving `3b11` and `4`
 - complexes are written in the form `(1,2)` instead of `(1, 2)` (the space was removed)
+- removed useless 'unti', 'repea', 'whil' (existing for HP28S compatibility), causing parsing problems
+- syntax error code is now 12 instead of 11
+- `test` command can also take a symbol as a parameter ; if the symbol contains a valid
+- à l'affichage le préfixe des chiffres en base 2 est 0b et pas 2b (la saisie 2bxxx est toutefois permise)
+- à l'affichage le préfixe des chiffres en base 16 est 0x et pas 16b (la saisie 16bxxx est toutefois permise)
+- à l'affichage les chiffres en base 10 pas de préfixe 10b (la saisie 10bxxx est toutefois permise)
 
 New
 - `« »` are valid as program delimiters. `<<` and `>>` are still valid
