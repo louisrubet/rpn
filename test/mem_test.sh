@@ -19,7 +19,7 @@ function checkmem {
     fi
 }
 
-to_test=(
+quick_tests=(
     "1.2 \"string\" 'ok' (2,3) << 9 nop >>"                        # base types inputs
     "nop help version uname history quit"                          # general commands
     "38 std 38 fix 38 sci 10 prec 2 default \"toward zero\" round" # modes
@@ -31,9 +31,15 @@ to_test=(
     "1 2 3 swap"                                                   # stack operations
 )
 
-echo "\nPOURQUOI NE PAS FAIRE UN TEST DE CHAQUE test.md PLUTOT ?\n"
-echo "rpn memory check"
-for i in ${!to_test[@]}; do
-    checkmem "${to_test[$i]}"
+functional_tests=($(cat all.md | grep "^@include" | awk '{print $2}'))
+
+echo "Quick rpn memory checks"
+for i in ${!quick_tests[@]}; do
+    checkmem "${quick_tests[$i]}"
+done
+
+echo "Functional rpn memory checks"
+for i in ${!functional_tests[@]}; do
+    checkmem "${functional_tests[$i]} test"
 done
 exit ${failed}

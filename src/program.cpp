@@ -141,11 +141,8 @@ program::keyword_t program::s_keywords[] = {
      "<false-instruction> ifte"},
     {cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> until <condition> end"},
     {cmd_branch, "until", (program_fn_t)&program::rpn_until, "used with do"},
-    {cmd_branch, "unti", (program_fn_t)&program::rpn_until, ""},
     {cmd_branch, "while", (program_fn_t)&program::rpn_while, "while <test-instruction> repeat <loop-instructions> end"},
-    {cmd_branch, "whil", (program_fn_t)&program::rpn_while, ""},
     {cmd_branch, "repeat", (program_fn_t)&program::rpn_repeat, "used with while"},
-    {cmd_branch, "repea", (program_fn_t)&program::rpn_repeat, ""},
 
     // STORE
     {cmd_undef, "", NULL, "\nSTORE"},
@@ -233,7 +230,12 @@ ret_value program::run(rpnstack& stk, heap& hp) {
 
     // branches for 'if'
     ret = preprocess();
-    if (ret != ret_ok) return ret;
+    if (ret != ret_ok) {
+        // free allocated
+        for (object* o : *this) delete o;
+        _local_heap.clear();
+        return ret;
+    }
 
     // iterate commands
     for (int i = 0; (go_out == false) && (interrupt_now == false) && (i < (int)size());) {
@@ -271,7 +273,6 @@ ret_value program::run(rpnstack& stk, heap& hp) {
                         break;
                 }
                 i++;
-                delete o;
                 break;
             }
 
@@ -293,18 +294,21 @@ ret_value program::run(rpnstack& stk, heap& hp) {
                         i = next_cmd;  // new direction
                         break;
                 }
-                delete o;
                 break;
             }
 
             default:
                 // not a command, but a stack entry, manage it
                 // copy the program stack entry to the running stack
-                stk.push_front(o);
+                stk.push_front(o->clone());
                 i++;
                 break;
         }
     }
+
+    // free allocated
+    for (object* o : *this) delete o;
+    _local_heap.clear();
 
     if (interrupt_now) {
         fprintf(stderr, "\nInterrupted\n");

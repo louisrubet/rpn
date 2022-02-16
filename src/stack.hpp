@@ -76,7 +76,12 @@ class rpnstack : public deque<object*> {
 class heap : public map<string, object*> {
    public:
     heap() {}
-    virtual ~heap() {}
+    virtual ~heap() { clear(); }
+
+    void clear() {
+        for_each(begin(), end(), [](auto it) { delete it.second; });
+        map::erase(begin(), end());
+    }
 
     /// @brief get a variable
     ///

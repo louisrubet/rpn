@@ -66,7 +66,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/rpn-store.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-string.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-test.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-test-core.cpp
+  ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-time.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-trig.cpp
   ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
