@@ -28,8 +28,7 @@ class rpnstack : public deque<object*> {
     ///
     static void copy_and_push_front(rpnstack& from, unsigned int index_from, rpnstack& to) {
         // carefull: caller must ensure that index_from is correct
-        auto newObj = from[index_from]->clone();
-        if (newObj != nullptr) to.push_front(newObj);
+        to.push_front(from[index_from]->clone());
     }
 
     /// @brief erase a stack entry from it index

@@ -42,7 +42,7 @@
 
 -> stack size should be 1
 
--> error should 2
+-> error should be 2
 
 `del`
 
@@ -212,7 +212,7 @@
 
 `1 2 3 4 5 dupn`
 
--> stack size should be 5
+-> stack size should be 4
 
 -> error should be 2
 
@@ -238,7 +238,7 @@
 
 `1 2 3 4 5 6 roll`
 
--> stack size should be 6
+-> stack size should be 5
 
 -> error should be 2
 
@@ -264,7 +264,7 @@
 
 `1 2 3 4 5 6 rolld`
 
--> stack size should be 6
+-> stack size should be 5
 
 -> error should be 2
 

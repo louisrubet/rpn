@@ -12,7 +12,7 @@ void program::rpn_swap(void) {
 ///
 void program::rpn_drop(void) {
     MIN_ARGUMENTS(1);
-    _stack->pop_front();
+    _stack->pop();
 }
 
 /// @brief drop2 keyword implementation
@@ -50,10 +50,10 @@ void program::rpn_dupn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)((number*)_stack->back())->value.toLong();
-    MIN_ARGUMENTS(args + 1);
-    _stack->pop_front();
+    int args = (int)((number*)_stack->front())->value.toLong();
+    _stack->pop();
 
+    MIN_ARGUMENTS(args);
     for (int i = 0; i < args; i++) rpnstack::copy_and_push_front(*_stack, args - 1, *_stack);
 }
 
@@ -88,14 +88,8 @@ void program::rpn_pick(void) {
 void program::rpn_rot(void) {
     MIN_ARGUMENTS(3);
 
-    rpnstack::copy_and_push_front(*_stack, 2, _calc_stack);
-    rpnstack::copy_and_push_front(*_stack, 1, _calc_stack);
-    rpnstack::copy_and_push_front(*_stack, 0, _calc_stack);
-    (void)_stack->pop_front(3);
-    rpnstack::copy_and_push_front(_calc_stack, 1, *_stack);
-    rpnstack::copy_and_push_front(_calc_stack, 0, *_stack);
-    rpnstack::copy_and_push_front(_calc_stack, 2, *_stack);
-    _calc_stack.pop_front(3);
+    rpnstack::copy_and_push_front(*_stack, 2, *_stack);
+    _stack->erase(3);
 }
 
 /// @brief depth keyword implementation
@@ -108,19 +102,12 @@ void program::rpn_roll(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)((number*)_stack->back())->value.toLong();
-    MIN_ARGUMENTS(args + 1);
-    _stack->pop_front();
+    size_t args = (int)((number*)_stack->front())->value;
+    _stack->pop();
+    MIN_ARGUMENTS(args);
 
-    for (int i = 0; i < args; i++) {
-        rpnstack::copy_and_push_front(*_stack, 0, _calc_stack);
-        _stack->pop_front();
-    }
-
-    for (int i = 1; i < args; i++) rpnstack::copy_and_push_front(_calc_stack, args - 1 - i, *_stack);
-    rpnstack::copy_and_push_front(_calc_stack, args - 1, *_stack);
-
-    _calc_stack.pop_front(args);
+    rpnstack::copy_and_push_front(*_stack, args - 1, *_stack);
+    _stack->erase(args);
 }
 
 /// @brief rolld keyword implementation
@@ -129,20 +116,12 @@ void program::rpn_rolld(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)((number*)_stack->back())->value.toLong();
-    MIN_ARGUMENTS(args + 1);
-    _stack->pop_front();
+    int args = (int)((number*)_stack->front())->value.toLong();
+    _stack->pop();
+    MIN_ARGUMENTS(args);
 
-    for (int i = 0; i < args; i++) {
-        rpnstack::copy_and_push_front(*_stack, 0, _calc_stack);
-        _stack->pop_front();
-    }
-
-    rpnstack::copy_and_push_front(_calc_stack, args - 1, *_stack);
-
-    for (int i = 1; i < args; i++) rpnstack::copy_and_push_front(_calc_stack, i - 1, *_stack);
-
-    _calc_stack.pop_front(args);
+    _stack->insert(_stack->begin()+args, _stack->at(0)->clone());
+    _stack->pop();
 }
 
 /// @brief over keyword implementation
