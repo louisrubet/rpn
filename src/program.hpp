@@ -93,9 +93,6 @@ class program : public deque<object*> {
     // local heap for local loop variables (for..next)
     heap _local_heap;
 
-    // calc stack internally used by branch and calc commands
-    rpnstack _calc_stack;
-
     // parent prog for inheriting heaps
     program* _parent_prog;
 
