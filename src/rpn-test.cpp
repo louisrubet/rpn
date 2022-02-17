@@ -25,7 +25,7 @@ void program::rpn_sup(void) {
     }
     // strings
     else if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
-        _stack->push_front(new number(cmp_strings_on_stack_top()));
+        _stack->push_front(new number(cmp_strings_on_stack_top() == 1));
         _stack->erase(1, 2);
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -43,7 +43,7 @@ void program::rpn_sup_eq(void) {
     }
     // strings
     else if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
-        _stack->push_front(new number(cmp_strings_on_stack_top()));
+        _stack->push_front(new number(cmp_strings_on_stack_top() != -1));
         _stack->erase(1, 2);
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -61,7 +61,7 @@ void program::rpn_inf(void) {
     }
     // strings
     else if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
-        _stack->push_front(new number(cmp_strings_on_stack_top()));
+        _stack->push_front(new number(cmp_strings_on_stack_top() == -1));
         _stack->erase(1, 2);
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -77,7 +77,7 @@ void program::rpn_inf_eq(void) {
     }
     // strings
     else if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
-        _stack->push_front(new number(cmp_strings_on_stack_top()));
+        _stack->push_front(new number(cmp_strings_on_stack_top() != 1));
         _stack->erase(1, 2);
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -100,7 +100,7 @@ void program::rpn_diff(void) {
     }
     // strings
     else if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
-        _stack->push_front(new number(cmp_strings_on_stack_top()));
+        _stack->push_front(new number(cmp_strings_on_stack_top() != 0));
         _stack->erase(1, 2);
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -123,7 +123,7 @@ void program::rpn_eq(void) {
     }
     // strings
     else if (_stack->type(0) == cmd_string && _stack->type(1) == cmd_string) {
-        _stack->push_front(new number(cmp_strings_on_stack_top()));
+        _stack->push_front(new number(cmp_strings_on_stack_top() == 0));
         _stack->erase(1, 2);
     } else
         ERR_CONTEXT(ret_bad_operand_type);
