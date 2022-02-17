@@ -13,7 +13,7 @@
 @include 030-branch.md
 @include 040-stack.md
 @include 050-real.md
-# @include 060-string.md
+@include 060-string.md
 # @include 070-test.md
 # @include 080-store.md
 # @include 090-program.md

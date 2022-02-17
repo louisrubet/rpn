@@ -64,7 +64,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/rpn-real.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-stack.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-store.cpp
-  #${PROJECT_SOURCE_DIR}/src/rpn-string.cpp
+  ${PROJECT_SOURCE_DIR}/src/rpn-string.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-test.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-time.cpp

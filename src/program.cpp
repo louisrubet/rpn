@@ -112,16 +112,15 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "over", &program::rpn_over, "push a copy of the element in stack level 2 onto the stack"},
 
     // STRING
-    // {cmd_undef, "", NULL, "\nSTRING"},
-    // {cmd_keyword, "->str", &program::rpn_instr, "convert an object into a string"},
-    // {cmd_keyword, "str->", &program::rpn_strout, "convert a string into an object"},
-    // {cmd_keyword, "chr", &program::rpn_chr, "convert ASCII character code in stack level 1 into a string"},
-    // {cmd_keyword, "num", &program::rpn_num,
-    //  "return ASCII code of the first character of the string in stack level 1 "
-    //  "as a real number"},
-    // {cmd_keyword, "size", &program::rpn_strsize, "return the length of the string"},
-    // {cmd_keyword, "pos", &program::rpn_strpos, "seach for the string in level 1 within the string in level 2"},
-    // {cmd_keyword, "sub", &program::rpn_strsub, "return a substring of the string in level 3"},
+    {cmd_undef, "", NULL, "\nSTRING"},
+    {cmd_keyword, "->str", &program::rpn_instr, "convert an object into a string"},
+    {cmd_keyword, "str->", &program::rpn_strout, "convert a string into an object"},
+    {cmd_keyword, "chr", &program::rpn_chr, "convert ASCII character code in stack level 1 into a string"},
+    {cmd_keyword, "num", &program::rpn_num,
+     "return ASCII code of the first character of the string in stack level 1 as a real number"},
+    {cmd_keyword, "size", &program::rpn_strsize, "return the length of the string"},
+    {cmd_keyword, "pos", &program::rpn_strpos, "seach for the string in level 1 within the string in level 2"},
+    {cmd_keyword, "sub", &program::rpn_strsub, "return a substring of the string in level 3"},
 
     // BRANCH
     {cmd_undef, "", NULL, "\nBRANCH"},
@@ -643,10 +642,13 @@ ret_value program::get_err(void) { return _err; }
 /// @param show_separator whether to show a stack level prefix or not
 ///
 void program::show_stack(rpnstack& st, bool show_separator) {
-    for (int i = st.size() - 1; i >= 0; i--) {
-        if (show_separator) cout << i + 1 << SHOW_STACK_SEPARATOR;
-        cout << st[i] << endl;
-    }
+    if (st.size() == 1)
+        cout << st[0] << endl;
+    else
+        for (int i = st.size() - 1; i >= 0; i--) {
+            if (show_separator) cout << i + 1 << SHOW_STACK_SEPARATOR;
+            cout << st[i] << endl;
+        }
 }
 
 /// @brief apply default precision mode and digits

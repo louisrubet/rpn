@@ -130,10 +130,7 @@ struct ostring : object {
     ostring(const char* value_) : object(cmd_string) { value = string(value_); }
     virtual object* clone() { return new ostring(value); }
     virtual string name() { return string("string"); }
-    virtual ostream& show(ostream& out) {
-        out << "\"" << value << "\"";
-        return out;
-    }
+    virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }
     string value;
 };
 
@@ -144,10 +141,7 @@ struct oprogram : object {
     oprogram(const string& value_) : object(cmd_program), value(value_) {}
     virtual object* clone() { return new oprogram(value); }
     virtual string name() { return string("program"); }
-    virtual ostream& show(ostream& out) {
-        out << "«" << value << "»";
-        return out;
-    }
+    virtual ostream& show(ostream& out) { return out << "«" << value << "»"; }
     string value;
 };
 
@@ -158,10 +152,7 @@ struct symbol : object {
     symbol(const string& value_, bool autoEval_ = true) : object(cmd_symbol), value(value_), autoEval(autoEval_) {}
     virtual object* clone() { return new symbol(value, autoEval); }
     virtual string name() { return string("symbol"); }
-    virtual ostream& show(ostream& out) {
-        out << "'" << value << "'";
-        return out;
-    }
+    virtual ostream& show(ostream& out) { return out << "'" << value << "'"; }
     bool autoEval;
     string value;
 };
