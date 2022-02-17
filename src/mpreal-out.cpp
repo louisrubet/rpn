@@ -43,6 +43,7 @@ ostream& mpreal_output10base(ostream& out, const string& fmt, const mpreal& valu
 
 static bool is_min(const mpreal& p, mpfr_prec_t prec) {
     // see mpfr_vasprintf code
+    // TODO here use mpreal functions like <=0, isinf etc
     bool ret;
     int round_away;
     switch (mpreal::get_default_rnd()) {

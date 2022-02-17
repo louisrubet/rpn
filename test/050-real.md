@@ -527,7 +527,7 @@ pi
 
 `123.456 mant -123.456 mant 0 mant`
 
--> stack should be 0.123456, 0.123456, 0
+-> stack should be 0.9645, -0.9645, 0
 
 `del`
 
@@ -551,7 +551,7 @@ pi
 
 `123.456 xpon -123.456 xpon 0 mant`
 
--> stack should be 3, 3, 0
+-> stack should be 7, 7, 0
 
 `del`
 
