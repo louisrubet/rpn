@@ -230,7 +230,6 @@ void program::rpn_dec() {
 ///
 void program::rpn_base() {
     MIN_ARGUMENTS(2);
-
     if (_stack->type(1) == cmd_number || _stack->type(1) == cmd_complex) {
         int base = (int)_stack->value<number>(0).toLong();
         _stack->pop();
@@ -271,7 +270,6 @@ void program::rpn_purcentCH() {
 ///
 void program::rpn_square() {
     MIN_ARGUMENTS(1);
-
     if (_stack->type(0) == cmd_number)
         _stack->value<number>(0) *= _stack->value<number>(0);
     else if (_stack->at(0)->_type == cmd_complex)
@@ -290,37 +288,15 @@ void program::rpn_modulo() {
     _stack->pop();
 }
 
-#if 0
-
 /// @brief abs keyword implementation
 ///
 void program::rpn_abs() {
     MIN_ARGUMENTS(1);
-
-    if (_stack->type(0) == cmd_number) {
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
-    } else if (_stack->at(0)->_type == cmd_complex) {
-        // 1. copy out -> calc x2+iy2
-        rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack);
-        _stack->pop_front();
-
-        // 2. calc x2+iy2
-        ocomplex* cplx = (ocomplex*)_calc_stack.back();
-        CHECK_MPFR(mpfr_mul(cplx->re.mpfr, cplx->re.mpfr, cplx->re.mpfr, mpreal::get_default_rnd()));
-        CHECK_MPFR(mpfr_mul(cplx->im.mpfr, cplx->im.mpfr, cplx->im.mpfr, mpreal::get_default_rnd()));
-
-        // 3. new real on stack
-        _stack->push_front(new number);
-        number* module = (number*)_stack->back();
-
-        // 4. set it to |x2+y2| then take sqrt
-        CHECK_MPFR(mpfr_set(module->value.mpfr, cplx->re.mpfr, mpreal::get_default_rnd()));
-        CHECK_MPFR(mpfr_add(module->value.mpfr, module->value.mpfr, cplx->im.mpfr, mpreal::get_default_rnd()));
-        CHECK_MPFR(mpfr_sqrt(module->value.mpfr, module->value.mpfr, mpreal::get_default_rnd()));
-
-        _calc_stack.pop_front();
-    } else
+    if (_stack->type(0) == cmd_number)
+        _stack->value<number>(0) = abs(_stack->value<number>(0));
+    else if (_stack->type(0) == cmd_complex)
+        _stack->value<ocomplex>(0) = norm(_stack->value<ocomplex>(0));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -329,33 +305,19 @@ void program::rpn_abs() {
 void program::rpn_fact() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
     // fact(n) = gamma(n+1)
-    number* left = (number*)_stack->back();
-    number* right;
-    _stack->push_front(right = new number);
-    right->value = 1L;
-    rpn_plus();
-
-    CHECK_MPFR(mpfr_gamma(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
+    _stack->value<number>(0) = gamma(_stack->value<number>(0) + 1);
 }
 
 /// @brief sign keyword implementation
 ///
 void program::rpn_sign() {
     MIN_ARGUMENTS(1);
-
-    if (_stack->at(0)->_type == cmd_number) {
-        // fact(n) = gamma(n+1)
-        number* left = (number*)_stack->back();
-        int result = mpfr_sgn(left->value.mpfr);
-        left->value = (long)result;
-    } else if (_stack->at(0)->_type == cmd_complex) {
-        // calc x/sqrt(x*x+y*y) +iy/sqrt(x*x+y*y)
-        rpn_dup();
-        rpn_abs();
-        rpn_div();
-    } else
+    if (_stack->type(0) == cmd_number)
+        _stack->value<number>(0) = sgn(_stack->value<number>(0));
+    else if (_stack->at(0)->_type == cmd_complex)
+        _stack->value<ocomplex>(0) = _stack->value<ocomplex>(0) / norm(_stack->value<ocomplex>(0));
+    else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -364,33 +326,12 @@ void program::rpn_sign() {
 void program::rpn_mant() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-
-    if (mpfr_number_p(left->value.mpfr)) {
-        if (mpfr_zero_p(left->value.mpfr))
-            left->value = 0.0;
-        else {
-            mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd());
-
-            number* one;
-            _stack->push_front(one = new number);
-            number* ten;
-            _stack->push_front(ten = new number);
-            ten->value = 10L;
-
-            one->value = 1L;
-            while (mpfr_greaterequal_p(left->value.mpfr, one->value.mpfr))
-                mpfr_div(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
-
-            one->value = 0.1;
-            while (mpfr_less_p(left->value.mpfr, one->value.mpfr))
-                mpfr_mul(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
-
-            _calc_stack.pop_front(2);
-        }
-    } else
+    if (!isfinite(_stack->value<number>(0))) {
         ERR_CONTEXT(ret_out_of_range);
+        return;
+    }
+    mp_exp_t exp;
+    _stack->value<number>(0) = frexp(_stack->value<number>(0), &exp);
 }
 
 /// @brief xpon keyword implementation
@@ -398,41 +339,13 @@ void program::rpn_mant() {
 void program::rpn_xpon() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-
-    if (mpfr_number_p(left->value.mpfr)) {
-        if (mpfr_zero_p(left->value.mpfr))
-            left->value = 0.0;
-        else {
-            double exponant = 0.0;
-            mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd());
-
-            number* one;
-            _stack->push_front(one = new number);
-            number* ten;
-            _stack->push_front(ten = new number);
-            ten->value = 10L;
-
-            one->value = 1L;
-            while (mpfr_greaterequal_p(left->value.mpfr, one->value.mpfr)) {
-                mpfr_div(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
-                exponant += 1.0;
-            }
-
-            one->value = 0.1;
-            while (mpfr_less_p(left->value.mpfr, one->value.mpfr)) {
-                mpfr_mul(left->value.mpfr, left->value.mpfr, ten->value.mpfr, mpreal::get_default_rnd());
-                exponant -= 1.0;
-            }
-
-            left->value = exponant;
-
-            _calc_stack.pop_front();
-            _calc_stack.pop_front();
-        }
-    } else
+    if (!isfinite(_stack->value<number>(0))) {
         ERR_CONTEXT(ret_out_of_range);
+        return;
+    }
+    mp_exp_t exp;
+    (void)frexp(_stack->value<number>(0), &exp);
+    _stack->value<number>(0) = exp;
 }
 
 /// @brief floor keyword implementation
@@ -440,10 +353,7 @@ void program::rpn_xpon() {
 void program::rpn_floor() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_floor(left->value.mpfr, left->value.mpfr));
+    _stack->value<number>(0) = floor(_stack->value<number>(0));
 }
 
 /// @brief ceil keyword implementation
@@ -451,10 +361,7 @@ void program::rpn_floor() {
 void program::rpn_ceil() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_ceil(left->value.mpfr, left->value.mpfr));
+    _stack->value<number>(0) = ceil(_stack->value<number>(0));
 }
 
 /// @brief fp keyword implementation
@@ -462,10 +369,7 @@ void program::rpn_ceil() {
 void program::rpn_fp() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_frac(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
+    _stack->value<number>(0) = frac(_stack->value<number>(0));
 }
 
 /// @brief ip keyword implementation
@@ -473,10 +377,7 @@ void program::rpn_fp() {
 void program::rpn_ip() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_trunc(left->value.mpfr, left->value.mpfr));
+    _stack->value<number>(0) = trunc(_stack->value<number>(0));
 }
 
 /// @brief min keyword implementation
@@ -485,11 +386,8 @@ void program::rpn_min() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-    number* right = (number*)_stack->pop_front();
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_min(left->value.mpfr, left->value.mpfr, right->value.mpfr, mpreal::get_default_rnd()));
+    _stack->value<number>(0) = min(_stack->value<number>(0), _stack->value<number>(1));
+    _stack->erase(1);
 }
 
 /// @brief max keyword implementation
@@ -498,10 +396,6 @@ void program::rpn_max() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-    number* right = (number*)_stack->pop_front();
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_max(left->value.mpfr, left->value.mpfr, right->value.mpfr, mpreal::get_default_rnd()));
+    _stack->value<number>(0) = max(_stack->value<number>(0), _stack->value<number>(1));
+    _stack->erase(1);
 }
-#endif

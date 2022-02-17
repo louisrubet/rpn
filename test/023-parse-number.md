@@ -91,6 +91,12 @@
 
 -> stack should be -0x1e2, -5b1234, -0b1
 
+## base (4)
+
+`del -0x1e2 -5b1234 -0b1`
+
+-> stack should be -0x1e2, -5b1234, -0b1
+
 ## base err
 
 `del 0b12`
@@ -113,8 +119,9 @@
 ## wrong base errors
 
 `del 0b0.1100`
+`ab Xb 1b ax 0X 3X`
 
--> stack should be 0b1
+-> stack should be 0b1, 'ab', 'Xb', '1b', 'ax', '0X', '3X'
 
 ## particular writings
 
