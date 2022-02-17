@@ -9,23 +9,20 @@ Compatibility is broken on these points
 - `1 2+` not allowed anymore, keep `1 2 +`
   - this corrects bad behaviors like `3b114` giving `3b11` and `4`
 - complexes are written in the form `(1,2)` instead of `(1, 2)` (space is removed)
-- removed useless 'unti', 'repea', 'whil' (existing for HP28S compatibility)
-- removed 'sqr' function, please use 'sq' instead (existing for HP28S compatibility)
+- removed useless `unti`, `repea`, `whil` (existing for HP28S compatibility)
+- removed `sqr` function, please use `sq` instead (existing for HP28S compatibility)
 - syntax error code is now 12 instead of 11
 - `test` command can also take a symbol as a parameter ; if the symbol contains a valid
-- à l'affichage le préfixe des chiffres en base 2 est 0b et pas 2b (la saisie 2bxxx est toutefois permise)
+- the binary prefix is 0b on display, but can be 0b, 0B, 2b or 2B at input
+- the hex prefix is 0x on display, but can be 0x, 0X or 16B at input
+- entering the sign after the base (ex: 0x-1e2) is allowed
 - à l'affichage le préfixe des chiffres en base 16 est 0x et pas 16b (la saisie 16bxxx est toutefois permise)
 - à l'affichage les chiffres en base 10 pas de préfixe 10b (la saisie 10bxxx est toutefois permise)
 - `mant` and `xpon` now give binary significand and exponent, as it is the norm (see frexp in math.h, cmath for example)
 - `dupn`, `roll`, `rolld` are not leaving anymore their argument in front of the stack in case of error
-- entering the sign after the base (ex: 0x-1e2) is allowed
+- `sub` now only accepts boundaries between 1 and the string length
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
 - enhanced code quality and memory usage checks
 - added `norm` as a synonym of `abs`
-
-cas de tests à ajouter:
-ab Xb 1b
-ax 0X 3X
-0x12pa1
