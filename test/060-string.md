@@ -136,7 +136,7 @@
 
 `"<< -> n << n >> >>" str->`
 
--> stack should be << -> n << n >> >>
+-> stack should be «-> n << n >>»
 
 `del`
 
@@ -270,7 +270,7 @@
 
 `"my string to sub" -1 -2 sub`
 
--> stack should be "m"
+-> stack should be ""
 
 `del`
 
@@ -278,7 +278,7 @@
 
 `"my string to sub" 0 0 sub`
 
--> stack should be "m"
+-> stack should be ""
 
 `del`
 
