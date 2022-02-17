@@ -10,6 +10,7 @@ Compatibility is broken on these points
   - this correct bad behaviors like `3b114` giving `3b11` and `4`
 - complexes are written in the form `(1,2)` instead of `(1, 2)` (the space was removed)
 - removed useless 'unti', 'repea', 'whil' (existing for HP28S compatibility), causing parsing problems
+- removed 'sqr' function, please use 'sq' instead
 - syntax error code is now 12 instead of 11
 - `test` command can also take a symbol as a parameter ; if the symbol contains a valid
 - à l'affichage le préfixe des chiffres en base 2 est 0b et pas 2b (la saisie 2bxxx est toutefois permise)
@@ -20,3 +21,9 @@ New
 - `« »` are valid as program delimiters. `<<` and `>>` are still valid
 - enhanced code quality and memory usage checks
 - some bugs (dupn, roll, rolld wrongly leaving the front arg in case of error)
+- added `norm` as a synonym of `abs`
+
+cas de tests à ajouter:
+ab Xb 1b
+ax 0X 3X
+0x12pa1

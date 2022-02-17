@@ -1,3 +1,5 @@
+#include <regex>
+
 #include "program.hpp"
 
 /// @brief completion callback as asked by linenoise-ng
@@ -170,31 +172,21 @@ static bool parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     return true;
 }
 
-static int getBase(string& entry, int idxStart, int& idxNumber) {
-    stringstream ss(entry.substr(idxStart, 2));
-
-    string baseStr = entry.substr(idxStart, 2);
-    if (baseStr == "0x" || baseStr == "0X") {
-        idxNumber = 2;
-        return 16;
-    } else if (baseStr == "0b") {
-        idxNumber = 2;
-        return 2;
-    } else if (entry.size() >= idxStart + 2 && baseStr[1] == 'b') {
-        int base = stoi(baseStr.substr(0, 1));
-        if (base >= BASE_MIN && base <= BASE_MAX) {
-            idxNumber = 2;
-            return base;
-        }
-    }
-    if (entry.size() >= idxStart + 3) {
-        baseStr = entry.substr(idxStart, 3);
-        if (isdigit(baseStr[0]) && isdigit(baseStr[1]) && baseStr[2] == 'b') {
-            int base = stoi(baseStr.substr(0, 2));
-            if (base >= BASE_MIN && base <= BASE_MAX) {
-                idxNumber = 3;
-                return base;
-            }
+static int getBase(string& entry, int idxStart, bool& positive) {
+    regex baseRegex("([+-])?((0[xX])|([0-9][0-9]?[bB]))");
+    smatch match;
+    if (regex_search(entry, match, baseRegex) && match.size() >= 5) {
+        string sign = match[1].str();
+        string base = match[2].str();
+        // sign out, permits expressions like -0xAB3F
+        positive = sign.size() > 0 && sign[0] == '-' ? false : true;
+        // base
+        entry = entry.substr(base.size() + sign.size());
+        if (base[1] == 'X' || base[1] == 'x') return 16;
+        if (base.size() > 0) {
+            int b = stoi(base.substr(0, base.size() - 1));
+            if (b == 0) b = 2;  // admit "0b" as binary suffix
+            return b;
         }
     }
     return 10;
@@ -204,19 +196,21 @@ static bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
     stringstream ss;
     int idxNumber = 0;
     string token;
+    bool positive = true;
 
-    base = getBase(entry, idx, idxNumber);
-
-    ss.str(entry.substr(idx + idxNumber));
+    ss.str(entry.substr(idx));
     if (getline(ss, token, delim)) {
-        nextIdx = token.size() + idx + idxNumber;
+        nextIdx = token.size() + idx + 1;
+        base = getBase(token, idx, positive);
+        if (base < BASE_MIN || base > BASE_MAX) return false;
         trim(token);
-        if (mpfr_set_str(r.mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0)
+        if (mpfr_set_str(r.mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
+            if (!positive) r = -r;
             return true;
-        else
+        } else
             return false;
     }
-    nextIdx = token.size() + idx + idxNumber + 1;
+    nextIdx = token.size() + idx + 1;
     return false;
 }
 
@@ -249,14 +243,14 @@ static bool parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     }
 
     size_t i = nextIdx;
-    while (i < entry.size() && entry[i] != ',') i++;
-    if (i == entry.size()) {
+    //while (i < entry.size() && entry[i] != ',') i++;
+    if (i >= entry.size()) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
     }
 
-    if (!getNumberAt(entry, i + 1, nextIdx, imBase, im, ')')) {
+    if (!getNumberAt(entry, i, nextIdx, imBase, im, ')')) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
