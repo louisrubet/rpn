@@ -150,6 +150,7 @@ void program::rpn_inv() {
 /// @brief power keyword implementation
 ///
 void program::rpn_power() {
+    MIN_ARGUMENTS(2);
     if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
         _stack->value<number>(1) = pow(_stack->value<number>(1), _stack->value<number>(0));
         _stack->pop();
@@ -170,9 +171,10 @@ void program::rpn_power() {
 /// @brief sqrt keyword implementation
 ///
 void program::rpn_squareroot() {
+    MIN_ARGUMENTS(1);
     if (_stack->type(0) == cmd_number) {
         if (_stack->value<number>(0) >= 0) {
-            _stack->value<number>(0) = rec_sqrt(_stack->value<number>(0));
+            _stack->value<number>(0) = sqrt(_stack->value<number>(0));
         } else {
             // negative number -> square root is compl ex
             _stack->push(new ocomplex);  // TODO manage new errors
@@ -239,26 +241,8 @@ void program::rpn_base() {
                 _stack->obj<ocomplex>(0)->reBase = base;
                 _stack->obj<ocomplex>(0)->imBase = base;
             }
-        }
-        else
+        } else
             ERR_CONTEXT(ret_out_of_range);
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
-}
-
-#if 0
-
-/// @brief sq keyword implementation
-///
-void program::rpn_square() {
-    MIN_ARGUMENTS(1);
-
-    if (_stack->at(0)->_type == cmd_number) {
-        number* left = (number*)_stack->back();
-        CHECK_MPFR(mpfr_sqr(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
-    } else if (_stack->at(0)->_type == cmd_complex) {
-        rpn_dup();
-        rpn_mul();
     } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
@@ -269,10 +253,8 @@ void program::rpn_purcent() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    number* right = (number*)_stack->pop_front();
-    number* left = (number*)_stack->back();
-    left->value *= right->value;
-    left->value /= 100;
+    _stack->value<number>(1) *= _stack->value<number>(0) / 100;
+    _stack->pop();
 }
 
 /// @brief %CH keyword implementation
@@ -281,10 +263,21 @@ void program::rpn_purcentCH() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    number* right = (number*)_stack->pop_front();
-    number* left = (number*)_stack->back();
-    right->value *= 100;
-    left->value /= right->value;
+    _stack->value<number>(1) = (_stack->value<number>(0) * 100) / _stack->value<number>(1);
+    _stack->pop();
+}
+
+/// @brief sq keyword implementation
+///
+void program::rpn_square() {
+    MIN_ARGUMENTS(1);
+
+    if (_stack->type(0) == cmd_number)
+        _stack->value<number>(0) *= _stack->value<number>(0);
+    else if (_stack->at(0)->_type == cmd_complex)
+        _stack->value<ocomplex>(0) *= _stack->value<ocomplex>(0);
+    else
+        ERR_CONTEXT(ret_bad_operand_type);
 }
 
 /// @brief mod keyword implementation
@@ -293,21 +286,18 @@ void program::rpn_modulo() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-    number* right = (number*)_stack->pop_front();
-    number* left = (number*)_stack->back();
-
-    CHECK_MPFR(mpfr_fmod(left->value.mpfr, left->value.mpfr, right->value.mpfr, mpreal::get_default_rnd()));
+    _stack->value<number>(1) = fmod(_stack->value<number>(1), _stack->value<number>(0));
+    _stack->pop();
 }
-#endif
 
 #if 0
+
 /// @brief abs keyword implementation
 ///
 void program::rpn_abs() {
     MIN_ARGUMENTS(1);
 
-    if (_stack->at(0)->_type == cmd_number) {
+    if (_stack->type(0) == cmd_number) {
         number* left = (number*)_stack->back();
         CHECK_MPFR(mpfr_abs(left->value.mpfr, left->value.mpfr, mpreal::get_default_rnd()));
     } else if (_stack->at(0)->_type == cmd_complex) {

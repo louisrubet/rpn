@@ -12,7 +12,7 @@
 @include 027-base-entry.md
 @include 030-branch.md
 @include 040-stack.md
-# @include 050-real.md
+@include 050-real.md
 # @include 060-string.md
 # @include 070-test.md
 # @include 080-store.md

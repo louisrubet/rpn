@@ -276,10 +276,6 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `del default`
 
-## base on complexes
-
--> stack should be TODO
-
 ## negative base numbers (1)
 
 `1000 hex neg`
@@ -309,6 +305,16 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 `-0b1111101000 3 base`
 
 -> stack should be -3b1101001
+
+`del default`
+
+## base on complexes
+
+```
+(0b110,0x102) dup bin swap dup hex dup 5 base
+```
+
+-> stack should be (0b110,0b100000010), (0b110,0x102), (0x6,0x102), (5b11,5b2013)
 
 `del default`
 

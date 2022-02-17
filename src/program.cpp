@@ -31,16 +31,16 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "^", &program::rpn_power, "power"},
     {cmd_keyword, "pow", &program::rpn_power, ""},
     {cmd_keyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
-    // {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
-    // {cmd_keyword, "sqr", &program::rpn_square, ""},
-    // {cmd_keyword, "abs", &program::rpn_abs, "absolute value"},
+    {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
+    {cmd_keyword, "abs", &program::rpn_abs, "absolute value (norm for a complex)"},
+    {cmd_keyword, "norm", &program::rpn_abs, ""},
     // {cmd_keyword, "sign", &program::rpn_sign, "1 if number at stack level 1 is > 0, 0 if == 0, -1 if <= 0"},
 
     // OPERATIONS ON REALS
     {cmd_undef, "", NULL, "\nOPERATIONS ON REALS"},
-    //{cmd_keyword, "%", &program::rpn_purcent, "purcent"},
-    //{cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
-    // {cmd_keyword, "mod", &program::rpn_modulo, "modulo"},
+    {cmd_keyword, "%", &program::rpn_purcent, "purcent"},
+    {cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
+    {cmd_keyword, "mod", &program::rpn_modulo, "modulo"},
     // {cmd_keyword, "fact", &program::rpn_fact, "n! for integer n or Gamma(x+1) for fractional x"},
     // {cmd_keyword, "mant", &program::rpn_mant, "mantissa of a real number"},
     // {cmd_keyword, "xpon", &program::rpn_xpon, "exponant of a real number"},
@@ -69,8 +69,9 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "sci", &program::rpn_sci, "scientific floating point representation. ex: 20 sci"},
     {cmd_keyword, "prec", &program::rpn_precision, "set float precision in bits. ex: 256 prec"},
     {cmd_keyword, "round", &program::rpn_round,
-     "set float rounding mode.\n\tex: [\"nearest\", \"toward zero\", \"toward "
-     "+inf\", \"toward -inf\", \"away from zero\"] round"},
+     "set float rounding mode.\n\tex: [\"nearest (even)\", \"toward zero\", \"toward "
+     "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\"] round"},
+
     {cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default"},
     {cmd_keyword, "type", &program::rpn_type, "show type of stack first entry"},
     {cmd_keyword, "hex", &program::rpn_hex, "hexadecimal representation, applies on stack level 0 only"},
@@ -166,16 +167,16 @@ program::keyword_t program::s_keywords[] = {
      ">>"},
 
     // TRIG ON REALS AND COMPLEXES
-    // {cmd_undef, "", NULL, "\nTRIG ON REALS AND COMPLEXES"},
-    // {cmd_keyword, "pi", &program::rpn_pi, "pi constant"},
-    // {cmd_keyword, "sin", &program::rpn_sin, "sinus"},
-    // {cmd_keyword, "asin", &program::rpn_asin, "arg sinus"},
-    // {cmd_keyword, "cos", &program::rpn_cos, "cosinus"},
-    // {cmd_keyword, "acos", &program::rpn_acos, "arg cosinus"},
-    // {cmd_keyword, "tan", &program::rpn_tan, "tangent"},
-    // {cmd_keyword, "atan", &program::rpn_atan, "arg tangent"},
-    // {cmd_keyword, "d->r", &program::rpn_d2r, "convert degrees to radians"},
-    // {cmd_keyword, "r->d", &program::rpn_r2d, "convert radians to degrees"},
+    {cmd_undef, "", NULL, "\nTRIG ON REALS AND COMPLEXES"},
+    {cmd_keyword, "pi", &program::rpn_pi, "pi constant"},
+    {cmd_keyword, "sin", &program::rpn_sin, "sinus"},
+    {cmd_keyword, "asin", &program::rpn_asin, "arg sinus"},
+    {cmd_keyword, "cos", &program::rpn_cos, "cosinus"},
+    {cmd_keyword, "acos", &program::rpn_acos, "arg cosinus"},
+    {cmd_keyword, "tan", &program::rpn_tan, "tangent"},
+    {cmd_keyword, "atan", &program::rpn_atan, "arg tangent"},
+    {cmd_keyword, "d->r", &program::rpn_d2r, "convert degrees to radians"},
+    {cmd_keyword, "r->d", &program::rpn_r2d, "convert radians to degrees"},
 
     // LOGS ON REALS AND COMPLEXES
     // {cmd_undef, "", NULL, "\nLOGS ON REALS AND COMPLEXES"},

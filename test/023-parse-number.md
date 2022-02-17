@@ -122,4 +122,9 @@
 
 -> stack should be 12345, 0b1100
 
+## hex powers
+`del 0x10p3 -0x2p4`
+
+-> stack should be 0x80, -0x20
+
 `del default`

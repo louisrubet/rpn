@@ -58,7 +58,7 @@ struct object {
 ///
 struct number : object {
     number() : object(cmd_number), base(10) {}
-    number(mpreal& value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
+    number(const mpreal& value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
     number(long value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
 
     int base;

@@ -116,7 +116,7 @@ pi
 
 ## round (1)
 
-`"nearest" round`
+`"nearest (even)" round`
 
 -> error should be 0
 
@@ -156,6 +156,22 @@ pi
 
 ## round (6)
 
+`"faithful rounding" round`
+
+-> error should be 0
+
+`del`
+
+## round (7)
+
+`"nearest (away from zero)" round`
+
+-> error should be 0
+
+`del`
+
+## round error
+
 `round`
 
 -> error should be 2
@@ -172,14 +188,6 @@ pi
 
 ## add (2)
 
-`1.2 2.3+`
-
--> stack should be 3.5
-
-`del`
-
-## add (3)
-
 `2.3 +`
 
 -> error should be 2
@@ -188,7 +196,7 @@ pi
 
 `del`
 
-## add (4)
+## add (3)
 
 `+`
 
@@ -206,14 +214,6 @@ pi
 
 ## sub (2)
 
-`1.2 2.3-`
-
--> stack should be -1.1
-
-`del`
-
-## sub (3)
-
 `2.3 -`
 
 -> error should be 2
@@ -222,7 +222,7 @@ pi
 
 `del`
 
-## sub (4)
+## sub (3)
 
 `-`
 
@@ -240,14 +240,6 @@ pi
 
 ## mul (2)
 
-`1.2 2.3*`
-
--> stack should be 2.76
-
-`del`
-
-## mul (3)
-
 `2.3 *`
 
 -> error should be 2
@@ -256,7 +248,7 @@ pi
 
 `del`
 
-## mul (4)
+## mul (3)
 
 `*`
 
@@ -272,15 +264,8 @@ pi
 
 `del`
 
+
 ## div (2)
-
-`1.2 2.3/`
-
--> stack should be 0.52173913043478260869565217391304347826
-
-`del`
-
-## div (3)
 
 `2.3 /`
 
@@ -290,7 +275,7 @@ pi
 
 `del`
 
-## div (4)
+## div (3)
 
 `/`
 
@@ -350,14 +335,6 @@ pi
 
 ## % (2)
 
-`2 30%`
-
--> stack should be 0.6
-
-del
-
-## % (3)
-
 `2 %`
 
 -> error should be 2
@@ -366,7 +343,7 @@ del
 
 `del`
 
-## % (4)
+## % (3)
 
 `%`
 
@@ -384,14 +361,6 @@ del
 
 ## %CH (2)
 
-`2 0.6%CH`
-
--> stack should be 30
-
-`del`
-
-## %CH (3)
-
 `2 %CH`
 
 -> error should be 2
@@ -400,7 +369,7 @@ del
 
 `del`
 
-## %CH (4)
+## %CH (3)
 
 `%CH`
 
@@ -418,14 +387,6 @@ del
 
 ## ^ (2)
 
-`2 10^`
-
--> stack should be 1024
-
-`del`
-
-## ^ (3)
-
 `2 ^`
 
 -> error should be 2
@@ -434,7 +395,7 @@ del
 
 `del`
 
-## ^ (4)
+## ^ (3)
 
 `^`
 
@@ -454,7 +415,7 @@ del
 
 `sqrt`
 
--> error should be 3
+-> error should be 2
 
 ## sq (1)
 
@@ -467,20 +428,6 @@ del
 ## sq (2)
 
 `sq`
-
--> error should be 2
-
-## sqr (1)
-
-`12 sqr`
-
--> stack should be 144
-
-`del`
-
-## sqr (2)
-
-`sqr`
 
 -> error should be 2
 
