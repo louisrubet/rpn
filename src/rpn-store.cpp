@@ -7,7 +7,7 @@ void program::rpn_sto(void) {
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     // store symbol with first value
-    auto it = _heap->find(_stack->value<ostring>(0));
+    const auto it = _heap->find(_stack->value<ostring>(0));
     if (it != _heap->end()) {
         delete it->second;
         _heap->erase(it);
@@ -18,169 +18,103 @@ void program::rpn_sto(void) {
 
 /// @brief sto+ keyword implementation
 ///
-#if 0
 void program::rpn_stoadd(void) {
     MIN_ARGUMENTS(2);
-
-    if (_stack->at(0)->_type == cmd_symbol && _stack->at(1)->_type == cmd_number) {
-        // get variable value on stack level 1, make op then modify variable
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpn_plus();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else if (_stack->at(1)->_type == cmd_symbol && _stack->at(0)->_type == cmd_number) {
-        // copy value, get variable value on stack level 1,
-        // put back value on stack level 1, make op then modify variable
-        rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack);
-        _stack->pop_front();
-
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack);
-            rpn_plus();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
+    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    if (_heap->find(_stack->value<ostring>(0)) == _heap->end()) {
+        ERR_CONTEXT(ret_unknown_variable);
+        return;
+    }
+    rpn_dup();
+    rpn_rcl(); // TODO is rcl the good one? it will recall local variables too
+    rpn_rot();
+    rpn_plus();
+    rpn_swap();
+    rpn_sto();
 }
 
 /// @brief sto- keyword implementation
 ///
 void program::rpn_stosub(void) {
     MIN_ARGUMENTS(2);
-
-    if (_stack->at(0)->_type == cmd_symbol && _stack->at(1)->_type == cmd_number) {
-        // get variable value on stack level 1, make op then modify variable
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpn_minus();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else if (_stack->at(1)->_type == cmd_symbol && _stack->at(0)->_type == cmd_number) {
-        // copy value, get variable value on stack level 1,
-        // put back value on stack level 1, make op then modify variable
-        rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack);
-        _stack->pop_front();
-
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack);
-            rpn_minus();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
+    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    if (_heap->find(_stack->value<ostring>(0)) == _heap->end()) {
+        ERR_CONTEXT(ret_unknown_variable);
+        return;
+    }
+    rpn_dup();
+    rpn_rcl();
+    rpn_rot();
+    rpn_minus();
+    rpn_swap();
+    rpn_sto();
 }
 
 /// @brief sto* keyword implementation
 ///
 void program::rpn_stomul(void) {
     MIN_ARGUMENTS(2);
-
-    if (_stack->at(0)->_type == cmd_symbol && _stack->at(1)->_type == cmd_number) {
-        // get variable value on stack level 1, make op then modify variable
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpn_mul();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else if (_stack->at(1)->_type == cmd_symbol && _stack->at(0)->_type == cmd_number) {
-        // copy value, get variable value on stack level 1,
-        // put back value on stack level 1, make op then modify variable
-        rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack);
-        _stack->pop_front();
-
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack);
-            rpn_mul();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
+    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    if (_heap->find(_stack->value<ostring>(0)) == _heap->end()) {
+        ERR_CONTEXT(ret_unknown_variable);
+        return;
+    }
+    rpn_dup();
+    rpn_rcl();
+    rpn_rot();
+    rpn_mul();
+    rpn_swap();
+    rpn_sto();
 }
 
 /// @brief sto/ keyword implementation
 ///
 void program::rpn_stodiv(void) {
     MIN_ARGUMENTS(2);
-
-    if (_stack->at(0)->_type == cmd_symbol && _stack->at(1)->_type == cmd_number) {
-        // get variable value on stack level 1, make op then modify variable
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpn_div();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else if (_stack->at(1)->_type == cmd_symbol && _stack->at(0)->_type == cmd_number) {
-        // copy value, get variable value on stack level 1,
-        // put back value on stack level 1, make op then modify variable
-        rpnstack::copy_and_push_front(*_stack, _stack->size() - 1, _calc_stack);
-        _stack->pop_front();
-
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpnstack::copy_and_push_front(_calc_stack, _calc_stack.size() - 1, *_stack);
-            rpn_div();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
+    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    if (_heap->find(_stack->value<ostring>(0)) == _heap->end()) {
+        ERR_CONTEXT(ret_unknown_variable);
+        return;
+    }
+    rpn_dup();
+    rpn_rcl();
+    rpn_rot();
+    rpn_div();
+    rpn_swap();
+    rpn_sto();
 }
 
 /// @brief stosneg keyword implementation
 ///
 void program::rpn_stoneg(void) {
     MIN_ARGUMENTS(1);
-
-    if (_stack->at(0)->_type == cmd_symbol) {
-        // get variable value on stack level 1, make op then modify variable
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpn_neg();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
+    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    if (_heap->find(_stack->value<ostring>(0)) == _heap->end()) {
+        ERR_CONTEXT(ret_unknown_variable);
+        return;
+    }
+    rpn_dup();
+    rpn_rcl();
+    rpn_neg();
+    rpn_swap();
+    rpn_sto();
 }
 
 /// @brief sinv keyword implementation
 ///
 void program::rpn_stoinv(void) {
     MIN_ARGUMENTS(1);
-
-    if (_stack->at(0)->_type == cmd_symbol) {
-        // get variable value on stack level 1, make op then modify variable
-        string variable(((symbol*)_stack->back())->value);
-        rpn_rcl();
-        if (_err == ret_ok) {
-            rpn_inv();
-            (*_heap)[variable] = _stack->at(0);
-            _stack->pop_front();
-        }
-    } else
-        ERR_CONTEXT(ret_bad_operand_type);
+    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    if (_heap->find(_stack->value<ostring>(0)) == _heap->end()) {
+        ERR_CONTEXT(ret_unknown_variable);
+        return;
+    }
+    rpn_dup();
+    rpn_rcl();
+    rpn_inv();
+    rpn_swap();
+    rpn_sto();
 }
-#endif
 
 /// @brief rcl keyword implementation
 ///
@@ -190,12 +124,12 @@ void program::rpn_rcl(void) {
 
     // recall a variable
     object* obj;
-    string variable(((symbol*)_stack->back())->value);
+    string variable(_stack->value<symbol>(0));
 
     // mind the order of heaps
     if (find_variable(variable, obj)) {
         (void)_stack->pop_front();
-        _stack->push_front(obj);
+        _stack->push_front(obj->clone());
     } else
         ERR_CONTEXT(ret_unknown_variable);
 }
@@ -208,7 +142,7 @@ void program::rpn_edit(void) {
     ostringstream st;
 
     // re-write stack objet in a stream
-    _stack->at(1)->show(st);
+    _stack->at(0)->show(st);
     _stack->pop();
 
     // set it as the linenoise line entry
@@ -240,8 +174,12 @@ void program::rpn_purge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    //if (_heap->erase(_stack->value<string>(0)) == 0)
-    //    ERR_CONTEXT(ret_unknown_variable);
+    const auto i = _heap->find(_stack->value<symbol>(0));
+    if (i != _heap->end()) {
+        delete i->second;
+        _heap->erase(i);
+    } else
+        ERR_CONTEXT(ret_unknown_variable);
     _stack->pop();
 }
 

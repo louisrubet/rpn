@@ -31,7 +31,10 @@ void program::test_get_stack(string& stack_is, rpnstack& stk) {
 /// @param steps_failed failed steps nb
 ///
 void program::test_show_result(string title, int tests, int tests_failed, int steps, int steps_failed) {
-    cout << title << ": run " << tests << " tests: " << tests - tests_failed << " passed, ";
+    //cout << title << ": run " << tests << " tests: " << tests - tests_failed << " passed, ";
+    if (!title.empty())
+        cout << title << ": ";
+    cout <<"run " << tests << " tests: " << tests - tests_failed << " passed, ";
     if (tests_failed > 0) cout << FG_RED;
     cout << tests_failed << " failed";
     if (tests_failed > 0) cout << COLOR_OFF;
@@ -245,7 +248,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
 
         // conclusion: show and keep for total
         if (tests != 0) {
-            test_show_result(test_filename, tests, tests_failed, steps, steps_failed);
+            test_show_result("", tests, tests_failed, steps, steps_failed);
 
             total_tests += tests;
             total_tests_failed += tests_failed;

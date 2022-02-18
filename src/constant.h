@@ -55,7 +55,6 @@ typedef enum {
     ret_missing_operand,
     ret_bad_operand_type,
     ret_out_of_range,
-    ret_bad_value,
     ret_unknown_variable,
     ret_internal,
     ret_deadly,
@@ -67,14 +66,15 @@ typedef enum {
     ret_runtime_error,
     ret_abort_current_entry,
     ret_out_of_memory,
+    ret_bad_value,
     ret_max
 } ret_value;
 
-#define RET_VALUE_STRINGS                                                                                           \
-    {                                                                                                               \
-        "ok", "unknown command", "missing operand", "bad operand type", "out of range", "bad value",                \
-            "unknown variable", "internal error, aborting", "deadly", "goodbye", "not implemented", "no operation", \
-            "syntax error", "division by zero", "runtime error", "aborted current entry", "out of memory"           \
+#define RET_VALUE_STRINGS                                                                                       \
+    {                                                                                                           \
+        "ok", "unknown command", "missing operand", "bad operand type", "out of range", "unknown variable",     \
+            "internal error, aborting", "deadly", "goodbye", "not implemented", "no operation", "syntax error", \
+            "division by zero", "runtime error", "aborted current entry", "out of memory", "bad value",         \
     }
 
 // command types

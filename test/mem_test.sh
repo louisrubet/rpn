@@ -33,10 +33,10 @@ quick_tests=(
 
 functional_tests=($(cat all.md | grep "^@include" | awk '{print $2}'))
 
-echo "Quick rpn memory checks"
-for i in ${!quick_tests[@]}; do
-    checkmem "${quick_tests[$i]}"
-done
+# echo "Quick rpn memory checks"
+# for i in ${!quick_tests[@]}; do
+#     checkmem "${quick_tests[$i]}"
+# done
 
 echo "Functional rpn memory checks"
 for i in ${!functional_tests[@]}; do
