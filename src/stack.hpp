@@ -36,9 +36,10 @@ class rpnstack : public deque<object*> {
     /// @param first index to start
     /// @param last index to stop
     ///
-    void erase(size_t first = 0, size_t nb = 1) {
+    void erase(size_t first = 0, size_t nb = 1, bool del = true) {
         size_t last = std::min(first + nb, size());
-        for_each(begin() + first, begin() + last, [](object* o) { delete o; });
+        if (del)
+            for_each(begin() + first, begin() + last, [](object* o) { delete o; });
         deque::erase(begin() + first, begin() + last);
     }
 

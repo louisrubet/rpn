@@ -1,4 +1,4 @@
-# STACK TEST
+# STACK
 
 `default del`
 

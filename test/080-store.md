@@ -86,7 +86,7 @@
 
 `del`
 
-## rcl (2)
+## rcl (3)
 
 `'var' rcl`
 
@@ -132,29 +132,13 @@
 
 ## sto+ (1)
 
-`8 'a' sto`
-
-`2 'a' sto+`
-
-`a`
+`8 'a' sto 2 'a' sto+ a`
 
 -> stack should be 10
 
 `del`
 
 ## sto+ (2)
-
-`2 'a' sto`
-
-`'a' 2 sto+`
-
-`a`
-
--> stack should be 4
-
-`del`
-
-## sto+ (3)
 
 `'a' sto+`
 
@@ -164,7 +148,7 @@
 
 `del`
 
-## sto+ (4)
+## sto+ (3)
 
 `3 'zz' sto+`
 
@@ -188,18 +172,6 @@
 
 ## sto- (2)
 
-`2 'a' sto`
-
-`'a' 2 sto-`
-
-`a`
-
--> stack should be 0
-
-`del`
-
-## sto- (3)
-
 `'a' sto-`
 
 -> stack size should be 1
@@ -208,7 +180,7 @@
 
 `del`
 
-## sto- (4)
+## sto- (3)
 
 `3 'zz' sto-`
 
@@ -232,18 +204,6 @@
 
 ## sto* (2)
 
-`2 'a' sto`
-
-`'a' 3 sto*`
-
-`a`
-
--> stack should be 6
-
-`del`
-
-## sto* (3)
-
 `'a' sto*`
 
 -> stack size should be 1
@@ -252,7 +212,7 @@
 
 `del`
 
-## sto* (4)
+## sto* (3)
 
 `3 'zz' sto*`
 
@@ -266,23 +226,11 @@
 
 `2 'a' sto`
 
-`6 'a' sto/`
+`4 'a' sto/`
 
 `a`
 
--> stack should be 3
-
-`del`
-
-## sto/ (2)
-
-`6 'a' sto`
-
-`'a' 2 sto/`
-
-`a`
-
--> stack should be 3
+-> stack should be 0.5
 
 `del`
 

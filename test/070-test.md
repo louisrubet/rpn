@@ -1,4 +1,4 @@
-# TESTS
+# LOGICAL TESTS
 
 `default del`
 
