@@ -388,6 +388,14 @@
 
 `del`
 
+## nested for next
+
+`1 2 for i 0 1 for j i (1,0) * j (0,1) * + next next`
+
+-> stack should be (1,0), (1,1), (2,0), (2,1)
+
+`del`
+
 ## for next - error case (1)
 
 `1 for i i next`
@@ -492,6 +500,14 @@
 
 `del`
 
+## nested for step
+
+`0 2 for i 0 6 for j i (1,0) * j (0,1) * + 3 step 2 step`
+
+-> stack should be (0,0), (0,3), (0,6), (2,0), (2,3), (2,6)
+
+`del`
+
 ## for step - error case (1)
 
 `0 1 for i i "0.5" step`
@@ -537,6 +553,14 @@
 `1 'a' sto do a 1 + 'a' sto until a 3 > end a`
 
 -> stack should be 4
+
+`del`
+
+## nexted do..until
+
+`1 'i' sto do 0 'j' sto do i (1,0) * j (0,1) * + 1 'j' sto+ until j 1 > end 1 'i' sto+ until i 2 > end`
+
+-> stack should be (1,0), (1,1), (2,0), (2,1)
 
 `del`
 
@@ -617,6 +641,14 @@
 `0 'a' sto while a 3 < repeat a 1 + 'a' sto 100 0 a for b b + next end`
 
 -> stack should be 101, 103, 106
+
+`del`
+
+## nested while .. repeat
+
+`1 'i' sto while i 2 <= repeat 0 'j' sto while j 1 <= repeat i (1,0) * j (0,1) * + 1 'j' sto+ end 1 'i' sto+ end`
+
+-> stack should be (1,0), (1,1), (2,0), (2,1)
 
 `del`
 

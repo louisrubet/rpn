@@ -1,7 +1,7 @@
 #include "program.hpp"
 
-/// @brief find variable by its name in local heap, parens heaps, global heap
-/// 
+/// @brief find variable by its name in local heap, successive parents heaps, global heap
+///
 /// @param variable the variable name to find
 /// @param obj the variable object found
 /// @return true variable was found
@@ -129,7 +129,7 @@ int program::rpn_inprog(branch& myobj) {
 
     // load variables
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--) {
-        _local_heap[string(((symbol*)(*this)[i])->value)] = _stack->at(0);
+        _local_heap[string(((symbol*)(*this)[i])->value)] = _stack->at(0)->clone();
         _stack->pop_front();
     }
 
