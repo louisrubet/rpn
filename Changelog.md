@@ -12,6 +12,8 @@ Changelog
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap
 
+grosse perte en performances (!)
+
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
 - added `norm` as a synonym of `abs`
@@ -19,7 +21,7 @@ New
 - entering the sign after the base (ex: 0x-1e2) is allowed
 
 Compatibility is broken on these points
-- `<< <<` doesn't input as `<< << >> >>` but as `<< << >>`
+- `<< <<` input doesn't lead to `««»»` but to `«<< »`, preventing to eval the real program content
 - `1 2+` not allowed anymore, keep `1 2 +`, this corrects bad behaviors like `3b114` pushing `3b11` and `4`
 - complexes are written in the form `(1,2)` instead of `(1, 2)` (space is removed)
 - removed useless `unti`, `repea`, `whil` (prev.existing for HP28S compatibility)
@@ -38,3 +40,5 @@ missing tests
 - les arguments d'une fonction en erreur doivent ils êre consommés ?
     ex embettant : sto+
 - sto+ * - / : ajouter des cas de test avec type incorrects
+- `10 -> n << n >>` plante
+- `1 'i' sto while i <= 2 repeat 0 'j' sto while j <= 1 repeat i (1,0) * j (0,1) * + 1 'j' sto+ end 1 'i' sto+ end` plante
