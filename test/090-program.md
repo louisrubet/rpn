@@ -8,7 +8,7 @@
 
 -> stack size should be 1
 
--> stack should be << 'one' >>
+-> stack should be «'one'»
 
 `del`
 
@@ -18,7 +18,7 @@
 
 -> stack size should be 1
 
--> stack should be << 'one' 2 >>
+-> stack should be «'one' 2»
 
 `del`
 
@@ -28,7 +28,7 @@
 
 -> stack size should be 1
 
--> stack should be <<  >>
+-> stack should be «»
 
 `del`
 
@@ -38,7 +38,7 @@
 
 -> stack size should be 1
 
--> stack should be << << << <<  >> >> >> >>
+-> stack should be «<< << <<»
 
 `del`
 
@@ -48,7 +48,7 @@
 
 -> stack size should be 1
 
--> stack should be << -> n << n 2 * >> >>
+-> stack should be «-> n << n 2 * >>»
 
 `del`
 
@@ -56,7 +56,7 @@
 
 `<< 1 << 2 >> >>`
 
--> stack should be << 1 << 2 >> >>
+-> stack should be «1 << 2 >>»
 
 `del`
 
@@ -64,7 +64,7 @@
 
 `<< 1 << 2 >> >> dup eval`
 
--> stack should be << 1 << 2 >> >>, 1, << 2 >>
+-> stack should be «1 << 2 >>», 1, «2»
 
 `del`
 
@@ -82,12 +82,61 @@
 
 `del`
 
-## program several args
+## nested programs
 
 `0 1 10 << -> u0 u1 n << u0 u1 1 n start dup2 + rot drop next swap drop >> >> eval`
 
 `eval`
 
 -> stack should be 89
+
+`del`
+
+## fibo
+
+```
+«dup 1 > if then dup 1 - fibo swap 2 - fibo + else 1 == if then 1 else 0 end end» 'fibo' sto
+7 fibo
+13 == if then 'ok!' end
+```
+
+-> stack should be 'ok!'
+
+`del`
+
+## nested programs with local variables
+
+```
+100
+10
+«dup2 * -> a b c << a b + c / -> d << << -> sym << sym ->str " is " + sym rcl ->str + >> >> 'stringify' sto 'a' stringify 'b' stringify 'c' stringify 'd' stringify >> >>»
+eval
+```
+
+-> stack should be "'a' is 100", "'b' is 10", "'c' is 1000", "'d' is 0.11"
+
+`del`
+
+## local variables multiple entries
+
+`1 2 3 << -> a b c << "a is " a ->str + "b is " b ->str + "c is " c ->str + >> >> eval`
+
+-> stack should be "a is 1", "b is 2", "c is 3"
+
+`del`
+
+## local variables separation (1)
+
+`123 'n' sto 1 << -> n << "n is " n ->str + >> >> eval`
+
+-> stack should be "n is 1"
+
+`del`
+
+## local variables separation (2)
+
+`123 'n' sto 2 << -> n << n sq << -> n << "n is " n ->str + >> >> >> eval >> eval`
+
+-> stack should be "n is 4"
 
 `del`
