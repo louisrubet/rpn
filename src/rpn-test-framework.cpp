@@ -50,15 +50,14 @@ void program::test_show_result(string title, int tests, int tests_failed, int st
 ///
 void program::rpn_test() {
     MIN_ARGUMENTS(1);
-    //TODO go back to string
-    ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
+    ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
     int total_tests = 0;
     int total_tests_failed = 0;
     int total_steps = 0;
     int total_steps_failed = 0;
 
-    string test_filename = _stack->value<symbol>(0);
+    string test_filename = _stack->value<ostring>(0);
     _stack->pop();
     cout << endl << "rpn version is " << version << endl;
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);

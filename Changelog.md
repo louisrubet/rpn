@@ -22,7 +22,6 @@ cf https://www.geeksforgeeks.org/overloading-new-delete-operator-c/
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
-- `test` command can also take a symbol as a parameter ; if the symbol contains a valid
 - entering the sign after the base (ex: 0x-1e2) is allowed
 
 Compatibility is broken on these points
