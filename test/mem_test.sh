@@ -40,6 +40,6 @@ functional_tests=($(cat all.md | grep "^@include" | awk '{print $2}'))
 
 echo "Functional rpn memory checks"
 for i in ${!functional_tests[@]}; do
-    checkmem "${functional_tests[$i]} test"
+    checkmem "\"${functional_tests[$i]}\" test"
 done
 exit ${failed}
