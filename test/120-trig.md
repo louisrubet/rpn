@@ -1,6 +1,6 @@
 # TRIGONOMETRY
 
-`del default 6 fix`
+`del default 6 fix 128 prec`
 
 ## pi
 
