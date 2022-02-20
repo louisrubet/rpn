@@ -1,4 +1,4 @@
-# PARSE SYMBOL
+# PARSE PROGRAM
 
 `default del `
 

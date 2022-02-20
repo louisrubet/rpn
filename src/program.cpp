@@ -52,15 +52,15 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "max", &program::rpn_max, "max of 2 real numbers"},
 
     // OPERATIONS ON COMPLEXES
-    // {cmd_undef, "", NULL, "\nOPERATIONS ON COMPLEXES"},
-    // {cmd_keyword, "re", &program::rpn_re, "complex real part"},
-    // {cmd_keyword, "im", &program::rpn_im, "complex imaginary part"},
-    // {cmd_keyword, "conj", &program::rpn_conj, "complex conjugate"},
-    // {cmd_keyword, "arg", &program::rpn_arg, "complex argument in radians"},
-    // {cmd_keyword, "c->r", &program::rpn_c2r, "transform a complex in 2 reals"},
-    // {cmd_keyword, "r->c", &program::rpn_r2c, "transform 2 reals in a complex"},
-    // {cmd_keyword, "p->r", &program::rpn_p2r, "cartesian to polar"},
-    // {cmd_keyword, "r->p", &program::rpn_r2p, "polar to cartesian"},
+    {cmd_undef, "", NULL, "\nOPERATIONS ON COMPLEXES"},
+    {cmd_keyword, "re", &program::rpn_re, "complex real part"},
+    {cmd_keyword, "im", &program::rpn_im, "complex imaginary part"},
+    {cmd_keyword, "conj", &program::rpn_conj, "complex conjugate"},
+    {cmd_keyword, "arg", &program::rpn_arg, "complex argument in radians"},
+    {cmd_keyword, "c->r", &program::rpn_c2r, "transform a complex in 2 reals"},
+    {cmd_keyword, "r->c", &program::rpn_r2c, "transform 2 reals in a complex"},
+    {cmd_keyword, "p->r", &program::rpn_p2r, "cartesian to polar"},
+    {cmd_keyword, "r->p", &program::rpn_r2p, "polar to cartesian"},
 
     // MODE
     {cmd_undef, "", NULL, "\nMODE"},
