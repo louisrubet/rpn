@@ -658,4 +658,7 @@ void program::apply_default() {
     number::s_mode = DEFAULT_MODE;
     number::s_digits = DEFAULT_DECIMAL_DIGITS;
     mpreal::set_default_prec(MPFR_DEFAULT_PREC_BITS);
+
+    static mp_rnd_t def_rnd = mpreal::get_default_rnd();
+    mpreal::set_default_rnd(def_rnd);
 }
