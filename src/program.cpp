@@ -33,7 +33,6 @@ program::keyword_t program::s_keywords[] = {
     {cmd_keyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
     {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
     {cmd_keyword, "abs", &program::rpn_abs, "absolute value (norm for a complex)"},
-    {cmd_keyword, "norm", &program::rpn_abs, ""},
     {cmd_keyword, "sign", &program::rpn_sign, "sign of a number or z/|z| for a complex"},
 
     // OPERATIONS ON REALS
