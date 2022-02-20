@@ -11,6 +11,7 @@ Changelog
 - [google c++ style guide](https://google.github.io/styleguide/cppguide.html) applied
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap
+- it seems cosh was giving sinh  (!)
 
 grosse perte en performances (!)
 - v2.3.2 fibo: 0,01s user 0,01s system 97% cpu 0,017 total
