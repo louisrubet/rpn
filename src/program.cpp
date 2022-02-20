@@ -199,10 +199,10 @@ program::keyword_t program::s_keywords[] = {
     // {cmd_keyword, "atanh", &program::rpn_atanh, "inverse hyperbolic tangent"},
 
     // TIME AND DATE
-    // {cmd_undef, "", NULL, "\nTIME AND DATE"},
-    // {cmd_keyword, "time", &program::rpn_time, "time in local format"},
-    // {cmd_keyword, "date", &program::rpn_date, "date in local format"},
-    // {cmd_keyword, "ticks", &program::rpn_ticks, "system tick in µs"},
+    {cmd_undef, "", NULL, "\nTIME AND DATE"},
+    {cmd_keyword, "time", &program::rpn_time, "time in local format"},
+    {cmd_keyword, "date", &program::rpn_date, "date in local format"},
+    {cmd_keyword, "ticks", &program::rpn_ticks, "system tick in µs"},
 
     // end
     {cmd_max, "", NULL, ""},
