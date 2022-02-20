@@ -13,6 +13,11 @@ Changelog
 - Delivery as flatpak and snap
 
 grosse perte en performances (!)
+- v2.3.2 fibo: 0,01s user 0,01s system 97% cpu 0,017 total
+- v3.0.0 fibo: 2,60s user 0,00s system 99% cpu 2,611 total
+- facteur 150 environ
+cf https://gmplib.org/manual/Custom-Allocation
+cf https://www.geeksforgeeks.org/overloading-new-delete-operator-c/
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
@@ -34,11 +39,14 @@ Compatibility is broken on these points
 - rpn is not delivered as deb and rpm anymore, since it is too much bound to particular OS
 - `sto/` bug correction: 3 'a' sto/ now correctly does a/3 -> a (although it did 3/a -> a)
 - `sto+` `sto-` `sto*` `sto/` don't accept anymore the syntax `'varname' value stoX`, but only `value 'varname' stoX`, ex: `3 'a' sto*`
+- incomplete entry `(1,` not available anymore
+- signed zero is the sign of zero is subject to change  compared to previous version, for example `-3 sqrt` now equals `(0.000000,1.732051)` instead of `(-0.000000,1.732051)`
 
-missing tests
+missing tests / problems
 - nested loops / if / while / do + access to local variables
 - les arguments d'une fonction en erreur doivent ils êre consommés ?
     ex embettant : sto+
 - sto+ * - / : ajouter des cas de test avec type incorrects
 - `10 -> n << n >>` plante
 - `1 'i' sto while i <= 2 repeat 0 'j' sto while j <= 1 repeat i (1,0) * j (0,1) * + 1 'j' sto+ end 1 'i' sto+ end` plante
+- real: ln, lnp1, log, log10, log2, exp, expm, alog2, alog10, sinh, asinh, cosh, acosh, tanh, atanh
