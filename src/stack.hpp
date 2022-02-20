@@ -115,6 +115,7 @@ class heap : public map<string, object*> {
             for (; num > 0; num--, i++)
                 ;
             obj = i->second;
+            name = i->first;
             return true;
         } else
             return false;

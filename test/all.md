@@ -21,4 +21,4 @@
 @include 110-time.md
 @include 120-trig.md
 @include 130-logs.md
-# @include 999-manual-tests.md
+@include 999-manual-tests.md
