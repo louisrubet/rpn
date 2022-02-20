@@ -23,6 +23,7 @@ cf https://www.geeksforgeeks.org/overloading-new-delete-operator-c/
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
 - entering the sign after the base (ex: 0x-1e2) is allowed
+- rpn is delivered as flatpak and snap packages to be compatible with a maximum of Linux distribs. rpm and deb are no longer generated
 
 Compatibility is broken on these points
 - `<< <<` input doesn't lead to `««»»` but to `«<< »`, preventing to eval the real program content
@@ -32,16 +33,13 @@ Compatibility is broken on these points
 - removed `sqr` function, please use `sq` instead (prev.existing for HP28S compatibility)
 - the binary prefix is always 0b on display, but still can be 0b, 0B, 2b or 2B at input
 - the hex prefix is always 0x on display, but still can be 0x, 0X or 16B at input
-- `mant` and `xpon` now give binary significand and exponent, as it is the norm in standard libs (libC, standard C++, mpfr, gmp)
+- `mant` and `xpon` now give binary (and not decimal) significand and exponent, as it is the norm in standard libs (libC, standard C++, mpfr, gmp)
 - `dupn`, `roll`, `rolld` are not leaving anymore their argument in front of the stack in case of error
-- `sub` now only accepts boundaries between 1 and the string length
-- rpn is not delivered as deb and rpm anymore, since it is too much bound to particular OS
-- `sto/` bug correction: 3 'a' sto/ now correctly does a/3 -> a (although it did 3/a -> a)
 - `sto+` `sto-` `sto*` `sto/` don't accept anymore the syntax `'varname' value stoX`, but only `value 'varname' stoX`, ex: `3 'a' sto*`
-- incomplete entry `(1,` not available anymore
+- incomplete entry `(1,` is not available anymore
 - signed zero is the sign of zero is subject to change  compared to previous version, for example `-3 sqrt` now equals `(0.000000,1.732051)` instead of `(-0.000000,1.732051)`
 
-missing tests / problems
-- les arguments d'une fonction en erreur doivent ils être consommés ?
-    ex embettant : sto+
-- `1 'i' sto while i <= 2 repeat 0 'j' sto while j <= 1 repeat i (1,0) * j (0,1) * + 1 'j' sto+ end 1 'i' sto+ end` plante
+Debug 
+- `sub` now only accepts boundaries between 1 and the string length
+- `sto/` behavior: sto/ now correctly stores variable / constant and not constant / variable
+- `cosh` now returns the hyp cosinus instead of the hyp sinus (!)
