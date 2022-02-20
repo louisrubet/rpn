@@ -57,7 +57,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/program.cpp
   ${PROJECT_SOURCE_DIR}/src/parse.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-branch.cpp
-  #${PROJECT_SOURCE_DIR}/src/rpn-complex.cpp
+  ${PROJECT_SOURCE_DIR}/src/rpn-complex.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-general.cpp
   #${PROJECT_SOURCE_DIR}/src/rpn-logs.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-program.cpp

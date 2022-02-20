@@ -17,6 +17,8 @@
 @include 070-test.md
 @include 080-store.md
 @include 090-program.md
-# @include 100-complex.md
+@include 100-complex.md
 # @include 110-time.md
+# @include 120-trig.md
+# @include 120-logs.md
 # @include 999-manual-tests.md

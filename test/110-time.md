@@ -1,4 +1,4 @@
-# date and time
+# DATE AND TIME
 
 `default del`
 

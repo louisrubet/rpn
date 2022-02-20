@@ -1,4 +1,4 @@
-### COMPLEX
+# COMPLEX
 
 `default del`
 
@@ -22,7 +22,7 @@
 
 `(1,`
 
--> stack should be (1,0)
+-> stack should be '(1,'
 
 `del`
 
@@ -46,7 +46,7 @@
 
 `(0b11,0b101)`
 
--> stack should be (3,5)
+-> stack should be (0b11,0b101)
 
 `del`
 
@@ -60,23 +60,15 @@
 
 ## add (2)
 
-`(1.2,2.3) (1,2)+`
-
--> stack should be (2.2,4.3)
-
-`del`
-
-## add (3)
-
-`(1.2,2.3) 3+`
+`(1.2,2.3) 3 +`
 
 -> stack should be (4.2,2.3)
 
 `del`
 
-## add (4)
+## add (3)
 
-`3 (1.2,2.3)+`
+`3 (1.2,2.3) +`
 
 -> stack should be (4.2,2.3)
 
@@ -92,25 +84,17 @@
 
 ## sub (2)
 
-`(1.2,2.3) (1,2)-`
-
--> stack should be (0.2,0.3)
-
-`del`
-
-## sub (3)
-
-`(1.2,2.3) 1-`
+`(1.2,2.3) 1 -`
 
 -> stack should be (0.2,2.3)
 
 `del`
 
-## sub (4)
+## sub (3)
 
 `1 (1.2,2.3) -`
 
--> stack should be (-0.2,2.3)
+-> stack should be (-0.2,-2.3)
 
 `del`
 
@@ -394,13 +378,21 @@
 
 ## r->c (2)
 
+`0x12 0b1101 r->c`
+
+-> stack should be (0x12,0b1101)
+
+`del`
+
+## r->c error (1)
+
 `1 r->c`
 
 -> error should be 2
 
 `del`
 
-## r->c (3)
+## r->c error (2)
 
 `r->c`
 
@@ -408,7 +400,7 @@
 
 `del`
 
-## r->c (3)
+## r->c error (3)
 
 `'1' '2' r->c`
 
@@ -426,13 +418,21 @@
 
 ## c->r (2)
 
+`(0x12,0b1101) c->r`
+
+-> stack should be 0x12, 0b1101
+
+`del`
+
+## c->r error (2)
+
 `c->r`
 
 -> error should be 2
 
 `del`
 
-## c->r (3)
+## c->r error (2)
 
 `'4' c->r`
 
@@ -502,6 +502,22 @@
 
 `del`
 
+## ^ (4)
+
+`-3 (1,2) ^`
+
+-> stack should be (0.003284,-0.004539)
+
+`del`
+
+## ^ (5)
+
+`(1,2) (1,2) ^`
+
+-> stack should be (-0.222517,0.100709)
+
+`del`
+
 ## sqrt (1)
 
 `(3,4) sqrt`
@@ -514,695 +530,6 @@
 
 `-3 sqrt`
 
--> stack should be (-0.000000,1.732051)
-
-`del`
-
-## sin (1)
-
-`(1,2) sin`
-
--> stack should be (3.165779,1.959601)
-
-`del`
-
-## sin (2)
-
-`(1,-2) sin`
-
--> stack should be (3.165779,-1.959601)
-
-`del`
-
-## sin (3)
-
-`(-1,-2) sin`
-
--> stack should be (-3.165779,-1.959601)
-
-`del`
-
-## sin (4)
-
-`(-1,2) sin`
-
--> stack should be (-3.165779,1.959601)
-
-`del`
-
-## asin (1)
-
-`(1,2) asin`
-
--> stack should be (0.427079,1.528571)
-
-`del`
-
-## asin (2)
-
-`(1,-2) asin`
-
--> stack should be (0.427079,-1.528571)
-
-`del`
-
-## asin (3)
-
-`(-1,-2) asin`
-
--> stack should be (-0.427079,-1.528571)
-
-`del`
-
-## asin (4)
-
-`(-1,2) asin`
-
--> stack should be (-0.427079,1.528571)
-
-`del`
-
-## cos (1)
-
-`(1,2) cos`
-
--> stack should be (2.032723,-3.051898)
-
-`del`
-
-## cos (2)
-
-`(1,-2) cos`
-
--> stack should be (2.032723,3.051898)
-
-`del`
-
-## cos (3)
-
-`(-1,-2) cos`
-
--> stack should be (2.032723,-3.051898)
-
-`del`
-
-## cos (4)
-
-`(-1,2) sin`
-
--> stack should be (-3.165779,1.959601)
-
-`del`
-
-## acos (1)
-
-`(1,2) acos`
-
--> stack should be (1.143718,-1.528571)
-
-`del`
-
-## acos (2)
-
-`(1,-2) acos`
-
--> stack should be (1.143718,1.528571)
-
-`del`
-
-## acos (3)
-
-`(-1,-2) acos`
-
--> stack should be (1.997875,1.528571)
-
-`del`
-
-## acos (4)
-
-`(-1,2) acos`
-
--> stack should be (1.997875,-1.528571)
-
-`del`
-
-## tan (1)
-
-`(1,2) tan`
-
--> stack should be (0.033813,1.014794)
-
-`del`
-
-## tan (2)
-
-`(1,-2) tan`
-
--> stack should be (0.033813,-1.014794)
-
-`del`
-
-## tan (3)
-
-`(-1,-2) tan`
-
--> stack should be (-0.033813,-1.014794)
-
-`del`
-
-## tan (4)
-
-`(-1,2) tan`
-
--> stack should be (-0.033813,1.014794)
-
-`del`
-
-## atan (1)
-
-`(1,2) atan`
-
--> stack should be (1.338973,0.402359)
-
-`del`
-
-## atan (2)
-
-`(1,-2) atan`
-
--> stack should be (1.338973,-0.402359)
-
-`del`
-
-## atan (3)
-
-`(-1,-2) atan`
-
--> stack should be (-1.338973,-0.402359)
-
-`del`
-
-## atan (4)
-
-`(-1,2) atan`
-
--> stack should be (-1.338973,0.402359)
-
-`del`
-
-## ln (1)
-
-`(1,2) ln`
-
--> stack should be (0.804719,1.107149)
-
-`del`
-
-## ln (2)
-
-`(1,-2) ln`
-
--> stack should be (0.804719,-1.107149)
-
-`del`
-
-
-## ln (3)
-
-`(-1,-2) ln`
-
--> stack should be (0.804719,-2.034444)
-
-`del`
-
-## ln (4)
-
-`(-1,2) ln`
-
--> stack should be (0.804719,2.034444)
-
-`del`
-
-## lnp1 (1)
-
-`(1,2) lnp1`
-
-`(1,2) 1 + ln ==`
-
--> stack should be 1.000000
-
-`del`
-
-## lnp1 (2)
-
-`(1,-2) lnp1`
-
-`(1,-2) 1 + ln ==`
-
--> stack should be 1.000000
-
-`del`
-
-## lnp1 (3)
-
-`(-1,-2) lnp1`
-
-`(-1,-2) 1 + ln ==`
-
--> stack should be 1.000000
-
-`del`
-
-## lnp1 (4)
-
-`(-1,2) lnp1`
-
-`(-1,2) 1 + ln ==`
-
--> stack should be 1.000000
-
-`del`
-
-## log (1)
-
-`(1,2) log`
-
--> stack should be (0.804719,1.107149)
-
-`del`
-
-## log (2)
-
-`(1,-2) log`
-
--> stack should be (0.804719,-1.107149)
-
-`del`
-
-## log (3)
-
-`(-1,-2) log`
-
--> stack should be (0.804719,-2.034444)
-
-`del`
-
-## log (4)
-
-`(-1,2) log`
-
--> stack should be (0.804719,2.034444)
-
-`del`
-
-## log10 (1)
-
-`(1,2) log10`
-
--> stack should be (0.349485,0.480829)
-
-`del`
-
-## log10 (2)
-
-`(1,-2) log10`
-
--> stack should be (0.349485,-0.480829)
-
-`del`
-
-## log10 (3)
-
-`(-1,-2) log10`
-
--> stack should be (0.349485,-0.883548)
-
-`del`
-
-## log10 (4)
-
-`(-1,2) log10`
-
--> stack should be (0.349485,0.883548)
-
-`del`
-
-## log2 (1)
-
-`(1,2) log2`
-
--> stack should be (1.160964,1.597278)
-
-`del`
-
-## log2 (2)
-
-`(1,-2) log2`
-
--> stack should be (1.160964,-1.597278)
-
-`del`
-
-## log2 (3)
-
-`(-1,-2) log2`
-
--> stack should be (1.160964,-2.935082)
-
-`del`
-
-## log2 (4)
-
-`(-1,2) log2`
-
--> stack should be (1.160964,2.935082)
-
-`del`
-
-## exp (1)
-
-`(1,2) exp`
-
--> stack should be (-1.131204,2.471727)
-
-`del`
-
-## exp (2)
-
-`(1,-2) exp`
-
--> stack should be (-1.131204,-2.471727)
-
-`del`
-
-## exp (3)
-
-`(-1,-2) exp`
-
--> stack should be (-0.153092,-0.334512)
-
-`del`
-
-## exp (4)
-
-`(-1,2) exp`
-
--> stack should be (-0.153092,0.334512)
-
-`del`
-
-## expm (1)
-
-`(1,2) expm`
-
-`(1,2) exp 1 - ==`
-
--> stack should be 1.000000
-
-`del`
-
-## expm (2)
-
-`(1,-2) expm`
-
-`(1,-2) exp 1 - ==`
-
--> stack should be 1.000000
-
-`del`
-
-## expm (3)
-
-`(-1,-2) expm`
-
-`(-1,-2) exp 1 - ==`
-
--> stack should be 1.000000
-
-`del`
-
-## expm (4)
-
-`(-1,2) expm`
-
-`(-1,2) exp 1 - ==`
-
--> stack should be 1.000000
-
-`del`
-
-## alog2 (1)
-
-`(1,2) alog2`
-
--> stack should be (0.366914,1.966055)
-
-`del`
-
-## alog2 (2)
-
-`(1,-2) alog2`
-
--> stack should be (0.366914,-1.966055)
-
-`del`
-
-## alog2 (3)
-
-`(-1,-2) alog2`
-
--> stack should be (0.091728,-0.491514)
-
-`del`
-
-## alog2 (4)
-
-`(-1,2) alog2`
-
--> stack should be (0.091728,0.491514)
-
-`del`
-
-## alog10 (1)
-
-`(1,2) alog10`
-
--> stack should be (-1.070135,-9.942576)
-
-`del`
-
-## alog10 (2)
-
-`(1,-2) alog10`
-
--> stack should be (-1.070135,9.942576)
-
-`del`
-
-## alog10 (3)
-
-`(-1,-2) alog10`
-
--> stack should be (-0.010701,0.099426)
-
-`del`
-
-## alog10 (4)
-
-`(-1,2) alog10`
-
--> stack should be (-0.010701,-0.099426)
-
-`del`
-
-## sinh (1)
-
-`(1,2) sinh`
-
--> stack should be (-0.489056,1.403119)
-
-`del`
-
-## sinh (2)
-
-`(1,-2) sinh`
-
--> stack should be (-0.489056,-1.403119)
-
-`del`
-
-## sinh (3)
-
-`(-1,-2) sinh`
-
--> stack should be (0.489056,-1.403119)
-
-`del`
-
-## sinh (4)
-
-`(-1,2) sinh`
-
--> stack should be (0.489056,1.403119)
-
-`del`
-
-## asinh (1)
-
-`(1,2) asinh`
-
--> stack should be (1.469352,1.063440)
-
-`del`
-
-## asinh (2)
-
-`(1,-2) asinh`
-
--> stack should be (1.469352,-1.063440)
-
-`del`
-
-## asinh (3)
-
-`(-1,-2) asinh`
-
--> stack should be (-1.469352,-1.063440)
-
-`del`
-
-## asinh (4)
-
-`(-1,2) asinh`
-
--> stack should be (-1.469352,1.063440)
-
-`del`
-
-## cosh (1)
-
-`(1,2) cosh`
-
--> stack should be (-0.489056,1.403119)
-
-`del`
-
-## cosh (2)
-
-`(1,-2) cosh`
-
--> stack should be (-0.489056,-1.403119)
-
-`del`
-
-## cosh (3)
-
-`(-1,-2) cosh`
-
--> stack should be (0.489056,-1.403119)
-
-`del`
-
-## cosh (4)
-
-`(-1,2) cosh`
-
--> stack should be (0.489056,1.403119)
-
-`del`
-
-## acosh (1)
-
-`(1,2) acosh`
-
--> stack should be (1.528571,1.143718)
-
-`del`
-
-## acosh (2)
-
-`(1,-2) acosh`
-
--> stack should be (1.528571,-1.143718)
-
-`del`
-
-## acosh (3)
-
-`(-1,-2) acosh`
-
--> stack should be (-1.528571,1.997875)
-
-`del`
-
-## acosh (4)
-
-`(-1,2) acosh`
-
--> stack should be (-1.528571,-1.997875)
-
-`del`
-
-## tanh (1)
-
-`(1,2) tanh`
-
--> stack should be (0.564133,-0.217934)
-
-`del`
-
-## tanh (2)
-
-`(1,-2) tanh`
-
--> stack should be (0.564133,0.217934)
-
-`del`
-
-## tanh (3)
-
-`(-1,-2) tanh`
-
--> stack should be (-0.564133,0.217934)
-
-`del`
-
-## tanh (4)
-
-`(-1,2) tanh`
-
--> stack should be (-0.564133,-0.217934)
-
-`del`
-
-## atanh (1)
-
-`(1,2) atanh`
-
--> stack should be (0.173287,1.178097)
-
-`del`
-
-## atanh (2)
-
-`(1,-2) atanh`
-
--> stack should be (0.173287,-1.178097)
-
-`del`
-
-## atanh (3)
-
-`(-1,-2) atanh`
-
--> stack should be (-0.173287,-1.178097)
-
-`del`
-
-## atanh (4)
-
-`(-1,2) atanh`
-
--> stack should be (-0.173287,1.178097)
+-> stack should be (0.000000,1.732051)
 
 `del`

@@ -152,8 +152,15 @@ void program::rpn_inv() {
 void program::rpn_power() {
     MIN_ARGUMENTS(2);
     if (_stack->type(0) == cmd_number && _stack->type(1) == cmd_number) {
-        _stack->value<number>(1) = pow(_stack->value<number>(1), _stack->value<number>(0));
-        _stack->pop();
+        if (_stack->value<number>(1) >= 0) {
+            _stack->value<number>(1) = pow(_stack->value<number>(1), _stack->value<number>(0));
+            _stack->pop();
+        } else {
+            mpreal zero;
+            _stack->push(new ocomplex(_stack->value<number>(1), zero, _stack->obj<number>(1)->base));
+            _stack->value<ocomplex>(0) = pow(_stack->value<ocomplex>(0), _stack->value<number>(1));
+            _stack->erase(1, 2);
+        }
     } else if (_stack->type(0) == cmd_complex && _stack->type(1) == cmd_complex) {
         _stack->value<ocomplex>(1) = pow(_stack->value<ocomplex>(1), _stack->value<ocomplex>(0));
         _stack->pop();
@@ -176,10 +183,11 @@ void program::rpn_squareroot() {
         if (_stack->value<number>(0) >= 0) {
             _stack->value<number>(0) = sqrt(_stack->value<number>(0));
         } else {
-            // negative number -> square root is compl ex
-            _stack->push(new ocomplex);  // TODO manage new errors
-            _stack->value<ocomplex>(0) = sqrt(_stack->value<number>(1));
-            _stack->pop_front(1);
+            // negative number -> square root is complex
+            mpreal zero;
+            _stack->push(new ocomplex(_stack->value<number>(0), zero, _stack->obj<number>(0)->base));  // TODO manage new errors
+            _stack->value<ocomplex>(0) = sqrt(_stack->value<ocomplex>(0));
+            _stack->erase(1);
         }
     } else if (_stack->type(0) == cmd_complex)
         _stack->value<ocomplex>(0) = sqrt(_stack->value<ocomplex>(0));
@@ -294,9 +302,10 @@ void program::rpn_abs() {
     MIN_ARGUMENTS(1);
     if (_stack->type(0) == cmd_number)
         _stack->value<number>(0) = abs(_stack->value<number>(0));
-    else if (_stack->type(0) == cmd_complex)
-        _stack->value<ocomplex>(0) = norm(_stack->value<ocomplex>(0));
-    else
+    else if (_stack->type(0) == cmd_complex) {
+        _stack->push(new number(abs(_stack->value<ocomplex>(0))));
+        _stack->erase(1);
+    } else
         ERR_CONTEXT(ret_bad_operand_type);
 }
 
@@ -316,7 +325,7 @@ void program::rpn_sign() {
     if (_stack->type(0) == cmd_number)
         _stack->value<number>(0) = sgn(_stack->value<number>(0));
     else if (_stack->at(0)->_type == cmd_complex)
-        _stack->value<ocomplex>(0) = _stack->value<ocomplex>(0) / norm(_stack->value<ocomplex>(0));
+        _stack->value<ocomplex>(0) = _stack->value<ocomplex>(0) / abs(_stack->value<ocomplex>(0));
     else
         ERR_CONTEXT(ret_bad_operand_type);
 }
