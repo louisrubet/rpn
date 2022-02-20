@@ -22,7 +22,6 @@ cf https://www.geeksforgeeks.org/overloading-new-delete-operator-c/
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
-- added `norm` as a synonym of `abs`
 - `test` command can also take a symbol as a parameter ; if the symbol contains a valid
 - entering the sign after the base (ex: 0x-1e2) is allowed
 
@@ -44,10 +43,6 @@ Compatibility is broken on these points
 - signed zero is the sign of zero is subject to change  compared to previous version, for example `-3 sqrt` now equals `(0.000000,1.732051)` instead of `(-0.000000,1.732051)`
 
 missing tests / problems
-- nested loops / if / while / do + access to local variables
-- les arguments d'une fonction en erreur doivent ils êre consommés ?
+- les arguments d'une fonction en erreur doivent ils être consommés ?
     ex embettant : sto+
-- sto+ * - / : ajouter des cas de test avec type incorrects
-- `10 -> n << n >>` plante
 - `1 'i' sto while i <= 2 repeat 0 'j' sto while j <= 1 repeat i (1,0) * j (0,1) * + 1 'j' sto+ end 1 'i' sto+ end` plante
-- real: ln, lnp1, log, log10, log2, exp, expm, alog2, alog10, sinh, asinh, cosh, acosh, tanh, atanh
