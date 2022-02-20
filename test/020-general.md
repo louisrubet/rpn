@@ -39,3 +39,21 @@
 -> error should be 0
 
 `del`
+
+## quit
+
+`q`
+
+-> error should be 8
+
+## quit (2)
+
+`quit`
+
+-> error should be 8
+
+## exit
+
+`exit`
+
+-> error should be 8

@@ -193,18 +193,18 @@ void program::rpn_vars(void) {
     // heap variables
     for (int i = 0; i < (int)_heap->size(); i++) {
         (void)_heap->get_by_index(i, name, obj);
-        printf("var %d: name '%s', type %s, value ", i + 1, name.c_str(), obj->name());
+        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";
         obj->show(cout);
-        printf("\n");
+        cout<<endl;
     }
 
     // parents local variables
     while (parent != NULL) {
         for (int i = 0; i < (int)parent->_local_heap.size(); i++) {
             (void)parent->_local_heap.get_by_index(i, name, obj);
-            printf("local var %d: name '%s', type %s, value ", i + 1, name.c_str(), obj->name());
+            cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";
             obj->show(cout);
-            printf("\n");
+            cout<<endl;
         }
         parent = parent->_parent_prog;
     }
@@ -212,9 +212,9 @@ void program::rpn_vars(void) {
     // local variables
     for (int i = 0; i < (int)_local_heap.size(); i++) {
         (void)_local_heap.get_by_index(i, name, obj);
-        printf("local var %d: name '%s', type %s, value ", i + 1, name.c_str(), obj->name());
+        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";
         obj->show(cout);
-        printf("\n");
+        cout<<endl;
     }
 }
 
