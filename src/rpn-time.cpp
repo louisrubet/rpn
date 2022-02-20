@@ -19,10 +19,9 @@ void program::rpn_time() {
                ((double)tm->tm_sec) * 1000000.0 + (double)(ts.tv_nsec / 1000);
 
         // push it
-        number* num;
-        _stack->push_front(num = static_cast<number*>(new number(date)));
-        // division is done here because of real precision)
-        CHECK_MPFR(mpfr_div_d(num->_value.mpfr, num->_value.mpfr, 10000000000.0, mpreal::get_default_rnd()));
+        // division after push for real precision
+        _stack->push(new number(date));
+        _stack->value<number>(0) /= 10000000000.0;
     } else
         ERR_CONTEXT(ret_internal);
 }
@@ -44,9 +43,9 @@ void program::rpn_date() {
 
         // push it
         number* num;
-        _stack->push_front(num = static_cast<number*>(new number(date)));
-        // division is done here because of real precision)
-        CHECK_MPFR(mpfr_div_d(num->_value.mpfr, num->_value.mpfr, 1000000.0, mpreal::get_default_rnd()));
+        // division after push for real precision
+        _stack->push(new number(date));
+        _stack->value<number>(0) /= 1000000.0;
     } else
         ERR_CONTEXT(ret_internal);
 }
@@ -65,9 +64,7 @@ void program::rpn_ticks() {
     if (tm != NULL) {
         // date in µs
         date = 1000000.0 * (double)ts.tv_sec + (double)(ts.tv_nsec / 1000);
-
-        // push it
-        _stack->push_front(static_cast<number*>(new number(date)));
+        _stack->push(new number(date));
     } else
         ERR_CONTEXT(ret_internal);
 }
