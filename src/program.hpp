@@ -44,7 +44,7 @@ struct if_layout_t {
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<object*> {
    public:
-    program(rpnstack* stk, heap& hp, program* parent = nullptr):_stack(stk),_heap(hp),_parent(parent) {
+    program(rpnstack& stk, heap& hp, program* parent = nullptr):_stack(stk),_heap(hp),_parent(parent) {
         interrupt_now = false;
     }
     virtual ~program() {
@@ -82,7 +82,7 @@ class program : public deque<object*> {
     string _err_context;
 
     // global stack holding results for user
-    rpnstack* _stack;
+    rpnstack& _stack;
 
     // global heap (sto, rcl)
     heap& _heap;
@@ -93,7 +93,7 @@ class program : public deque<object*> {
     // parent prog for inheriting heaps
     program* _parent;
 
-    int stack_size() { return _stack->size(); }
+    int stack_size() { return _stack.size(); }
 
    private:
     static const char* s_ret_value_string[ret_max];
@@ -296,14 +296,14 @@ class program : public deque<object*> {
     } while (0)
 
 #define ARG_MUST_BE_OF_TYPE(num, type) do { \
-        if (_stack->at(num)->_type != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } \
+        if (_stack.at(num)->_type != (type)) { ERR_CONTEXT(ret_bad_operand_type); return; } \
     } while (0)
 
 #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { \
-        if (_stack->at(num)->_type != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } \
+        if (_stack.at(num)->_type != (type)) { ERR_CONTEXT(ret_bad_operand_type); return (ret); } \
     } while (0)
 
-#define IS_ARG_TYPE(num, type) (_stack->at(num)->_type == (type))
+#define IS_ARG_TYPE(num, type) (_stack.at(num)->_type == (type))
 
 #define CHECK_MPFR(op) do { (void)(op); } while (0)
 

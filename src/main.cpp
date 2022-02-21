@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
         // entry loop
         while (go_on) {
             // make program from interactive entry
-            program prog(&_global_stack, _global_heap);
+            program prog(_global_stack, _global_heap);
             switch (program::entry(prog)) {
                 case ret_good_bye:
                     go_on = false;
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
     }
     // run with cmd line arguments
     else {
-        program prog(&_global_stack, _global_heap);
+        program prog(_global_stack, _global_heap);
         string entry;
         int i;
 

@@ -57,8 +57,8 @@ void program::rpn_test() {
     int total_steps = 0;
     int total_steps_failed = 0;
 
-    string test_filename = _stack->value<ostring>(0);
-    _stack->pop();
+    string test_filename = _stack.value<ostring>(0);
+    _stack.pop();
     cout << endl << "rpn version is " << version << endl;
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
     test_show_result("Total", total_tests, total_tests_failed, total_steps, total_steps_failed);
@@ -227,7 +227,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 // parse entry and run line
                 entry = regex_replace(entry, regex("`"), "");
                 if (!entry.empty()) {
-                    program prog(&stk, hp);
+                    program prog(stk, hp);
                     ret = program::parse(entry, prog);
                     if (ret == ret_ok) {
                         // run it
