@@ -1,11 +1,20 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
+#define MPFR_USE_NO_MACRO
 #include <mpfr.h>
-#include <string.h>
+#include <mpreal.h>
+using namespace mpfr;
+
+#include <ostream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+#include "mpreal-out.hpp"
 
 // definitions for objects
-////
+///
 typedef enum {
     cmd_undef,
     cmd_number,   // floating point number
@@ -24,259 +33,168 @@ class branch;
 typedef void (program::*program_fn_t)(void);
 typedef int (program::*branch_fn_t)(branch&);
 
-/// @brief MPFR (floating point) object
-///
-struct floating_t {
-    mpfr_prec_t mpfr_prec;         // precision in bits
-    unsigned int mpfr_prec_bytes;  // significand storing length in bytes
-    mpfr_t mpfr;                   // mpfr object
-
-    void init() {
-        void* significand = (void*)(this + 1);
-        mpfr_prec = s_mpfr_prec;
-        mpfr_prec_bytes = s_mpfr_prec_bytes;
-        mpfr_custom_init(significand, MPFR_DEFAULT_PREC_BITS);
-        mpfr_custom_init_set(mpfr, MPFR_ZERO_KIND, 0, mpfr_prec, significand);
-    }
-
-    void move() {
-        void* significand = (void*)(this + 1);
-        mpfr_custom_move(mpfr, significand);
-    }
-
-    floating_t& operator=(const double val) { mpfr_set_d(mpfr, val, s_mpfr_rnd); }
-
-    floating_t& operator=(const long int val) { mpfr_set_si(mpfr, val, s_mpfr_rnd); }
-
-    floating_t& operator=(const unsigned long val) { mpfr_set_ui(mpfr, val, s_mpfr_rnd); }
-
-    operator double() { return mpfr_get_d(mpfr, s_mpfr_rnd); }
-
-    operator int() { return (int)mpfr_get_si(mpfr, s_mpfr_rnd); }
-
-    operator long() { return mpfr_get_si(mpfr, s_mpfr_rnd); }
-
-    bool operator>(const floating_t right) { return mpfr_cmp(mpfr, right.mpfr) > 0; }
-
-    bool operator<(const floating_t right) { return mpfr_cmp(mpfr, right.mpfr) < 0; }
-
-    // default precision in bits, precision length in bytes, rounding mode
-    static mpfr_prec_t s_mpfr_prec;
-    static unsigned int s_mpfr_prec_bytes;
-    static mpfr_rnd_t s_mpfr_rnd;
-    static const char* s_mpfr_rnd_str[5];
-};
-
 /// @brief object - a generic stack object
 ///
 struct object {
-    // object type
+    object(cmd_type_t type = cmd_undef) : _type(type) {}
+    virtual ~object() {}
     cmd_type_t _type;
-    unsigned int _size;
+    virtual object* clone() {
+        object* o = new object();
+        if (o != nullptr) *o = *this;
+        return o;
+    }
 
-    //
-    unsigned int size() { return _size; }
+    virtual string name() { return string("object"); }
+    virtual ostream& show(ostream& out) {
+        out << "(" << name() << " - unknown representation)";
+        return out;
+    }
+    friend ostream& operator<<(ostream& os, object* o) { return o->show(os); }
 
-    void show(FILE* stream = stdout);
-
-    //
-    static const char* s_cmd_type_string[cmd_max];
+    unsigned int size() { return sizeof(*this); }
 };
 
 /// @brief stack objects derived from object
 ///
-struct number : public object {
-    // members
-    enum { dec, hex, bin, base } _representation;
-    // base
-    // carefull: _base is used only if _representation = base
-    int _base;
-    // mind that float value is at the end of the object
-    // because its mantissa is just after the obj in memory
-    floating_t _value;
+struct number : object {
+    number() : object(cmd_number), base(10) {}
+    number(const mpreal& value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
+    number(long value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
 
-    // publics
-    number() { _type = cmd_number; }
+    int base;
+    mpreal value;
 
-    void init() {
-        _type = cmd_number;
-        _representation = dec;
-        _value.init();
-    }
-
-    void move() { _value.move(); }
-
-    void set(unsigned long value) {
-        _type = cmd_number;
-        _value = value;
-    }
-
-    static unsigned int calc_size() { return (unsigned int)(sizeof(number) + floating_t::s_mpfr_prec_bytes); }
+    virtual object* clone() { return new number(value, base); }
+    virtual string name() { return string("number"); }
+    virtual ostream& show(ostream& out) { return showValue(out, value, s_mode, s_digits, base); }
 
     // representation mode
     typedef enum { std, fix, sci } mode_enum;
     static mode_enum s_mode;
 
     // precision
-    static int s_decimal_digits;
-    static string s_mpfr_printf_format;
+    static int s_digits;
+
+    // clang-format off
+    static string _makeNumberFormat(mode_enum mode, int digits) {
+        stringstream format;
+        format<<"%."<<digits;
+        switch(mode) {
+            case std: format<<"R*g"; break;
+            case fix: format<<"R*f"; break;
+            case sci: format<<"R*e"; break;
+        }
+        return format.str();
+    }
+    // clang-format on
+
+    static ostream& showValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
+        if (base == 10)
+            return mpreal_output10base(out, _makeNumberFormat(s_mode, s_digits), value);
+        else
+            return mpreal_outputNbase(out, base, value);
+    }
 };
 
 /// @brief stack objects derived from object
 ///
-struct complex : public object {
-    enum { dec, hex } _representation;
-    // mind that re float value is at the end of the object
-    // because its mantissa is just after the obj in memory
-    floating_t _re;
-
-    complex() { _type = cmd_complex; }
-
-    // re and im float values are at the end of the object
-    floating_t* re() { return &_re; }
-    floating_t* im() { return (floating_t*)((char*)&_re + sizeof(floating_t) + _re.mpfr_prec_bytes); }
-
-    void init() {
-        _type = cmd_complex;
-        _representation = dec;
-        re()->init();
-        im()->init();
+struct ocomplex : object {
+    ocomplex() : object(cmd_complex), reBase(10), imBase(10) {}
+    ocomplex(complex<mpreal>& value_, int reb = 10, int imb = 10) : object(cmd_complex), reBase(reb), imBase(imb) {
+        value = value_;
+    }
+    ocomplex(mpreal& re_, mpreal& im_, int reb = 10, int imb = 10) : object(cmd_complex), reBase(reb), imBase(imb) {
+        value.real(re_);
+        value.imag(im_);
     }
 
-    void move() {
-        re()->move();
-        im()->move();
-    }
+    int reBase, imBase;
+    complex<mpreal> value;
 
-    static unsigned int calc_size() {
-        return (unsigned int)(sizeof(complex) + 2 * (sizeof(floating_t) + floating_t::s_mpfr_prec_bytes));
+    virtual object* clone() { return new ocomplex(value, reBase, imBase); }
+    virtual string name() { return string("complex"); }
+    virtual ostream& show(ostream& out) {
+        out << '(';
+        number::showValue(out, value.real(), number::s_mode, number::s_digits, reBase);
+        out << ',';
+        number::showValue(out, value.imag(), number::s_mode, number::s_digits, imBase);
+        return out << ')';
     }
 };
 
 /// @brief object string
-/// 
-struct ostring : public object {
-    // ostring may first have been allocated with len+1 bytes
-    void set(const char* value, unsigned int len) {
-        _type = cmd_string;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[_len] = 0;
-            _len = 0;
-        }
-    }
-
-    // length of _value, not including the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+///
+struct ostring : object {
+    ostring() : object(cmd_string) {}
+    ostring(const string& value_) : object(cmd_string), value(value_) {}
+    virtual object* clone() { return new ostring(value); }
+    virtual string name() { return string("string"); }
+    virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }
+    string value;
 };
 
 /// @brief object program
-/// 
-struct oprogram : public object {
-    // oprogram may first have been allocated with len+1 bytes
-    void set(const char* value, unsigned int len) {
-        _type = cmd_program;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
-    }
-
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+///
+struct oprogram : object {
+    oprogram() : object(cmd_program) {}
+    oprogram(const string& value_) : object(cmd_program), value(value_) {}
+    virtual object* clone() { return new oprogram(value); }
+    virtual string name() { return string("program"); }
+    virtual ostream& show(ostream& out) { return out << "«" << value << "»"; }
+    string value;
 };
 
 /// @brief object symbol
-/// 
-struct symbol : public object {
-    // symbol may first have been allocated with len+1 bytes
-    void set(const char* value, unsigned int len, bool auto_eval) {
-        _type = cmd_symbol;
-        _auto_eval = auto_eval;
-
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
-    }
-
-    //
-    bool _auto_eval;
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+///
+struct symbol : object {
+    symbol(bool autoEval_ = true) : object(cmd_symbol), autoEval(autoEval_) {}
+    symbol(const string& value_, bool autoEval_ = true) : object(cmd_symbol), value(value_), autoEval(autoEval_) {}
+    virtual object* clone() { return new symbol(value, autoEval); }
+    virtual string name() { return string("symbol"); }
+    virtual ostream& show(ostream& out) { return out << "'" << value << "'"; }
+    bool autoEval;
+    string value;
 };
 
 /// @brief object keyword
-/// 
-struct keyword : public object {
-    // keyword may first have been allocated with len+1 bytes
-    void set(program_fn_t fn, const char* value, unsigned int len) {
-        _type = cmd_keyword;
-        _fn = fn;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
-    }
-
-    //
-    program_fn_t _fn;
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+///
+struct keyword : object {
+    keyword() : object(cmd_keyword) {}
+    keyword(program_fn_t fn_, const string& value_) : object(cmd_keyword), fn(fn_), value(value_) {}
+    virtual object* clone() { return new keyword(fn, value); }
+    virtual string name() { return string("keyword"); }
+    program_fn_t fn;
+    string value;
 };
 
 /// @brief object branch
-/// 
-struct branch : public object {
-    //
-    void set(branch_fn_t fn, const char* value, unsigned int len) {
-        _type = cmd_branch;
-        _fn = fn;
+///
+struct branch : object {
+    branch() : object(cmd_branch) {}
+    branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) {
+        fn = fn_;
         arg1 = -1;
         arg2 = -1;
         arg3 = -1;
-        farg1 = NULL;
-        farg2 = NULL;
         arg_bool = 0;
-        if (value != NULL) {
-            if (len > 0) (void)memcpy(_value, value, len);
-            _value[len] = 0;
-            _len = len;
-        } else {
-            _value[0] = 0;
-            _len = 0;
-        }
+        value = value_;
     }
-
-    // branch function
-    branch_fn_t _fn;
-    // args used by cmd_branch cmds
+    branch(branch& other) : object(cmd_branch) {
+        fn = other.fn;
+        arg1 = other.arg1;
+        arg2 = other.arg2;
+        arg3 = other.arg3;
+        arg_bool = other.arg_bool;
+        value = other.value;
+    }
+    virtual object* clone() { return new branch(*this); }
+    virtual string name() { return string("branch"); }
+    branch_fn_t fn;
     int arg1, arg2, arg3;
-    number *farg1, *farg2;
+    mpreal firstIndex, lastIndex;
     bool arg_bool;
-
-    // length of _value, not includiong the terminal '\0'
-    unsigned int _len;
-    char _value[0];
+    string value;
 };
 
 #endif
