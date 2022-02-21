@@ -20,8 +20,8 @@ void program::rpn_time() {
 
         // push it
         // division after push for real precision
-        _stack->push(new number(date));
-        _stack->value<number>(0) /= 10000000000.0;
+        _stack.push(new number(date));
+        _stack.value<number>(0) /= 10000000000.0;
     } else
         ERR_CONTEXT(ret_internal);
 }
@@ -44,8 +44,8 @@ void program::rpn_date() {
         // push it
         number* num;
         // division after push for real precision
-        _stack->push(new number(date));
-        _stack->value<number>(0) /= 1000000.0;
+        _stack.push(new number(date));
+        _stack.value<number>(0) /= 1000000.0;
     } else
         ERR_CONTEXT(ret_internal);
 }
@@ -64,7 +64,7 @@ void program::rpn_ticks() {
     if (tm != NULL) {
         // date in µs
         date = 1000000.0 * (double)ts.tv_sec + (double)(ts.tv_nsec / 1000);
-        _stack->push(new number(date));
+        _stack.push(new number(date));
     } else
         ERR_CONTEXT(ret_internal);
 }

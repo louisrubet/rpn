@@ -57,9 +57,9 @@ class rpnstack : public deque<object*> {
     }
 
     template <class objectType>
-    auto obj(int level) {
+    auto& obj(int level) {
         // carefull: caller must ensure that level is correct
-        return static_cast<objectType*>(at(level));
+        return static_cast<objectType&>(*at(level));
     }
 
     template <class objectType>
