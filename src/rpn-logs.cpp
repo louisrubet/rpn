@@ -13,7 +13,7 @@ void program::rpn_log10() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = log10(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief alog10 keyword implementation
@@ -25,7 +25,7 @@ void program::rpn_alog10() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = exp(log(mpreal(10)) * _stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief log2 keyword implementation
@@ -37,7 +37,7 @@ void program::rpn_log2() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = log(_stack.value<ocomplex>(0)) / const_log2();
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief alog2 keyword implementation
@@ -49,7 +49,7 @@ void program::rpn_alog2() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = exp(const_log2() * _stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief ln keyword implementation
@@ -61,7 +61,7 @@ void program::rpn_ln() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = log(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief exp keyword implementation
@@ -73,7 +73,7 @@ void program::rpn_exp() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = exp(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief expm keyword implementation
@@ -85,7 +85,7 @@ void program::rpn_expm() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = exp(_stack.value<ocomplex>(0)) - mpreal(1);
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief lnp1 keyword implementation
@@ -97,7 +97,7 @@ void program::rpn_lnp1() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = log(_stack.value<ocomplex>(0) + mpreal(1));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief sinh keyword implementation
@@ -109,7 +109,7 @@ void program::rpn_sinh() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = sinh(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief asinh keyword implementation
@@ -121,7 +121,7 @@ void program::rpn_asinh() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = asinh(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief cosh keyword implementation
@@ -133,7 +133,7 @@ void program::rpn_cosh() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = cosh(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief acosh keyword implementation
@@ -145,7 +145,7 @@ void program::rpn_acosh() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = acosh(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief tanh keyword implementation
@@ -157,7 +157,7 @@ void program::rpn_tanh() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = tanh(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief atanh keyword implementation
@@ -169,5 +169,5 @@ void program::rpn_atanh() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = atanh(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
