@@ -31,7 +31,7 @@ void program::rpn_plus() {
         _stack.value<ocomplex>(1) += _stack.value<number>(0);
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief - keyword implementation
@@ -60,7 +60,7 @@ void program::rpn_minus() {
         _stack.value<ocomplex>(1) = _stack.value<number>(0) - _stack.value<ocomplex>(1);
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief * keyword implementation
@@ -89,7 +89,7 @@ void program::rpn_mul() {
         _stack.value<ocomplex>(1) *= _stack.value<number>(0);
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief / keyword implementation
@@ -118,7 +118,7 @@ void program::rpn_div() {
         _stack.value<ocomplex>(1) = _stack.value<number>(0) / _stack.value<ocomplex>(1);
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief neg keyword implementation
@@ -131,7 +131,7 @@ void program::rpn_neg() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = -_stack.value<ocomplex>(0);
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief inv keyword implementation
@@ -144,7 +144,7 @@ void program::rpn_inv() {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = mpreal{1} / _stack.value<ocomplex>(0);
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief power keyword implementation
@@ -172,7 +172,7 @@ void program::rpn_power() {
         _stack.value<ocomplex>(1) = pow(_stack.value<number>(0), _stack.value<ocomplex>(1));
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief sqrt keyword implementation
@@ -192,7 +192,7 @@ void program::rpn_squareroot() {
     } else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = sqrt(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief hex keyword implementation
@@ -205,7 +205,7 @@ void program::rpn_hex() {
         _stack.obj<ocomplex>(0).reBase = 16;
         _stack.obj<ocomplex>(0).imBase = 16;
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief bin keyword implementation
@@ -218,7 +218,7 @@ void program::rpn_bin() {
         _stack.obj<ocomplex>(0).reBase = 2;
         _stack.obj<ocomplex>(0).imBase = 2;
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief dec keyword implementation
@@ -231,7 +231,7 @@ void program::rpn_dec() {
         _stack.obj<ocomplex>(0).reBase = 10;
         _stack.obj<ocomplex>(0).imBase = 10;
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief base keyword implementation
@@ -249,9 +249,9 @@ void program::rpn_base() {
                 _stack.obj<ocomplex>(0).imBase = base;
             }
         } else
-            ERR_CONTEXT(ret_out_of_range);
+            setErrorContext(ret_out_of_range);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief % (purcent) keyword implementation
@@ -283,7 +283,7 @@ void program::rpn_square() {
     else if (_stack.at(0)->_type == cmd_complex)
         _stack.value<ocomplex>(0) *= _stack.value<ocomplex>(0);
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief mod keyword implementation
@@ -306,7 +306,7 @@ void program::rpn_abs() {
         _stack.push(new number(abs(_stack.value<ocomplex>(0))));
         _stack.erase(1);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief fact (factorial) keyword implementation
@@ -327,7 +327,7 @@ void program::rpn_sign() {
     else if (_stack.at(0)->_type == cmd_complex)
         _stack.value<ocomplex>(0) = _stack.value<ocomplex>(0) / abs(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief mant keyword implementation
@@ -336,7 +336,7 @@ void program::rpn_mant() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     if (!isfinite(_stack.value<number>(0))) {
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
         return;
     }
     mp_exp_t exp;
@@ -349,7 +349,7 @@ void program::rpn_xpon() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     if (!isfinite(_stack.value<number>(0))) {
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
         return;
     }
     mp_exp_t exp;

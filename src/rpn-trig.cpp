@@ -34,7 +34,7 @@ void program::rpn_sin(void) {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = sin(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief asin keyword implementation
@@ -47,7 +47,7 @@ void program::rpn_asin(void) {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = asin(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief cos keyword implementation
@@ -60,7 +60,7 @@ void program::rpn_cos(void) {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = cos(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief acos keyword implementation
@@ -73,7 +73,7 @@ void program::rpn_acos(void) {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = acos(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief tan keyword implementation
@@ -86,7 +86,7 @@ void program::rpn_tan(void) {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = tan(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief atan keyword implementation
@@ -99,5 +99,5 @@ void program::rpn_atan(void) {
     else if (_stack.type(0) == cmd_complex)
         _stack.value<ocomplex>(0) = atan(_stack.value<ocomplex>(0));
     else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }

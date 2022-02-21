@@ -28,7 +28,7 @@ void program::rpn_sup(void) {
         _stack.push_front(new number(cmp_strings_on_stack_top() == 1));
         _stack.erase(1, 2);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief >= keyword implementation
@@ -46,7 +46,7 @@ void program::rpn_sup_eq(void) {
         _stack.push_front(new number(cmp_strings_on_stack_top() != -1));
         _stack.erase(1, 2);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief < keyword implementation
@@ -64,7 +64,7 @@ void program::rpn_inf(void) {
         _stack.push_front(new number(cmp_strings_on_stack_top() == -1));
         _stack.erase(1, 2);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief <= keyword implementation
@@ -80,7 +80,7 @@ void program::rpn_inf_eq(void) {
         _stack.push_front(new number(cmp_strings_on_stack_top() != 1));
         _stack.erase(1, 2);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief != keyword implementation
@@ -103,7 +103,7 @@ void program::rpn_diff(void) {
         _stack.push_front(new number(cmp_strings_on_stack_top() != 0));
         _stack.erase(1, 2);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief == keyword implementation
@@ -126,7 +126,7 @@ void program::rpn_eq(void) {
         _stack.push_front(new number(cmp_strings_on_stack_top() == 0));
         _stack.erase(1, 2);
     } else
-        ERR_CONTEXT(ret_bad_operand_type);
+        setErrorContext(ret_bad_operand_type);
 }
 
 /// @brief and keyword implementation

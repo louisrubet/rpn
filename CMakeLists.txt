@@ -55,7 +55,8 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/object.cpp
   ${PROJECT_SOURCE_DIR}/src/mpreal-out.cpp
   ${PROJECT_SOURCE_DIR}/src/program.cpp
-  ${PROJECT_SOURCE_DIR}/src/parse.cpp
+  ${PROJECT_SOURCE_DIR}/src/lexer.cpp
+  ${PROJECT_SOURCE_DIR}/src/input.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-branch.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-complex.cpp
   ${PROJECT_SOURCE_DIR}/src/rpn-general.cpp

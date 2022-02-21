@@ -1,5 +1,8 @@
 #include <regex>
+using namespace std;
 
+#include "version.h"
+#include "escape.h"
 #include "program.hpp"
 
 /// @brief write stack in a string, each entry separated between commas
@@ -59,9 +62,9 @@ void program::rpn_test() {
 
     string test_filename = _stack.value<ostring>(0);
     _stack.pop();
-    cout << endl << "rpn version is " << version << endl;
+    cout << endl << "rpn version is " << RPN_VERSION << endl;
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
-    test_show_result("Total", total_tests, total_tests_failed, total_steps, total_steps_failed);
+    test_show_result("\nTotal", total_tests, total_tests_failed, total_steps, total_steps_failed);
 }
 
 /// @brief load a test file and run its tests
@@ -228,7 +231,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 entry = regex_replace(entry, regex("`"), "");
                 if (!entry.empty()) {
                     program prog(stk, hp);
-                    ret = program::parse(entry, prog);
+                    ret = prog.parse(entry);
                     if (ret == ret_ok) {
                         // run it
                         (void)prog.run();

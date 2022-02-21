@@ -77,7 +77,7 @@ void program::rpn_pick(void) {
 
     // treat stack depth errors
     if ((to_pick == 0) || (to_pick > _stack.size())) {
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
         return;
     }
 
