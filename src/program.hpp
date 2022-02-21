@@ -44,8 +44,7 @@ struct if_layout_t {
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<object*> {
    public:
-    program(program* parent_prog = NULL) {
-        _parent_prog = parent_prog;
+    program(rpnstack* stk, heap* hp, program* parent = nullptr):_stack(stk),_heap(hp),_parent(parent) {
         interrupt_now = false;
     }
     virtual ~program() {
@@ -60,9 +59,8 @@ class program : public deque<object*> {
     static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type);
 
     // running
-    ret_value run(rpnstack& stk, heap& hp);
+    ret_value run();
     void stop();
-    // bool compare_keyword(keyword* k, const char* str_to_compare, int len);
     bool compare_branch(branch* b, const char* str_to_compare, int len);
     ret_value preprocess(void);
 
@@ -93,7 +91,7 @@ class program : public deque<object*> {
     heap _local_heap;
 
     // parent prog for inheriting heaps
-    program* _parent_prog;
+    program* _parent;
 
     int stack_size() { return _stack->size(); }
 

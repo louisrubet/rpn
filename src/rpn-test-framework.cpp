@@ -227,11 +227,11 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 // parse entry and run line
                 entry = regex_replace(entry, regex("`"), "");
                 if (!entry.empty()) {
-                    program prog;
+                    program prog(&stk, &hp);
                     ret = program::parse(entry, prog);
                     if (ret == ret_ok) {
                         // run it
-                        (void)prog.run(stk, hp);
+                        (void)prog.run();
                         last_err = (int)prog.get_err();
                     }
                 }

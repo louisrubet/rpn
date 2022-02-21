@@ -9,7 +9,7 @@
 ///
 bool program::find_variable(string& variable, object*& obj) {
     bool found = false;
-    program* parent = _parent_prog;
+    program* parent = _parent;
 
     if (_local_heap.get(variable, obj))
         found = true;
@@ -19,7 +19,7 @@ bool program::find_variable(string& variable, object*& obj) {
                 found = true;
                 break;
             }
-            parent = parent->_parent_prog;
+            parent = parent->_parent;
         }
         if (!found) {
             if (_heap->get(variable, obj)) found = true;
@@ -64,12 +64,12 @@ void program::rpn_eval(void) {
 
     // run prog if any
     if (run_prog) {
-        program prog(this);
+        program prog(_stack, _heap, this);
 
         // make program from entry
         if (program::parse(prog_text, prog) == ret_ok) {
             // run it
-            prog.run(*_stack, *_heap);
+            prog.run();
         }
     }
 }
@@ -135,12 +135,12 @@ int program::rpn_inprog(branch& myobj) {
 
     // run the program
     string entry(((oprogram*)(*this)[myobj.arg1 + count_symbols + 1])->value);
-    program prog(this);
+    program prog(_stack, _heap, this);
 
     // make the program from entry
     if (program::parse(entry, prog) == ret_ok) {
         // run it
-        prog.run(*_stack, *_heap);
+        prog.run();
     }
 
     // point on next command

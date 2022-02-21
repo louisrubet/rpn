@@ -209,20 +209,12 @@ program::keyword_t program::s_keywords[] = {
 
 /// @brief run a program on a stack and a heap
 ///
-/// @param stk the stack, storing prog result
-/// @param hp the heap, storing variables
 /// @return ret_value see this type
 ///
-ret_value program::run(rpnstack& stk, heap& hp) {
+ret_value program::run() {
     bool go_out = false;
     ret_value ret = ret_ok;
     cmd_type_t type;
-
-    // stack comes from outside
-    _stack = &stk;
-
-    // global heap comes from outside
-    _heap = &hp;
 
     _err = ret_ok;
     _err_context = "";
@@ -299,7 +291,7 @@ ret_value program::run(rpnstack& stk, heap& hp) {
             default:
                 // not a command, but a stack entry, manage it
                 // copy the program stack entry to the running stack
-                stk.push_front(o->clone());
+                _stack->push_front(o->clone());
                 i++;
                 break;
         }
