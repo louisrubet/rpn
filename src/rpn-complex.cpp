@@ -6,13 +6,8 @@
 void program::rpn_re() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    _stack->pop_back();
-
-    number* re = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    CHECK_MPFR(mpfr_set(re->_value.mpfr, ((complex*)_calc_stack.get_obj(0))->re()->mpfr, floating_t::s_mpfr_rnd));
-    _calc_stack.pop_back();
+    _stack.push_front(new number(real(_stack.value<ocomplex>(0))));
+    _stack.erase(1);
 }
 
 /// @brief im keyword implementation
@@ -21,13 +16,8 @@ void program::rpn_re() {
 void program::rpn_im() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    _stack->pop_back();
-
-    number* im = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_calc_stack.get_obj(0))->im()->mpfr, floating_t::s_mpfr_rnd));
-    _calc_stack.pop_back();
+    _stack.push_front(new number(imag(_stack.value<ocomplex>(0))));
+    _stack.erase(1);
 }
 
 /// @brief arg keyword implementation
@@ -36,15 +26,8 @@ void program::rpn_im() {
 void program::rpn_arg() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    // calc atan2(x/y)
-    complex* cplx = (complex*)_stack->pop_back();
-    number* num = (number*)_calc_stack.allocate_back(number::calc_size(), cmd_number);
-
-    CHECK_MPFR(mpfr_atan2(num->_value.mpfr, cplx->im()->mpfr, cplx->re()->mpfr, floating_t::s_mpfr_rnd));
-
-    stack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack);
-    _calc_stack.pop_back();
+    _stack.push_front(new number(arg(_stack.value<ocomplex>(0))));
+    _stack.erase(1);
 }
 
 /// @brief conj keyword implementation
@@ -53,9 +36,7 @@ void program::rpn_arg() {
 void program::rpn_conj() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    complex* cplx = (complex*)_stack->back();
-    CHECK_MPFR(mpfr_neg(cplx->im()->mpfr, cplx->im()->mpfr, floating_t::s_mpfr_rnd));
+    _stack.value<ocomplex>(0) = conj(_stack.value<ocomplex>(0));
 }
 
 /// @brief r2c keyword implementation
@@ -65,16 +46,8 @@ void program::rpn_r2c() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-
-    stack::copy_and_push_back(*_stack, _stack->size() - 2, _calc_stack);
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    _stack->pop_back();
-    _stack->pop_back();
-
-    complex* cplx = (complex*)_stack->allocate_back(complex::calc_size(), cmd_complex);
-    CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_calc_stack.get_obj(1))->_value.mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_calc_stack.get_obj(0))->_value.mpfr, floating_t::s_mpfr_rnd));
-    _calc_stack.pop_back(2);
+    _stack.push(new ocomplex(_stack.value<number>(1), _stack.value<number>(0), _stack.obj<ocomplex>(1).reBase, _stack.obj<ocomplex>(0).reBase));
+    _stack.erase(1, 2);
 }
 
 /// @brief c2r keyword implementation
@@ -83,16 +56,9 @@ void program::rpn_r2c() {
 void program::rpn_c2r() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    _stack->pop_back();
-
-    number* re = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    number* im = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-
-    CHECK_MPFR(mpfr_set(re->_value.mpfr, ((complex*)_calc_stack.back())->re()->mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_set(im->_value.mpfr, ((complex*)_calc_stack.back())->im()->mpfr, floating_t::s_mpfr_rnd));
-    _calc_stack.pop_back();
+    _stack.push(new number(real(_stack.value<ocomplex>(0)), _stack.obj<ocomplex>(0).reBase));
+    _stack.push(new number(imag(_stack.value<ocomplex>(1)), _stack.obj<ocomplex>(1).imBase));
+    _stack.erase(2);
 }
 
 /// @brief r2p keyword implementation
@@ -101,20 +67,10 @@ void program::rpn_c2r() {
 void program::rpn_r2p() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    rpn_dup();
-    rpn_dup();
-    rpn_arg();
-
-    complex* cplx = (complex*)_stack->get_obj(1);
-    CHECK_MPFR(mpfr_set(cplx->im()->mpfr, ((number*)_stack->back())->_value.mpfr, floating_t::s_mpfr_rnd));
-    _stack->pop_back();
-
-    rpn_swap();
-    rpn_abs();
-    cplx = (complex*)_stack->get_obj(1);
-    CHECK_MPFR(mpfr_set(cplx->re()->mpfr, ((number*)_stack->back())->_value.mpfr, floating_t::s_mpfr_rnd));
-    _stack->pop_back();
+    mpreal rho = abs(_stack.value<ocomplex>(0));
+    mpreal theta = arg(_stack.value<ocomplex>(0));
+    _stack.value<ocomplex>(0).real(rho);
+    _stack.value<ocomplex>(0).imag(theta);
 }
 
 /// @brief p2r keyword implementation
@@ -123,26 +79,5 @@ void program::rpn_r2p() {
 void program::rpn_p2r() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_complex);
-
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    _calc_stack.allocate_back(number::calc_size(), cmd_number);
-
-    // assert complex is polar
-    complex* rhotheta = (complex*)_calc_stack.get_obj(1);
-    number* tmp = (number*)_calc_stack.get_obj(0);
-    complex* result = (complex*)_stack->back();
-
-    // calc cos(theta)
-    CHECK_MPFR(mpfr_set(tmp->_value.mpfr, rhotheta->im()->mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_cos(tmp->_value.mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
-
-    // calc rcos(theta)
-    CHECK_MPFR(mpfr_mul(result->re()->mpfr, rhotheta->re()->mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
-
-    // calc sin(theta)
-    CHECK_MPFR(mpfr_set(tmp->_value.mpfr, rhotheta->im()->mpfr, floating_t::s_mpfr_rnd));
-    CHECK_MPFR(mpfr_sin(tmp->_value.mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
-
-    // calc rsin(theta)
-    CHECK_MPFR(mpfr_mul(result->im()->mpfr, rhotheta->re()->mpfr, tmp->_value.mpfr, floating_t::s_mpfr_rnd));
+    _stack.value<ocomplex>(0) = polar(abs(_stack.value<ocomplex>(0)), arg(_stack.value<ocomplex>(0)));
 }

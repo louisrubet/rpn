@@ -1,4 +1,34 @@
+#include <stdio.h>
+
+#include "escape.h"
+#include "linenoise.h"
 #include "program.hpp"
+#include "version.h"
+
+// description
+#define XSTR(a) STR(a)
+#define STR(a) #a
+static const string _description{
+    ATTR_BOLD "R" ATTR_OFF "everse " ATTR_BOLD "P" ATTR_OFF "olish " ATTR_BOLD "N" ATTR_OFF
+              "otation language\n\n"
+              "using " ATTR_BOLD "GMP" ATTR_OFF " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
+                  __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" ATTR_BOLD "MPFR" ATTR_OFF " v" MPFR_VERSION_STRING
+                                               " under GNU LGPL\n"
+                                               "and " ATTR_BOLD "linenoise-ng" ATTR_OFF " v" LINENOISE_VERSION
+                                               " under BSD\n"};
+
+// syntax
+static const string _syntax{ATTR_BOLD "Syntax" ATTR_OFF
+                                      ": rpn [command]\n"
+                                      "with optional command = list of commands"};
+
+static const map<string, mpfr_rnd_t> _mpfr_round{{"nearest (even)", MPFR_RNDN},
+                                                        {"toward zero", MPFR_RNDZ},
+                                                        {"toward +inf", MPFR_RNDU},
+                                                        {"toward -inf", MPFR_RNDD},
+                                                        {"away from zero", MPFR_RNDA},
+                                                        {"faithful rounding", MPFR_RNDF},
+                                                        {"nearest (away from zero)", MPFR_RNDNA}};
 
 /// @brief nop keyword implementation
 ///
@@ -8,85 +38,63 @@ void program::rpn_nop() {
 
 /// @brief quit keyword implementation
 ///
-void program::rpn_good_bye() { ERR_CONTEXT(ret_good_bye); }
+void program::rpn_good_bye() { setErrorContext(ret_good_bye); }
 
 /// @brief nop keyword implementation
 /// the result is written on stdout
 ///
 void program::rpn_help() {
     // software name
-    printf("\n" ATTR_BOLD "%s" ATTR_OFF "\n", uname);
+    cout << endl << ATTR_BOLD << RPN_UNAME << ATTR_OFF << endl;
 
-    // description
-    printf("%s\n\n", description);
+    // _description
+    cout << _description << endl << endl;
 
-    // syntax
-    printf("%s\n", syntax);
+    // _syntax
+    cout << _syntax << endl;
 
     // keywords
     unsigned int i = 0;
-    while (s_keywords[i].type != cmd_max) {
-        if (s_keywords[i].comment.size() != 0) {
+    for (auto& kw : _keywords)
+        if (!kw.comment.empty()) {
             // titles in bold
-            if (s_keywords[i].type == cmd_undef) printf(ATTR_BOLD);
+            if (kw.type == cmd_undef) cout << ATTR_BOLD;
             // show title or keyword + comment
-            printf("%s\t%s\n", s_keywords[i].name, s_keywords[i].comment.c_str());
-            if (s_keywords[i].type == cmd_undef) printf(ATTR_OFF);
+            cout << kw.name << '\t' << kw.comment << endl;
+            if (kw.type == cmd_undef) cout << ATTR_OFF;
         }
-        i++;
-    }
-    printf("\n");
+    cout << endl;
 
     // show mode
-    printf("Current float mode is ");
+    cout << "Current float mode is ";
     switch (number::s_mode) {
         case number::std:
-            printf("'std'");
+            cout << "'std'";
             break;
         case number::fix:
-            printf("'fix'");
+            cout << "'fix'";
             break;
         case number::sci:
-            printf("'sci'");
+            cout << "'sci'";
             break;
         default:
-            printf("unknown");
+            cout << "unknown";
             break;
     }
-    printf(" with %d digits after the decimal point\n", number::s_decimal_digits);
 
     // bits precision, decimal digits and rounding mode
-    printf("Current floating point precision is %d bits\n", (int)floating_t::s_mpfr_prec);
-    printf("Current rounding mode is \"%s\"\n", floating_t::s_mpfr_rnd_str[floating_t::s_mpfr_rnd]);
-    printf("\n\n");
-}
-
-/// @brief calculate a number of digits for a given base from a precision in bits
-/// 
-/// @param base the base
-/// @param bit_precision the precision in bits
-/// @return int the number of digits
-///
-static int base_digits_from_bit_precision(int base, int bit_precision) {
-    return (int)ceil(bit_precision * log(2.0) / log((double)base)) - 1;
-}
-
-/// @brief print a decimal digit in a given MPFR format
-/// 
-/// @param decimal_digits the number
-/// @param printf_format the format
-/// @return string the result string
-///
-static string make_digit_format(int decimal_digits, const char* printf_format) {
-    stringstream ss;
-    ss << MPFR_FORMAT_BEG;
-    ss << number::s_decimal_digits;
-    ss << printf_format;
-    return ss.str();
+    cout << " with " << number::s_digits << " digits after the decimal point" << endl;
+    cout << "Current floating point precision is " << (int)mpreal::get_default_prec() << " bits" << endl;
+    for (auto& rn : _mpfr_round)
+        if (rn.second == mpreal::get_default_rnd()) {
+            cout << "Current rounding mode is '" << rn.first << '\'' << endl;
+            break;
+        }
+    cout << endl << endl;
 }
 
 /// @brief whether a precision is in the precision min/max
-/// 
+///
 /// @param precision the precision in bits
 /// @return true the precision is good
 /// @return false the precision is not good
@@ -110,15 +118,15 @@ void program::rpn_std() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(((number*)_stack->pop_back())->_value);
+    double digits = double(_stack.value<number>(0));
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::std;
-        number::s_decimal_digits = (int)digits;
-        number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
+        number::s_digits = (int)digits;
+        _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
 /// @brief fix keyword implementation
@@ -127,15 +135,15 @@ void program::rpn_fix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(((number*)_stack->pop_back())->_value);
+    double digits = double(_stack.value<number>(0));
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::fix;
-        number::s_decimal_digits = (int)digits;
-        number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_FIX);
+        number::s_digits = (int)digits;
+        _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
 /// @brief sci keyword implementation
@@ -144,34 +152,24 @@ void program::rpn_sci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(((number*)_stack->pop_back())->_value);
+    double digits = double(_stack.value<number>(0));
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::sci;
-        number::s_decimal_digits = (int)digits;
-        number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_SCI);
+        number::s_digits = (int)digits;
+        _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
-/// @brief version keyword implementation
+/// @brief _version keyword implementation
 ///
-void program::rpn_version() {
-    // allocate and set object
-    unsigned int naked_entry_len = strlen(version);
-    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring) + naked_entry_len + 1, cmd_string);
-    str->set(version, naked_entry_len);
-}
+void program::rpn_version() { _stack.push_front(new ostring(RPN_VERSION)); }
 
-/// @brief uname keyword implementation
+/// @brief _uname keyword implementation
 ///
-void program::rpn_uname() {
-    // allocate and set object
-    unsigned int naked_entry_len = strlen(uname);
-    ostring* str = (ostring*)_stack->allocate_back(sizeof(ostring) + naked_entry_len + 1, cmd_string);
-    str->set(uname, naked_entry_len);
-}
+void program::rpn_uname() { _stack.push_front(new ostring(RPN_UNAME)); }
 
 /// @brief history keyword implementation
 ///
@@ -179,7 +177,7 @@ void program::rpn_history() {
     // see command history on stdout
     int index = 0;
     char* line = linenoiseHistoryLine(index);
-    while (line != NULL) {
+    while (line != nullptr) {
         cout << line << endl;
         free(line);
         line = linenoiseHistoryLine(++index);
@@ -190,14 +188,8 @@ void program::rpn_history() {
 ///
 void program::rpn_type() {
     MIN_ARGUMENTS(1);
-
-    int type = _stack->pop_back()->_type;
-    if (type < 0 || type >= (int)cmd_max) type = (int)cmd_undef;
-
-    unsigned int string_size = strlen(object::s_cmd_type_string[type]);
-    unsigned int size = sizeof(symbol) + string_size + 1;
-    ostring* typ = (ostring*)_stack->allocate_back(size, cmd_string);
-    typ->set(object::s_cmd_type_string[type], string_size);
+    _stack.push(new ostring(_stack.at(0)->name()));
+    _stack.erase(1);
 }
 
 /// @brief default keyword implementation
@@ -211,19 +203,18 @@ void program::rpn_precision() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // set precision
-    unsigned long prec = mpfr_get_ui(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+    unsigned long prec = _stack.value<number>(0).toULong();
     if (prec >= (unsigned long)MPFR_PREC_MIN && prec <= (unsigned long)MPFR_PREC_MAX) {
-        floating_t::s_mpfr_prec = (mpfr_prec_t)prec;
-        floating_t::s_mpfr_prec_bytes = mpfr_custom_get_size(prec);
+        mpreal::set_default_prec(prec);
 
         // modify digits seen by user if std mode
         if (number::s_mode == number::std) {
             // calc max nb of digits user can see with the current bit precision
-            number::s_decimal_digits = base_digits_from_bit_precision(10, floating_t::s_mpfr_prec);
-            number::s_mpfr_printf_format = make_digit_format(number::s_decimal_digits, MPFR_FORMAT_STD);
+            number::s_digits = bits2digits(mpreal::get_default_prec());
         }
+        _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
 /// @brief round keyword implementation
@@ -232,13 +223,12 @@ void program::rpn_round() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    ostring* str = (ostring*)_stack->pop_back();
-    bool done = false;
-    for (int rnd = (int)MPFR_DEFAULT_RND; rnd <= (int)MPFR_RNDA; rnd++) {
-        if (string(floating_t::s_mpfr_rnd_str[rnd]) == str->_value) {
-            floating_t::s_mpfr_rnd = (mpfr_rnd_t)rnd;
-            done = true;
-        }
-    }
-    if (!done) ERR_CONTEXT(ret_out_of_range);
+    map<string, mpfr_rnd_t> matchRound{_mpfr_round};
+
+    auto found = matchRound.find(_stack.value<ostring>(0));
+    if (found != matchRound.end())
+        mpreal::set_default_rnd(found->second);
+    else
+        setErrorContext(ret_out_of_range);
+    _stack.pop();
 }

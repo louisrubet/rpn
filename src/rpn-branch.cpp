@@ -1,7 +1,7 @@
 #include "program.hpp"
 
 /// @brief if keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -11,16 +11,16 @@ int program::rpn_if(branch& myobj) {
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    if (mpfr_cmp_si(((number*)_stack->get_obj(0))->_value.mpfr, 0UL) != 0)
+    if (_stack.value<number>(0) != 0)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
-    (void)_stack->pop_back();
+    _stack.pop();
     return -1;
 }
 
 /// @brief then keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 ///
@@ -30,7 +30,7 @@ int program::rpn_then(branch& myobj) {
     // myobj.arg3 = index of if
     // if condition is true -> arg1 (= jump to then + 1)
     // else -> arg2 (= jump to else + 1 or end + 1)
-    branch* if_cmd = (branch*)seq_obj(myobj.arg3);
+    branch* if_cmd = (branch*)at(myobj.arg3);
     if (if_cmd->arg1 == 1)
         return myobj.arg1;
     else
@@ -38,7 +38,7 @@ int program::rpn_then(branch& myobj) {
 }
 
 /// @brief else keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -49,7 +49,7 @@ int program::rpn_else(branch& myobj) {
     // myobj.arg3 = index of if
     // if condition was false -> arg1 (= jump to else + 1)
     // if condition was true -> arg2 (= jump to end + 1)
-    branch* if_cmd = (branch*)seq_obj(myobj.arg3);
+    branch* if_cmd = (branch*)at(myobj.arg3);
     if (if_cmd->arg1 == 1)
         return myobj.arg2;
     else
@@ -57,7 +57,7 @@ int program::rpn_else(branch& myobj) {
 }
 
 /// @brief end keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -72,8 +72,8 @@ int program::rpn_end(branch& myobj) {
         ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
         // check arg
-        number* arg = (number*)_stack->pop_back();
-        if (mpfr_cmp_si(arg->_value.mpfr, 0UL) == 0) ret = myobj.arg1;
+        if (_stack.value<number>(0) == 0) ret = myobj.arg1;
+        _stack.pop();
     }
     // arg2 = index of while+1 in case of while..repeat..end
     else if (myobj.arg2 != -1)
@@ -83,7 +83,7 @@ int program::rpn_end(branch& myobj) {
 }
 
 /// @brief do keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -94,7 +94,7 @@ int program::rpn_do(branch& myobj) {
 }
 
 /// @brief until keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -105,7 +105,7 @@ int program::rpn_until(branch& myobj) {
 }
 
 /// @brief ift keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -116,20 +116,15 @@ void program::rpn_ift(void) {
 
     // check ift arg
     // arg is true if number != 0 or if is nan or +/-inf
-    number* testee = ((number*)_stack->get_obj(1));
-
-    if (!mpfr_zero_p(testee->_value.mpfr)) {
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack));
-        (void)_stack->pop_back(2);
-
-        CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack));
-        (void)_calc_stack.pop_back();
-    } else
-        (void)_stack->pop_back(2);
+    if (_stack.value<number>(1) != 0) {
+        _stack.erase(1);
+    } else {
+        _stack.pop_front(2);
+    }
 }
 
 /// @brief ifte keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -139,22 +134,17 @@ void program::rpn_ifte(void) {
     ARG_MUST_BE_OF_TYPE(2, cmd_number);
 
     // check ifte arg
-    // arg is true if number != 0 or if is nan or +/-inf
-    number* testee = ((number*)_stack->get_obj(2));
-
-    if (!mpfr_zero_p(testee->_value.mpfr))
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size() - 2, _calc_stack));
-    else
-        CHECK_MPFR(stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack));
-
-    (void)_stack->pop_back(3);
-
-    CHECK_MPFR(stack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack));
-    (void)_calc_stack.pop_back();
+    if (_stack.value<number>(2) != 0) {
+        _stack.erase(2);
+        _stack.pop();
+    } else {
+        _stack.erase(2);
+        _stack.erase(1);
+    }
 }
 
 /// @brief while keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -165,7 +155,7 @@ int program::rpn_while(branch& myobj) {
 }
 
 /// @brief repeat keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -178,14 +168,14 @@ int program::rpn_repeat(branch& myobj) {
 
     // check arg
     // myobj.arg1 is end+1
-    number* arg = (number*)_stack->pop_back();
-    if (mpfr_cmp_si(arg->_value.mpfr, 0UL) == 0) ret = myobj.arg1;
+    if (_stack.value<number>(0) == 0) ret = myobj.arg1;
+    _stack.pop();
 
     return ret;
 }
 
 /// @brief start keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -197,18 +187,13 @@ int program::rpn_start(branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
-    // farg2 = last value of start command
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    myobj.farg2 = (number*)_calc_stack.back();
-    _stack->pop_back();
-
-    // farg1 = first value of start command
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    myobj.farg1 = (number*)_calc_stack.back();
-    _stack->pop_back();
+    // loop boundaries
+    myobj.firstIndex = _stack.value<number>(1);
+    myobj.lastIndex = _stack.value<number>(0);
+    _stack.pop_front(2);
 
     // test value
-    if (myobj.farg1->_value > myobj.farg2->_value)
+    if (myobj.firstIndex > myobj.lastIndex)
         // last boundary lower than first boundary
         // -> next command shall be after 'next'
         // arg2 holds index of 'next'
@@ -218,7 +203,7 @@ int program::rpn_start(branch& myobj) {
 }
 
 /// @brief for keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -230,68 +215,67 @@ int program::rpn_for(branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
-    symbol* sym = ((symbol*)seq_obj(myobj.arg1));
+    symbol* sym = (symbol*)at(myobj.arg1);  // arg1 = loop variable index
 
-    // farg2 = last value of for command
-    // arg1 = index of symbol to increase
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    myobj.farg2 = (number*)_calc_stack.back();
-    _stack->pop_back();
-
-    // farg1 = first value of for command
-    stack::copy_and_push_back(*_stack, _stack->size() - 1, _calc_stack);
-    myobj.farg1 = (number*)_calc_stack.back();
-    _stack->pop_back();
+    // loop boundaries
+    myobj.firstIndex = _stack.value<number>(1);
+    myobj.lastIndex = _stack.value<number>(0);
 
     // test value
-    if (myobj.farg1->_value > myobj.farg2->_value)
+    if (myobj.firstIndex > myobj.lastIndex)
         // last boundary lower than first boundary
         // -> next command shall be after 'next'
         // arg2 holds index of 'next'
         ret = myobj.arg2 + 1;
     else {
         // store symbol with first value
-        _local_heap.add(sym->_value, (object*)myobj.farg1, myobj.farg1->size());
+        auto it = _local_heap.find(sym->value);
+        if (it != _local_heap.end()) {
+            delete it->second;
+            _local_heap.erase(it);
+        }
+        _local_heap[sym->value] = _stack.obj<number>(1).clone();
         ret = myobj.arg1 + 1;
     }
+
+    _stack.pop_front(2);
 
     return ret;
 }
 
 /// @brief next keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
 ///
 int program::rpn_next(branch& myobj) {
-    // arg1 = index of start or for command in program
-    // farg1 = current count
-    branch* start_or_for = (branch*)seq_obj(myobj.arg1);
+    // arg1 = loop variable index
+    // firstIndex = current point in the loop
+    branch* start_or_for = (branch*)at(myobj.arg1);
     if (!myobj.arg_bool) {
         myobj.arg_bool = true;
-        myobj.farg1 = start_or_for->farg1;
+        myobj.firstIndex = start_or_for->firstIndex;
     }
 
     // increment then test
     // carefull: round toward minus infinity to avoid missing last boundary (because growing step)
-    mpfr_add_si(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, 1UL, MPFR_RNDD);
+    mpfr_add(myobj.firstIndex.mpfr_ptr(), myobj.firstIndex.mpfr_srcptr(), mpreal(1).mpfr_srcptr(), MPFR_RNDD);
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1) {
         object* obj;
         unsigned int size;
-        symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+        symbol* var = (symbol*)at(start_or_for->arg1);
 
-        // increase symbol variable
-        _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
+        // store symbol variable (asserted existing in the local heap)
+        ((number*)_local_heap[var->value])->value = myobj.firstIndex;
     }
 
     // test value
-    if (myobj.farg1->_value > start_or_for->farg2->_value) {
+    if (myobj.firstIndex > start_or_for->lastIndex) {
         // end of loop
         myobj.arg_bool = false;  // init again next time
-        _calc_stack.pop_back(2);
         return -1;
     } else {
         // for command: next instruction will be after symbol variable
@@ -303,7 +287,7 @@ int program::rpn_next(branch& myobj) {
 }
 
 /// @brief step keyword (branch) implementation
-/// 
+///
 /// @param myobj the current branch object
 /// @return int index of the next object to run in the current program
 /// @return -1 the next object index to run in the current program is the current+1
@@ -313,39 +297,39 @@ int program::rpn_step(branch& myobj) {
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    number* step = (number*)_stack->pop_back();
+    mpreal step = _stack.value<number>(0);
+    _stack.pop();
 
     // end of loop if step is negative or zero
-    if (mpfr_cmp_d(step->_value.mpfr, 0.0) <= 0)
+    if (step <= 0)
         ret = -1;
     else {
-        // arg1 = index of start or for command in program
-        // farg1 = current count
-        branch* start_or_for = (branch*)seq_obj(myobj.arg1);
+        // arg1 = loop variable index
+        // firstIndex = current count
+        branch* start_or_for = (branch*)at(myobj.arg1);
         if (!myobj.arg_bool) {
             myobj.arg_bool = true;
-            myobj.farg1 = start_or_for->farg1;
+            myobj.firstIndex = start_or_for->firstIndex;
         }
 
         // increment then test
         // carefull: round toward minus infinity to avoid missing last boundary (because growing step)
-        mpfr_add(myobj.farg1->_value.mpfr, myobj.farg1->_value.mpfr, step->_value.mpfr, MPFR_RNDD);
+        mpfr_add(myobj.firstIndex.mpfr_ptr(), myobj.firstIndex.mpfr_srcptr(), step.mpfr_srcptr(), MPFR_RNDD);
 
         // for command: increment symbol too
         if (start_or_for->arg1 != -1) {
             object* obj;
             unsigned int size;
-            symbol* var = (symbol*)seq_obj(start_or_for->arg1);
+            symbol* var = (symbol*)at(start_or_for->arg1);
 
             // increase symbol variable
-            _local_heap.replace_value(string(var->_value), myobj.farg1, myobj.farg1->size());
-        }
+            ((number*)_local_heap[var->value])->value = myobj.firstIndex;
+       }
 
         // test loop value is out of range
-        if (myobj.farg1->_value > start_or_for->farg2->_value) {
+        if (myobj.firstIndex > start_or_for->lastIndex) {
             // end of loop
             myobj.arg_bool = false;  // init again next time
-            _calc_stack.pop_back(2);
             ret = -1;
         } else {
             // for command: next instruction will be after symbol variable

@@ -1,3 +1,5 @@
+#include <fcntl.h>
+
 #include "program.hpp"
 
 /// @brief ->str keyword implementation
@@ -6,24 +8,11 @@ void program::rpn_instr() {
     MIN_ARGUMENTS(1);
 
     // stringify only if not already a string
-    if (_stack->get_type(0) != cmd_string) {
-        // write the object in stack(0) in a string and remove this obj
-        FILE* tmp = tmpfile();
-        if (tmp != NULL) {
-            ((object*)_stack->pop_back())->show(tmp);
-
-            // reserve the correct size on stack
-            unsigned int str_size = (unsigned int)ftell(tmp);
-            ostring* str = (ostring*)_stack->allocate_back(str_size + 1 + sizeof(ostring), cmd_string);
-            str->_len = str_size;
-
-            // fill the obj
-            rewind(tmp);
-            if (fread(str->_value, str_size, 1, tmp) != 1) ERR_CONTEXT(ret_runtime_error);
-            str->_value[str_size] = 0;
-            fclose(tmp);
-        } else
-            ERR_CONTEXT(ret_runtime_error);
+    if (_stack.type(0) != cmd_string) {
+        stringstream ss;
+        ss << _stack.at(0);
+        _stack.pop();
+        _stack.push(new ostring(ss.str()));
     }
 }
 
@@ -33,14 +22,14 @@ void program::rpn_strout() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    string entry(((ostring*)_stack->pop_back())->_value);
-
-    program prog;
+    string entry(_stack.value<ostring>(0));
+    program prog(_stack, _heap);
+    _stack.pop();
 
     // make program from string in stack level 1
-    if (program::parse(entry.c_str(), prog) == ret_ok)
+    if (prog.parse(entry) == ret_ok)
         // run it
-        prog.run(*_stack, *_heap);
+        prog.run();
 }
 
 /// @brief chr keyword implementation
@@ -48,17 +37,10 @@ void program::rpn_strout() {
 void program::rpn_chr() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-
-    // get arg as number % 256
-    char the_chr = (char)mpfr_get_d(((number*)_stack->pop_back())->_value.mpfr, floating_t::s_mpfr_rnd);
+    char the_chr = (char)(int)_stack.value<number>(0);
+    _stack.pop();
     if (the_chr < 32 || the_chr > 126) the_chr = '.';
-
-    // reserve the correct size on stack (1 char)
-    unsigned int str_size = 1;
-    ostring* str = (ostring*)_stack->allocate_back(str_size + 1 + sizeof(ostring), cmd_string);
-    str->_len = str_size;
-    str->_value[0] = the_chr;
-    str->_value[1] = 0;
+    _stack.push_front(new ostring(string(1, the_chr)));
 }
 
 /// @brief num keyword implementation
@@ -66,10 +48,11 @@ void program::rpn_chr() {
 void program::rpn_num() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
-
-    double the_chr = (double)((ostring*)_stack->pop_back())->_value[0];
-    number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    numb->_value = the_chr;
+    if (_stack.value<ostring>(0).size() > 0)
+        _stack.push_front(new number(_stack.value<ostring>(0)[0]));
+    else
+        _stack.push_front(new number(0));
+    _stack.erase(1);
 }
 
 /// @brief size keyword implementation
@@ -77,10 +60,8 @@ void program::rpn_num() {
 void program::rpn_strsize() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
-
-    double len = ((ostring*)_stack->pop_back())->_len;
-    number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    numb->_value = len;
+    _stack.push_front(new number(_stack.value<ostring>(0).size()));
+    _stack.erase(1);
 }
 
 /// @brief pos keyword implementation
@@ -90,15 +71,9 @@ void program::rpn_strpos() {
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
     ARG_MUST_BE_OF_TYPE(1, cmd_string);
 
-    long pos = 0;
-    char* src = ((ostring*)_stack->get_obj(1))->_value;
-    char* found = strstr(src, ((ostring*)_stack->get_obj(0))->_value);
-    if (found != NULL) pos = (long)(found - src) + 1L;
-
-    _stack->pop_back(2);
-
-    number* numb = (number*)_stack->allocate_back(number::calc_size(), cmd_number);
-    numb->_value = pos;
+    size_t pos = _stack.value<ostring>(1).find(_stack.value<ostring>(0)) + 1;
+    _stack.pop_front(2);
+    _stack.push_front(new number(pos));
 }
 
 /// @brief sub keyword implementation
@@ -109,38 +84,11 @@ void program::rpn_strsub() {
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
     ARG_MUST_BE_OF_TYPE(2, cmd_string);
 
-    long first = long(((number*)_stack->get_obj(1))->_value) - 1;
-    long last = long(((number*)_stack->get_obj(0))->_value) - 1;
-    long len = ((ostring*)_stack->get_obj(2))->_len;
-    bool result_is_void = false;
+    size_t first = (size_t)_stack.value<number>(1);
+    size_t len = (size_t)_stack.value<number>(0) - first + 1;
+    first--;
 
-    _stack->pop_back(2);
-
-    if (first < 0) first = 0;
-    if (last < 0) last = 0;
-    if (first > len && last > len)
-        result_is_void = true;
-    else {
-        if (first > len) first = len - 1;
-        if (last > len) last = len - 1;
-        if (first > last) result_is_void = true;
-    }
-
-    if (!result_is_void) {
-        unsigned int str_size = last - first + 1;
-        ostring* str = (ostring*)_calc_stack.allocate_back(str_size + 1 + sizeof(ostring), cmd_string);
-        str->_len = str_size;
-
-        memcpy(((ostring*)_calc_stack.back())->_value, ((ostring*)_stack->get_obj(0))->_value + first, str_size);
-        ((ostring*)_calc_stack.back())->_value[str_size] = 0;
-
-        _stack->pop_back();
-        stack::copy_and_push_back(_calc_stack, _calc_stack.size() - 1, *_stack);
-        _calc_stack.pop_back();
-    } else {
-        _stack->pop_back();
-        ostring* str = (ostring*)_stack->allocate_back(1 + sizeof(ostring), cmd_string);
-        str->_len = 0;
-        str->_value[0] = 0;
-    }
+    if (first > _stack.value<ostring>(2).size()) first = len = 0;
+    _stack.push(new ostring(_stack.value<ostring>(2).substr(first, len)));
+    _stack.erase(1, 3);
 }
