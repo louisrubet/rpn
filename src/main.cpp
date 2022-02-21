@@ -1,5 +1,3 @@
-// std c
-#include <errno.h>
 #include <linux/limits.h>
 #include <pwd.h>
 #include <signal.h>
@@ -8,43 +6,48 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <cerrno>
+#include <iostream>
+using namespace std;
+
 // internal includes
 #include "program.hpp"
 
-static heap s_global_heap;
-static rpnstack s_global_stack;
-static program* s_prog_to_interrupt = NULL;
+static heap _global_heap;
+static stack _global_stack;
+static program* _prog_to_interrupt = NULL;
 
 /// @brief actions to be done at rpn exit
 ///
-void exit_interactive_rpn() {
+static void exit_interactive_rpn() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != NULL) {
-        char history_path[PATH_MAX];
-        sprintf(history_path, "%s/%s", pw->pw_dir, HISTORY_FILE);
+        stringstream history_path;
+        history_path << pw->pw_dir << '/' << HISTORY_FILE;
 
         // trunc current history
-        ofstream history(history_path, ios_base::out | ios_base::trunc);
+        ofstream history(history_path.str(), ios_base::out | ios_base::trunc);
         history.close();
 
         // save it
-        if (linenoiseHistorySave(history_path) != 0)
-            fprintf(stderr, "warning, could not save %s (errno=%d, '%s')\n", history_path, errno, strerror(errno));
+        if (linenoiseHistorySave(history_path.str()) != 0)
+            cerr << "warning, could not save " << history_path.str() << " (errno=" << errno << " '"
+                 << strerror(errno) "')" << endl;
         linenoiseHistoryFree();
     }
 }
 
 /// @brief actions to be done at rpn exit
 ///
-void init_interactive_rpn() {
+static void init_interactive_rpn() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != NULL) {
-        char history_path[PATH_MAX];
-        sprintf(history_path, "%s/%s", pw->pw_dir, HISTORY_FILE);
+        stringstream history_path;
+        history_path << pw->pw_dir << '/' << HISTORY_FILE;
 
         // don't care about errors
         linenoiseHistorySetMaxLen(HISTORY_FILE_MAX_LINES);
-        linenoiseHistoryLoad(history_path);
+        linenoiseHistoryLoad(history_path.str());
     }
 }
 
@@ -55,9 +58,9 @@ void init_interactive_rpn() {
 /// @param context see POSIX sigaction
 ///
 static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context) {
-    if (s_prog_to_interrupt != NULL) {
-        s_prog_to_interrupt->stop();
-        s_prog_to_interrupt = NULL;
+    if (_prog_to_interrupt != NULL) {
+        _prog_to_interrupt->stop();
+        _prog_to_interrupt = NULL;
     }
 
     exit_interactive_rpn();
@@ -70,9 +73,9 @@ static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context) {
 /// @param context see POSIX sigaction
 ///
 static void segv_handler(int sig, siginfo_t* siginfo, void* context) {
-    fprintf(stderr, "Internal error\n");
-    s_prog_to_interrupt->stop();
-    s_prog_to_interrupt = NULL;
+    cerr << "Internal error" << endl;
+    _prog_to_interrupt->stop();
+    _prog_to_interrupt = NULL;
 }
 
 /// @brief setup signals handlers to stop with honours
@@ -82,7 +85,7 @@ static void segv_handler(int sig, siginfo_t* siginfo, void* context) {
 static void catch_signals(program* prog) {
     struct sigaction act = {0};
 
-    s_prog_to_interrupt = prog;
+    _prog_to_interrupt = prog;
 
     act.sa_sigaction = &ctrlc_handler;
     act.sa_flags = SA_SIGINFO;
@@ -128,10 +131,10 @@ int main(int argc, char* argv[]) {
                     catch_signals(&prog);
 
                     // run it
-                    if (prog.run(s_global_stack, s_global_heap) == ret_good_bye)
+                    if (prog.run(_global_stack, _global_heap) == ret_good_bye)
                         go_on = false;
                     else
-                        program::show_stack(s_global_stack);
+                        program::show_stack(_global_stack);
                     break;
             }
         }
@@ -160,8 +163,8 @@ int main(int argc, char* argv[]) {
             catch_signals(&prog);
 
             // run it
-            ret = prog.run(s_global_stack, s_global_heap);
-            program::show_stack(s_global_stack, false);
+            ret = prog.run(_global_stack, _global_heap);
+            program::show_stack(_global_stack, false);
         }
     }
 
