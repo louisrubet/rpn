@@ -23,13 +23,13 @@ void program::rpn_strout() {
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
     string entry(_stack->value<ostring>(0));
-    program prog;
+    program prog(_stack, _heap);
     _stack->pop();
 
     // make program from string in stack level 1
     if (program::parse(entry, prog) == ret_ok)
         // run it
-        prog.run(*_stack, *_heap);
+        prog.run();
 }
 
 /// @brief chr keyword implementation

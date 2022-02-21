@@ -187,7 +187,7 @@ void program::rpn_purge(void) {
 ///
 void program::rpn_vars(void) {
     object* obj;
-    program* parent = _parent_prog;
+    program* parent = _parent;
     string name;
 
     // heap variables
@@ -206,7 +206,7 @@ void program::rpn_vars(void) {
             obj->show(cout);
             cout<<endl;
         }
-        parent = parent->_parent_prog;
+        parent = parent->_parent;
     }
 
     // local variables
