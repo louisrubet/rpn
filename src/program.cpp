@@ -291,7 +291,7 @@ ret_value program::run() {
             default:
                 // not a command, but a stack entry, manage it
                 // copy the program stack entry to the running stack
-                _stack->push_front(o->clone());
+                _stack.push_front(o->clone());
                 i++;
                 break;
         }

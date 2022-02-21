@@ -95,13 +95,13 @@ void program::rpn_std() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(_stack->value<number>(0));
+    double digits = double(_stack.value<number>(0));
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::std;
         number::s_digits = (int)digits;
-        _stack->pop();
+        _stack.pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
 }
@@ -112,13 +112,13 @@ void program::rpn_fix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(_stack->value<number>(0));
+    double digits = double(_stack.value<number>(0));
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::fix;
         number::s_digits = (int)digits;
-        _stack->pop();
+        _stack.pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
 }
@@ -129,24 +129,24 @@ void program::rpn_sci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(_stack->value<number>(0));
+    double digits = double(_stack.value<number>(0));
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::sci;
         number::s_digits = (int)digits;
-        _stack->pop();
+        _stack.pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
 }
 
 /// @brief version keyword implementation
 ///
-void program::rpn_version() { _stack->push_front(new ostring(version)); }
+void program::rpn_version() { _stack.push_front(new ostring(version)); }
 
 /// @brief uname keyword implementation
 ///
-void program::rpn_uname() { _stack->push_front(new ostring(uname)); }
+void program::rpn_uname() { _stack.push_front(new ostring(uname)); }
 
 /// @brief history keyword implementation
 ///
@@ -165,8 +165,8 @@ void program::rpn_history() {
 ///
 void program::rpn_type() {
     MIN_ARGUMENTS(1);
-    _stack->push(new ostring(_stack->at(0)->name()));
-    _stack->erase(1);
+    _stack.push(new ostring(_stack.at(0)->name()));
+    _stack.erase(1);
 }
 
 /// @brief default keyword implementation
@@ -180,7 +180,7 @@ void program::rpn_precision() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // set precision
-    unsigned long prec = _stack->value<number>(0).toULong();
+    unsigned long prec = _stack.value<number>(0).toULong();
     if (prec >= (unsigned long)MPFR_PREC_MIN && prec <= (unsigned long)MPFR_PREC_MAX) {
         mpreal::set_default_prec(prec);
 
@@ -189,7 +189,7 @@ void program::rpn_precision() {
             // calc max nb of digits user can see with the current bit precision
             number::s_digits = bits2digits(mpreal::get_default_prec());
         }
-        _stack->pop();
+        _stack.pop();
     } else
         ERR_CONTEXT(ret_out_of_range);
 }
@@ -202,10 +202,10 @@ void program::rpn_round() {
 
     map<string, mpfr_rnd_t> matchRound{MPFR_ROUND_STRINGS};
 
-    auto found = matchRound.find(_stack->value<ostring>(0));
+    auto found = matchRound.find(_stack.value<ostring>(0));
     if (found != matchRound.end())
         mpreal::set_default_rnd(found->second);
     else
         ERR_CONTEXT(ret_out_of_range);
-    _stack->pop();
+    _stack.pop();
 }

@@ -39,25 +39,25 @@ void program::rpn_eval(void) {
     if (IS_ARG_TYPE(0, cmd_symbol)) {
         // recall a variable
         object* obj;
-        string variable(((symbol*)_stack->front())->value);
-        _stack->pop();
+        string variable(_stack.value<symbol>(0));
+        _stack.pop();
 
         // if variable holds a program, run this program
         if (find_variable(variable, obj)) {
             if (obj->_type == cmd_program) {
-                prog_text = _stack->value<oprogram>(0);
-                _stack->pop();
+                prog_text = _stack.value<oprogram>(0);
+                _stack.pop();
                 run_prog = true;
             } else {
                 // else recall this variable (i.e. stack its content)
-                _stack->push_front(obj);
+                _stack.push_front(obj);
             }
         } else
             ERR_CONTEXT(ret_unknown_variable);
     } else if (IS_ARG_TYPE(0, cmd_program)) {
         // eval a program
-        prog_text = _stack->value<oprogram>(0);
-        _stack->pop();
+        prog_text = _stack.value<oprogram>(0);
+        _stack.pop();
         run_prog = true;
     } else
         ERR_CONTEXT(ret_bad_operand_type);
@@ -129,8 +129,8 @@ int program::rpn_inprog(branch& myobj) {
 
     // load variables
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--) {
-        _local_heap[string(((symbol*)(*this)[i])->value)] = _stack->at(0)->clone();
-        _stack->pop_front();
+        _local_heap[string(((symbol*)(*this)[i])->value)] = _stack.at(0)->clone();
+        _stack.pop_front();
     }
 
     // run the program

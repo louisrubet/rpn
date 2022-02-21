@@ -7,13 +7,13 @@ void program::rpn_sto(void) {
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     // store symbol with first value
-    const auto it = _heap.find(_stack->value<ostring>(0));
+    const auto it = _heap.find(_stack.value<ostring>(0));
     if (it != _heap.end()) {
         delete it->second;
         _heap.erase(it);
     }
-    _heap[_stack->value<ostring>(0)] = _stack->at(1)->clone();
-    _stack->pop_front(2);
+    _heap[_stack.value<ostring>(0)] = _stack.at(1)->clone();
+    _stack.pop_front(2);
 }
 
 /// @brief sto+ keyword implementation
@@ -21,7 +21,7 @@ void program::rpn_sto(void) {
 void program::rpn_stoadd(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack->value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
         ERR_CONTEXT(ret_unknown_variable);
         return;
     }
@@ -38,7 +38,7 @@ void program::rpn_stoadd(void) {
 void program::rpn_stosub(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack->value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
         ERR_CONTEXT(ret_unknown_variable);
         return;
     }
@@ -55,7 +55,7 @@ void program::rpn_stosub(void) {
 void program::rpn_stomul(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack->value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
         ERR_CONTEXT(ret_unknown_variable);
         return;
     }
@@ -72,7 +72,7 @@ void program::rpn_stomul(void) {
 void program::rpn_stodiv(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack->value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
         ERR_CONTEXT(ret_unknown_variable);
         return;
     }
@@ -89,7 +89,7 @@ void program::rpn_stodiv(void) {
 void program::rpn_stoneg(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack->value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
         ERR_CONTEXT(ret_unknown_variable);
         return;
     }
@@ -105,7 +105,7 @@ void program::rpn_stoneg(void) {
 void program::rpn_stoinv(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack->value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
         ERR_CONTEXT(ret_unknown_variable);
         return;
     }
@@ -124,12 +124,12 @@ void program::rpn_rcl(void) {
 
     // recall a variable
     object* obj;
-    string variable(_stack->value<symbol>(0));
+    string variable(_stack.value<symbol>(0));
 
     // mind the order of heaps
     if (find_variable(variable, obj)) {
-        (void)_stack->pop_front();
-        _stack->push_front(obj->clone());
+        (void)_stack.pop_front();
+        _stack.push_front(obj->clone());
     } else
         ERR_CONTEXT(ret_unknown_variable);
 }
@@ -142,8 +142,8 @@ void program::rpn_edit(void) {
     ostringstream st;
 
     // re-write stack objet in a stream
-    _stack->at(0)->show(st);
-    _stack->pop();
+    _stack.at(0)->show(st);
+    _stack.pop();
 
     // set it as the linenoise line entry
     linenoisePreloadBuffer((const char*)st.str().c_str());
@@ -160,12 +160,12 @@ void program::auto_rcl(symbol* symb) {
 
         // mind the order of heaps
         if (find_variable(variable, obj)) {
-            _stack->push_front(obj->clone());
+            _stack.push_front(obj->clone());
             if (obj->_type == cmd_program) rpn_eval();
         } else
-            _stack->push_front(symb->clone());
+            _stack.push_front(symb->clone());
     } else
-        _stack->push_front(symb->clone());
+        _stack.push_front(symb->clone());
 }
 
 /// @brief purge keyword implementation
@@ -174,13 +174,13 @@ void program::rpn_purge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    const auto i = _heap.find(_stack->value<symbol>(0));
+    const auto i = _heap.find(_stack.value<symbol>(0));
     if (i != _heap.end()) {
         delete i->second;
         _heap.erase(i);
     } else
         ERR_CONTEXT(ret_unknown_variable);
-    _stack->pop();
+    _stack.pop();
 }
 
 /// @brief vars keyword implementation

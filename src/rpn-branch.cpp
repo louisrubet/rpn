@@ -11,11 +11,11 @@ int program::rpn_if(branch& myobj) {
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    if (_stack->value<number>(0) != 0)
+    if (_stack.value<number>(0) != 0)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
-    _stack->pop();
+    _stack.pop();
     return -1;
 }
 
@@ -72,8 +72,8 @@ int program::rpn_end(branch& myobj) {
         ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
         // check arg
-        if (_stack->value<number>(0) == 0) ret = myobj.arg1;
-        _stack->pop();
+        if (_stack.value<number>(0) == 0) ret = myobj.arg1;
+        _stack.pop();
     }
     // arg2 = index of while+1 in case of while..repeat..end
     else if (myobj.arg2 != -1)
@@ -116,10 +116,10 @@ void program::rpn_ift(void) {
 
     // check ift arg
     // arg is true if number != 0 or if is nan or +/-inf
-    if (_stack->value<number>(1) != 0) {
-        _stack->erase(1);
+    if (_stack.value<number>(1) != 0) {
+        _stack.erase(1);
     } else {
-        _stack->pop_front(2);
+        _stack.pop_front(2);
     }
 }
 
@@ -134,12 +134,12 @@ void program::rpn_ifte(void) {
     ARG_MUST_BE_OF_TYPE(2, cmd_number);
 
     // check ifte arg
-    if (_stack->value<number>(2) != 0) {
-        _stack->erase(2);
-        _stack->pop();
+    if (_stack.value<number>(2) != 0) {
+        _stack.erase(2);
+        _stack.pop();
     } else {
-        _stack->erase(2);
-        _stack->erase(1);
+        _stack.erase(2);
+        _stack.erase(1);
     }
 }
 
@@ -168,8 +168,8 @@ int program::rpn_repeat(branch& myobj) {
 
     // check arg
     // myobj.arg1 is end+1
-    if (_stack->value<number>(0) == 0) ret = myobj.arg1;
-    _stack->pop();
+    if (_stack.value<number>(0) == 0) ret = myobj.arg1;
+    _stack.pop();
 
     return ret;
 }
@@ -188,9 +188,9 @@ int program::rpn_start(branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, -(int)ret_runtime_error);
 
     // loop boundaries
-    myobj.firstIndex = _stack->value<number>(1);
-    myobj.lastIndex = _stack->value<number>(0);
-    _stack->pop_front(2);
+    myobj.firstIndex = _stack.value<number>(1);
+    myobj.lastIndex = _stack.value<number>(0);
+    _stack.pop_front(2);
 
     // test value
     if (myobj.firstIndex > myobj.lastIndex)
@@ -218,8 +218,8 @@ int program::rpn_for(branch& myobj) {
     symbol* sym = (symbol*)at(myobj.arg1);  // arg1 = loop variable index
 
     // loop boundaries
-    myobj.firstIndex = _stack->value<number>(1);
-    myobj.lastIndex = _stack->value<number>(0);
+    myobj.firstIndex = _stack.value<number>(1);
+    myobj.lastIndex = _stack.value<number>(0);
 
     // test value
     if (myobj.firstIndex > myobj.lastIndex)
@@ -234,11 +234,11 @@ int program::rpn_for(branch& myobj) {
             delete it->second;
             _local_heap.erase(it);
         }
-        _local_heap[sym->value] = _stack->obj<number>(1)->clone();
+        _local_heap[sym->value] = _stack.obj<number>(1).clone();
         ret = myobj.arg1 + 1;
     }
 
-    _stack->pop_front(2);
+    _stack.pop_front(2);
 
     return ret;
 }
@@ -297,8 +297,8 @@ int program::rpn_step(branch& myobj) {
     MIN_ARGUMENTS_RET(1, -(int)ret_runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, -(int)ret_runtime_error);
 
-    mpreal step = _stack->value<number>(0);
-    _stack->pop();
+    mpreal step = _stack.value<number>(0);
+    _stack.pop();
 
     // end of loop if step is negative or zero
     if (step <= 0)
