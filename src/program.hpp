@@ -44,7 +44,7 @@ struct if_layout_t {
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<object*> {
    public:
-    program(rpnstack* stk, heap* hp, program* parent = nullptr):_stack(stk),_heap(hp),_parent(parent) {
+    program(rpnstack* stk, heap& hp, program* parent = nullptr):_stack(stk),_heap(hp),_parent(parent) {
         interrupt_now = false;
     }
     virtual ~program() {
@@ -85,7 +85,7 @@ class program : public deque<object*> {
     rpnstack* _stack;
 
     // global heap (sto, rcl)
-    heap* _heap;
+    heap& _heap;
 
     // local heap for local loop variables (for..next)
     heap _local_heap;

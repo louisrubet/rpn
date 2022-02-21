@@ -22,7 +22,7 @@ bool program::find_variable(string& variable, object*& obj) {
             parent = parent->_parent;
         }
         if (!found) {
-            if (_heap->get(variable, obj)) found = true;
+            if (_heap.get(variable, obj)) found = true;
         }
     }
 
