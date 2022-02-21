@@ -1,4 +1,34 @@
+#include <stdio.h>
+
+#include "escape.h"
+#include "linenoise.h"
 #include "program.hpp"
+#include "version.h"
+
+// description
+#define XSTR(a) STR(a)
+#define STR(a) #a
+static const string _description{
+    ATTR_BOLD "R" ATTR_OFF "everse " ATTR_BOLD "P" ATTR_OFF "olish " ATTR_BOLD "N" ATTR_OFF
+              "otation language\n\n"
+              "using " ATTR_BOLD "GMP" ATTR_OFF " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
+                  __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" ATTR_BOLD "MPFR" ATTR_OFF " v" MPFR_VERSION_STRING
+                                               " under GNU LGPL\n"
+                                               "and " ATTR_BOLD "linenoise-ng" ATTR_OFF " v" LINENOISE_VERSION
+                                               " under BSD\n"};
+
+// syntax
+static const string _syntax{ATTR_BOLD "Syntax" ATTR_OFF
+                                      ": rpn [command]\n"
+                                      "with optional command = list of commands"};
+
+static const map<string, mpfr_rnd_t> _mpfr_round{{"nearest (even)", MPFR_RNDN},
+                                                        {"toward zero", MPFR_RNDZ},
+                                                        {"toward +inf", MPFR_RNDU},
+                                                        {"toward -inf", MPFR_RNDD},
+                                                        {"away from zero", MPFR_RNDA},
+                                                        {"faithful rounding", MPFR_RNDF},
+                                                        {"nearest (away from zero)", MPFR_RNDNA}};
 
 /// @brief nop keyword implementation
 ///
@@ -8,33 +38,31 @@ void program::rpn_nop() {
 
 /// @brief quit keyword implementation
 ///
-void program::rpn_good_bye() { ERR_CONTEXT(ret_good_bye); }
+void program::rpn_good_bye() { setErrorContext(ret_good_bye); }
 
 /// @brief nop keyword implementation
 /// the result is written on stdout
 ///
 void program::rpn_help() {
     // software name
-    cout << endl << ATTR_BOLD << uname << ATTR_OFF << endl;
+    cout << endl << ATTR_BOLD << RPN_UNAME << ATTR_OFF << endl;
 
-    // description
-    cout << description << endl << endl;
+    // _description
+    cout << _description << endl << endl;
 
-    // syntax
-    cout << syntax << endl;
+    // _syntax
+    cout << _syntax << endl;
 
     // keywords
     unsigned int i = 0;
-    while (s_keywords[i].type != cmd_max) {
-        if (s_keywords[i].comment.size() != 0) {
+    for (auto& kw : _keywords)
+        if (!kw.comment.empty()) {
             // titles in bold
-            if (s_keywords[i].type == cmd_undef) cout << ATTR_BOLD;
+            if (kw.type == cmd_undef) cout << ATTR_BOLD;
             // show title or keyword + comment
-            cout << s_keywords[i].name << '\t' << s_keywords[i].comment << endl;
-            if (s_keywords[i].type == cmd_undef) cout << ATTR_OFF;
+            cout << kw.name << '\t' << kw.comment << endl;
+            if (kw.type == cmd_undef) cout << ATTR_OFF;
         }
-        i++;
-    }
     cout << endl;
 
     // show mode
@@ -57,14 +85,9 @@ void program::rpn_help() {
     // bits precision, decimal digits and rounding mode
     cout << " with " << number::s_digits << " digits after the decimal point" << endl;
     cout << "Current floating point precision is " << (int)mpreal::get_default_prec() << " bits" << endl;
-    struct RndStrings {
-        string name;
-        mp_rnd_t rnd;
-    };
-    vector<RndStrings> rndStrings{MPFR_ROUND_STRINGS};
-    for (RndStrings r : rndStrings)
-        if (r.rnd == mpreal::get_default_rnd()) {
-            cout << "Current rounding mode is " << r.name << endl;
+    for (auto& rn : _mpfr_round)
+        if (rn.second == mpreal::get_default_rnd()) {
+            cout << "Current rounding mode is '" << rn.first << '\'' << endl;
             break;
         }
     cout << endl << endl;
@@ -103,7 +126,7 @@ void program::rpn_std() {
         number::s_digits = (int)digits;
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
 /// @brief fix keyword implementation
@@ -120,7 +143,7 @@ void program::rpn_fix() {
         number::s_digits = (int)digits;
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
 /// @brief sci keyword implementation
@@ -137,16 +160,16 @@ void program::rpn_sci() {
         number::s_digits = (int)digits;
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
-/// @brief version keyword implementation
+/// @brief _version keyword implementation
 ///
-void program::rpn_version() { _stack.push_front(new ostring(version)); }
+void program::rpn_version() { _stack.push_front(new ostring(RPN_VERSION)); }
 
-/// @brief uname keyword implementation
+/// @brief _uname keyword implementation
 ///
-void program::rpn_uname() { _stack.push_front(new ostring(uname)); }
+void program::rpn_uname() { _stack.push_front(new ostring(RPN_UNAME)); }
 
 /// @brief history keyword implementation
 ///
@@ -154,7 +177,7 @@ void program::rpn_history() {
     // see command history on stdout
     int index = 0;
     char* line = linenoiseHistoryLine(index);
-    while (line != NULL) {
+    while (line != nullptr) {
         cout << line << endl;
         free(line);
         line = linenoiseHistoryLine(++index);
@@ -191,7 +214,7 @@ void program::rpn_precision() {
         }
         _stack.pop();
     } else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
 }
 
 /// @brief round keyword implementation
@@ -200,12 +223,12 @@ void program::rpn_round() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    map<string, mpfr_rnd_t> matchRound{MPFR_ROUND_STRINGS};
+    map<string, mpfr_rnd_t> matchRound{_mpfr_round};
 
     auto found = matchRound.find(_stack.value<ostring>(0));
     if (found != matchRound.end())
         mpreal::set_default_rnd(found->second);
     else
-        ERR_CONTEXT(ret_out_of_range);
+        setErrorContext(ret_out_of_range);
     _stack.pop();
 }

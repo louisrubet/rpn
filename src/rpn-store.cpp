@@ -1,4 +1,5 @@
 #include "program.hpp"
+#include "input.hpp"
 
 /// @brief sto keyword implementation
 ///
@@ -22,7 +23,7 @@ void program::rpn_stoadd(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
     if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
         return;
     }
     rpn_dup();
@@ -39,7 +40,7 @@ void program::rpn_stosub(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
     if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
         return;
     }
     rpn_dup();
@@ -56,7 +57,7 @@ void program::rpn_stomul(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
     if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
         return;
     }
     rpn_dup();
@@ -73,7 +74,7 @@ void program::rpn_stodiv(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
     if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
         return;
     }
     rpn_dup();
@@ -90,7 +91,7 @@ void program::rpn_stoneg(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
     if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
         return;
     }
     rpn_dup();
@@ -106,7 +107,7 @@ void program::rpn_stoinv(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
     if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
         return;
     }
     rpn_dup();
@@ -131,7 +132,7 @@ void program::rpn_rcl(void) {
         (void)_stack.pop_front();
         _stack.push_front(obj->clone());
     } else
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
 }
 
 /// @brief edit keyword implementation
@@ -146,7 +147,7 @@ void program::rpn_edit(void) {
     _stack.pop();
 
     // set it as the linenoise line entry
-    linenoisePreloadBuffer((const char*)st.str().c_str());
+    Input::preload(st.str().c_str());
 }
 
 /// @brief recall then eval a symbol variable if it is auto-evaluable
@@ -179,7 +180,7 @@ void program::rpn_purge(void) {
         delete i->second;
         _heap.erase(i);
     } else
-        ERR_CONTEXT(ret_unknown_variable);
+        setErrorContext(ret_unknown_variable);
     _stack.pop();
 }
 
@@ -199,7 +200,7 @@ void program::rpn_vars(void) {
     }
 
     // parents local variables
-    while (parent != NULL) {
+    while (parent != nullptr) {
         for (int i = 0; i < (int)parent->_local_heap.size(); i++) {
             (void)parent->_local_heap.get_by_index(i, name, obj);
             cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";

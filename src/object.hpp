@@ -1,13 +1,14 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
+#define MPFR_USE_NO_MACRO
+#include <mpfr.h>
 #include <mpreal.h>
 using namespace mpfr;
 
-#include <bitset>
-#include <complex>
-#include <iomanip>
 #include <ostream>
+#include <string>
+#include <sstream>
 using namespace std;
 
 #include "mpreal-out.hpp"
@@ -127,7 +128,6 @@ struct ocomplex : object {
 struct ostring : object {
     ostring() : object(cmd_string) {}
     ostring(const string& value_) : object(cmd_string), value(value_) {}
-    ostring(const char* value_) : object(cmd_string) { value = string(value_); }
     virtual object* clone() { return new ostring(value); }
     virtual string name() { return string("string"); }
     virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }

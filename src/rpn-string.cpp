@@ -27,7 +27,7 @@ void program::rpn_strout() {
     _stack.pop();
 
     // make program from string in stack level 1
-    if (program::parse(entry, prog) == ret_ok)
+    if (prog.parse(entry) == ret_ok)
         // run it
         prog.run();
 }

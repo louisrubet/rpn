@@ -13,7 +13,7 @@ void program::rpn_time() {
     clock_gettime(CLOCK_REALTIME, &ts);
     time_t time = (time_t)ts.tv_sec;
     tm = localtime(&time);
-    if (tm != NULL) {
+    if (tm != nullptr) {
         // date format = HH.MMSSssssss
         date = ((double)tm->tm_hour) * 10000000000.0 + ((double)tm->tm_min) * 100000000.0 +
                ((double)tm->tm_sec) * 1000000.0 + (double)(ts.tv_nsec / 1000);
@@ -23,7 +23,7 @@ void program::rpn_time() {
         _stack.push(new number(date));
         _stack.value<number>(0) /= 10000000000.0;
     } else
-        ERR_CONTEXT(ret_internal);
+        setErrorContext(ret_internal);
 }
 
 /// @brief date keyword implementation
@@ -37,7 +37,7 @@ void program::rpn_date() {
     clock_gettime(CLOCK_REALTIME, &ts);
     time_t time = (time_t)ts.tv_sec;
     tm = localtime(&time);
-    if (tm != NULL) {
+    if (tm != nullptr) {
         // date format = (M)M.DDYYYY
         date = (double)(tm->tm_mon + 1) * 1000000.0 + (double)(tm->tm_mday) * 10000.0 + (double)(tm->tm_year + 1900);
 
@@ -47,7 +47,7 @@ void program::rpn_date() {
         _stack.push(new number(date));
         _stack.value<number>(0) /= 1000000.0;
     } else
-        ERR_CONTEXT(ret_internal);
+        setErrorContext(ret_internal);
 }
 
 /// @brief ticks keyword implementation
@@ -61,10 +61,10 @@ void program::rpn_ticks() {
     clock_gettime(CLOCK_REALTIME, &ts);
     time_t time = (time_t)ts.tv_sec;
     tm = localtime(&time);
-    if (tm != NULL) {
+    if (tm != nullptr) {
         // date in µs
         date = 1000000.0 * (double)ts.tv_sec + (double)(ts.tv_nsec / 1000);
         _stack.push(new number(date));
     } else
-        ERR_CONTEXT(ret_internal);
+        setErrorContext(ret_internal);
 }

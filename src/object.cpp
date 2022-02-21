@@ -1,10 +1,4 @@
-#include <math.h>
-#include <string>
-using namespace std;
-
 #include "constant.h"
-#define MPFR_USE_NO_MACRO
-#include <mpfr.h>
 #include "object.hpp"
 
 // number statics
