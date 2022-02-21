@@ -24,7 +24,6 @@ using namespace std;
 
 // internal includes
 #include "constant.h"
-#include "debug.h"
 #include "escape.h"
 #include "object.hpp"
 #include "stack.hpp"
