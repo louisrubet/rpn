@@ -1,10 +1,6 @@
 #include <linux/limits.h>
 #include <pwd.h>
 #include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #include <cerrno>
 #include <iostream>
@@ -14,7 +10,7 @@ using namespace std;
 #include "program.hpp"
 
 static heap _global_heap;
-static stack _global_stack;
+static rpnstack _global_stack;
 static program* _prog_to_interrupt = NULL;
 
 /// @brief actions to be done at rpn exit
@@ -30,9 +26,9 @@ static void exit_interactive_rpn() {
         history.close();
 
         // save it
-        if (linenoiseHistorySave(history_path.str()) != 0)
-            cerr << "warning, could not save " << history_path.str() << " (errno=" << errno << " '"
-                 << strerror(errno) "')" << endl;
+        if (linenoiseHistorySave(history_path.str().c_str()) != 0)
+            cerr << "warning, could not save " << history_path.str() << " [errno=" << errno << ' ' << strerror(errno)
+                 << "']" << endl;
         linenoiseHistoryFree();
     }
 }
@@ -47,7 +43,7 @@ static void init_interactive_rpn() {
 
         // don't care about errors
         linenoiseHistorySetMaxLen(HISTORY_FILE_MAX_LINES);
-        linenoiseHistoryLoad(history_path.str());
+        linenoiseHistoryLoad(history_path.str().c_str());
     }
 }
 
@@ -90,12 +86,12 @@ static void catch_signals(program* prog) {
     act.sa_sigaction = &ctrlc_handler;
     act.sa_flags = SA_SIGINFO;
     if (sigaction(SIGINT, &act, NULL) < 0)
-        (void)fprintf(stderr, "Warning, Ctrl-C cannot be catched [errno=%d '%s']", errno, strerror(errno));
+        cerr << "Warning, Ctrl-C cannot be caught [errno=" << errno << ' ' << strerror(errno) << "']" << endl;
 
     act.sa_sigaction = &segv_handler;
     act.sa_flags = SA_SIGINFO;
     if (sigaction(SIGSEGV, &act, NULL) < 0)
-        (void)fprintf(stderr, "Warning, SIGSEGV cannot be catched [errno=%d '%s']", errno, strerror(errno));
+        cerr << "Warning, SIGSEGV cannot be caught [errno=" << errno << ' ' << strerror(errno) << "']" << endl;
 }
 
 /// @brief rpn entry point
@@ -119,7 +115,7 @@ int main(int argc, char* argv[]) {
         // entry loop
         while (go_on) {
             // make program from interactive entry
-            program prog;
+            program prog(&_global_stack, &_global_heap);
             switch (program::entry(prog)) {
                 case ret_good_bye:
                     go_on = false;
@@ -131,7 +127,7 @@ int main(int argc, char* argv[]) {
                     catch_signals(&prog);
 
                     // run it
-                    if (prog.run(_global_stack, _global_heap) == ret_good_bye)
+                    if (prog.run() == ret_good_bye)
                         go_on = false;
                     else
                         program::show_stack(_global_stack);
@@ -144,7 +140,7 @@ int main(int argc, char* argv[]) {
     }
     // run with cmd line arguments
     else {
-        program prog;
+        program prog(&_global_stack, &_global_heap);
         string entry;
         int i;
 
@@ -157,13 +153,11 @@ int main(int argc, char* argv[]) {
         // make program
         ret = program::parse(entry, prog);
         if (ret == ret_ok) {
-            string separator = "";
-
             // user could stop prog with CtrlC
             catch_signals(&prog);
 
             // run it
-            ret = prog.run(_global_stack, _global_heap);
+            ret = prog.run();
             program::show_stack(_global_stack, false);
         }
     }
