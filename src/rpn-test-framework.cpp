@@ -227,7 +227,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 // parse entry and run line
                 entry = regex_replace(entry, regex("`"), "");
                 if (!entry.empty()) {
-                    program prog(&stk, &hp);
+                    program prog(&stk, hp);
                     ret = program::parse(entry, prog);
                     if (ret == ret_ok) {
                         // run it
