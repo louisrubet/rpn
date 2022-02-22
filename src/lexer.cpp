@@ -107,6 +107,7 @@ bool Lexer::parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynE
 }
 
 int Lexer::getBaseAt(string& entry, int idxStart, bool& positive) {
+    #if 0
     regex baseRegex("([+-])?((0[xX])|([0-9][0-9]?[bB]))");
     smatch match;
     if (regex_search(entry, match, baseRegex) && match.size() >= 5) {
@@ -123,10 +124,11 @@ int Lexer::getBaseAt(string& entry, int idxStart, bool& positive) {
             return b;
         }
     }
+    #endif
     return 10;
 }
 
-bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal& r, char delim) {
+bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal** r, char delim) {
     stringstream ss;
     int idxNumber = 0;
     string token;
@@ -138,8 +140,9 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
         base = getBaseAt(token, idx, positive);
         if (base < BASE_MIN || base > BASE_MAX) return false;
         trim(token);
-        if (mpfr_set_str(r.mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
-            if (!positive) r = -r;
+        *r = new mpreal;
+        if (mpfr_set_str((*r)->mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
+            if (!positive) *(*r) = -*(*r);
             return true;
         } else
             return false;
@@ -150,9 +153,9 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
 
 bool Lexer::parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                         vector<SynElement>& elements) {
-    mpreal r;
+    mpreal* r;
     int base = 10;
-    if (getNumberAt(entry, idx, nextIdx, base, r)) {
+    if (getNumberAt(entry, idx, nextIdx, base, &r)) {
         elements.push_back({cmd_number, .re = r, .reBase = base});
         return true;
     } else {
@@ -163,14 +166,15 @@ bool Lexer::parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynEr
 
 bool Lexer::parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                          vector<SynElement>& elements) {
-    mpreal re, im;
+    mpreal* re;
+    mpreal* im;
     int reBase, imBase = 10;
     if (idx + 1 == entry.size()) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
     }
-    if (!getNumberAt(entry, idx + 1, nextIdx, reBase, re, ',')) {
+    if (!getNumberAt(entry, idx + 1, nextIdx, reBase, &re, ',')) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol
@@ -184,7 +188,7 @@ bool Lexer::parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynE
         return true;  // complex format error, return a symbol
     }
 
-    if (!getNumberAt(entry, i, nextIdx, imBase, im, ')')) {
+    if (!getNumberAt(entry, i, nextIdx, imBase, &im, ')')) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
         return true;  // complex format error, return a symbol

@@ -1,5 +1,5 @@
 #include <pwd.h>
-#include <signal.h>
+#include <csignal>
 
 #include <cerrno>
 #include <iostream>
