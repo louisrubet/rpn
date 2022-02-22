@@ -1,7 +1,7 @@
-#include <stdio.h>
+#include <cstdio>
+#include "linenoise.h"
 
 #include "escape.h"
-#include "linenoise.h"
 #include "program.hpp"
 #include "version.h"
 

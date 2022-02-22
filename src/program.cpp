@@ -590,10 +590,10 @@ ret_value program::parse(string& entry) {
         for (Lexer::SynElement& element : elements) {
             switch (element.type) {
                 case cmd_number:
-                    push_back(new number(element.re, element.reBase));
+                    push_back(new number(*element.re, element.reBase));
                     break;
                 case cmd_complex:
-                    push_back(new ocomplex(element.re, element.im, element.reBase, element.imBase));
+                    push_back(new ocomplex(*element.re, *element.im, element.reBase, element.imBase));
                     break;
                 case cmd_string:
                     push_back(new ostring(element.value));

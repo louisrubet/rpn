@@ -28,7 +28,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(BASE_COMPILER_OPTIONS "-std=c++14 -Wl,--no-as-needed")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -fomit-frame-pointer -s")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -s")
 endif()
 
 # custom linenoise-ng
@@ -75,6 +75,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp
 )
 target_link_libraries(rpn mpfr)
+target_link_libraries(rpn gmp)
 
 # man
 add_custom_target(man ALL)
