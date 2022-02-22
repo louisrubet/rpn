@@ -6,7 +6,7 @@ project(rpn)
 
 if((NOT CMAKE_BUILD_TYPE MATCHES Debug)
     AND (NOT CMAKE_BUILD_TYPE MATCHES Release))
-    set(CMAKE_BUILD_TYPE Release CACHE string "Choose the type of build, options are: None Debug Release" FORCE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release" FORCE)
 endif()
 
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
