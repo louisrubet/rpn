@@ -5,7 +5,7 @@ bool Lexer::lexer(string& entry, map<string, ReservedWord>& keywords, vector<Syn
     size_t jump;
     for (size_t i = 0; i < entry.size(); i++) {
         if (isspace(entry[i])) continue;
-        SynElement element;
+        SynElement element{.re = nullptr, .im = nullptr};
         switch (entry[i]) {
             case '"':
                 if (!parseString(entry, i, jump, errors, elements)) return false;
@@ -116,8 +116,7 @@ int Lexer::getBaseAt(string& entry, size_t& nextIdx, bool& positive) {
     if (entry[scan] == '+') {
         scan++;
         nextIdx = scan;
-    }
-    else if (entry[scan] == '-') {
+    } else if (entry[scan] == '-') {
         scan++;
         nextIdx = scan;
         positive = false;
@@ -169,8 +168,10 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
         if (mpfr_set_str((*r)->mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
             if (!positive) *(*r) = -*(*r);
             return true;
-        } else
-            return false;
+        } else {
+            delete *r;
+            return false;            
+        }
     }
     nextIdx = token.size() + idx + 1;
     return false;
@@ -206,16 +207,19 @@ bool Lexer::parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     }
 
     size_t i = nextIdx;
-    // while (i < entry.size() && entry[i] != ',') i++;
     if (i >= entry.size()) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
+        if (re != nullptr) delete re;
+        if (im != nullptr) delete im;
         return true;  // complex format error, return a symbol
     }
 
     if (!getNumberAt(entry, i, nextIdx, imBase, &im, ')')) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
         nextIdx = entry.size();
+        if (re != nullptr) delete re;
+        if (im != nullptr) delete im;
         return true;  // complex format error, return a symbol
     }
     elements.push_back({cmd_complex, .re = re, .im = im, .reBase = reBase, .imBase = imBase});
