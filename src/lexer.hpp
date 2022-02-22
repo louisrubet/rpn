@@ -66,7 +66,7 @@ class Lexer {
     bool parseUnknown(string& entry, size_t idx, size_t& nextIdx, vector<SynElement>& elements);
 
     void trim(string& s);
-    int getBaseAt(string& entry, int idxStart, bool& positive);
+    int getBaseAt(string& entry, size_t& nextIdx, bool& positive);
     bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal** r, char delim = ' ');
 };
 
