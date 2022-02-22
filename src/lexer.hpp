@@ -19,8 +19,8 @@ class Lexer {
     struct SynElement {
         cmd_type_t type;
         string value;
-        mpreal re;
-        mpreal im;
+        mpreal* re;
+        mpreal* im;
         int reBase;
         int imBase;
         program_fn_t fn;
@@ -66,8 +66,8 @@ class Lexer {
     bool parseUnknown(string& entry, size_t idx, size_t& nextIdx, vector<SynElement>& elements);
 
     void trim(string& s);
-    int getBaseAt(string& entry, int idxStart, bool& positive);
-    bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal& r, char delim = ' ');
+    int getBaseAt(string& entry, size_t& nextIdx, bool& positive);
+    bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal** r, char delim = ' ');
 };
 
 #endif
