@@ -612,7 +612,10 @@ ret_value program::parse(string& entry) {
                     break;
                 default:
                     show_error(ret_unknown_err, "error creating program from entry");
+                    break;
             }
+            if (element.re != nullptr) delete element.re;
+            if (element.im != nullptr) delete element.im;
         }
     } else
         for (SynError& err : errors) show_syntax_error(err.err.c_str());
