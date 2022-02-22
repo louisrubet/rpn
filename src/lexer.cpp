@@ -1,6 +1,3 @@
-#include <regex>
-using namespace std;
-
 #include "lexer.hpp"
 
 bool Lexer::lexer(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
@@ -38,6 +35,8 @@ bool Lexer::lexer(string& entry, map<string, ReservedWord>& keywords, vector<Syn
         if (parseUnknown(entry, i, jump, elements))
             // last chance, this unknown entry is treated as a symbol
             i = jump - 1;
+        else
+            return false;  // no object of any type could be found, this is a lexer error
     }
 
     return true;
@@ -106,25 +105,47 @@ bool Lexer::parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     return true;
 }
 
-int Lexer::getBaseAt(string& entry, int idxStart, bool& positive) {
-    #if 0
-    regex baseRegex("([+-])?((0[xX])|([0-9][0-9]?[bB]))");
-    smatch match;
-    if (regex_search(entry, match, baseRegex) && match.size() >= 5) {
-        string sign = match[1].str();
-        string base = match[2].str();
-        // sign out, permits expressions like -0xAB3F
-        positive = sign.size() > 0 && sign[0] == '-' ? false : true;
-        // base
-        entry = entry.substr(base.size() + sign.size());
-        if (base[1] == 'X' || base[1] == 'x') return 16;
-        if (base.size() > 0) {
-            int b = stoi(base.substr(0, base.size() - 1));
-            if (b == 0) b = 2;  // admit "0b" as binary suffix
-            return b;
+int Lexer::getBaseAt(string& entry, size_t& nextIdx, bool& positive) {
+    // a regex could be "([+-])?((0[xX])|([0-9][0-9]?[bB]))"
+    // regex is not use because dramatically slow
+    // entry is scanned from idxStart, searching for [s]abc (sign and 3 first chars)
+    size_t scan = 0;
+    nextIdx = 0;
+    positive = true;
+    if (scan >= entry.size()) return 10;
+    if (entry[scan] == '+') {
+        scan++;
+        nextIdx = scan;
+    }
+    else if (entry[scan] == '-') {
+        scan++;
+        nextIdx = scan;
+        positive = false;
+    }
+    if (scan + 2 >= entry.size()) return 10;
+    char a = entry[scan];
+    char b = entry[scan + 1];
+    char c = 0;
+    if (scan + 2 < entry.size()) c = entry[scan + 2];
+    if (a == '0') {
+        if (b == 'x' || b == 'X') {
+            nextIdx = scan + 2;
+            return 16;
+        }
+        if (b == 'b' || b == 'B') {
+            nextIdx = scan + 2;
+            return 2;
+        }
+    } else if (isdigit(a)) {
+        if (b == 'b' || b == 'B') {
+            nextIdx = scan + 2;
+            return int(a - '0');
+        }
+        if (isdigit(b) && (c == 'b' || c == 'B')) {
+            nextIdx = scan + 3;
+            return 10 * int(a - '0') + int(b - '0');
         }
     }
-    #endif
     return 10;
 }
 
@@ -134,12 +155,16 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
     string token;
     bool positive = true;
 
+    nextIdx = idx;
+
     ss.str(entry.substr(idx));
     if (getline(ss, token, delim)) {
+        size_t numberIdx;
         nextIdx = token.size() + idx + 1;
-        base = getBaseAt(token, idx, positive);
-        if (base < BASE_MIN || base > BASE_MAX) return false;
         trim(token);
+        base = getBaseAt(token, numberIdx, positive);
+        if (base < BASE_MIN || base > BASE_MAX) return false;
+        if (numberIdx != 0) token = token.substr(numberIdx);
         *r = new mpreal;
         if (mpfr_set_str((*r)->mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
             if (!positive) *(*r) = -*(*r);
@@ -153,7 +178,7 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
 
 bool Lexer::parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                         vector<SynElement>& elements) {
-    mpreal* r;
+    mpreal* r = nullptr;
     int base = 10;
     if (getNumberAt(entry, idx, nextIdx, base, &r)) {
         elements.push_back({cmd_number, .re = r, .reBase = base});
@@ -166,8 +191,8 @@ bool Lexer::parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynEr
 
 bool Lexer::parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                          vector<SynElement>& elements) {
-    mpreal* re;
-    mpreal* im;
+    mpreal* re = nullptr;
+    mpreal* im = nullptr;
     int reBase, imBase = 10;
     if (idx + 1 == entry.size()) {
         elements.push_back({cmd_symbol, .value = entry.substr(idx, entry.size() - idx)});
