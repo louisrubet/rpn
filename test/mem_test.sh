@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rpn=../build/rpn
+rpn=../debug/rpn
 
 FG_RED="\033[0;31m"
 FG_GREEN="\033[0;32m"
