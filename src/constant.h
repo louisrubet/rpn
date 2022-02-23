@@ -41,7 +41,7 @@ typedef enum {
     ret_abort_current_entry,
     ret_out_of_memory,
     ret_bad_value,
-    ret_max
+    ret_test_failed
 } ret_value;
 
 // base min and max

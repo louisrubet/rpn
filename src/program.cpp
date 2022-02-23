@@ -263,11 +263,14 @@ ret_value program::run() {
                         // error: abort prog
                         go_out = true;
 
+                        // test error: make rpn return EXIT_FAILURE
+                        if (_err == ret_test_failed)
+                            ret = ret_test_failed;
+
                         // error: show it
-                        if (show_error(_err, _err_context) == ret_deadly) {
+                        if (show_error(_err, _err_context) == ret_deadly)
                             // pb showing error -> go out software
                             ret = ret_good_bye;
-                        }
                         break;
                 }
                 i++;
@@ -633,7 +636,7 @@ ret_value program::show_error() {
     vector<string> errorStrings {"ok", "unknown command", "missing operand", "bad operand type",
         "out of range", "unknown variable", "internal error, aborting", "deadly", "goodbye", "not implemented",
         "no operation", "syntax error", "division by zero", "runtime error", "aborted current entry", "out of memory",
-        "bad value"};
+        "bad value", "test failed"};
     // clang-format on
     // show last recorded error
     if ((size_t)_err < errorStrings.size())
