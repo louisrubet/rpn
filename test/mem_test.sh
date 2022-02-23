@@ -1,6 +1,12 @@
 #!/bin/bash
 
-rpn=../debug/rpn
+if [ -z "${1}" ]
+  then
+    echo "Syntax: ${0} <rpn path>"
+    exit 1
+fi
+
+rpn=${1}
 
 FG_RED="\033[0;31m"
 FG_GREEN="\033[0;32m"
