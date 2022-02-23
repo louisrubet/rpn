@@ -1,9 +1,9 @@
 #include <regex>
 using namespace std;
 
-#include "version.h"
 #include "escape.h"
 #include "program.hpp"
+#include "version.h"
 
 /// @brief write stack in a string, each entry separated between commas
 ///
@@ -34,10 +34,8 @@ void program::test_get_stack(string& stack_is, rpnstack& stk) {
 /// @param steps_failed failed steps nb
 ///
 void program::test_show_result(string title, int tests, int tests_failed, int steps, int steps_failed) {
-    //cout << title << ": run " << tests << " tests: " << tests - tests_failed << " passed, ";
-    if (!title.empty())
-        cout << title << ": ";
-    cout <<"run " << tests << " tests: " << tests - tests_failed << " passed, ";
+    if (!title.empty()) cout << title << ": ";
+    cout << "run " << tests << " tests: " << tests - tests_failed << " passed, ";
     if (tests_failed > 0) cout << FG_RED;
     cout << tests_failed << " failed";
     if (tests_failed > 0) cout << COLOR_OFF;
@@ -65,6 +63,12 @@ void program::rpn_test() {
     cout << endl << "rpn version is " << RPN_VERSION << endl;
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
     test_show_result("\nTotal", total_tests, total_tests_failed, total_steps, total_steps_failed);
+
+    // notify to caller that test succeeded or not
+    if (total_tests_failed > 0) {
+        _err = ret_test_failed;
+        _err_context = string("rpn version ") + RPN_VERSION + ", test file " + test_filename;
+    }
 }
 
 /// @brief load a test file and run its tests
