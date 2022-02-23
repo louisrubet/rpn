@@ -36,9 +36,9 @@
 
 ## entry (5)
 
-`(0x1234,0x10.10)`
+`(0x1234,0x1010)`
 
--> stack should be (0x1.234p+12,0x1.01p+4)
+-> stack should be (0x1234,0x1010)
 
 `del`
 

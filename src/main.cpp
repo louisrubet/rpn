@@ -1,6 +1,7 @@
 #include <pwd.h>
-#include <csignal>
+#include <unistd.h>
 
+#include <csignal>
 #include <cerrno>
 #include <iostream>
 using namespace std;
@@ -162,5 +163,6 @@ int main(int argc, char* argv[]) {
 
     mpfr_free_cache();
 
-    return ret;
+    if (ret != ret_ok) return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
