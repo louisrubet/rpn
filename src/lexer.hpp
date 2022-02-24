@@ -1,14 +1,14 @@
 #ifndef LEXER_HPP_
 #define LEXER_HPP_
 
-#include <map>
-#include <vector>
-using namespace std;
-
 #define MPFR_USE_NO_MACRO
 #include <mpfr.h>
 #include <mpreal.h>
 using namespace mpfr;
+
+#include <map>
+#include <vector>
+using namespace std;
 
 #include "constant.h"
 #include "object.hpp"
