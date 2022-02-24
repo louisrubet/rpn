@@ -1,11 +1,12 @@
 #ifndef INPUT_HPP_
 #define INPUT_HPP_
 
+#include <cstdio>
+
 #include <string>
 #include <vector>
 using namespace std;
 
-#include <cstdio>
 #include "linenoise.h"
 
 class Input {
