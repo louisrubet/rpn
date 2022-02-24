@@ -1,9 +1,20 @@
-#include <regex>
-using namespace std;
-
 #include "escape.h"
 #include "program.hpp"
 #include "version.h"
+
+static void _findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+{
+    // Get the first occurrence
+    size_t pos = data.find(toSearch);
+    // Repeat till end is reached
+    while( pos != std::string::npos)
+    {
+        // Replace this occurrence of Sub String
+        data.replace(pos, toSearch.size(), replaceStr);
+        // Get the next occurrence from the current position
+        pos =data.find(toSearch, pos + replaceStr.size());
+    }
+}
 
 /// @brief write stack in a string, each entry separated between commas
 ///
@@ -232,7 +243,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 failed = true;
             } else {
                 // parse entry and run line
-                entry = regex_replace(entry, regex("`"), "");
+                _findAndReplaceAll(entry, "`", "");
                 if (!entry.empty()) {
                     program prog(stk, hp);
                     ret = prog.parse(entry);
