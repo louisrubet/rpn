@@ -1,5 +1,5 @@
-#ifndef _ENTRY_HPP_
-#define _ENTRY_HPP_
+#ifndef INPUT_HPP_
+#define INPUT_HPP_
 
 #include <string>
 #include <vector>

@@ -1,5 +1,5 @@
-#ifndef ESCAPE_H
-#define ESCAPE_H
+#ifndef ESCAPE_H_
+#define ESCAPE_H_
 
 // ANSI escape sequences
 

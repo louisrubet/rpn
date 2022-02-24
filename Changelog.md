@@ -9,6 +9,8 @@ Changelog
 - SonarCloud integration, Sonar way profile
 - clang-format now based on google style
 - [google c++ style guide](https://google.github.io/styleguide/cppguide.html) applied
+  - define guard
+  - name and order of inclusions
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap
 - it seems cosh was giving sinh  (!)
