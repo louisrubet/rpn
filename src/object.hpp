@@ -1,20 +1,41 @@
-#ifndef OBJECT_HPP_
-#define OBJECT_HPP_
+// Copyright (c) 2014-2022 Louis Rubet
+
+#ifndef SRC_OBJECT_HPP_
+#define SRC_OBJECT_HPP_
+
+#include <mpreal.h>
 
 #include "mpreal-out.hpp"
-
-#define MPFR_USE_NO_MACRO
-#include <mpfr.h>
-#include <mpreal.h>
 using namespace mpfr;
 
 #include <ostream>
-#include <string>
 #include <sstream>
+#include <string>
 using namespace std;
 
 // definitions for objects
 ///
+typedef enum {
+    ret_ok,
+    ret_unknown_err,
+    ret_missing_operand,
+    ret_bad_operand_type,
+    ret_out_of_range,
+    ret_unknown_variable,
+    ret_internal,
+    ret_deadly,
+    ret_good_bye,
+    ret_not_impl,
+    ret_nop,
+    ret_syntax,
+    ret_div_by_zero,
+    ret_runtime_error,
+    ret_abort_current_entry,
+    ret_out_of_memory,
+    ret_bad_value,
+    ret_test_failed
+} ret_value;
+
 typedef enum {
     cmd_undef,
     cmd_number,   // floating point number
@@ -36,7 +57,7 @@ typedef size_t (program::*branch_fn_t)(branch&);
 /// @brief object - a generic stack object
 ///
 struct object {
-    object(cmd_type_t type = cmd_undef) : _type(type) {}
+    explicit object(cmd_type_t type = cmd_undef) : _type(type) {}
     virtual ~object() {}
     cmd_type_t _type;
     virtual object* clone() {
@@ -59,8 +80,8 @@ struct object {
 ///
 struct number : object {
     number() : object(cmd_number), base(10) {}
-    number(const mpreal& value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
-    number(long value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
+    explicit number(const mpreal& value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
+    explicit number(int value_, int base_ = 10) : object(cmd_number), base(base_), value(value_) {}
 
     int base;
     mpreal value;
@@ -72,18 +93,21 @@ struct number : object {
     // representation mode
     typedef enum { std, fix, sci } mode_enum;
     static mode_enum s_mode;
+    static constexpr mode_enum DEFAULT_MODE = number::std;
 
     // precision
+    static constexpr mpfr_prec_t MPFR_DEFAULT_PREC_BITS = 128;
+    static constexpr int DEFAULT_DECIMAL_DIGITS = 38;
     static int s_digits;
 
     // clang-format off
     static string _makeNumberFormat(mode_enum mode, int digits) {
         stringstream format;
-        format<<"%."<<digits;
-        switch(mode) {
-            case std: format<<"R*g"; break;
-            case fix: format<<"R*f"; break;
-            case sci: format<<"R*e"; break;
+        format << "%." << digits;
+        switch ( mode ) {
+            case std: format << "R*g"; break;
+            case fix: format << "R*f"; break;
+            case sci: format << "R*e"; break;
         }
         return format.str();
     }
@@ -101,10 +125,12 @@ struct number : object {
 ///
 struct ocomplex : object {
     ocomplex() : object(cmd_complex), reBase(10), imBase(10) {}
-    ocomplex(complex<mpreal>& value_, int reb = 10, int imb = 10) : object(cmd_complex), reBase(reb), imBase(imb) {
+    explicit ocomplex(complex<mpreal>& value_, int reb = 10, int imb = 10)
+        : object(cmd_complex), reBase(reb), imBase(imb) {
         value = value_;
     }
-    ocomplex(mpreal& re_, mpreal& im_, int reb = 10, int imb = 10) : object(cmd_complex), reBase(reb), imBase(imb) {
+    explicit ocomplex(mpreal& re_, mpreal& im_, int reb = 10, int imb = 10)
+        : object(cmd_complex), reBase(reb), imBase(imb) {
         value.real(re_);
         value.imag(im_);
     }
@@ -127,7 +153,7 @@ struct ocomplex : object {
 ///
 struct ostring : object {
     ostring() : object(cmd_string) {}
-    ostring(const string& value_) : object(cmd_string), value(value_) {}
+    explicit ostring(const string& value_) : object(cmd_string), value(value_) {}
     virtual object* clone() { return new ostring(value); }
     virtual string name() { return string("string"); }
     virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }
@@ -138,7 +164,7 @@ struct ostring : object {
 ///
 struct oprogram : object {
     oprogram() : object(cmd_program) {}
-    oprogram(const string& value_) : object(cmd_program), value(value_) {}
+    explicit oprogram(const string& value_) : object(cmd_program), value(value_) {}
     virtual object* clone() { return new oprogram(value); }
     virtual string name() { return string("program"); }
     virtual ostream& show(ostream& out) { return out << "«" << value << "»"; }
@@ -148,8 +174,9 @@ struct oprogram : object {
 /// @brief object symbol
 ///
 struct symbol : object {
-    symbol(bool autoEval_ = true) : object(cmd_symbol), autoEval(autoEval_) {}
-    symbol(const string& value_, bool autoEval_ = true) : object(cmd_symbol), value(value_), autoEval(autoEval_) {}
+    explicit symbol(bool autoEval_ = true) : object(cmd_symbol), autoEval(autoEval_) {}
+    explicit symbol(const string& value_, bool autoEval_ = true)
+        : object(cmd_symbol), value(value_), autoEval(autoEval_) {}
     virtual object* clone() { return new symbol(value, autoEval); }
     virtual string name() { return string("symbol"); }
     virtual ostream& show(ostream& out) { return out << "'" << value << "'"; }
@@ -161,7 +188,7 @@ struct symbol : object {
 ///
 struct keyword : object {
     keyword() : object(cmd_keyword) {}
-    keyword(program_fn_t fn_, const string& value_) : object(cmd_keyword), fn(fn_), value(value_) {}
+    explicit keyword(program_fn_t fn_, const string& value_) : object(cmd_keyword), fn(fn_), value(value_) {}
     virtual object* clone() { return new keyword(fn, value); }
     virtual string name() { return string("keyword"); }
     program_fn_t fn;
@@ -172,15 +199,15 @@ struct keyword : object {
 ///
 struct branch : object {
     branch() : object(cmd_branch) {}
-    branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) {
+    explicit branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) {
         fn = fn_;
-        arg1 = (size_t)-1;
-        arg2 = (size_t)-1;
-        arg3 = (size_t)-1;
+        arg1 = static_cast<size_t>(-1);
+        arg2 = static_cast<size_t>(-1);
+        arg3 = static_cast<size_t>(-1);
         arg_bool = 0;
         value = value_;
     }
-    branch(branch& other) : object(cmd_branch) {
+    explicit branch(branch& other) : object(cmd_branch) {
         fn = other.fn;
         arg1 = other.arg1;
         arg2 = other.arg2;
@@ -197,4 +224,4 @@ struct branch : object {
     string value;
 };
 
-#endif
+#endif  // SRC_OBJECT_HPP_
