@@ -1,20 +1,20 @@
-#ifndef _PARSER_HPP_
-#define _PARSER_HPP_
+// Copyright (c) 2014-2022 Louis Rubet
 
-#include <map>
-#include <vector>
-using namespace std;
+#ifndef SRC_LEXER_HPP_
+#define SRC_LEXER_HPP_
 
-#define MPFR_USE_NO_MACRO
-#include <mpfr.h>
 #include <mpreal.h>
 using namespace mpfr;
 
-#include "constant.h"
+#include <map>
+#include <vector>
+#include <string>
+using namespace std;
+
 #include "object.hpp"
 
 class Lexer {
-   public:
+ public:
     // a structure to describe a syntaxical element and its value
     struct SynElement {
         cmd_type_t type;
@@ -50,7 +50,7 @@ class Lexer {
     bool lexer(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
                vector<SynError>& errors);
 
-   private:
+ private:
     bool parseString(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
                      vector<SynElement>& elements);
     bool parseSymbol(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
@@ -70,4 +70,4 @@ class Lexer {
     bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal** r, char delim = ' ');
 };
 
-#endif
+#endif  // SRC_LEXER_HPP_
