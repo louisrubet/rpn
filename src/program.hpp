@@ -13,9 +13,9 @@ using namespace mpfr;
 
 // internal includes
 #include "constant.h"
+#include "lexer.hpp"
 #include "object.hpp"
 #include "stack.hpp"
-#include "lexer.hpp"
 
 //< convinient structure to preprocess a program
 struct if_layout_t {
@@ -32,7 +32,7 @@ struct if_layout_t {
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<object*>, public Lexer {
    public:
-    program(rpnstack& stk, heap& hp, program* parent = nullptr):_stack(stk),_heap(hp),_parent(parent) {
+    program(rpnstack& stk, heap& hp, program* parent = nullptr) : _stack(stk), _heap(hp), _parent(parent) {
         interrupt_now = false;
     }
     virtual ~program() {
@@ -99,20 +99,21 @@ class program : public deque<object*>, public Lexer {
     ////
 
     // branch
-    int rpn_if(branch& myobj);
-    int rpn_then(branch& myobj);
-    int rpn_else(branch& myobj);
-    int rpn_end(branch& myobj);
-    int rpn_do(branch& myobj);
-    int rpn_until(branch& myobj);
+    size_t rpn_if(branch& myobj);
+    size_t rpn_then(branch& myobj);
+    size_t rpn_else(branch& myobj);
+    size_t rpn_end(branch& myobj);
+    size_t rpn_do(branch& myobj);
+    size_t rpn_until(branch& myobj);
     void rpn_ift(void);
     void rpn_ifte(void);
-    int rpn_while(branch& myobj);
-    int rpn_repeat(branch& myobj);
-    int rpn_start(branch& myobj);
-    int rpn_for(branch& myobj);
-    int rpn_next(branch& myobj);
-    int rpn_step(branch& myobj);
+    size_t rpn_while(branch& myobj);
+    size_t rpn_repeat(branch& myobj);
+    size_t rpn_start(branch& myobj);
+    size_t rpn_for(branch& myobj);
+    size_t rpn_next(branch& myobj);
+    size_t rpn_step(branch& myobj);
+    enum { step_out = (size_t)-1, runtime_error = (size_t)-2 };
 
     // complex
     void rpn_re();
