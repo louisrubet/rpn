@@ -31,7 +31,7 @@ class program;
 class branch;
 
 typedef void (program::*program_fn_t)(void);
-typedef int (program::*branch_fn_t)(branch&);
+typedef size_t (program::*branch_fn_t)(branch&);
 
 /// @brief object - a generic stack object
 ///
@@ -174,9 +174,9 @@ struct branch : object {
     branch() : object(cmd_branch) {}
     branch(branch_fn_t fn_, const string& value_) : object(cmd_branch) {
         fn = fn_;
-        arg1 = -1;
-        arg2 = -1;
-        arg3 = -1;
+        arg1 = (size_t)-1;
+        arg2 = (size_t)-1;
+        arg3 = (size_t)-1;
         arg_bool = 0;
         value = value_;
     }
@@ -191,7 +191,7 @@ struct branch : object {
     virtual object* clone() { return new branch(*this); }
     virtual string name() { return string("branch"); }
     branch_fn_t fn;
-    int arg1, arg2, arg3;
+    size_t arg1, arg2, arg3;
     mpreal firstIndex, lastIndex;
     bool arg_bool;
     string value;
