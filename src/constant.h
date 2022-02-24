@@ -1,5 +1,5 @@
-#ifndef CONSTANT_H
-#define CONSTANT_H
+#ifndef CONSTANT_H_
+#define CONSTANT_H_
 
 #define MPFR_USE_NO_MACRO
 #include <mpfr.h>

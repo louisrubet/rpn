@@ -1,5 +1,5 @@
-#ifndef PROGRAM_HPP
-#define PROGRAM_HPP
+#ifndef PROGRAM_HPP_
+#define PROGRAM_HPP_
 
 // std c++
 #include <fstream>

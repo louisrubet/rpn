@@ -1,5 +1,5 @@
-#ifndef OBJECT_HPP
-#define OBJECT_HPP
+#ifndef OBJECT_HPP_
+#define OBJECT_HPP_
 
 #define MPFR_USE_NO_MACRO
 #include <mpfr.h>
