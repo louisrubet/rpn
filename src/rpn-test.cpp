@@ -17,7 +17,6 @@ long program::cmp_strings_on_stack_top() {
 ///
 void program::rpn_sup(void) {
     MIN_ARGUMENTS(2);
-
     // numbers
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
         _stack.push_front(new number(_stack.value<number>(1) > _stack.value<number>(0)));
@@ -35,7 +34,6 @@ void program::rpn_sup(void) {
 ///
 void program::rpn_sup_eq(void) {
     MIN_ARGUMENTS(2);
-
     // numbers
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
         _stack.push_front(new number(_stack.value<number>(1) >= _stack.value<number>(0)));
@@ -53,7 +51,6 @@ void program::rpn_sup_eq(void) {
 ///
 void program::rpn_inf(void) {
     MIN_ARGUMENTS(2);
-
     // numbers
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
         _stack.push_front(new number(_stack.value<number>(1) < _stack.value<number>(0)));
@@ -70,6 +67,7 @@ void program::rpn_inf(void) {
 /// @brief <= keyword implementation
 ///
 void program::rpn_inf_eq(void) {
+    MIN_ARGUMENTS(2);
     // numbers
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
         _stack.push_front(new number(_stack.value<number>(1) <= _stack.value<number>(0)));
@@ -87,7 +85,6 @@ void program::rpn_inf_eq(void) {
 ///
 void program::rpn_diff(void) {
     MIN_ARGUMENTS(2);
-
     // numbers
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
         _stack.push_front(new number(_stack.value<number>(1) != _stack.value<number>(0)));
@@ -110,7 +107,6 @@ void program::rpn_diff(void) {
 ///
 void program::rpn_eq(void) {
     MIN_ARGUMENTS(2);
-
     // numbers
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
         _stack.push_front(new number(_stack.value<number>(1) == _stack.value<number>(0)));

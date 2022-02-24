@@ -236,8 +236,8 @@ ret_value program::run() {
     }
 
     // iterate commands
-    for (int i = 0; (go_out == false) && (interrupt_now == false) && (i < (int)size());) {
-        object* o = (*this)[i];
+    for (size_t i = 0; (go_out == false) && (interrupt_now == false) && (i < size());) {
+        object* o = at(i);
         switch (o->_type) {
             // could be an auto-evaluated symbol
             case cmd_symbol:
@@ -281,18 +281,17 @@ ret_value program::run() {
             case cmd_branch: {
                 // call matching function
                 branch* b = (branch*)o;
-                int next_cmd = (this->*(b->fn))(*b);
+                size_t next_cmd = (this->*(b->fn))(*b);
                 switch (next_cmd) {
-                    case -1:
+                    case step_out: // step out
                         i++;  // meaning 'next command'
                         break;
-                    case -(int)ret_runtime_error:
-                        // error: show it
+                    case runtime_error: // runtime error
                         (void)show_error(_err, _err_context);
-                        go_out = true;  // end of run
+                        go_out = true;
                         break;
                     default:
-                        i = next_cmd;  // new direction
+                        i = next_cmd;
                         break;
                 }
                 break;
