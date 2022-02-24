@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include <ctime>
 
 #include "program.hpp"
@@ -15,15 +17,16 @@ void program::rpn_time() {
     tm = localtime(&time);
     if (tm != nullptr) {
         // date format = HH.MMSSssssss
-        date = ((double)tm->tm_hour) * 10000000000.0 + ((double)tm->tm_min) * 100000000.0 +
-               ((double)tm->tm_sec) * 1000000.0 + (double)(ts.tv_nsec / 1000);
+        date = (static_cast<double>(tm->tm_hour) * 10000000000.0 + static_cast<double>(tm->tm_min) * 100000000.0 +
+                static_cast<double>(tm->tm_sec) * 1000000.0 + static_cast<double>(ts.tv_nsec / 1000));
 
         // push it
         // division after push for real precision
         _stack.push(new number(date));
         _stack.value<number>(0) /= 10000000000.0;
-    } else
+    } else {
         setErrorContext(ret_internal);
+    }
 }
 
 /// @brief date keyword implementation
@@ -39,15 +42,17 @@ void program::rpn_date() {
     tm = localtime(&time);
     if (tm != nullptr) {
         // date format = (M)M.DDYYYY
-        date = (double)(tm->tm_mon + 1) * 1000000.0 + (double)(tm->tm_mday) * 10000.0 + (double)(tm->tm_year + 1900);
+        date = static_cast<double>(tm->tm_mon + 1) * 1000000.0 + static_cast<double>(tm->tm_mday) * 10000.0 +
+               static_cast<double>(tm->tm_year + 1900);
 
         // push it
         number* num;
         // division after push for real precision
         _stack.push(new number(date));
         _stack.value<number>(0) /= 1000000.0;
-    } else
+    } else {
         setErrorContext(ret_internal);
+    }
 }
 
 /// @brief ticks keyword implementation
@@ -63,8 +68,9 @@ void program::rpn_ticks() {
     tm = localtime(&time);
     if (tm != nullptr) {
         // date in µs
-        date = 1000000.0 * (double)ts.tv_sec + (double)(ts.tv_nsec / 1000);
+        date = 1000000.0 * static_cast<double>(ts.tv_sec) + static_cast<double>(ts.tv_nsec / 1000);
         _stack.push(new number(date));
-    } else
+    } else {
         setErrorContext(ret_internal);
+    }
 }

@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include <fcntl.h>
 
 #include "program.hpp"
@@ -37,7 +39,7 @@ void program::rpn_strout() {
 void program::rpn_chr() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    char the_chr = (char)(int)_stack.value<number>(0);
+    char the_chr = static_cast<char>(_stack.value<number>(0).toLong());
     _stack.pop();
     if (the_chr < 32 || the_chr > 126) the_chr = '.';
     _stack.push_front(new ostring(string(1, the_chr)));
@@ -72,7 +74,7 @@ void program::rpn_strpos() {
     ARG_MUST_BE_OF_TYPE(1, cmd_string);
 
     size_t pos = _stack.value<ostring>(1).find(_stack.value<ostring>(0)) + 1;
-    _stack.pop_front(2);
+    _stack.erase(0, 2);
     _stack.push_front(new number(pos));
 }
 
@@ -84,8 +86,8 @@ void program::rpn_strsub() {
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
     ARG_MUST_BE_OF_TYPE(2, cmd_string);
 
-    size_t first = (size_t)_stack.value<number>(1);
-    size_t len = (size_t)_stack.value<number>(0) - first + 1;
+    size_t first = _stack.value<number>(1).toULong();
+    size_t len = _stack.value<number>(0).toULong() - first + 1;
     first--;
 
     if (first > _stack.value<ostring>(2).size()) first = len = 0;

@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "program.hpp"
 
 /// @brief pi keyword implementation
@@ -28,7 +30,6 @@ void program::rpn_r2d(void) {
 ///
 void program::rpn_sin(void) {
     MIN_ARGUMENTS(1);
-
     if (_stack.type(0) == cmd_number)
         _stack.value<number>(0) = sin(_stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)
@@ -41,7 +42,6 @@ void program::rpn_sin(void) {
 ///
 void program::rpn_asin(void) {
     MIN_ARGUMENTS(1);
-
     if (_stack.type(0) == cmd_number)
         _stack.value<number>(0) = asin(_stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)
@@ -54,7 +54,6 @@ void program::rpn_asin(void) {
 ///
 void program::rpn_cos(void) {
     MIN_ARGUMENTS(1);
-
     if (_stack.type(0) == cmd_number)
         _stack.value<number>(0) = cos(_stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)
@@ -67,7 +66,6 @@ void program::rpn_cos(void) {
 ///
 void program::rpn_acos(void) {
     MIN_ARGUMENTS(1);
-
     if (_stack.type(0) == cmd_number)
         _stack.value<number>(0) = acos(_stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)
@@ -80,7 +78,6 @@ void program::rpn_acos(void) {
 ///
 void program::rpn_tan(void) {
     MIN_ARGUMENTS(1);
-
     if (_stack.type(0) == cmd_number)
         _stack.value<number>(0) = tan(_stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)
@@ -93,7 +90,6 @@ void program::rpn_tan(void) {
 ///
 void program::rpn_atan(void) {
     MIN_ARGUMENTS(1);
-
     if (_stack.type(0) == cmd_number)
         _stack.value<number>(0) = atan(_stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)

@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "lexer.hpp"
 
 bool Lexer::lexer(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
@@ -85,17 +87,18 @@ bool Lexer::parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynE
     // find last ">>" or "»"
     int countNested = 0;
     for (size_t i = idx + 2; i < entry.size() - 1; i++) {
-        if ((entry[i] == '<' && entry[i + 1] == '<') || (entry.substr(i, 2) == "«"))
+        if ((entry[i] == '<' && entry[i + 1] == '<') || (entry.substr(i, 2) == "«")) {
             countNested++;
-        else if ((entry[i] == '>' && entry[i + 1] == '>') || (entry.substr(i, 2) == "»")) {
+        } else if ((entry[i] == '>' && entry[i + 1] == '>') || (entry.substr(i, 2) == "»")) {
             if (countNested == 0) {
                 string prg = entry.substr(idx + 2, i - idx - 2);
                 trim(prg);
                 elements.push_back({cmd_program, .value = prg});
                 nextIdx = i + 2;
                 return true;
-            } else
+            } else {
                 countNested--;
+            }
         }
     }
     string prg = entry.substr(idx + 2, entry.size() - idx - 2);
@@ -138,11 +141,11 @@ int Lexer::getBaseAt(string& entry, size_t& nextIdx, bool& positive) {
     } else if (isdigit(a)) {
         if (b == 'b' || b == 'B') {
             nextIdx = scan + 2;
-            return int(a - '0');
+            return static_cast<int>(a - '0');
         }
         if (isdigit(b) && (c == 'b' || c == 'B')) {
             nextIdx = scan + 3;
-            return 10 * int(a - '0') + int(b - '0');
+            return 10 * static_cast<int>(a - '0') + static_cast<int>(b - '0');
         }
     }
     return 10;
@@ -162,7 +165,7 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
         nextIdx = token.size() + idx + 1;
         trim(token);
         base = getBaseAt(token, numberIdx, positive);
-        if (base < BASE_MIN || base > BASE_MAX) return false;
+        if (base < 2 || base > 62) return false;
         if (numberIdx != 0) token = token.substr(numberIdx);
         *r = new mpreal;
         if (mpfr_set_str((*r)->mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
@@ -170,7 +173,7 @@ bool Lexer::getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, m
             return true;
         } else {
             delete *r;
-            return false;            
+            return false;
         }
     }
     nextIdx = token.size() + idx + 1;

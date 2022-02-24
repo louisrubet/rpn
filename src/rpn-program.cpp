@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "program.hpp"
 
 /// @brief find variable by its name in local heap, successive parents heaps, global heap
@@ -11,9 +13,9 @@ bool program::find_variable(string& variable, object*& obj) {
     bool found = false;
     program* parent = _parent;
 
-    if (_local_heap.get(variable, obj))
+    if (_local_heap.get(variable, obj)) {
         found = true;
-    else {
+    } else {
         while (parent != nullptr) {
             if (parent->_local_heap.get(variable, obj)) {
                 found = true;
@@ -52,15 +54,17 @@ void program::rpn_eval(void) {
                 // else recall this variable (i.e. stack its content)
                 _stack.push_front(obj);
             }
-        } else
+        } else {
             setErrorContext(ret_unknown_variable);
+        }
     } else if (_stack.type(0) == cmd_program) {
         // eval a program
         prog_text = _stack.value<oprogram>(0);
         _stack.pop();
         run_prog = true;
-    } else
+    } else {
         setErrorContext(ret_bad_operand_type);
+    }
 
     // run prog if any
     if (run_prog) {
@@ -92,14 +96,14 @@ int program::rpn_inprog(branch& myobj) {
     // find next oprogram object
     for (unsigned int i = myobj.arg1 + 1; i < size(); i++) {
         // count symbol
-        if (at(i)->_type == cmd_symbol) count_symbols++;
-        // stop if prog
-        else if (at(i)->_type == cmd_program) {
+        if (at(i)->_type == cmd_symbol) {
+            count_symbols++;
+        } else if (at(i)->_type == cmd_program) {
+            // stop if prog
             prog_found = true;
             break;
-        }
-        // found something other than symbol
-        else {
+        } else {
+            // found something other than symbol
             setErrorContext(ret_bad_operand_type);
             show_error(_err, context);
             return -1;
@@ -121,7 +125,7 @@ int program::rpn_inprog(branch& myobj) {
     }
 
     // check symbols number vs stack size
-    if (stack_size() < count_symbols) {
+    if (_stack.size() < count_symbols) {
         setErrorContext(ret_missing_operand);
         show_error(_err, context);
         return -1;
@@ -129,12 +133,12 @@ int program::rpn_inprog(branch& myobj) {
 
     // load variables
     for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--) {
-        _local_heap[string(((symbol*)at(i))->value)] = _stack.at(0)->clone();
-        _stack.pop_front();
+        _local_heap[reinterpret_cast<symbol*>(at(i))->value] = _stack.at(0)->clone();
+        _stack.pop();
     }
 
     // run the program
-    string entry(((oprogram*)at(myobj.arg1 + count_symbols + 1))->value);
+    string& entry = reinterpret_cast<oprogram*>(at(myobj.arg1 + count_symbols + 1))->value;
     program prog(_stack, _heap, this);
 
     // make the program from entry
