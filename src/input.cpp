@@ -1,10 +1,13 @@
-#include "string.h"
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "input.hpp"
+
+#include <cstring>
 
 vector<string>* Input::_acWords = nullptr;
 
 Input::Input(string& entry, vector<string>& autocompletionWords, string prompt, string mlPrompt) : status(cont) {
-    char* c_entry;
+    char* c_entry = nullptr;
     bool multiline = false;
     int entry_len;
 
@@ -35,10 +38,12 @@ Input::Input(string& entry, vector<string>& autocompletionWords, string prompt, 
                 // keep history
                 if (c_entry[0] != 0) (void)linenoiseHistoryAdd(entry.c_str());
                 status = ok;
-            } else
+            } else {
                 status = error;
+            }
         }
     }
+    free(c_entry);
 }
 
 /// @brief completion callback as asked by linenoise-ng
@@ -48,24 +53,20 @@ Input::Input(string& entry, vector<string>& autocompletionWords, string prompt, 
 /// @param lc the completion object to add strings with linenoiseAddCompletion()
 ///
 void Input::entry_completion_generator(const char* text, linenoiseCompletions* lc) {
-    if (Input::_acWords == nullptr || text == nullptr)
-        return;
-    
+    if (Input::_acWords == nullptr || text == nullptr) return;
+
     int text_len = strnlen(text, 6);
 
-    // propose all keywords
     if (text_len == 0)
-        for (string& ac : *Input::_acWords)
-            // add all keywords
-            linenoiseAddCompletion(lc, ac.c_str());
-    // propose keywords matching to text begining
+        // propose all keywords
+        for (string& ac : *Input::_acWords) linenoiseAddCompletion(lc, ac.c_str());
     else
+        // propose only keywords matching to text begining
         for (string& ac : *Input::_acWords)
             // compare list entry with text, return if match
             if (ac.compare(0, text_len, text) == 0) linenoiseAddCompletion(lc, ac.c_str());
 }
 
 void Input::preload(const char* preloadText) {
-    if (preloadText != nullptr)
-        linenoisePreloadBuffer(preloadText);
+    if (preloadText != nullptr) linenoisePreloadBuffer(preloadText);
 }
