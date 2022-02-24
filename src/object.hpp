@@ -1,6 +1,8 @@
 #ifndef OBJECT_HPP_
 #define OBJECT_HPP_
 
+#include "mpreal-out.hpp"
+
 #define MPFR_USE_NO_MACRO
 #include <mpfr.h>
 #include <mpreal.h>
@@ -10,8 +12,6 @@ using namespace mpfr;
 #include <string>
 #include <sstream>
 using namespace std;
-
-#include "mpreal-out.hpp"
 
 // definitions for objects
 ///

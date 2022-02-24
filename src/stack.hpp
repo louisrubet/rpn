@@ -1,8 +1,7 @@
 #ifndef STACK_HPP_
 #define STACK_HPP_
 
-#include <string.h>
-
+#include <cstring>
 #include <algorithm>
 #include <deque>
 #include <map>
