@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "program.hpp"
 
 /// @brief if keyword (branch) implementation
@@ -38,7 +40,7 @@ size_t program::rpn_then(branch& myobj) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    if_cmd = (branch*)at(myobj.arg3);
+    if_cmd = reinterpret_cast<branch*>(at(myobj.arg3));
     if (if_cmd->arg1 == 1)
         return myobj.arg1;
     else
@@ -63,7 +65,7 @@ size_t program::rpn_else(branch& myobj) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    if_cmd = (branch*)at(myobj.arg3);
+    if_cmd = reinterpret_cast<branch*>(at(myobj.arg3));
     if (if_cmd->arg1 == 1)
         return myobj.arg2;
     else
@@ -89,10 +91,10 @@ size_t program::rpn_end(branch& myobj) {
         // check arg
         if (_stack.value<number>(0) == 0) ret = myobj.arg1;
         _stack.pop();
-    }
-    // arg2 = index of while+1 in case of while..repeat..end
-    else if (myobj.arg2 != step_out)
+    } else if (myobj.arg2 != step_out) {
+        // arg2 = index of while+1 in case of while..repeat..end
         ret = myobj.arg2;
+    }
 
     return ret;
 }
@@ -134,11 +136,10 @@ void program::rpn_ift(void) {
 
     // check ift arg
     // arg is true if number != 0 or if is nan or +/-inf
-    if (_stack.value<number>(1) != 0) {
+    if (_stack.value<number>(1) != 0)
         _stack.erase(1);
-    } else {
-        _stack.pop_front(2);
-    }
+    else
+        _stack.erase(0, 2);
 }
 
 /// @brief ifte keyword (branch) implementation
@@ -212,7 +213,7 @@ size_t program::rpn_start(branch& myobj) {
     // loop boundaries
     myobj.firstIndex = _stack.value<number>(1);
     myobj.lastIndex = _stack.value<number>(0);
-    _stack.pop_front(2);
+    _stack.erase(0, 2);
 
     // test value
     if (myobj.firstIndex > myobj.lastIndex)
@@ -243,19 +244,19 @@ size_t program::rpn_for(branch& myobj) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    sym = (symbol*)at(myobj.arg1);  // arg1 = loop variable index
+    sym = reinterpret_cast<symbol*>(at(myobj.arg1));  // arg1 = loop variable index
 
     // loop boundaries
     myobj.firstIndex = _stack.value<number>(1);
     myobj.lastIndex = _stack.value<number>(0);
 
     // test value
-    if (myobj.firstIndex > myobj.lastIndex)
+    if (myobj.firstIndex > myobj.lastIndex) {
         // last boundary lower than first boundary
         // -> next command shall be after 'next'
         // arg2 holds index of 'next'
         ret = myobj.arg2 + 1;
-    else {
+    } else {
         // store symbol with first value
         auto it = _local_heap.find(sym->value);
         if (it != _local_heap.end()) {
@@ -266,7 +267,7 @@ size_t program::rpn_for(branch& myobj) {
         ret = myobj.arg1 + 1;
     }
 
-    _stack.pop_front(2);
+    _stack.erase(0, 2);
 
     return ret;
 }
@@ -286,7 +287,7 @@ size_t program::rpn_next(branch& myobj) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    start_or_for = (branch*)at(myobj.arg1);
+    start_or_for = reinterpret_cast<branch*>(at(myobj.arg1));
     if (!myobj.arg_bool) {
         myobj.arg_bool = true;
         myobj.firstIndex = start_or_for->firstIndex;
@@ -304,10 +305,10 @@ size_t program::rpn_next(branch& myobj) {
             setErrorContext(ret_missing_operand);
             return runtime_error;
         }
-        var = (symbol*)at(start_or_for->arg1);
+        var = reinterpret_cast<symbol*>(at(start_or_for->arg1));
 
         // store symbol variable (asserted existing in the local heap)
-        ((number*)_local_heap[var->value])->value = myobj.firstIndex;
+        reinterpret_cast<number*>(_local_heap[var->value])->value = myobj.firstIndex;
     }
 
     // test value
@@ -340,9 +341,9 @@ size_t program::rpn_step(branch& myobj) {
     _stack.pop();
 
     // end of loop if step is negative or zero
-    if (step <= 0)
+    if (step <= 0) {
         ret = step_out;
-    else {
+    } else {
         // arg1 = loop variable index
         // firstIndex = current count
         branch* start_or_for;
@@ -350,7 +351,7 @@ size_t program::rpn_step(branch& myobj) {
             setErrorContext(ret_missing_operand);
             return runtime_error;
         }
-        start_or_for = (branch*)at(myobj.arg1);
+        start_or_for = reinterpret_cast<branch*>(at(myobj.arg1));
         if (!myobj.arg_bool) {
             myobj.arg_bool = true;
             myobj.firstIndex = start_or_for->firstIndex;
@@ -369,9 +370,9 @@ size_t program::rpn_step(branch& myobj) {
                 setErrorContext(ret_missing_operand);
                 return runtime_error;
             }
-            var = (symbol*)at(start_or_for->arg1);
+            var = reinterpret_cast<symbol*>(at(start_or_for->arg1));
             // increase symbol variable
-            ((number*)_local_heap[var->value])->value = myobj.firstIndex;
+            reinterpret_cast<number*>(_local_heap[var->value])->value = myobj.firstIndex;
         }
 
         // test loop value is out of range

@@ -9,6 +9,13 @@ Changelog
 - SonarCloud integration, Sonar way profile
 - clang-format now based on google style
 - [google c++ style guide](https://google.github.io/styleguide/cppguide.html) applied
+  - c++17
+  - define guard
+  - name and order of inclusions
+  - static and global variables
+    - common patterns (ex: no static maps or vectors)
+  - classes (explicit)
+  - cpplint used with a CPPLINT.cfg removing some warnings
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap
 - it seems cosh was giving sinh  (!)
@@ -38,6 +45,7 @@ Compatibility is broken on these points
 - `sto+` `sto-` `sto*` `sto/` don't accept anymore the syntax `'varname' value stoX`, but only `value 'varname' stoX`, ex: `3 'a' sto*`
 - incomplete entry `(1,` is not available anymore
 - signed zero is the sign of zero is subject to change  compared to previous version, for example `-3 sqrt` now equals `(0.000000,1.732051)` instead of `(-0.000000,1.732051)`
+- removed CtrlC for interrupting a program (considered useless)
 
 Debug 
 - `sub` now only accepts boundaries between 1 and the string length

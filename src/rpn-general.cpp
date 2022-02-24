@@ -1,34 +1,39 @@
-#include <cstdio>
-#include "linenoise.h"
+// Copyright (c) 2014-2022 Louis Rubet
 
-#include "escape.h"
+#include <cstdio>
+#include <string>
+
+#include "linenoise.h"
+using namespace std;
+
 #include "program.hpp"
 #include "version.h"
 
 // description
+static const string ATTR_BOLD = "\33[1m";
+static const string ATTR_OFF = "\33[0m";
+
 #define XSTR(a) STR(a)
 #define STR(a) #a
-static const string _description{
-    ATTR_BOLD "R" ATTR_OFF "everse " ATTR_BOLD "P" ATTR_OFF "olish " ATTR_BOLD "N" ATTR_OFF
-              "otation language\n\n"
-              "using " ATTR_BOLD "GMP" ATTR_OFF " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
-                  __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" ATTR_BOLD "MPFR" ATTR_OFF " v" MPFR_VERSION_STRING
-                                               " under GNU LGPL\n"
-                                               "and " ATTR_BOLD "linenoise-ng" ATTR_OFF " v" LINENOISE_VERSION
-                                               " under BSD\n"};
+static const string _description{ATTR_BOLD + "R" + ATTR_OFF + "everse " + ATTR_BOLD + "P" + ATTR_OFF + "olish " +
+                                 ATTR_BOLD + "N" + ATTR_OFF + "otation language\n\nusing " + ATTR_BOLD + "GMP" +
+                                 ATTR_OFF +
+                                 " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
+                                     __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" +
+                                 ATTR_BOLD + "MPFR" + ATTR_OFF + " v" MPFR_VERSION_STRING " under GNU LGPL\nand " +
+                                 ATTR_BOLD + "linenoise-ng" + ATTR_OFF + " v" LINENOISE_VERSION " under BSD\n"};
 
 // syntax
-static const string _syntax{ATTR_BOLD "Syntax" ATTR_OFF
-                                      ": rpn [command]\n"
-                                      "with optional command = list of commands"};
+static const string _syntax{ATTR_BOLD + "Syntax" + ATTR_OFF +
+                            ": rpn [command]\nwith optional command = list of commands"};
 
 static const map<string, mpfr_rnd_t> _mpfr_round{{"nearest (even)", MPFR_RNDN},
-                                                        {"toward zero", MPFR_RNDZ},
-                                                        {"toward +inf", MPFR_RNDU},
-                                                        {"toward -inf", MPFR_RNDD},
-                                                        {"away from zero", MPFR_RNDA},
-                                                        {"faithful rounding", MPFR_RNDF},
-                                                        {"nearest (away from zero)", MPFR_RNDNA}};
+                                                 {"toward zero", MPFR_RNDZ},
+                                                 {"toward +inf", MPFR_RNDU},
+                                                 {"toward -inf", MPFR_RNDD},
+                                                 {"away from zero", MPFR_RNDA},
+                                                 {"faithful rounding", MPFR_RNDF},
+                                                 {"nearest (away from zero)", MPFR_RNDNA}};
 
 /// @brief nop keyword implementation
 ///
@@ -84,7 +89,7 @@ void program::rpn_help() {
 
     // bits precision, decimal digits and rounding mode
     cout << " with " << number::s_digits << " digits after the decimal point" << endl;
-    cout << "Current floating point precision is " << (int)mpreal::get_default_prec() << " bits" << endl;
+    cout << "Current floating point precision is " << static_cast<int>(mpreal::get_default_prec()) << " bits" << endl;
     for (auto& rn : _mpfr_round)
         if (rn.second == mpreal::get_default_rnd()) {
             cout << "Current rounding mode is '" << rn.first << '\'' << endl;
@@ -93,23 +98,14 @@ void program::rpn_help() {
     cout << endl << endl;
 }
 
-/// @brief whether a precision is in the precision min/max
+/// @brief whether a printed precision is in the precision min/max
 ///
-/// @param precision the precision in bits
+/// @param precision the precision in digits
 /// @return true the precision is good
 /// @return false the precision is not good
 ///
-static bool check_decimal_digits(double precision) {
-    bool ret = true;
-
-    // MPFR_PREC_MAX mpfr_prec_t depends on _MPFR_PREC_FORMAT macro (see mpfr.h)
-    // this could not exceed 63 bits max (0x7FFFFFFFFFFFFFFF)
-    double prec_max = (double)MPFR_PREC_MAX;
-    double prec_min = 0.0;
-
-    if (precision < prec_min || precision > prec_max) ret = false;
-
-    return ret;
+static bool check_decimal_digits(int precision) {
+    return precision >= 0;
 }
 
 /// @brief std keyword implementation
@@ -118,15 +114,16 @@ void program::rpn_std() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(_stack.value<number>(0));
+    int digits = static_cast<int>(_stack.value<number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::std;
-        number::s_digits = (int)digits;
+        number::s_digits = digits;
         _stack.pop();
-    } else
+    } else {
         setErrorContext(ret_out_of_range);
+    }
 }
 
 /// @brief fix keyword implementation
@@ -135,15 +132,16 @@ void program::rpn_fix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(_stack.value<number>(0));
+    int digits = static_cast<int>(_stack.value<number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::fix;
-        number::s_digits = (int)digits;
+        number::s_digits = digits;
         _stack.pop();
-    } else
+    } else {
         setErrorContext(ret_out_of_range);
+    }
 }
 
 /// @brief sci keyword implementation
@@ -152,15 +150,16 @@ void program::rpn_sci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    double digits = double(_stack.value<number>(0));
+    int digits = static_cast<int>(_stack.value<number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
         number::s_mode = number::sci;
-        number::s_digits = (int)digits;
+        number::s_digits = digits;
         _stack.pop();
-    } else
+    } else {
         setErrorContext(ret_out_of_range);
+    }
 }
 
 /// @brief _version keyword implementation
@@ -203,8 +202,8 @@ void program::rpn_precision() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // set precision
-    unsigned long prec = _stack.value<number>(0).toULong();
-    if (prec >= (unsigned long)MPFR_PREC_MIN && prec <= (unsigned long)MPFR_PREC_MAX) {
+    int prec = static_cast<int>(_stack.value<number>(0).toLong());
+    if (prec >= MPFR_PREC_MIN && prec <= MPFR_PREC_MAX) {
         mpreal::set_default_prec(prec);
 
         // modify digits seen by user if std mode
@@ -213,8 +212,9 @@ void program::rpn_precision() {
             number::s_digits = bits2digits(mpreal::get_default_prec());
         }
         _stack.pop();
-    } else
+    } else {
         setErrorContext(ret_out_of_range);
+    }
 }
 
 /// @brief round keyword implementation

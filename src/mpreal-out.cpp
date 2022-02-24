@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "mpreal-out.hpp"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -43,7 +45,7 @@ ostream& mpreal_output10base(ostream& out, const string& fmt, const mpreal& valu
 
 static bool is_min(const mpreal& p, mpfr_prec_t prec) {
     // see mpfr_vasprintf code
-    // TODO here use mpreal functions like <=0, isinf etc
+    // TODO(louis):  here use mpreal functions like <=0, isinf etc
     bool ret;
     int round_away;
     switch (mpreal::get_default_rnd()) {
@@ -98,9 +100,9 @@ static void _out_base(ostream& out, int base) {
 ostream& _out_singular(ostream& out, int base, const mpreal& value) {
     const char* write_after_sign = NULL;  // unused for now
     int digits = 0;                       // forced 0 digits after separator
-    if (MPFR_IS_NAN(value.mpfr_srcptr()))
+    if (MPFR_IS_NAN(value.mpfr_srcptr())) {
         out << "nan";
-    else if (MPFR_IS_INF(value.mpfr_srcptr())) {
+    } else if (MPFR_IS_INF(value.mpfr_srcptr())) {
         if (MPFR_IS_NEG(value.mpfr_srcptr())) out << '-';
         out << "inf";
     } else {
@@ -142,7 +144,9 @@ ostream& _out_number(ostream& out, int base, const mpreal& value) {
     int digits = 0;                       // forced 0 digits after separator
     mpfr_exp_t exp = mpfr_get_exp(value.mpfr_srcptr());
 
-    char* str = mpfr_get_str(NULL, &exp, base, digits + exp + 1, value.mpfr_srcptr(), mpreal::get_default_rnd());
+    char* str = mpfr_get_str(NULL, &exp, base, digits + static_cast<int>(exp) + 1, value.mpfr_srcptr(),
+                             mpreal::get_default_rnd());
+    int nexp = static_cast<int>(exp);
     char* print_from;
     if (str != NULL) {
         int len = strlen(str);
@@ -163,25 +167,26 @@ ostream& _out_number(ostream& out, int base, const mpreal& value) {
                 out << "0b";
             else
                 out << base << "b";
-            if (exp < 0) {
+            if (nexp < 0) {
                 out << '0';
                 if (digits > 0) {
                     out << '.';
-                    for (int i = 0; i < -(int)exp; i++) out << '0';
+                    for (int i = 0; i < -nexp; i++) out << '0';
                     out << str;
-                    for (int i = 0; i < (int)(digits - len + exp); i++) out << '0';
+                    for (int i = 0; i < digits - len + nexp; i++) out << '0';
                 }
             } else {
-                if (exp == 0)
+                if (nexp == 0) {
                     out << '0';
-                else
-                    for (int i = 0; i < (int)exp; i++) out << print_from[i];
+                } else {
+                    for (int i = 0; i < nexp; i++) out << print_from[i];
+                }
                 if (digits > 0) {
                     out << '.';
 
-                    int remaining = (int)MIN(strlen(print_from) - exp - 1, digits) + 1;
-                    for (int i = (int)exp; i < remaining + (int)exp; i++) out << print_from[i];
-                    for (int i = 0; i < (int)(exp + digits - len); i++) out << '0';
+                    int remaining = MIN(strlen(print_from) - nexp - 1, digits) + 1;
+                    for (int i = nexp; i < remaining + nexp; i++) out << print_from[i];
+                    for (int i = 0; i < nexp + digits - len; i++) out << '0';
                 }
             }
         }
