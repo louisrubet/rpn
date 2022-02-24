@@ -1,8 +1,8 @@
-#ifndef MPREAL_OUT_HPP_
-#define MPREAL_OUT_HPP_
+// Copyright (c) 2014-2022 Louis Rubet
 
-#define MPFR_USE_NO_MACRO
-#include <mpfr.h>
+#ifndef SRC_MPREAL_OUT_HPP_
+#define SRC_MPREAL_OUT_HPP_
+
 #include <mpreal.h>
 using namespace mpfr;
 
@@ -13,4 +13,4 @@ using namespace std;
 ostream& mpreal_output10base(ostream& out, const string& fmt, const mpreal& value);
 ostream& mpreal_outputNbase(ostream& out, int base, const mpreal& value);
 
-#endif
+#endif  // SRC_MPREAL_OUT_HPP_

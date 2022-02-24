@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "program.hpp"
 
 /// @brief swap keyword implementation
@@ -20,7 +22,7 @@ void program::rpn_drop(void) {
 ///
 void program::rpn_drop2(void) {
     MIN_ARGUMENTS(2);
-    _stack.pop_front(2);
+    _stack.erase(0, 2);
 }
 
 /// @brief dropn keyword implementation
@@ -29,7 +31,7 @@ void program::rpn_dropn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)_stack.value<number>(0).toLong();
+    int args = static_cast<int>(_stack.value<number>(0).toLong());
     MIN_ARGUMENTS(args + 1);
     _stack.erase(0, args + 1);
 }
@@ -42,7 +44,7 @@ void program::rpn_erase(void) { _stack.erase(0, _stack.size()); }
 ///
 void program::rpn_dup(void) {
     MIN_ARGUMENTS(1);
-    rpnstack::copy_and_push_front(_stack, 0, _stack);
+    _stack.push_front(_stack.at(0)->clone());
 }
 
 /// @brief dupn keyword implementation
@@ -51,19 +53,19 @@ void program::rpn_dupn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)((number*)_stack.front())->value.toLong();
+    int args = static_cast<int>(_stack.value<number>(0).toLong());
     _stack.pop();
 
     MIN_ARGUMENTS(args);
-    for (int i = 0; i < args; i++) rpnstack::copy_and_push_front(_stack, args - 1, _stack);
+    for (int i = 0; i < args; i++) _stack.push_front(_stack.at(args - 1)->clone());
 }
 
 /// @brief dup2 keyword implementation
 ///
 void program::rpn_dup2(void) {
     MIN_ARGUMENTS(2);
-    rpnstack::copy_and_push_front(_stack, 1, _stack);
-    rpnstack::copy_and_push_front(_stack, 1, _stack);
+    _stack.push_front(_stack.at(1)->clone());
+    _stack.push_front(_stack.at(1)->clone());
 }
 
 /// @brief pick keyword implementation
@@ -72,7 +74,7 @@ void program::rpn_pick(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    unsigned int to_pick = (unsigned int)_stack.value<number>(0);
+    int to_pick = static_cast<int>(_stack.value<number>(0).toLong());
     _stack.pop();
 
     // treat stack depth errors
@@ -81,7 +83,7 @@ void program::rpn_pick(void) {
         return;
     }
 
-    rpnstack::copy_and_push_front(_stack, to_pick - 1, _stack);
+    _stack.push_front(_stack.at(to_pick - 1)->clone());
 }
 
 /// @brief rot keyword implementation
@@ -103,7 +105,7 @@ void program::rpn_roll(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    size_t args = (int)((number*)_stack.front())->value;
+    int args = static_cast<int>(_stack.value<number>(0).toLong());
     _stack.pop();
     MIN_ARGUMENTS(args);
 
@@ -118,7 +120,7 @@ void program::rpn_rolld(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int args = (int)((number*)_stack.front())->value.toLong();
+    int args = static_cast<int>(_stack.value<number>(0).toLong());
     _stack.pop();
     MIN_ARGUMENTS(args);
 
@@ -131,7 +133,5 @@ void program::rpn_rolld(void) {
 ///
 void program::rpn_over(void) {
     MIN_ARGUMENTS(2);
-
-    rpnstack::copy_and_push_front(_stack, 1, _stack);
+    _stack.push_front(_stack.at(1)->clone());
 }
-

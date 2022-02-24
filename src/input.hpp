@@ -1,8 +1,9 @@
-#ifndef INPUT_HPP_
-#define INPUT_HPP_
+// Copyright (c) 2014-2022 Louis Rubet
+
+#ifndef SRC_INPUT_HPP_
+#define SRC_INPUT_HPP_
 
 #include <cstdio>
-
 #include <string>
 #include <vector>
 using namespace std;
@@ -10,15 +11,15 @@ using namespace std;
 #include "linenoise.h"
 
 class Input {
-   public:
+ public:
     Input(string& entry, vector<string>& autocompletionWords, string prompt = "rpn> ", string mlPrompt = ">");
-    enum {ok, cont, abort, ctrlc, error} status;
+    enum { ok, cont, abort, ctrlc, error } status;
 
     static void preload(const char* preloadText);
 
-   private:
+ private:
     static void entry_completion_generator(const char* text, linenoiseCompletions* lc);
     static vector<string>* _acWords;
 };
 
-#endif
+#endif  // SRC_INPUT_HPP_

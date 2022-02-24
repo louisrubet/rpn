@@ -1,40 +1,27 @@
-#ifndef PROGRAM_HPP_
-#define PROGRAM_HPP_
+// Copyright (c) 2014-2022 Louis Rubet
+
+#ifndef SRC_PROGRAM_HPP_
+#define SRC_PROGRAM_HPP_
 
 // std c++
+#include <deque>
 #include <fstream>
+#include <string>
 #include <vector>
 using namespace std;
 
-#define MPFR_USE_NO_MACRO
-#include <mpfr.h>
 #include <mpreal.h>
 using namespace mpfr;
 
 // internal includes
-#include "constant.h"
 #include "lexer.hpp"
 #include "object.hpp"
 #include "stack.hpp"
 
-//< convinient structure to preprocess a program
-struct if_layout_t {
-    if_layout_t()
-        : index_then_or_unti_or_repeat(-1), index_else(-1), index_end(-1), is_do_unti(false), is_while_repeat(false) {}
-    int index_if_or_do_or_while;
-    int index_then_or_unti_or_repeat;
-    int index_else;
-    int index_end;
-    bool is_do_unti;
-    bool is_while_repeat;
-};
-
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<object*>, public Lexer {
-   public:
-    program(rpnstack& stk, heap& hp, program* parent = nullptr) : _stack(stk), _heap(hp), _parent(parent) {
-        interrupt_now = false;
-    }
+ public:
+    program(rpnstack& stk, heap& hp, program* parent = nullptr) : _stack(stk), _heap(hp), _parent(parent) {}
     virtual ~program() {
         _local_heap.clear();
         clear();
@@ -47,7 +34,6 @@ class program : public deque<object*>, public Lexer {
     // running
     ret_value run();
     void stop();
-    bool compare_branch(branch* b, const char* str_to_compare, int len);
     ret_value preprocess(void);
 
     ret_value show_error();
@@ -56,15 +42,13 @@ class program : public deque<object*>, public Lexer {
     void show_syntax_error(const char* context);
     ret_value get_err(void);
 
-    static void show_stack(rpnstack& st, bool show_separator = true);
+    void show_stack(bool show_separator = true);
 
     static void apply_default();
 
     static vector<string>& getAutocompletionWords();
 
-   private:
-    bool interrupt_now;
-
+ private:
     // current error and its context
     ret_value _err;
     string _err_context;
@@ -81,9 +65,7 @@ class program : public deque<object*>, public Lexer {
     // parent prog for inheriting heaps
     program* _parent;
 
-    int stack_size() { return _stack.size(); }
-
-   private:
+ private:
     // keywords
     struct keyword_t {
         cmd_type_t type;
@@ -92,8 +74,6 @@ class program : public deque<object*>, public Lexer {
         string comment;
     };
     static vector<keyword_t> _keywords;
-    static map<string, Lexer::ReservedWord> _keywordsMap;
-    static vector<string> _autocompletionWords;
 
     // keywords implementation
     ////
@@ -113,7 +93,7 @@ class program : public deque<object*>, public Lexer {
     size_t rpn_for(branch& myobj);
     size_t rpn_next(branch& myobj);
     size_t rpn_step(branch& myobj);
-    enum { step_out = (size_t)-1, runtime_error = (size_t)-2 };
+    enum { step_out = static_cast<size_t>(-1), runtime_error = static_cast<size_t>(-2) };
 
     // complex
     void rpn_re();
@@ -233,14 +213,11 @@ class program : public deque<object*>, public Lexer {
     void rpn_strsub();
 
     // test-core
-    void test_get_stack(string& stack_is, rpnstack& stk);
-    void test_show_result(string title, int tests, int tests_failed, int steps, int steps_failed);
     void rpn_test();
     void test(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
               int& total_steps_failed);
 
     // test
-    long cmp_strings_on_stack_top();
     void rpn_sup(void);
     void rpn_sup_eq(void);
     void rpn_inf(void);
@@ -270,26 +247,45 @@ class program : public deque<object*>, public Lexer {
     void rpn_ticks();
 };
 
-// clang-format off
-
 // convenience macros for rpn_xx function
 // carefull : some of these macros modify program flow
-#define setErrorContext(err) do { _err = (err); _err_context = __FUNCTION__; } while (0)
 
-#define MIN_ARGUMENTS(num) do { \
-        if (stack_size() < (num)) { setErrorContext(ret_missing_operand); return; } \
+#define setErrorContext(err)         \
+    do {                             \
+        _err = (err);                \
+        _err_context = __FUNCTION__; \
     } while (0)
 
-#define MIN_ARGUMENTS_RET(num, ret) do { \
-        if (stack_size() < (num)) { setErrorContext(ret_missing_operand); return (ret); } \
+#define MIN_ARGUMENTS(num)                         \
+    do {                                           \
+        if ((num) >= 0 && _stack.size() < (num)) { \
+            setErrorContext(ret_missing_operand);  \
+            return;                                \
+        }                                          \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE(num, type) do { \
-        if (_stack.at(num)->_type != (type)) { setErrorContext(ret_bad_operand_type); return; } \
+#define MIN_ARGUMENTS_RET(num, ret)                \
+    do {                                           \
+        if ((num) >= 0 && _stack.size() < (num)) { \
+            setErrorContext(ret_missing_operand);  \
+            return (ret);                          \
+        }                                          \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) do { \
-        if (_stack.at(num)->_type != (type)) { setErrorContext(ret_bad_operand_type); return (ret); } \
+#define ARG_MUST_BE_OF_TYPE(num, type)                       \
+    do {                                                     \
+        if ((num) >= 0 && _stack.at(num)->_type != (type)) { \
+            setErrorContext(ret_bad_operand_type);           \
+            return;                                          \
+        }                                                    \
     } while (0)
 
-#endif
+#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)              \
+    do {                                                     \
+        if ((num) >= 0 && _stack.at(num)->_type != (type)) { \
+            setErrorContext(ret_bad_operand_type);           \
+            return (ret);                                    \
+        }                                                    \
+    } while (0)
+
+#endif  // SRC_PROGRAM_HPP_

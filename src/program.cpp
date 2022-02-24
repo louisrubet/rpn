@@ -1,3 +1,5 @@
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "program.hpp"
 
 //< language reserved keywords (allowed types are cmd_keyword, cmd_branch or cmd_undef)
@@ -201,17 +203,13 @@ vector<program::keyword_t> program::_keywords{
     {cmd_keyword, "ticks", &program::rpn_ticks, "system tick in µs"},
 };
 
-/// keywords map for lexer
-map<string, Lexer::ReservedWord> program::_keywordsMap;
-
 /// autocompletion vector for linenoise autocompletion
-vector<string> program::_autocompletionWords;
-
 vector<string>& program::getAutocompletionWords() {
-    if (_autocompletionWords.empty())
+    static vector<string> autocompletionWords;
+    if (autocompletionWords.empty())
         for (auto& kw : _keywords)
-            if (!kw.name.empty()) _autocompletionWords.push_back(kw.name);
-    return _autocompletionWords;
+            if (!kw.name.empty()) autocompletionWords.push_back(kw.name);
+    return autocompletionWords;
 }
 
 /// @brief run a program on a stack and a heap
@@ -236,18 +234,18 @@ ret_value program::run() {
     }
 
     // iterate commands
-    for (size_t i = 0; (go_out == false) && (interrupt_now == false) && (i < size());) {
+    for (size_t i = 0; (go_out == false) && (i < size());) {
         object* o = at(i);
         switch (o->_type) {
             // could be an auto-evaluated symbol
             case cmd_symbol:
-                auto_rcl((symbol*)o);
+                auto_rcl(reinterpret_cast<symbol*>(o));
                 i++;
                 break;
 
             // a keyword
             case cmd_keyword: {
-                keyword* k = (keyword*)o;
+                keyword* k = reinterpret_cast<keyword*>(o);
                 // call the matching function
                 (this->*(k->fn))();
                 switch (_err) {
@@ -264,8 +262,7 @@ ret_value program::run() {
                         go_out = true;
 
                         // test error: make rpn return EXIT_FAILURE
-                        if (_err == ret_test_failed)
-                            ret = ret_test_failed;
+                        if (_err == ret_test_failed) ret = ret_test_failed;
 
                         // error: show it
                         if (show_error(_err, _err_context) == ret_deadly)
@@ -280,13 +277,13 @@ ret_value program::run() {
             // a branch keyword
             case cmd_branch: {
                 // call matching function
-                branch* b = (branch*)o;
+                branch* b = reinterpret_cast<branch*>(o);
                 size_t next_cmd = (this->*(b->fn))(*b);
                 switch (next_cmd) {
-                    case step_out: // step out
-                        i++;  // meaning 'next command'
+                    case step_out:  // step out
+                        i++;        // meaning 'next command'
                         break;
-                    case runtime_error: // runtime error
+                    case runtime_error:  // runtime error
                         (void)show_error(_err, _err_context);
                         go_out = true;
                         break;
@@ -310,32 +307,7 @@ ret_value program::run() {
     for (object* o : *this) delete o;
     _local_heap.clear();
 
-    if (interrupt_now) {
-        cerr << endl << "Interrupted" << endl;
-        interrupt_now = false;
-    }
-
     return ret;
-}
-
-/// @brief stop a program
-///
-///
-void program::stop() { interrupt_now = true; }
-
-/// @brief return whether a branch object has a given name
-///
-/// @param b the branch object
-/// @param str_to_compare the name
-/// @param len the name length
-/// @return true the branch name is str_to_compare
-/// @return false the branch name is NOT str_to_compare
-///
-bool program::compare_branch(branch* b, const char* str_to_compare, int len) {
-    if (str_to_compare != nullptr)
-        return b->value == str_to_compare;
-    else
-        return false;
 }
 
 /// @brief prepare a program for execution
@@ -346,6 +318,20 @@ bool program::compare_branch(branch* b, const char* str_to_compare, int len) {
 /// @return ret_value see this type
 ///
 ret_value program::preprocess(void) {
+    struct if_layout_t {
+        if_layout_t()
+            : index_then_or_unti_or_repeat(-1),
+              index_else(-1),
+              index_end(-1),
+              is_do_unti(false),
+              is_while_repeat(false) {}
+        int index_if_or_do_or_while;
+        int index_then_or_unti_or_repeat;
+        int index_else;
+        int index_end;
+        bool is_do_unti;
+        bool is_while_repeat;
+    };
     // for if-then-else-end
     vector<struct if_layout_t> vlayout;
     int layout_index = -1;
@@ -354,20 +340,20 @@ ret_value program::preprocess(void) {
 
     // analyse if-then-else-end branches
     // analyse start-{next, step} branches
-    for (int i = 0; i < (int)size(); i++) {
-        if ((*this)[i]->_type == cmd_branch) {
-            branch* k = (branch*)(*this)[i];
-            if (compare_branch(k, "if", 2)) {
+    for (size_t i = 0; i < size(); i++) {
+        if (at(i)->_type == cmd_branch) {
+            branch* k = reinterpret_cast<branch*>(at(i));
+            if (k->value == "if") {
                 if_layout_t layout;
                 layout.index_if_or_do_or_while = i;
                 vlayout.push_back(layout);
                 layout_index++;
-            } else if (compare_branch(k, "then", 4)) {
-                int next = i + 1;
-                if (next >= (int)size()) next = -1;
+            } else if (k->value == "then") {
+                size_t next = i + 1;
+                if (next >= size()) next = step_out;
 
                 // nothing after 'then' -> error
-                if (next == -1) {
+                if (next == step_out) {
                     // error: show it
                     show_syntax_error("missing end after then");
                     return ret_syntax;
@@ -385,12 +371,12 @@ ret_value program::preprocess(void) {
                 vlayout[layout_index].index_then_or_unti_or_repeat = i;
                 k->arg1 = next;
                 k->arg3 = vlayout[layout_index].index_if_or_do_or_while;
-            } else if (compare_branch(k, "else", 4)) {
-                int next = i + 1;
-                if (next >= (int)size()) next = -1;
+            } else if (k->value == "else") {
+                size_t next = i + 1;
+                if (next >= size()) next = step_out;
 
                 // nothing after 'else' -> error
-                if (next == -1) {
+                if (next == step_out) {
                     // error: show it
                     show_syntax_error("missing end after else");
                     return ret_syntax;
@@ -413,47 +399,47 @@ ret_value program::preprocess(void) {
                 vlayout[layout_index].index_else = i;
                 k->arg1 = next;  // fill branch1 (if was false) of 'else'
                 k->arg3 = vlayout[layout_index].index_if_or_do_or_while;
-                ((branch*)(*this)[vlayout[layout_index].index_then_or_unti_or_repeat])->arg2 =
+                reinterpret_cast<branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))->arg2 =
                     next;  // fill branch2 (if was false) of 'then'
-            } else if (compare_branch(k, "start", 5))
+            } else if (k->value == "start") {
                 vstartindex.push_back(i);
-            else if (compare_branch(k, "for", 3)) {
+            } else if (k->value == "for") {
                 vstartindex.push_back(i);
                 k->arg1 = i + 1;  // arg1 points on symbol variable
-            } else if (compare_branch(k, "next", 4)) {
+            } else if (k->value == "next") {
                 if (vstartindex.size() == 0) {
                     // error: show it
                     show_syntax_error("missing start or for before next");
                     return ret_syntax;
                 }
                 k->arg1 = vstartindex[vstartindex.size() - 1];  // 'next' arg1 = 'start' index
-                ((branch*)(*this)[vstartindex[vstartindex.size() - 1]])->arg2 =
+                reinterpret_cast<branch*>(at(vstartindex[vstartindex.size() - 1]))->arg2 =
                     i;  // 'for' or 'start' arg2 = 'next' index
                 vstartindex.pop_back();
-            } else if (compare_branch(k, "step", 4)) {
+            } else if (k->value == "step") {
                 if (vstartindex.size() == 0) {
                     // error: show it
                     show_syntax_error("missing start or for before step");
                     return ret_syntax;
                 }
                 k->arg1 = vstartindex[vstartindex.size() - 1];  // fill 'step' branch1 = 'start' index
-                ((branch*)(*this)[vstartindex[vstartindex.size() - 1]])->arg2 =
+                reinterpret_cast<branch*>(at(vstartindex[vstartindex.size() - 1]))->arg2 =
                     i;  // 'for' or 'start' arg2 = 'next' index
                 vstartindex.pop_back();
-            } else if (compare_branch(k, "->", 2)) {
+            } else if (k->value == "->") {
                 k->arg1 = i;  // arg1 is '->' command index in program
-            } else if (compare_branch(k, "do", 2)) {
+            } else if (k->value == "do") {
                 if_layout_t layout;
                 layout.index_if_or_do_or_while = i;
                 layout.is_do_unti = true;
                 vlayout.push_back(layout);
                 layout_index++;
-            } else if (compare_branch(k, "until", 4)) {
-                int next = i + 1;
-                if (next >= (int)size()) next = -1;
+            } else if (k->value == "until") {
+                size_t next = i + 1;
+                if (next >= size()) next = step_out;
 
                 // nothing after 'unti' -> error
-                if (next == -1) {
+                if (next == step_out) {
                     // error: show it
                     show_syntax_error("missing end");
                     return ret_syntax;
@@ -469,13 +455,13 @@ ret_value program::preprocess(void) {
                     return ret_syntax;
                 }
                 vlayout[layout_index].index_then_or_unti_or_repeat = i;
-            } else if (compare_branch(k, "while", 4)) {
+            } else if (k->value == "while") {
                 if_layout_t layout;
                 layout.index_if_or_do_or_while = i;
                 layout.is_while_repeat = true;
                 vlayout.push_back(layout);
                 layout_index++;
-            } else if (compare_branch(k, "repeat", 5)) {
+            } else if (k->value == "repeat") {
                 if (layout_index < 0 || !vlayout[layout_index].is_while_repeat) {
                     // error: show it
                     show_syntax_error("missing while");
@@ -487,9 +473,9 @@ ret_value program::preprocess(void) {
                     return ret_syntax;
                 }
                 vlayout[layout_index].index_then_or_unti_or_repeat = i;
-            } else if (compare_branch(k, "end", 3)) {
-                int next = i + 1;
-                if (next >= (int)size()) next = -1;
+            } else if (k->value == "end") {
+                size_t next = i + 1;
+                if (next >= size()) next = step_out;
 
                 if (layout_index < 0) {
                     // error: show it
@@ -529,7 +515,8 @@ ret_value program::preprocess(void) {
                         }
 
                         // fill 'repeat' arg1 with 'end+1'
-                        ((branch*)(*this)[vlayout[layout_index].index_then_or_unti_or_repeat])->arg1 = i + 1;
+                        reinterpret_cast<branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))->arg1 =
+                            i + 1;
                         layout_index--;
                     } else {
                         // this end closes an if..then..(else)
@@ -538,14 +525,15 @@ ret_value program::preprocess(void) {
                             show_syntax_error("duplicate end");
                             return ret_syntax;
                         }
-                        if (vlayout[layout_index].index_else != -1)
+                        if (vlayout[layout_index].index_else != -1) {
                             // fill 'end' branch of 'else'
-                            ((branch*)(*this)[vlayout[layout_index].index_else])->arg2 = i;
-                        else {
+                            reinterpret_cast<branch*>(at(vlayout[layout_index].index_else))->arg2 = i;
+                        } else {
                             // fill 'end' branch of 'then'
-                            if (vlayout[layout_index].index_then_or_unti_or_repeat != -1)
-                                ((branch*)(*this)[vlayout[layout_index].index_then_or_unti_or_repeat])->arg2 = i;
-                            else {
+                            if (vlayout[layout_index].index_then_or_unti_or_repeat != -1) {
+                                reinterpret_cast<branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))
+                                    ->arg2 = i;
+                            } else {
                                 // error: show it
                                 show_syntax_error("missing then");
                                 return ret_syntax;
@@ -577,17 +565,18 @@ ret_value program::preprocess(void) {
 /// @return ret_value see this type
 ///
 ret_value program::parse(string& entry) {
+    static map<string, Lexer::ReservedWord> keywordsMap;
     vector<Lexer::SynElement> elements;
     vector<Lexer::SynError> errors;
     ret_value ret = ret_ok;
 
     // prepare map for finding reserved keywords
-    if (_keywordsMap.empty())
+    if (keywordsMap.empty())
         for (auto& kw : _keywords)
-            if (!kw.name.empty()) _keywordsMap[kw.name] = {kw.type, kw.fn};
+            if (!kw.name.empty()) keywordsMap[kw.name] = {kw.type, kw.fn};
 
     // separate the entry string
-    if (lexer(entry, _keywordsMap, elements, errors)) {
+    if (lexer(entry, keywordsMap, elements, errors)) {
         // make objects from parsed elements
         for (Lexer::SynElement& element : elements) {
             switch (element.type) {
@@ -619,8 +608,9 @@ ret_value program::parse(string& entry) {
             if (element.re != nullptr) delete element.re;
             if (element.im != nullptr) delete element.im;
         }
-    } else
+    } else {
         for (SynError& err : errors) show_syntax_error(err.err.c_str());
+    }
 
     return ret;
 }
@@ -638,7 +628,7 @@ ret_value program::show_error() {
         "bad value", "test failed"};
     // clang-format on
     // show last recorded error
-    if ((size_t)_err < errorStrings.size())
+    if (static_cast<size_t>(_err) < errorStrings.size())
         cerr << _err_context << ": error " << _err << ": " << errorStrings[_err] << endl;
     else
         cerr << _err_context << " (unknown error code)" << endl;
@@ -701,26 +691,26 @@ ret_value program::get_err(void) { return _err; }
 /// @brief show a stack (show its different objects)
 /// generally a stack is associated to a running program
 ///
-/// @param st the stack to show
 /// @param show_separator whether to show a stack level prefix or not
 ///
-void program::show_stack(rpnstack& st, bool show_separator) {
-    if (st.size() == 1)
-        cout << st[0] << endl;
-    else
-        for (int i = st.size() - 1; i >= 0; i--) {
+void program::show_stack(bool show_separator) {
+    if (_stack.size() == 1) {
+        cout << _stack[0] << endl;
+    } else {
+        for (int i = _stack.size() - 1; i >= 0; i--) {
             if (show_separator) cout << i + 1 << "> ";
-            cout << st[i] << endl;
+            cout << _stack[i] << endl;
         }
+    }
 }
 
 /// @brief apply default precision mode and digits
 ///
 void program::apply_default() {
     // default float precision, float mode
-    number::s_mode = DEFAULT_MODE;
-    number::s_digits = DEFAULT_DECIMAL_DIGITS;
-    mpreal::set_default_prec(MPFR_DEFAULT_PREC_BITS);
+    number::s_mode = number::DEFAULT_MODE;
+    number::s_digits = number::DEFAULT_DECIMAL_DIGITS;
+    mpreal::set_default_prec(number::MPFR_DEFAULT_PREC_BITS);
 
     static mp_rnd_t def_rnd = mpreal::get_default_rnd();
     mpreal::set_default_rnd(def_rnd);

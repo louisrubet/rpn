@@ -1,5 +1,7 @@
-#include "program.hpp"
+// Copyright (c) 2014-2022 Louis Rubet
+
 #include "input.hpp"
+#include "program.hpp"
 
 /// @brief sto keyword implementation
 ///
@@ -14,7 +16,7 @@ void program::rpn_sto(void) {
         _heap.erase(it);
     }
     _heap[_stack.value<ostring>(0)] = _stack.at(1)->clone();
-    _stack.pop_front(2);
+    _stack.erase(0, 2);
 }
 
 /// @brief sto+ keyword implementation
@@ -27,7 +29,7 @@ void program::rpn_stoadd(void) {
         return;
     }
     rpn_dup();
-    rpn_rcl(); // TODO is rcl the good one? it will recall local variables too
+    rpn_rcl();  // TODO(louis) is rcl the good one? it will recall local variables too
     rpn_rot();
     rpn_plus();
     rpn_swap();
@@ -129,10 +131,11 @@ void program::rpn_rcl(void) {
 
     // mind the order of heaps
     if (find_variable(variable, obj)) {
-        (void)_stack.pop_front();
+        (void)_stack.pop();
         _stack.push_front(obj->clone());
-    } else
+    } else {
         setErrorContext(ret_unknown_variable);
+    }
 }
 
 /// @brief edit keyword implementation
@@ -163,10 +166,12 @@ void program::auto_rcl(symbol* symb) {
         if (find_variable(variable, obj)) {
             _stack.push_front(obj->clone());
             if (obj->_type == cmd_program) rpn_eval();
-        } else
+        } else {
             _stack.push_front(symb->clone());
-    } else
+        }
+    } else {
         _stack.push_front(symb->clone());
+    }
 }
 
 /// @brief purge keyword implementation
@@ -179,8 +184,9 @@ void program::rpn_purge(void) {
     if (i != _heap.end()) {
         delete i->second;
         _heap.erase(i);
-    } else
+    } else {
         setErrorContext(ret_unknown_variable);
+    }
     _stack.pop();
 }
 
@@ -190,32 +196,27 @@ void program::rpn_vars(void) {
     object* obj;
     program* parent = _parent;
     string name;
+    int index = 1;
 
     // heap variables
-    for (int i = 0; i < (int)_heap.size(); i++) {
-        (void)_heap.get_by_index(i, name, obj);
-        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";
-        obj->show(cout);
-        cout<<endl;
+    for (auto i : _heap) {
+        cout << "var " << index++ << ": name '" << i.first << "', type " << i.second->name() << ", value ";
+        i.second->show(cout) << endl;
+    }
+
+    // local variables
+    for (auto i : _local_heap) {
+        cout << "var " << index++ << ": name '" << i.first << "', type " << i.second->name() << ", value ";
+        i.second->show(cout) << endl;
     }
 
     // parents local variables
     while (parent != nullptr) {
-        for (int i = 0; i < (int)parent->_local_heap.size(); i++) {
-            (void)parent->_local_heap.get_by_index(i, name, obj);
-            cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";
-            obj->show(cout);
-            cout<<endl;
+        for (auto i : parent->_local_heap) {
+            cout << "parent var " << index++ << ": name '" << i.first << "', type " << i.second->name() << ", value ";
+            obj->show(cout) << endl;
         }
         parent = parent->_parent;
-    }
-
-    // local variables
-    for (int i = 0; i < (int)_local_heap.size(); i++) {
-        (void)_local_heap.get_by_index(i, name, obj);
-        cout<<"var "<<i+1<<": name '"<<name<<"', type "<<obj->name()<<", value ";
-        obj->show(cout);
-        cout<<endl;
     }
 }
 
