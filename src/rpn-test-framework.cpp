@@ -76,16 +76,16 @@ void program::rpn_test() {
     int total_steps = 0;
     int total_steps_failed = 0;
 
-    string test_filename = _stack.value<String>(0);
-    _stack.pop();
+    string test_filename = stack_.value<String>(0);
+    stack_.pop();
     cout << endl << "rpn version is " << RPN_VERSION << endl;
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
     testShowResult("\nTotal", total_tests, total_tests_failed, total_steps, total_steps_failed);
 
     // notify to caller that test succeeded or not
     if (total_tests_failed > 0) {
-        _err = kTestFailed;
-        _err_context = string("rpn version ") + RPN_VERSION + ", test file " + test_filename;
+        err_ = kTestFailed;
+        err_context_ = string("rpn version ") + RPN_VERSION + ", test file " + test_filename;
     }
 }
 

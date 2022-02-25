@@ -71,7 +71,7 @@ bool Lexer::parseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynE
     // here we are sure that entry[0] is at least '\''
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '\'') {
-            elements.push_back({kSymbol, .value = entry.substr(idx + 1, i - idx - 1), .autoEval = false});
+            elements.push_back({kSymbol, .value = entry.substr(idx + 1, i - idx - 1), .auto_eval = false});
             next_idx = i + 1;
             return true;
         }
@@ -185,7 +185,7 @@ bool Lexer::parseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynE
     mpreal* r = nullptr;
     int base = 10;
     if (getNumberAt(entry, idx, next_idx, base, &r)) {
-        elements.push_back({kNumber, .re = r, .reBase = base});
+        elements.push_back({kNumber, .re = r, .re_base = base});
         return true;
     } else {
         errors.push_back({entry.size(), "unterminated number"});
@@ -197,13 +197,13 @@ bool Lexer::parseComplex(string& entry, size_t idx, size_t& next_idx, vector<Syn
                          vector<SynElement>& elements) {
     mpreal* re = nullptr;
     mpreal* im = nullptr;
-    int reBase, imBase = 10;
+    int re_base, im_base = 10;
     if (idx + 1 == entry.size()) {
         elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         return true;  // complex format error, return a symbol
     }
-    if (!getNumberAt(entry, idx + 1, next_idx, reBase, &re, ',')) {
+    if (!getNumberAt(entry, idx + 1, next_idx, re_base, &re, ',')) {
         elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         return true;  // complex format error, return a symbol
@@ -218,14 +218,14 @@ bool Lexer::parseComplex(string& entry, size_t idx, size_t& next_idx, vector<Syn
         return true;  // complex format error, return a symbol
     }
 
-    if (!getNumberAt(entry, i, next_idx, imBase, &im, ')')) {
+    if (!getNumberAt(entry, i, next_idx, im_base, &im, ')')) {
         elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         if (re != nullptr) delete re;
         if (im != nullptr) delete im;
         return true;  // complex format error, return a symbol
     }
-    elements.push_back({kComplex, .re = re, .im = im, .reBase = reBase, .imBase = imBase});
+    elements.push_back({kComplex, .re = re, .im = im, .re_base = re_base, .im_base = im_base});
     next_idx++;
     return true;
 }
@@ -249,7 +249,7 @@ bool Lexer::parseUnknown(string& entry, size_t idx, size_t& next_idx, vector<Syn
     stringstream ss(entry.substr(idx));
     string token;
     ss >> token;
-    elements.push_back({kSymbol, .value = token, .autoEval = true});
+    elements.push_back({kSymbol, .value = token, .auto_eval = true});
     next_idx = token.size() + idx;
     return true;
 }
