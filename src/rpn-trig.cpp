@@ -12,7 +12,7 @@ void program::rpn_pi(void) {
 ///
 void program::rpn_d2r(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
     _stack.value<Number>(0) *= mpfr::const_pi();
     _stack.value<Number>(0) /= 180;
 }
@@ -21,7 +21,7 @@ void program::rpn_d2r(void) {
 ///
 void program::rpn_r2d(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
     _stack.value<Number>(0) /= mpfr::const_pi();
     _stack.value<Number>(0) *= 180;
 }
@@ -30,70 +30,70 @@ void program::rpn_r2d(void) {
 ///
 void program::rpn_sin(void) {
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_number)
+    if (_stack.type(0) == kNumber)
         _stack.value<Number>(0) = sin(_stack.value<Number>(0));
-    else if (_stack.type(0) == cmd_complex)
+    else if (_stack.type(0) == kComplex)
         _stack.value<Complex>(0) = sin(_stack.value<Complex>(0));
     else
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
 }
 
 /// @brief asin keyword implementation
 ///
 void program::rpn_asin(void) {
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_number)
+    if (_stack.type(0) == kNumber)
         _stack.value<Number>(0) = asin(_stack.value<Number>(0));
-    else if (_stack.type(0) == cmd_complex)
+    else if (_stack.type(0) == kComplex)
         _stack.value<Complex>(0) = asin(_stack.value<Complex>(0));
     else
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
 }
 
 /// @brief cos keyword implementation
 ///
 void program::rpn_cos(void) {
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_number)
+    if (_stack.type(0) == kNumber)
         _stack.value<Number>(0) = cos(_stack.value<Number>(0));
-    else if (_stack.type(0) == cmd_complex)
+    else if (_stack.type(0) == kComplex)
         _stack.value<Complex>(0) = cos(_stack.value<Complex>(0));
     else
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
 }
 
 /// @brief acos keyword implementation
 ///
 void program::rpn_acos(void) {
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_number)
+    if (_stack.type(0) == kNumber)
         _stack.value<Number>(0) = acos(_stack.value<Number>(0));
-    else if (_stack.type(0) == cmd_complex)
+    else if (_stack.type(0) == kComplex)
         _stack.value<Complex>(0) = acos(_stack.value<Complex>(0));
     else
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
 }
 
 /// @brief tan keyword implementation
 ///
 void program::rpn_tan(void) {
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_number)
+    if (_stack.type(0) == kNumber)
         _stack.value<Number>(0) = tan(_stack.value<Number>(0));
-    else if (_stack.type(0) == cmd_complex)
+    else if (_stack.type(0) == kComplex)
         _stack.value<Complex>(0) = tan(_stack.value<Complex>(0));
     else
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
 }
 
 /// @brief atan keyword implementation
 ///
 void program::rpn_atan(void) {
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_number)
+    if (_stack.type(0) == kNumber)
         _stack.value<Number>(0) = atan(_stack.value<Number>(0));
-    else if (_stack.type(0) == cmd_complex)
+    else if (_stack.type(0) == kComplex)
         _stack.value<Complex>(0) = atan(_stack.value<Complex>(0));
     else
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
 }

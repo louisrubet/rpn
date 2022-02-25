@@ -38,7 +38,7 @@ void program::rpn_eval(void) {
     string prog_text;
 
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == cmd_symbol) {
+    if (_stack.type(0) == kSymbol) {
         // recall a variable
         Object* obj;
         string variable(_stack.value<Symbol>(0));
@@ -46,7 +46,7 @@ void program::rpn_eval(void) {
 
         // if variable holds a program, run this program
         if (find_variable(variable, obj)) {
-            if (obj->_type == cmd_program) {
+            if (obj->_type == kProgram) {
                 prog_text = _stack.value<Program>(0);
                 _stack.pop();
                 run_prog = true;
@@ -55,15 +55,15 @@ void program::rpn_eval(void) {
                 _stack.push_front(obj);
             }
         } else {
-            setErrorContext(ret_unknown_variable);
+            setErrorContext(kUnknownVariable);
         }
-    } else if (_stack.type(0) == cmd_program) {
+    } else if (_stack.type(0) == kProgram) {
         // eval a program
         prog_text = _stack.value<Program>(0);
         _stack.pop();
         run_prog = true;
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 
     // run prog if any
@@ -71,7 +71,7 @@ void program::rpn_eval(void) {
         program prog(_stack, _heap, this);
 
         // make program from entry
-        if (prog.parse(prog_text) == ret_ok) {
+        if (prog.parse(prog_text) == kOk) {
             // run it
             prog.run();
         }
@@ -86,7 +86,7 @@ int program::rpn_inprog(Branch& inprog_obj) {
     bool prog_found = false;
 
     if (inprog_obj.arg1 == -1) {
-        setErrorContext(ret_unknown_err);
+        setErrorContext(kUnknownError);
         return -1;
     }
 
@@ -96,15 +96,15 @@ int program::rpn_inprog(Branch& inprog_obj) {
     // find next Program object
     for (unsigned int i = inprog_obj.arg1 + 1; i < size(); i++) {
         // count symbol
-        if (at(i)->_type == cmd_symbol) {
+        if (at(i)->_type == kSymbol) {
             count_symbols++;
-        } else if (at(i)->_type == cmd_program) {
+        } else if (at(i)->_type == kProgram) {
             // stop if prog
             prog_found = true;
             break;
         } else {
             // found something other than symbol
-            setErrorContext(ret_bad_operand_type);
+            setErrorContext(kBadOperandType);
             show_error(_err, context);
             return -1;
         }
@@ -112,21 +112,21 @@ int program::rpn_inprog(Branch& inprog_obj) {
 
     // found 0 symbols
     if (count_symbols == 0) {
-        setErrorContext(ret_syntax);
+        setErrorContext(kSyntaxError);
         show_error(_err, context);
         return -1;
     }
 
     // <program> is missing
     if (!prog_found) {
-        setErrorContext(ret_syntax);
+        setErrorContext(kSyntaxError);
         show_error(_err, context);
         return -1;
     }
 
     // check symbols Number vs stack size
     if (_stack.size() < count_symbols) {
-        setErrorContext(ret_missing_operand);
+        setErrorContext(kMissingOperand);
         show_error(_err, context);
         return -1;
     }
@@ -142,7 +142,7 @@ int program::rpn_inprog(Branch& inprog_obj) {
     program prog(_stack, _heap, this);
 
     // make the program from entry
-    if (prog.parse(entry) == ret_ok) {
+    if (prog.parse(entry) == kOk) {
         // run it
         prog.run();
     }

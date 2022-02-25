@@ -28,19 +28,19 @@ class program : public deque<Object*>, public Lexer {
     }
 
     // parser
-    ret_value parse(string& entry);
-    static ret_value get_fn(const char* fn_name, program_fn_t& fn, cmd_type_t& type);
+    RetValue parse(string& entry);
+    static RetValue get_fn(const char* fn_name, program_fn_t& fn, ObjectType& type);
 
     // running
-    ret_value run();
+    RetValue run();
     void stop();
-    ret_value preprocess(void);
+    RetValue preprocess(void);
 
-    ret_value show_error();
-    ret_value show_error(ret_value err, string& context);
-    ret_value show_error(ret_value err, const char* context);
+    RetValue show_error();
+    RetValue show_error(RetValue err, string& context);
+    RetValue show_error(RetValue err, const char* context);
     void show_syntax_error(const char* context);
-    ret_value get_err(void);
+    RetValue get_err(void);
 
     void show_stack(bool show_separator = true);
 
@@ -50,7 +50,7 @@ class program : public deque<Object*>, public Lexer {
 
  private:
     // current error and its context
-    ret_value _err;
+    RetValue _err;
     string _err_context;
 
     // global stack holding results for user
@@ -68,7 +68,7 @@ class program : public deque<Object*>, public Lexer {
  private:
     // keywords
     struct keyword_t {
-        cmd_type_t type;
+        ObjectType type;
         string name;
         program_fn_t fn;
         string comment;
@@ -93,7 +93,7 @@ class program : public deque<Object*>, public Lexer {
     size_t rpn_for(Branch& myobj);
     size_t rpn_next(Branch& myobj);
     size_t rpn_step(Branch& myobj);
-    enum { step_out = static_cast<size_t>(-1), runtime_error = static_cast<size_t>(-2) };
+    enum { kStepOut = static_cast<size_t>(-1), kRtError = static_cast<size_t>(-2) };
 
     // complex
     void rpn_re();
@@ -259,7 +259,7 @@ class program : public deque<Object*>, public Lexer {
 #define MIN_ARGUMENTS(num)                         \
     do {                                           \
         if ((num) >= 0 && _stack.size() < (num)) { \
-            setErrorContext(ret_missing_operand);  \
+            setErrorContext(kMissingOperand);  \
             return;                                \
         }                                          \
     } while (0)
@@ -267,7 +267,7 @@ class program : public deque<Object*>, public Lexer {
 #define MIN_ARGUMENTS_RET(num, ret)                \
     do {                                           \
         if ((num) >= 0 && _stack.size() < (num)) { \
-            setErrorContext(ret_missing_operand);  \
+            setErrorContext(kMissingOperand);  \
             return (ret);                          \
         }                                          \
     } while (0)
@@ -275,7 +275,7 @@ class program : public deque<Object*>, public Lexer {
 #define ARG_MUST_BE_OF_TYPE(num, type)                       \
     do {                                                     \
         if ((num) >= 0 && _stack.at(num)->_type != (type)) { \
-            setErrorContext(ret_bad_operand_type);           \
+            setErrorContext(kBadOperandType);           \
             return;                                          \
         }                                                    \
     } while (0)
@@ -283,7 +283,7 @@ class program : public deque<Object*>, public Lexer {
 #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)              \
     do {                                                     \
         if ((num) >= 0 && _stack.at(num)->_type != (type)) { \
-            setErrorContext(ret_bad_operand_type);           \
+            setErrorContext(kBadOperandType);           \
             return (ret);                                    \
         }                                                    \
     } while (0)

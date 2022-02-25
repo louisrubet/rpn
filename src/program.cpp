@@ -2,205 +2,205 @@
 
 #include "program.hpp"
 
-//< language reserved keywords (allowed types are cmd_keyword, cmd_branch or cmd_undef)
+//< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
 vector<program::keyword_t> program::_keywords{
     // GENERAL
-    {cmd_undef, "", nullptr, "\nGENERAL"},
-    {cmd_keyword, "nop", &program::rpn_nop, "no operation"},
-    {cmd_keyword, "help", &program::rpn_help, "this help message"},
-    {cmd_keyword, "h", &program::rpn_help, ""},
-    {cmd_keyword, "?", &program::rpn_help, ""},
-    {cmd_keyword, "quit", &program::rpn_good_bye, "quit software"},
-    {cmd_keyword, "q", &program::rpn_good_bye, ""},
-    {cmd_keyword, "exit", &program::rpn_good_bye, ""},
-    {cmd_keyword, "test", &program::rpn_test, ""},  // not seen by user
-    {cmd_keyword, "version", &program::rpn_version, "show rpn version"},
-    {cmd_keyword, "uname", &program::rpn_uname, "show rpn complete identification string"},
-    {cmd_keyword, "history", &program::rpn_history, "see commands history"},
+    {kUndef, "", nullptr, "\nGENERAL"},
+    {kKeyword, "nop", &program::rpn_nop, "no operation"},
+    {kKeyword, "help", &program::rpn_help, "this help message"},
+    {kKeyword, "h", &program::rpn_help, ""},
+    {kKeyword, "?", &program::rpn_help, ""},
+    {kKeyword, "quit", &program::rpn_good_bye, "quit software"},
+    {kKeyword, "q", &program::rpn_good_bye, ""},
+    {kKeyword, "exit", &program::rpn_good_bye, ""},
+    {kKeyword, "test", &program::rpn_test, ""},  // not seen by user
+    {kKeyword, "version", &program::rpn_version, "show rpn version"},
+    {kKeyword, "uname", &program::rpn_uname, "show rpn complete identification string"},
+    {kKeyword, "history", &program::rpn_history, "see commands history"},
 
     // USUAL OPERATIONS ON REALS AND COMPLEXES
-    {cmd_undef, "", nullptr, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
-    {cmd_keyword, "+", &program::rpn_plus, "addition"},
-    {cmd_keyword, "-", &program::rpn_minus, "substraction"},
-    {cmd_keyword, "*", &program::rpn_mul, "multiplication"},
-    {cmd_keyword, "/", &program::rpn_div, "division"},
-    {cmd_keyword, "inv", &program::rpn_inv, "inverse"},
-    {cmd_keyword, "chs", &program::rpn_neg, "negation"},
-    {cmd_keyword, "neg", &program::rpn_neg, ""},
-    {cmd_keyword, "^", &program::rpn_power, "power"},
-    {cmd_keyword, "pow", &program::rpn_power, ""},
-    {cmd_keyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
-    {cmd_keyword, "sq", &program::rpn_square, "rpn_square"},
-    {cmd_keyword, "abs", &program::rpn_abs, "absolute value (norm for a complex)"},
-    {cmd_keyword, "sign", &program::rpn_sign, "sign of a number or z/|z| for a complex"},
+    {kUndef, "", nullptr, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
+    {kKeyword, "+", &program::rpn_plus, "addition"},
+    {kKeyword, "-", &program::rpn_minus, "substraction"},
+    {kKeyword, "*", &program::rpn_mul, "multiplication"},
+    {kKeyword, "/", &program::rpn_div, "division"},
+    {kKeyword, "inv", &program::rpn_inv, "inverse"},
+    {kKeyword, "chs", &program::rpn_neg, "negation"},
+    {kKeyword, "neg", &program::rpn_neg, ""},
+    {kKeyword, "^", &program::rpn_power, "power"},
+    {kKeyword, "pow", &program::rpn_power, ""},
+    {kKeyword, "sqrt", &program::rpn_squareroot, "rpn_square root"},
+    {kKeyword, "sq", &program::rpn_square, "rpn_square"},
+    {kKeyword, "abs", &program::rpn_abs, "absolute value (norm for a complex)"},
+    {kKeyword, "sign", &program::rpn_sign, "sign of a number or z/|z| for a complex"},
 
     // OPERATIONS ON REALS
-    {cmd_undef, "", nullptr, "\nOPERATIONS ON REALS"},
-    {cmd_keyword, "%", &program::rpn_purcent, "purcent"},
-    {cmd_keyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
-    {cmd_keyword, "mod", &program::rpn_modulo, "modulo"},
-    {cmd_keyword, "fact", &program::rpn_fact, "n! for integer n or Gamma(x+1) for fractional x"},
-    {cmd_keyword, "mant", &program::rpn_mant, "mantissa of a real number"},
-    {cmd_keyword, "xpon", &program::rpn_xpon, "exponant of a real number"},
-    {cmd_keyword, "floor", &program::rpn_floor, "largest number <="},
-    {cmd_keyword, "ceil", &program::rpn_ceil, "smallest number >="},
-    {cmd_keyword, "ip", &program::rpn_ip, "integer part"},
-    {cmd_keyword, "fp", &program::rpn_fp, "fractional part"},
-    {cmd_keyword, "min", &program::rpn_min, "min of 2 real numbers"},
-    {cmd_keyword, "max", &program::rpn_max, "max of 2 real numbers"},
+    {kUndef, "", nullptr, "\nOPERATIONS ON REALS"},
+    {kKeyword, "%", &program::rpn_purcent, "purcent"},
+    {kKeyword, "%CH", &program::rpn_purcentCH, "inverse purcent"},
+    {kKeyword, "mod", &program::rpn_modulo, "modulo"},
+    {kKeyword, "fact", &program::rpn_fact, "n! for integer n or Gamma(x+1) for fractional x"},
+    {kKeyword, "mant", &program::rpn_mant, "mantissa of a real number"},
+    {kKeyword, "xpon", &program::rpn_xpon, "exponant of a real number"},
+    {kKeyword, "floor", &program::rpn_floor, "largest number <="},
+    {kKeyword, "ceil", &program::rpn_ceil, "smallest number >="},
+    {kKeyword, "ip", &program::rpn_ip, "integer part"},
+    {kKeyword, "fp", &program::rpn_fp, "fractional part"},
+    {kKeyword, "min", &program::rpn_min, "min of 2 real numbers"},
+    {kKeyword, "max", &program::rpn_max, "max of 2 real numbers"},
 
     // OPERATIONS ON COMPLEXES
-    {cmd_undef, "", nullptr, "\nOPERATIONS ON COMPLEXES"},
-    {cmd_keyword, "re", &program::rpn_re, "complex real part"},
-    {cmd_keyword, "im", &program::rpn_im, "complex imaginary part"},
-    {cmd_keyword, "conj", &program::rpn_conj, "complex conjugate"},
-    {cmd_keyword, "arg", &program::rpn_arg, "complex argument in radians"},
-    {cmd_keyword, "c->r", &program::rpn_c2r, "transform a complex in 2 reals"},
-    {cmd_keyword, "r->c", &program::rpn_r2c, "transform 2 reals in a complex"},
-    {cmd_keyword, "p->r", &program::rpn_p2r, "cartesian to polar"},
-    {cmd_keyword, "r->p", &program::rpn_r2p, "polar to cartesian"},
+    {kUndef, "", nullptr, "\nOPERATIONS ON COMPLEXES"},
+    {kKeyword, "re", &program::rpn_re, "complex real part"},
+    {kKeyword, "im", &program::rpn_im, "complex imaginary part"},
+    {kKeyword, "conj", &program::rpn_conj, "complex conjugate"},
+    {kKeyword, "arg", &program::rpn_arg, "complex argument in radians"},
+    {kKeyword, "c->r", &program::rpn_c2r, "transform a complex in 2 reals"},
+    {kKeyword, "r->c", &program::rpn_r2c, "transform 2 reals in a complex"},
+    {kKeyword, "p->r", &program::rpn_p2r, "cartesian to polar"},
+    {kKeyword, "r->p", &program::rpn_r2p, "polar to cartesian"},
 
     // MODE
-    {cmd_undef, "", nullptr, "\nMODE"},
-    {cmd_keyword, "std", &program::rpn_std, "standard floating numbers representation. ex: std"},
-    {cmd_keyword, "fix", &program::rpn_fix, "fixed point representation. ex: 6 fix"},
-    {cmd_keyword, "sci", &program::rpn_sci, "scientific floating point representation. ex: 20 sci"},
-    {cmd_keyword, "prec", &program::rpn_precision, "set float precision in bits. ex: 256 prec"},
-    {cmd_keyword, "round", &program::rpn_round,
+    {kUndef, "", nullptr, "\nMODE"},
+    {kKeyword, "std", &program::rpn_std, "standard floating numbers representation. ex: std"},
+    {kKeyword, "fix", &program::rpn_fix, "fixed point representation. ex: 6 fix"},
+    {kKeyword, "sci", &program::rpn_sci, "scientific floating point representation. ex: 20 sci"},
+    {kKeyword, "prec", &program::rpn_precision, "set float precision in bits. ex: 256 prec"},
+    {kKeyword, "round", &program::rpn_round,
      "set float rounding mode.\n\tex: [\"nearest (even)\", \"toward zero\", \"toward "
      "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\"] round"},
 
-    {cmd_keyword, "default", &program::rpn_default, "set float representation and precision to default"},
-    {cmd_keyword, "type", &program::rpn_type, "show type of stack first entry"},
-    {cmd_keyword, "hex", &program::rpn_hex, "hexadecimal representation, applies on stack level 0 only"},
-    {cmd_keyword, "dec", &program::rpn_dec, "decimal representation, applies on stack level 0 only"},
-    {cmd_keyword, "bin", &program::rpn_bin, "binary representation, applies on stack level 0 only"},
-    {cmd_keyword, "base", &program::rpn_base, "arbitrary base representation, applies on stack level 0 only"},
+    {kKeyword, "default", &program::rpn_default, "set float representation and precision to default"},
+    {kKeyword, "type", &program::rpn_type, "show type of stack first entry"},
+    {kKeyword, "hex", &program::rpn_hex, "hexadecimal representation, applies on stack level 0 only"},
+    {kKeyword, "dec", &program::rpn_dec, "decimal representation, applies on stack level 0 only"},
+    {kKeyword, "bin", &program::rpn_bin, "binary representation, applies on stack level 0 only"},
+    {kKeyword, "base", &program::rpn_base, "arbitrary base representation, applies on stack level 0 only"},
 
     // TESTS
-    {cmd_undef, "", nullptr, "\nTEST"},
-    {cmd_keyword, ">", &program::rpn_sup, "binary operator >"},
-    {cmd_keyword, ">=", &program::rpn_sup_eq, "binary operator >="},
-    {cmd_keyword, "<", &program::rpn_inf, "binary operator <"},
-    {cmd_keyword, "<=", &program::rpn_inf_eq, "binary operator <="},
-    {cmd_keyword, "!=", &program::rpn_diff, "binary operator != (different)"},
-    {cmd_keyword, "==", &program::rpn_eq, "binary operator == (equal)"},
-    {cmd_keyword, "and", &program::rpn_test_and, "boolean operator and"},
-    {cmd_keyword, "or", &program::rpn_test_or, "boolean operator or"},
-    {cmd_keyword, "xor", &program::rpn_test_xor, "boolean operator xor"},
-    {cmd_keyword, "not", &program::rpn_test_not, "boolean operator not"},
-    {cmd_keyword, "same", &program::rpn_same, "boolean operator same (equal)"},
+    {kUndef, "", nullptr, "\nTEST"},
+    {kKeyword, ">", &program::rpn_sup, "binary operator >"},
+    {kKeyword, ">=", &program::rpn_sup_eq, "binary operator >="},
+    {kKeyword, "<", &program::rpn_inf, "binary operator <"},
+    {kKeyword, "<=", &program::rpn_inf_eq, "binary operator <="},
+    {kKeyword, "!=", &program::rpn_diff, "binary operator != (different)"},
+    {kKeyword, "==", &program::rpn_eq, "binary operator == (equal)"},
+    {kKeyword, "and", &program::rpn_test_and, "boolean operator and"},
+    {kKeyword, "or", &program::rpn_test_or, "boolean operator or"},
+    {kKeyword, "xor", &program::rpn_test_xor, "boolean operator xor"},
+    {kKeyword, "not", &program::rpn_test_not, "boolean operator not"},
+    {kKeyword, "same", &program::rpn_same, "boolean operator same (equal)"},
 
     // STACK
-    {cmd_undef, "", nullptr, "\nSTACK"},
-    {cmd_keyword, "swap", &program::rpn_swap, "swap 2 first stack entries"},
-    {cmd_keyword, "drop", &program::rpn_drop, "drop first stack entry"},
-    {cmd_keyword, "drop2", &program::rpn_drop2, "drop 2 first stack entries"},
-    {cmd_keyword, "dropn", &program::rpn_dropn, "drop n first stack entries"},
-    {cmd_keyword, "del", &program::rpn_erase, "drop all stack entries"},
-    {cmd_keyword, "erase", &program::rpn_erase, ""},
-    {cmd_keyword, "rot", &program::rpn_rot, "rotate 3 first stack entries"},
-    {cmd_keyword, "dup", &program::rpn_dup, "duplicate first stack entry"},
-    {cmd_keyword, "dup2", &program::rpn_dup2, "duplicate 2 first stack entries"},
-    {cmd_keyword, "dupn", &program::rpn_dupn, "duplicate n first stack entries"},
-    {cmd_keyword, "pick", &program::rpn_pick, "push a copy of  the given stack level onto the stack"},
-    {cmd_keyword, "depth", &program::rpn_depth, "give stack depth"},
-    {cmd_keyword, "roll", &program::rpn_roll, "move a stack entry to the top of the stack"},
-    {cmd_keyword, "rolld", &program::rpn_rolld, "move the element on top of the stack to a higher stack position"},
-    {cmd_keyword, "over", &program::rpn_over, "push a copy of the element in stack level 2 onto the stack"},
+    {kUndef, "", nullptr, "\nSTACK"},
+    {kKeyword, "swap", &program::rpn_swap, "swap 2 first stack entries"},
+    {kKeyword, "drop", &program::rpn_drop, "drop first stack entry"},
+    {kKeyword, "drop2", &program::rpn_drop2, "drop 2 first stack entries"},
+    {kKeyword, "dropn", &program::rpn_dropn, "drop n first stack entries"},
+    {kKeyword, "del", &program::rpn_erase, "drop all stack entries"},
+    {kKeyword, "erase", &program::rpn_erase, ""},
+    {kKeyword, "rot", &program::rpn_rot, "rotate 3 first stack entries"},
+    {kKeyword, "dup", &program::rpn_dup, "duplicate first stack entry"},
+    {kKeyword, "dup2", &program::rpn_dup2, "duplicate 2 first stack entries"},
+    {kKeyword, "dupn", &program::rpn_dupn, "duplicate n first stack entries"},
+    {kKeyword, "pick", &program::rpn_pick, "push a copy of  the given stack level onto the stack"},
+    {kKeyword, "depth", &program::rpn_depth, "give stack depth"},
+    {kKeyword, "roll", &program::rpn_roll, "move a stack entry to the top of the stack"},
+    {kKeyword, "rolld", &program::rpn_rolld, "move the element on top of the stack to a higher stack position"},
+    {kKeyword, "over", &program::rpn_over, "push a copy of the element in stack level 2 onto the stack"},
 
     // STRING
-    {cmd_undef, "", nullptr, "\nSTRING"},
-    {cmd_keyword, "->str", &program::rpn_instr, "convert an object into a string"},
-    {cmd_keyword, "str->", &program::rpn_strout, "convert a string into an object"},
-    {cmd_keyword, "chr", &program::rpn_chr, "convert ASCII character code in stack level 1 into a string"},
-    {cmd_keyword, "num", &program::rpn_num,
+    {kUndef, "", nullptr, "\nSTRING"},
+    {kKeyword, "->str", &program::rpn_instr, "convert an object into a string"},
+    {kKeyword, "str->", &program::rpn_strout, "convert a string into an object"},
+    {kKeyword, "chr", &program::rpn_chr, "convert ASCII character code in stack level 1 into a string"},
+    {kKeyword, "num", &program::rpn_num,
      "return ASCII code of the first character of the string in stack level 1 as a real number"},
-    {cmd_keyword, "size", &program::rpn_strsize, "return the length of the string"},
-    {cmd_keyword, "pos", &program::rpn_strpos, "seach for the string in level 1 within the string in level 2"},
-    {cmd_keyword, "sub", &program::rpn_strsub, "return a substring of the string in level 3"},
+    {kKeyword, "size", &program::rpn_strsize, "return the length of the string"},
+    {kKeyword, "pos", &program::rpn_strpos, "seach for the string in level 1 within the string in level 2"},
+    {kKeyword, "sub", &program::rpn_strsub, "return a substring of the string in level 3"},
 
     // BRANCH
-    {cmd_undef, "", nullptr, "\nBRANCH"},
-    {cmd_branch, "if", (program_fn_t)&program::rpn_if,
+    {kUndef, "", nullptr, "\nBRANCH"},
+    {kBranch, "if", (program_fn_t)&program::rpn_if,
      "if <test-instruction> then <true-instructions> else <false-instructions> "
      "end"},
-    {cmd_branch, "then", (program_fn_t)&program::rpn_then, "used with if"},
-    {cmd_branch, "else", (program_fn_t)&program::rpn_else, "used with if"},
-    {cmd_branch, "end", (program_fn_t)&program::rpn_end, "used with various branch instructions"},
-    {cmd_branch, "start", (program_fn_t)&program::rpn_start, "<start> <end> start <instructions> next|<step> step"},
-    {cmd_branch, "for", (program_fn_t)&program::rpn_for,
+    {kBranch, "then", (program_fn_t)&program::rpn_then, "used with if"},
+    {kBranch, "else", (program_fn_t)&program::rpn_else, "used with if"},
+    {kBranch, "end", (program_fn_t)&program::rpn_end, "used with various branch instructions"},
+    {kBranch, "start", (program_fn_t)&program::rpn_start, "<start> <end> start <instructions> next|<step> step"},
+    {kBranch, "for", (program_fn_t)&program::rpn_for,
      "<start> <end> for <variable> <instructions> next|<step> step"},
-    {cmd_branch, "next", (program_fn_t)&program::rpn_next, "used with start and for"},
-    {cmd_branch, "step", (program_fn_t)&program::rpn_step, "used with start and for"},
-    {cmd_keyword, "ift", &program::rpn_ift, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
-    {cmd_keyword, "ifte", &program::rpn_ifte,
+    {kBranch, "next", (program_fn_t)&program::rpn_next, "used with start and for"},
+    {kBranch, "step", (program_fn_t)&program::rpn_step, "used with start and for"},
+    {kKeyword, "ift", &program::rpn_ift, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
+    {kKeyword, "ifte", &program::rpn_ifte,
      "similar to if-then-else-end, <test-instruction> <true-instruction> "
      "<false-instruction> ifte"},
-    {cmd_branch, "do", (program_fn_t)&program::rpn_do, "do <instructions> until <condition> end"},
-    {cmd_branch, "until", (program_fn_t)&program::rpn_until, "used with do"},
-    {cmd_branch, "while", (program_fn_t)&program::rpn_while, "while <test-instruction> repeat <loop-instructions> end"},
-    {cmd_branch, "repeat", (program_fn_t)&program::rpn_repeat, "used with while"},
+    {kBranch, "do", (program_fn_t)&program::rpn_do, "do <instructions> until <condition> end"},
+    {kBranch, "until", (program_fn_t)&program::rpn_until, "used with do"},
+    {kBranch, "while", (program_fn_t)&program::rpn_while, "while <test-instruction> repeat <loop-instructions> end"},
+    {kBranch, "repeat", (program_fn_t)&program::rpn_repeat, "used with while"},
 
     // STORE
-    {cmd_undef, "", nullptr, "\nSTORE"},
-    {cmd_keyword, "sto", &program::rpn_sto, "store a variable. ex: 1 'name' sto"},
-    {cmd_keyword, "rcl", &program::rpn_rcl, "recall a variable. ex: 'name' rcl"},
-    {cmd_keyword, "purge", &program::rpn_purge, "delete a variable. ex: 'name' purge"},
-    {cmd_keyword, "vars", &program::rpn_vars, "list all variables"},
-    {cmd_keyword, "clusr", &program::rpn_clusr, "erase all variables"},
-    {cmd_keyword, "edit", &program::rpn_edit, "edit a variable content"},
-    {cmd_keyword, "sto+", &program::rpn_stoadd, "add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+"},
-    {cmd_keyword, "sto-", &program::rpn_stosub, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-"},
-    {cmd_keyword, "sto*", &program::rpn_stomul, "multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*"},
-    {cmd_keyword, "sto/", &program::rpn_stodiv, "divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/"},
-    {cmd_keyword, "sneg", &program::rpn_stoneg, "negate a variable. ex: 'name' sneg"},
-    {cmd_keyword, "sinv", &program::rpn_stoinv, "inverse a variable. ex: 1 'name' sinv"},
+    {kUndef, "", nullptr, "\nSTORE"},
+    {kKeyword, "sto", &program::rpn_sto, "store a variable. ex: 1 'name' sto"},
+    {kKeyword, "rcl", &program::rpn_rcl, "recall a variable. ex: 'name' rcl"},
+    {kKeyword, "purge", &program::rpn_purge, "delete a variable. ex: 'name' purge"},
+    {kKeyword, "vars", &program::rpn_vars, "list all variables"},
+    {kKeyword, "clusr", &program::rpn_clusr, "erase all variables"},
+    {kKeyword, "edit", &program::rpn_edit, "edit a variable content"},
+    {kKeyword, "sto+", &program::rpn_stoadd, "add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+"},
+    {kKeyword, "sto-", &program::rpn_stosub, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-"},
+    {kKeyword, "sto*", &program::rpn_stomul, "multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*"},
+    {kKeyword, "sto/", &program::rpn_stodiv, "divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/"},
+    {kKeyword, "sneg", &program::rpn_stoneg, "negate a variable. ex: 'name' sneg"},
+    {kKeyword, "sinv", &program::rpn_stoinv, "inverse a variable. ex: 1 'name' sinv"},
     // PROGRAM
-    {cmd_undef, "", nullptr, "\nPROGRAM"},
-    {cmd_keyword, "eval", &program::rpn_eval, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval"},
-    {cmd_branch, "->", (program_fn_t)&program::rpn_inprog,
+    {kUndef, "", nullptr, "\nPROGRAM"},
+    {kKeyword, "eval", &program::rpn_eval, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval"},
+    {kBranch, "->", (program_fn_t)&program::rpn_inprog,
      "load program local variables. ex: << -> n m << 0 n m for i i + next >> "
      ">>"},
 
     // TRIG ON REALS AND COMPLEXES
-    {cmd_undef, "", nullptr, "\nTRIG ON REALS AND COMPLEXES"},
-    {cmd_keyword, "pi", &program::rpn_pi, "pi constant"},
-    {cmd_keyword, "sin", &program::rpn_sin, "sinus"},
-    {cmd_keyword, "asin", &program::rpn_asin, "arg sinus"},
-    {cmd_keyword, "cos", &program::rpn_cos, "cosinus"},
-    {cmd_keyword, "acos", &program::rpn_acos, "arg cosinus"},
-    {cmd_keyword, "tan", &program::rpn_tan, "tangent"},
-    {cmd_keyword, "atan", &program::rpn_atan, "arg tangent"},
-    {cmd_keyword, "d->r", &program::rpn_d2r, "convert degrees to radians"},
-    {cmd_keyword, "r->d", &program::rpn_r2d, "convert radians to degrees"},
+    {kUndef, "", nullptr, "\nTRIG ON REALS AND COMPLEXES"},
+    {kKeyword, "pi", &program::rpn_pi, "pi constant"},
+    {kKeyword, "sin", &program::rpn_sin, "sinus"},
+    {kKeyword, "asin", &program::rpn_asin, "arg sinus"},
+    {kKeyword, "cos", &program::rpn_cos, "cosinus"},
+    {kKeyword, "acos", &program::rpn_acos, "arg cosinus"},
+    {kKeyword, "tan", &program::rpn_tan, "tangent"},
+    {kKeyword, "atan", &program::rpn_atan, "arg tangent"},
+    {kKeyword, "d->r", &program::rpn_d2r, "convert degrees to radians"},
+    {kKeyword, "r->d", &program::rpn_r2d, "convert radians to degrees"},
 
     // LOGS ON REALS AND COMPLEXES
-    {cmd_undef, "", nullptr, "\nLOGS ON REALS AND COMPLEXES"},
-    {cmd_keyword, "e", &program::rpn_e, "Euler constant"},
-    {cmd_keyword, "ln", &program::rpn_ln, "logarithm base e"},
-    {cmd_keyword, "log", &program::rpn_ln, ""},
-    {cmd_keyword, "lnp1", &program::rpn_lnp1, "ln(1+x) which is useful when x is close to 0"},
-    {cmd_keyword, "exp", &program::rpn_exp, "exponential"},
-    {cmd_keyword, "expm", &program::rpn_expm, "exp(x)-1 which is useful when x is close to 0"},
-    {cmd_keyword, "log10", &program::rpn_log10, "logarithm base 10"},
-    {cmd_keyword, "alog10", &program::rpn_alog10, "exponential base 10"},
-    {cmd_keyword, "exp10", &program::rpn_alog10, ""},
-    {cmd_keyword, "log2", &program::rpn_log2, "logarithm base 2"},
-    {cmd_keyword, "alog2", &program::rpn_alog2, "exponential base 2"},
-    {cmd_keyword, "exp2", &program::rpn_alog2, ""},
-    {cmd_keyword, "sinh", &program::rpn_sinh, "hyperbolic sine"},
-    {cmd_keyword, "asinh", &program::rpn_asinh, "inverse hyperbolic sine"},
-    {cmd_keyword, "cosh", &program::rpn_cosh, "hyperbolic cosine"},
-    {cmd_keyword, "acosh", &program::rpn_acosh, "inverse hyperbolic cosine"},
-    {cmd_keyword, "tanh", &program::rpn_tanh, "hyperbolic tangent"},
-    {cmd_keyword, "atanh", &program::rpn_atanh, "inverse hyperbolic tangent"},
+    {kUndef, "", nullptr, "\nLOGS ON REALS AND COMPLEXES"},
+    {kKeyword, "e", &program::rpn_e, "Euler constant"},
+    {kKeyword, "ln", &program::rpn_ln, "logarithm base e"},
+    {kKeyword, "log", &program::rpn_ln, ""},
+    {kKeyword, "lnp1", &program::rpn_lnp1, "ln(1+x) which is useful when x is close to 0"},
+    {kKeyword, "exp", &program::rpn_exp, "exponential"},
+    {kKeyword, "expm", &program::rpn_expm, "exp(x)-1 which is useful when x is close to 0"},
+    {kKeyword, "log10", &program::rpn_log10, "logarithm base 10"},
+    {kKeyword, "alog10", &program::rpn_alog10, "exponential base 10"},
+    {kKeyword, "exp10", &program::rpn_alog10, ""},
+    {kKeyword, "log2", &program::rpn_log2, "logarithm base 2"},
+    {kKeyword, "alog2", &program::rpn_alog2, "exponential base 2"},
+    {kKeyword, "exp2", &program::rpn_alog2, ""},
+    {kKeyword, "sinh", &program::rpn_sinh, "hyperbolic sine"},
+    {kKeyword, "asinh", &program::rpn_asinh, "inverse hyperbolic sine"},
+    {kKeyword, "cosh", &program::rpn_cosh, "hyperbolic cosine"},
+    {kKeyword, "acosh", &program::rpn_acosh, "inverse hyperbolic cosine"},
+    {kKeyword, "tanh", &program::rpn_tanh, "hyperbolic tangent"},
+    {kKeyword, "atanh", &program::rpn_atanh, "inverse hyperbolic tangent"},
 
     // TIME AND DATE
-    {cmd_undef, "", nullptr, "\nTIME AND DATE"},
-    {cmd_keyword, "time", &program::rpn_time, "time in local format"},
-    {cmd_keyword, "date", &program::rpn_date, "date in local format"},
-    {cmd_keyword, "ticks", &program::rpn_ticks, "system tick in µs"},
+    {kUndef, "", nullptr, "\nTIME AND DATE"},
+    {kKeyword, "time", &program::rpn_time, "time in local format"},
+    {kKeyword, "date", &program::rpn_date, "date in local format"},
+    {kKeyword, "ticks", &program::rpn_ticks, "system tick in µs"},
 };
 
 /// autocompletion vector for linenoise autocompletion
@@ -214,19 +214,19 @@ vector<string>& program::getAutocompletionWords() {
 
 /// @brief run a program on a stack and a heap
 ///
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::run() {
+RetValue program::run() {
     bool go_out = false;
-    ret_value ret = ret_ok;
-    cmd_type_t type;
+    RetValue ret = kOk;
+    ObjectType type;
 
-    _err = ret_ok;
+    _err = kOk;
     _err_context = "";
 
     // branches for 'if'
     ret = preprocess();
-    if (ret != ret_ok) {
+    if (ret != kOk) {
         // free allocated
         for (Object* o : *this) delete o;
         _local_heap.clear();
@@ -238,36 +238,36 @@ ret_value program::run() {
         Object* o = at(i);
         switch (o->_type) {
             // could be an auto-evaluated symbol
-            case cmd_symbol:
+            case kSymbol:
                 auto_rcl(reinterpret_cast<Symbol*>(o));
                 i++;
                 break;
 
             // a keyword
-            case cmd_keyword: {
+            case kKeyword: {
                 Keyword* k = reinterpret_cast<Keyword*>(o);
                 // call the matching function
                 (this->*(k->fn))();
                 switch (_err) {
                     // no pb -> go on
-                    case ret_ok:
+                    case kOk:
                         break;
                     // explicit go out software
-                    case ret_good_bye:
+                    case kGoodbye:
                         go_out = true;
-                        ret = ret_good_bye;
+                        ret = kGoodbye;
                         break;
                     default:
                         // error: abort prog
                         go_out = true;
 
                         // test error: make rpn return EXIT_FAILURE
-                        if (_err == ret_test_failed) ret = ret_test_failed;
+                        if (_err == kTestFailed) ret = kTestFailed;
 
                         // error: show it
-                        if (show_error(_err, _err_context) == ret_deadly)
+                        if (show_error(_err, _err_context) == kDeadlyError)
                             // pb showing error -> go out software
-                            ret = ret_good_bye;
+                            ret = kGoodbye;
                         break;
                 }
                 i++;
@@ -275,15 +275,15 @@ ret_value program::run() {
             }
 
             // a branch keyword
-            case cmd_branch: {
+            case kBranch: {
                 // call matching function
                 Branch* b = reinterpret_cast<Branch*>(o);
                 size_t next_cmd = (this->*(b->fn))(*b);
                 switch (next_cmd) {
-                    case step_out:  // step out
+                    case kStepOut:  // step out
                         i++;        // meaning 'next command'
                         break;
-                    case runtime_error:  // runtime error
+                    case kRtError:  // runtime error
                         (void)show_error(_err, _err_context);
                         go_out = true;
                         break;
@@ -315,9 +315,9 @@ ret_value program::run() {
 /// inner members of branch or keyword objects are filled by this function
 /// these inner members store for example the index of the next keyword to execute etc.
 ///
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::preprocess(void) {
+RetValue program::preprocess(void) {
     struct if_layout_t {
         if_layout_t()
             : index_then_or_unti_or_repeat(-1),
@@ -341,7 +341,7 @@ ret_value program::preprocess(void) {
     // analyse if-then-else-end branches
     // analyse start-{next, step} branches
     for (size_t i = 0; i < size(); i++) {
-        if (at(i)->_type == cmd_branch) {
+        if (at(i)->_type == kBranch) {
             Branch* k = reinterpret_cast<Branch*>(at(i));
             if (k->value == "if") {
                 if_layout_t layout;
@@ -350,51 +350,51 @@ ret_value program::preprocess(void) {
                 layout_index++;
             } else if (k->value == "then") {
                 size_t next = i + 1;
-                if (next >= size()) next = step_out;
+                if (next >= size()) next = kStepOut;
 
                 // nothing after 'then' -> error
-                if (next == step_out) {
+                if (next == kStepOut) {
                     // error: show it
                     show_syntax_error("missing end after then");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (layout_index < 0) {
                     // error: show it
                     show_syntax_error("missing if before then");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (vlayout[layout_index].index_then_or_unti_or_repeat != -1) {
                     // error: show it
                     show_syntax_error("duplicate then");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 vlayout[layout_index].index_then_or_unti_or_repeat = i;
                 k->arg1 = next;
                 k->arg3 = vlayout[layout_index].index_if_or_do_or_while;
             } else if (k->value == "else") {
                 size_t next = i + 1;
-                if (next >= size()) next = step_out;
+                if (next >= size()) next = kStepOut;
 
                 // nothing after 'else' -> error
-                if (next == step_out) {
+                if (next == kStepOut) {
                     // error: show it
                     show_syntax_error("missing end after else");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (layout_index < 0) {
                     // error: show it
                     show_syntax_error("missing if before else");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (vlayout[layout_index].index_then_or_unti_or_repeat == -1) {
                     // error: show it
                     show_syntax_error("missing then before else");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (vlayout[layout_index].index_else != -1) {
                     // error: show it
                     show_syntax_error("duplicate else");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 vlayout[layout_index].index_else = i;
                 k->arg1 = next;  // fill branch1 (if was false) of 'else'
@@ -410,7 +410,7 @@ ret_value program::preprocess(void) {
                 if (vstart_index.size() == 0) {
                     // error: show it
                     show_syntax_error("missing start or for before next");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 k->arg1 = vstart_index[vstart_index.size() - 1];  // 'next' arg1 = 'start' index
                 reinterpret_cast<Branch*>(at(vstart_index[vstart_index.size() - 1]))->arg2 =
@@ -420,7 +420,7 @@ ret_value program::preprocess(void) {
                 if (vstart_index.size() == 0) {
                     // error: show it
                     show_syntax_error("missing start or for before step");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 k->arg1 = vstart_index[vstart_index.size() - 1];  // fill 'step' branch1 = 'start' index
                 reinterpret_cast<Branch*>(at(vstart_index[vstart_index.size() - 1]))->arg2 =
@@ -436,23 +436,23 @@ ret_value program::preprocess(void) {
                 layout_index++;
             } else if (k->value == "until") {
                 size_t next = i + 1;
-                if (next >= size()) next = step_out;
+                if (next >= size()) next = kStepOut;
 
                 // nothing after 'unti' -> error
-                if (next == step_out) {
+                if (next == kStepOut) {
                     // error: show it
                     show_syntax_error("missing end");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (layout_index < 0 || !vlayout[layout_index].is_do_unti) {
                     // error: show it
                     show_syntax_error("missing do");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (vlayout[layout_index].index_then_or_unti_or_repeat != -1) {
                     // error: show it
                     show_syntax_error("duplicate until");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 vlayout[layout_index].index_then_or_unti_or_repeat = i;
             } else if (k->value == "while") {
@@ -465,35 +465,35 @@ ret_value program::preprocess(void) {
                 if (layout_index < 0 || !vlayout[layout_index].is_while_repeat) {
                     // error: show it
                     show_syntax_error("missing while");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 if (vlayout[layout_index].index_then_or_unti_or_repeat != -1) {
                     // error: show it
                     show_syntax_error("duplicate repeat");
-                    return ret_syntax;
+                    return kSyntaxError;
                 }
                 vlayout[layout_index].index_then_or_unti_or_repeat = i;
             } else if (k->value == "end") {
                 size_t next = i + 1;
-                if (next >= size()) next = step_out;
+                if (next >= size()) next = kStepOut;
 
                 if (layout_index < 0) {
                     // error: show it
                     show_syntax_error("missing branch instruction before end");
-                    return ret_syntax;
+                    return kSyntaxError;
                 } else {
                     if (vlayout[layout_index].is_do_unti) {
                         // this end closes a do..unti
                         if (vlayout[layout_index].index_end != -1) {
                             // error: show it
                             show_syntax_error("duplicate end");
-                            return ret_syntax;
+                            return kSyntaxError;
                         }
 
                         if (vlayout[layout_index].index_then_or_unti_or_repeat == -1) {
                             // error: show it
                             show_syntax_error("missing until");
-                            return ret_syntax;
+                            return kSyntaxError;
                         }
 
                         k->arg1 = vlayout[layout_index].index_if_or_do_or_while + 1;
@@ -503,7 +503,7 @@ ret_value program::preprocess(void) {
                         if (vlayout[layout_index].index_end != -1) {
                             // error: show it
                             show_syntax_error("duplicate end");
-                            return ret_syntax;
+                            return kSyntaxError;
                         }
 
                         k->arg2 = vlayout[layout_index].index_if_or_do_or_while + 1;
@@ -511,7 +511,7 @@ ret_value program::preprocess(void) {
                         if (vlayout[layout_index].index_then_or_unti_or_repeat == -1) {
                             // error: show it
                             show_syntax_error("missing repeat");
-                            return ret_syntax;
+                            return kSyntaxError;
                         }
 
                         // fill 'repeat' arg1 with 'end+1'
@@ -522,7 +522,7 @@ ret_value program::preprocess(void) {
                         if (vlayout[layout_index].index_end != -1) {
                             // error: show it
                             show_syntax_error("duplicate end");
-                            return ret_syntax;
+                            return kSyntaxError;
                         }
                         if (vlayout[layout_index].index_else != -1) {
                             // fill 'end' branch of 'else'
@@ -535,7 +535,7 @@ ret_value program::preprocess(void) {
                             } else {
                                 // error: show it
                                 show_syntax_error("missing then");
-                                return ret_syntax;
+                                return kSyntaxError;
                             }
                         }
                         layout_index--;
@@ -547,27 +547,27 @@ ret_value program::preprocess(void) {
     if (layout_index >= 0) {
         // error: show it
         show_syntax_error("missing end");
-        return ret_syntax;
+        return kSyntaxError;
     }
     if (vstart_index.size() > 0) {
         // error: show it
         show_syntax_error("missing next or step after for or start");
-        return ret_syntax;
+        return kSyntaxError;
     }
-    return ret_ok;
+    return kOk;
 }
 
 /// @brief parse an entry string: cut it into objects chunks and add them to a program
 ///
 /// @param entry the entry string
 /// @param prog the program to be filled
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::parse(string& entry) {
+RetValue program::parse(string& entry) {
     static map<string, Lexer::ReservedWord> keywords_map;
     vector<Lexer::SynElement> elements;
     vector<Lexer::SynError> errors;
-    ret_value ret = ret_ok;
+    RetValue ret = kOk;
 
     // prepare map for finding reserved keywords
     if (keywords_map.empty())
@@ -579,29 +579,29 @@ ret_value program::parse(string& entry) {
         // make objects from parsed elements
         for (Lexer::SynElement& element : elements) {
             switch (element.type) {
-                case cmd_number:
+                case kNumber:
                     push_back(new Number(*element.re, element.reBase));
                     break;
-                case cmd_complex:
+                case kComplex:
                     push_back(new Complex(*element.re, *element.im, element.reBase, element.imBase));
                     break;
-                case cmd_string:
+                case kString:
                     push_back(new String(element.value));
                     break;
-                case cmd_symbol:
+                case kSymbol:
                     push_back(new Symbol(element.value, element.autoEval));
                     break;
-                case cmd_program:
+                case kProgram:
                     push_back(new Program(element.value));
                     break;
-                case cmd_keyword:
+                case kKeyword:
                     push_back(new Keyword(element.fn, element.value));
                     break;
-                case cmd_branch:
+                case kBranch:
                     push_back(new Branch((branch_fn_t)element.fn, element.value));
                     break;
                 default:
-                    show_error(ret_unknown_err, "error creating program from entry");
+                    show_error(kUnknownError, "error creating program from entry");
                     break;
             }
             if (element.re != nullptr) delete element.re;
@@ -616,27 +616,29 @@ ret_value program::parse(string& entry) {
 
 /// @brief show the last error set
 ///
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::show_error() {
-    ret_value ret;
+RetValue program::show_error() {
+    RetValue ret;
     // clang-format off
-    vector<string> errorStrings {"ok", "unknown command", "missing operand", "bad operand type",
-        "out of range", "unknown variable", "internal error, aborting", "deadly", "goodbye", "not implemented",
-        "no operation", "syntax error", "division by zero", "runtime error", "aborted current entry", "out of memory",
-        "bad value", "test failed"};
+    map<RetValue, string> errorStrings{{kOk, "ok"}, {kUnknownError, "unknown command"},
+        {kMissingOperand, "missing operand"}, {kBadOperandType, "bad operand type"},
+        {kOutOfRange, "out of range"}, {kUnknownVariable, "unknown variable"},
+        {kInternalError, "internal error, aborting"}, {kDeadlyError, "deadly"},
+        {kGoodbye, "goodbye"}, {kNotImplemented, "not implemented"},
+        {kNop, "no operation"}, {kSyntaxError, "syntax error"},
+        {kDivByZero, "division by zero"}, {kRuntimeError, "runtime error"},
+        {kAbortCurrentEntry, "aborted current entry"}, {kOutOfMemory, "out of memory"},
+        {kBadValue, "bad value"}, {kTestFailed, "test failed"}
+    };
     // clang-format on
-    // show last recorded error
-    if (static_cast<size_t>(_err) < errorStrings.size())
-        cerr << _err_context << ": error " << _err << ": " << errorStrings[_err] << endl;
-    else
-        cerr << _err_context << " (unknown error code)" << endl;
+    cerr << _err_context << ": error " << _err << ": " << errorStrings[_err] << endl;
     switch (_err) {
-        case ret_internal:
-        case ret_deadly:
-            ret = ret_deadly;
+        case kInternalError:
+        case kDeadlyError:
+            ret = kDeadlyError;
         default:
-            ret = ret_ok;
+            ret = kOk;
     }
 
     return ret;
@@ -646,9 +648,9 @@ ret_value program::show_error() {
 ///
 /// @param err the error to record
 /// @param context a context string
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::show_error(ret_value err, string& context) {
+RetValue program::show_error(RetValue err, string& context) {
     // record error
     _err = err;
     _err_context = context;
@@ -659,9 +661,9 @@ ret_value program::show_error(ret_value err, string& context) {
 ///
 /// @param err the error to record
 /// @param context a context string
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::show_error(ret_value err, const char* context) {
+RetValue program::show_error(RetValue err, const char* context) {
     // record error
     _err = err;
     _err_context = context;
@@ -672,20 +674,20 @@ ret_value program::show_error(ret_value err, const char* context) {
 ///
 /// @param err the error to record
 /// @param context a context string
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
 void program::show_syntax_error(const char* context) {
     // record error
-    _err = ret_syntax;
+    _err = kSyntaxError;
     _err_context = context;
     (void)show_error();
 }
 
 /// @brief return the last error set
 ///
-/// @return ret_value see this type
+/// @return RetValue see this type
 ///
-ret_value program::get_err(void) { return _err; }
+RetValue program::get_err(void) { return _err; }
 
 /// @brief show a stack (show its different objects)
 /// generally a stack is associated to a running program

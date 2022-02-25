@@ -19,7 +19,7 @@ class Lexer {
  public:
     // a structure to describe a syntaxical element and its value
     struct SynElement {
-        cmd_type_t type;
+        ObjectType type;
         string value;
         mpreal* re;
         mpreal* im;
@@ -35,7 +35,7 @@ class Lexer {
     };
 
     struct ReservedWord {
-        cmd_type_t type;
+        ObjectType type;
         program_fn_t fn;
     };
 
