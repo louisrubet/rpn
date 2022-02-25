@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "object.hpp"
+#include "object.h"
 
 // number statics
 Number::mode_enum Number::mode = Number::kDefaultMode;

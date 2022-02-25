@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "input.hpp"
-#include "program.hpp"
+#include "input.h"
+#include "program.h"
 
 /// @brief sto keyword implementation
 ///

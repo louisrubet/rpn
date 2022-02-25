@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "mpreal-out.hpp"
+#include "mpreal-out.h"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(h, i) ((h) > (i) ? (h) : (i))

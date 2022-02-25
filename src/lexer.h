@@ -11,7 +11,7 @@ using mpfr::mpreal;
 #include <vector>
 using std::map, std::string, std::vector;
 
-#include "object.hpp"
+#include "object.h"
 
 class Lexer {
  public:

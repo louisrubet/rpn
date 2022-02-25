@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "program.hpp"
+#include "program.h"
 
 /// @brief if keyword (branch) implementation
 ///

@@ -9,8 +9,8 @@
 using std::cerr;
 
 // internal includes
-#include "input.hpp"
-#include "program.hpp"
+#include "input.h"
+#include "program.h"
 
 /// @brief actions to be done at rpn exit
 ///
