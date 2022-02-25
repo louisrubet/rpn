@@ -4,14 +4,18 @@
 #define SRC_OBJECT_HPP_
 
 #include <mpreal.h>
-
-#include "mpreal-out.hpp"
-using namespace mpfr;
+using mpfr::mpreal;
 
 #include <ostream>
-#include <sstream>
 #include <string>
-using namespace std;
+#include <sstream>
+#include <complex>
+using std::ostream;
+using std::string;
+using std::stringstream;
+using std::complex;
+
+#include "mpreal-out.hpp"
 
 // definitions for objects
 ///

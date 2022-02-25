@@ -5,7 +5,7 @@
 /// @brief pi keyword implementation
 ///
 void program::rpn_pi(void) {
-    _stack.push_front(new number(const_pi()));
+    _stack.push_front(new number(mpfr::const_pi()));
 }
 
 /// @brief d->r keyword implementation
@@ -13,7 +13,7 @@ void program::rpn_pi(void) {
 void program::rpn_d2r(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    _stack.value<number>(0) *= const_pi();
+    _stack.value<number>(0) *= mpfr::const_pi();
     _stack.value<number>(0) /= 180;
 }
 
@@ -22,7 +22,7 @@ void program::rpn_d2r(void) {
 void program::rpn_r2d(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    _stack.value<number>(0) /= const_pi();
+    _stack.value<number>(0) /= mpfr::const_pi();
     _stack.value<number>(0) *= 180;
 }
 

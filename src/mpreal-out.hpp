@@ -4,11 +4,12 @@
 #define SRC_MPREAL_OUT_HPP_
 
 #include <mpreal.h>
-using namespace mpfr;
+using mpfr::mpreal;
 
 #include <string>
 #include <ostream>
-using namespace std;
+using std::string;
+using std::ostream;
 
 ostream& mpreal_output10base(ostream& out, const string& fmt, const mpreal& value);
 ostream& mpreal_outputNbase(ostream& out, int base, const mpreal& value);

@@ -4,12 +4,14 @@
 #define SRC_LEXER_HPP_
 
 #include <mpreal.h>
-using namespace mpfr;
+using mpfr::mpreal;
 
 #include <map>
 #include <vector>
 #include <string>
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 #include "object.hpp"
 

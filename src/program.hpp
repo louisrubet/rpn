@@ -11,7 +11,7 @@
 using namespace std;
 
 #include <mpreal.h>
-using namespace mpfr;
+using mpfr::mpreal;
 
 // internal includes
 #include "lexer.hpp"

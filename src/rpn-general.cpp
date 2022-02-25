@@ -1,39 +1,36 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include <cstdio>
+#include <iostream>
 #include <string>
+#include <utility>
+using std::cout;
+using std::string;
+using std::pair;
 
 #include "linenoise.h"
-using namespace std;
-
 #include "program.hpp"
 #include "version.h"
 
 // description
-static const string ATTR_BOLD = "\33[1m";
-static const string ATTR_OFF = "\33[0m";
+#define ATTR_BOLD "\33[1m"
+#define ATTR_OFF "\33[0m"
 
 #define XSTR(a) STR(a)
 #define STR(a) #a
-static const string _description{ATTR_BOLD + "R" + ATTR_OFF + "everse " + ATTR_BOLD + "P" + ATTR_OFF + "olish " +
-                                 ATTR_BOLD + "N" + ATTR_OFF + "otation language\n\nusing " + ATTR_BOLD + "GMP" +
-                                 ATTR_OFF +
-                                 " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
-                                     __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" +
-                                 ATTR_BOLD + "MPFR" + ATTR_OFF + " v" MPFR_VERSION_STRING " under GNU LGPL\nand " +
-                                 ATTR_BOLD + "linenoise-ng" + ATTR_OFF + " v" LINENOISE_VERSION " under BSD\n"};
+static const char _description[] = ATTR_BOLD
+    "R" ATTR_OFF "everse " ATTR_BOLD "P" ATTR_OFF "olish " ATTR_BOLD "N" ATTR_OFF "otation language\n\nusing " ATTR_BOLD
+    "GMP" ATTR_OFF " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
+        __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" ATTR_BOLD "MPFR" ATTR_OFF " v" MPFR_VERSION_STRING
+                                     " under GNU LGPL\nand " ATTR_BOLD "linenoise-ng" ATTR_OFF " v" LINENOISE_VERSION
+                                     " under BSD\n";
 
-// syntax
-static const string _syntax{ATTR_BOLD + "Syntax" + ATTR_OFF +
-                            ": rpn [command]\nwith optional command = list of commands"};
+static const char _syntax[] = ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\nwith optional command = list of commands";
 
-static const map<string, mpfr_rnd_t> _mpfr_round{{"nearest (even)", MPFR_RNDN},
-                                                 {"toward zero", MPFR_RNDZ},
-                                                 {"toward +inf", MPFR_RNDU},
-                                                 {"toward -inf", MPFR_RNDD},
-                                                 {"away from zero", MPFR_RNDA},
-                                                 {"faithful rounding", MPFR_RNDF},
-                                                 {"nearest (away from zero)", MPFR_RNDNA}};
+#define MPFR_ROUND                                                                                                     \
+    {"nearest (even)", MPFR_RNDN}, {"toward zero", MPFR_RNDZ}, {"toward +inf", MPFR_RNDU}, {"toward -inf", MPFR_RNDD}, \
+        {"away from zero", MPFR_RNDA}, {"faithful rounding", MPFR_RNDF}, {                                             \
+        "nearest (away from zero)", MPFR_RNDNA                                                                         \
+    }
 
 /// @brief nop keyword implementation
 ///
@@ -90,7 +87,8 @@ void program::rpn_help() {
     // bits precision, decimal digits and rounding mode
     cout << " with " << number::s_digits << " digits after the decimal point" << endl;
     cout << "Current floating point precision is " << static_cast<int>(mpreal::get_default_prec()) << " bits" << endl;
-    for (auto& rn : _mpfr_round)
+    vector<pair<string, mpfr_rnd_t>> rnd{MPFR_ROUND};
+    for (auto& rn : rnd)
         if (rn.second == mpreal::get_default_rnd()) {
             cout << "Current rounding mode is '" << rn.first << '\'' << endl;
             break;
@@ -104,9 +102,7 @@ void program::rpn_help() {
 /// @return true the precision is good
 /// @return false the precision is not good
 ///
-static bool check_decimal_digits(int precision) {
-    return precision >= 0;
-}
+static bool check_decimal_digits(int precision) { return precision >= 0; }
 
 /// @brief std keyword implementation
 ///
@@ -209,7 +205,7 @@ void program::rpn_precision() {
         // modify digits seen by user if std mode
         if (number::s_mode == number::std) {
             // calc max nb of digits user can see with the current bit precision
-            number::s_digits = bits2digits(mpreal::get_default_prec());
+            number::s_digits = mpfr::bits2digits(mpreal::get_default_prec());
         }
         _stack.pop();
     } else {
@@ -223,7 +219,7 @@ void program::rpn_round() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    map<string, mpfr_rnd_t> matchRound{_mpfr_round};
+    map<string, mpfr_rnd_t> matchRound{MPFR_ROUND};
 
     auto found = matchRound.find(_stack.value<ostring>(0));
     if (found != matchRound.end())
