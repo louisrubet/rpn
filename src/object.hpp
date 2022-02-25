@@ -20,37 +20,36 @@ using std::complex;
 // definitions for objects
 ///
 typedef enum {
-    ret_ok,
-    ret_unknown_err,
-    ret_missing_operand,
-    ret_bad_operand_type,
-    ret_out_of_range,
-    ret_unknown_variable,
-    ret_internal,
-    ret_deadly,
-    ret_good_bye,
-    ret_not_impl,
-    ret_nop,
-    ret_syntax,
-    ret_div_by_zero,
-    ret_runtime_error,
-    ret_abort_current_entry,
-    ret_out_of_memory,
-    ret_bad_value,
-    ret_test_failed
-} ret_value;
+    kOk,
+    kUnknownError,
+    kMissingOperand,
+    kBadOperandType,
+    kOutOfRange,
+    kUnknownVariable,
+    kInternalError,
+    kDeadlyError,
+    kGoodbye,
+    kNotImplemented,
+    kNop,
+    kSyntaxError,
+    kDivByZero,
+    kRuntimeError,
+    kAbortCurrentEntry,
+    kOutOfMemory,
+    kBadValue,
+    kTestFailed
+} RetValue;
 
 typedef enum {
-    cmd_undef,
-    cmd_number,   // floating point number
-    cmd_complex,  // complex, couple of floating point numbers
-    cmd_string,   // "string"
-    cmd_symbol,   // 'symbol'
-    cmd_program,  // << instructions >> «instructions»
-    cmd_keyword,  // langage (reserved) keyword
-    cmd_branch,   // langage (reserved) branch keyword
-    cmd_max
-} cmd_type_t;
+    kUndef,
+    kNumber,   // 3.1416, 1e-1234, 0x12ab, 2b110, 50ba12
+    kComplex,  // (1,2)
+    kString,   // "string"
+    kSymbol,   // 'symbol'
+    kProgram,  // << instructions >> «instructions»
+    kKeyword,  // langage (reserved) keyword (rot, dup, swap ..)
+    kBranch    // langage (reserved) branch keyword (for, if, then ..)
+} ObjectType;
 
 class program;
 class Branch;
@@ -61,9 +60,9 @@ typedef size_t (program::*branch_fn_t)(Branch&);
 /// @brief Object - a generic stack object
 ///
 struct Object {
-    explicit Object(cmd_type_t type = cmd_undef) : _type(type) {}
+    explicit Object(ObjectType type = kUndef) : _type(type) {}
     virtual ~Object() {}
-    cmd_type_t _type;
+    ObjectType _type;
     virtual Object* clone() {
         Object* o = new Object();
         if (o != nullptr) *o = *this;
@@ -83,9 +82,9 @@ struct Object {
 /// @brief stack objects derived from Object
 ///
 struct Number : Object {
-    Number() : Object(cmd_number), base(10) {}
-    explicit Number(const mpreal& value_, int base_ = 10) : Object(cmd_number), base(base_), value(value_) {}
-    explicit Number(int value_, int base_ = 10) : Object(cmd_number), base(base_), value(value_) {}
+    Number() : Object(kNumber), base(10) {}
+    explicit Number(const mpreal& value_, int base_ = 10) : Object(kNumber), base(base_), value(value_) {}
+    explicit Number(int value_, int base_ = 10) : Object(kNumber), base(base_), value(value_) {}
 
     int base;
     mpreal value;
@@ -95,9 +94,9 @@ struct Number : Object {
     virtual ostream& show(ostream& out) { return showValue(out, value, s_mode, s_digits, base); }
 
     // representation mode
-    typedef enum { std, fix, sci } mode_enum;
+    typedef enum { kStd, kFix, kSci } mode_enum;
     static mode_enum s_mode;
-    static constexpr mode_enum DEFAULT_MODE = Number::std;
+    static constexpr mode_enum DEFAULT_MODE = Number::kStd;
 
     // precision
     static constexpr mpfr_prec_t MPFR_DEFAULT_PREC_BITS = 128;
@@ -109,9 +108,9 @@ struct Number : Object {
         stringstream format;
         format << "%." << digits;
         switch ( mode ) {
-            case std: format << "R*g"; break;
-            case fix: format << "R*f"; break;
-            case sci: format << "R*e"; break;
+            case kStd: format << "R*g"; break;
+            case kFix: format << "R*f"; break;
+            case kSci: format << "R*e"; break;
         }
         return format.str();
     }
@@ -128,13 +127,13 @@ struct Number : Object {
 /// @brief stack objects inheriting Object
 ///
 struct Complex : Object {
-    Complex() : Object(cmd_complex), reBase(10), imBase(10) {}
+    Complex() : Object(kComplex), reBase(10), imBase(10) {}
     explicit Complex(complex<mpreal>& value_, int reb = 10, int imb = 10)
-        : Object(cmd_complex), reBase(reb), imBase(imb) {
+        : Object(kComplex), reBase(reb), imBase(imb) {
         value = value_;
     }
     explicit Complex(mpreal& re_, mpreal& im_, int reb = 10, int imb = 10)
-        : Object(cmd_complex), reBase(reb), imBase(imb) {
+        : Object(kComplex), reBase(reb), imBase(imb) {
         value.real(re_);
         value.imag(im_);
     }
@@ -154,8 +153,8 @@ struct Complex : Object {
 };
 
 struct String : Object {
-    String() : Object(cmd_string) {}
-    explicit String(const string& value_) : Object(cmd_string), value(value_) {}
+    String() : Object(kString) {}
+    explicit String(const string& value_) : Object(kString), value(value_) {}
     virtual Object* clone() { return new String(value); }
     virtual string name() { return string("string"); }
     virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }
@@ -163,8 +162,8 @@ struct String : Object {
 };
 
 struct Program : Object {
-    Program() : Object(cmd_program) {}
-    explicit Program(const string& value_) : Object(cmd_program), value(value_) {}
+    Program() : Object(kProgram) {}
+    explicit Program(const string& value_) : Object(kProgram), value(value_) {}
     virtual Object* clone() { return new Program(value); }
     virtual string name() { return string("program"); }
     virtual ostream& show(ostream& out) { return out << "«" << value << "»"; }
@@ -172,9 +171,9 @@ struct Program : Object {
 };
 
 struct Symbol : Object {
-    explicit Symbol(bool autoEval_ = true) : Object(cmd_symbol), autoEval(autoEval_) {}
+    explicit Symbol(bool autoEval_ = true) : Object(kSymbol), autoEval(autoEval_) {}
     explicit Symbol(const string& value_, bool autoEval_ = true)
-        : Object(cmd_symbol), value(value_), autoEval(autoEval_) {}
+        : Object(kSymbol), value(value_), autoEval(autoEval_) {}
     virtual Object* clone() { return new Symbol(value, autoEval); }
     virtual string name() { return string("symbol"); }
     virtual ostream& show(ostream& out) { return out << "'" << value << "'"; }
@@ -183,8 +182,8 @@ struct Symbol : Object {
 };
 
 struct Keyword : Object {
-    Keyword() : Object(cmd_keyword) {}
-    explicit Keyword(program_fn_t fn_, const string& value_) : Object(cmd_keyword), fn(fn_), value(value_) {}
+    Keyword() : Object(kKeyword) {}
+    explicit Keyword(program_fn_t fn_, const string& value_) : Object(kKeyword), fn(fn_), value(value_) {}
     virtual Object* clone() { return new Keyword(fn, value); }
     virtual string name() { return string("keyword"); }
     program_fn_t fn;
@@ -192,8 +191,8 @@ struct Keyword : Object {
 };
 
 struct Branch : Object {
-    Branch() : Object(cmd_branch) {}
-    explicit Branch(branch_fn_t fn_, const string& value_) : Object(cmd_branch) {
+    Branch() : Object(kBranch) {}
+    explicit Branch(branch_fn_t fn_, const string& value_) : Object(kBranch) {
         fn = fn_;
         arg1 = static_cast<size_t>(-1);
         arg2 = static_cast<size_t>(-1);
@@ -201,7 +200,7 @@ struct Branch : Object {
         arg_bool = 0;
         value = value_;
     }
-    explicit Branch(Branch& other) : Object(cmd_branch) {
+    explicit Branch(Branch& other) : Object(kBranch) {
         fn = other.fn;
         arg1 = other.arg1;
         arg2 = other.arg2;

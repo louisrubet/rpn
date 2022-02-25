@@ -69,7 +69,7 @@ static void testShowResult(string title, int tests, int tests_failed, int steps,
 ///
 void program::rpn_test() {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_string);
+    ARG_MUST_BE_OF_TYPE(0, kString);
 
     int total_tests = 0;
     int total_tests_failed = 0;
@@ -84,7 +84,7 @@ void program::rpn_test() {
 
     // notify to caller that test succeeded or not
     if (total_tests_failed > 0) {
-        _err = ret_test_failed;
+        _err = kTestFailed;
         _err_context = string("rpn version ") + RPN_VERSION + ", test file " + test_filename;
     }
 }
@@ -113,7 +113,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
     if (test_file.is_open()) {
         string test_title;
         string entry;
-        ret_value ret;
+        RetValue ret;
         rpnstack stk;
         heap hp;
         bool failed = false;
@@ -246,7 +246,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 if (!entry.empty()) {
                     program prog(stk, hp);
                     ret = prog.parse(entry);
-                    if (ret == ret_ok) {
+                    if (ret == kOk) {
                         // run it
                         (void)prog.run();
                         last_err = static_cast<int>(prog.get_err());

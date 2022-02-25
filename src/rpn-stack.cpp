@@ -29,7 +29,7 @@ void program::rpn_drop2(void) {
 ///
 void program::rpn_dropn(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int args = static_cast<int>(_stack.value<Number>(0).toLong());
     MIN_ARGUMENTS(args + 1);
@@ -51,7 +51,7 @@ void program::rpn_dup(void) {
 ///
 void program::rpn_dupn(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int args = static_cast<int>(_stack.value<Number>(0).toLong());
     _stack.pop();
@@ -72,14 +72,14 @@ void program::rpn_dup2(void) {
 ///
 void program::rpn_pick(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int to_pick = static_cast<int>(_stack.value<Number>(0).toLong());
     _stack.pop();
 
     // treat stack depth errors
     if ((to_pick == 0) || (to_pick > _stack.size())) {
-        setErrorContext(ret_out_of_range);
+        setErrorContext(kOutOfRange);
         return;
     }
 
@@ -103,7 +103,7 @@ void program::rpn_depth(void) { _stack.push_front(new Number(_stack.size())); }
 ///
 void program::rpn_roll(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int args = static_cast<int>(_stack.value<Number>(0).toLong());
     _stack.pop();
@@ -118,7 +118,7 @@ void program::rpn_roll(void) {
 ///
 void program::rpn_rolld(void) {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int args = static_cast<int>(_stack.value<Number>(0).toLong());
     _stack.pop();

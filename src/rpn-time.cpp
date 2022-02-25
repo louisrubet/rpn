@@ -25,7 +25,7 @@ void program::rpn_time() {
         _stack.push(new Number(date));
         _stack.value<Number>(0) /= 10000000000.0;
     } else {
-        setErrorContext(ret_internal);
+        setErrorContext(kInternalError);
     }
 }
 
@@ -51,7 +51,7 @@ void program::rpn_date() {
         _stack.push(new Number(date));
         _stack.value<Number>(0) /= 1000000.0;
     } else {
-        setErrorContext(ret_internal);
+        setErrorContext(kInternalError);
     }
 }
 
@@ -71,6 +71,6 @@ void program::rpn_ticks() {
         date = 1000000.0 * static_cast<double>(ts.tv_sec) + static_cast<double>(ts.tv_nsec / 1000);
         _stack.push(new Number(date));
     } else {
-        setErrorContext(ret_internal);
+        setErrorContext(kInternalError);
     }
 }

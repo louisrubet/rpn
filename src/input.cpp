@@ -4,19 +4,19 @@
 
 #include <cstring>
 
-vector<string>* Input::_ac_list = nullptr;
+vector<string>* Input::ac_list_ = nullptr;
 
 Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, string multiline_prompt)
-    : status(cont) {
+    : status(InputStatus::kContinue) {
     char* c_entry = nullptr;
     bool multiline = false;
     int entry_len;
 
-    _ac_list = &autocompletion_list;
+    ac_list_ = &autocompletion_list;
 
     // linenoise for entry
     linenoiseSetCompletionCallback(entry_completion_generator);
-    while (status == cont) {
+    while (status == InputStatus::kContinue) {
         // get user entry
         if (multiline)
             c_entry = linenoise(multiline_prompt.c_str(), &entry_len);
@@ -26,9 +26,9 @@ Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, 
         // Ctrl-C
         if (linenoiseKeyType() == 1) {
             if (entry_len > 0 || multiline)
-                status = abort;
+                status = InputStatus::kAbort;
             else
-                status = ctrlc;
+                status = InputStatus::kCtrlc;
         } else if (linenoiseKeyType() == 3) {
             multiline = true;
             if (c_entry != nullptr) entry += c_entry;
@@ -38,9 +38,9 @@ Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, 
                 entry += c_entry;
                 // keep history
                 if (c_entry[0] != 0) (void)linenoiseHistoryAdd(entry.c_str());
-                status = ok;
+                status = InputStatus::kOk;
             } else {
-                status = error;
+                status = InputStatus::kError;
             }
         }
     }
@@ -54,16 +54,16 @@ Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, 
 /// @param lc the completion object to add strings with linenoiseAddCompletion()
 ///
 void Input::entry_completion_generator(const char* text, linenoiseCompletions* lc) {
-    if (Input::_ac_list == nullptr || text == nullptr) return;
+    if (Input::ac_list_ == nullptr || text == nullptr) return;
 
     int text_len = strnlen(text, 6);
 
     if (text_len == 0)
         // propose all keywords
-        for (string& ac : *Input::_ac_list) linenoiseAddCompletion(lc, ac.c_str());
+        for (string& ac : *Input::ac_list_) linenoiseAddCompletion(lc, ac.c_str());
     else
         // propose only keywords matching to text begining
-        for (string& ac : *Input::_ac_list)
+        for (string& ac : *Input::ac_list_)
             // compare list entry with text, return if match
             if (ac.compare(0, text_len, text) == 0) linenoiseAddCompletion(lc, ac.c_str());
 }

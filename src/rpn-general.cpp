@@ -40,7 +40,7 @@ void program::rpn_nop() {
 
 /// @brief quit keyword implementation
 ///
-void program::rpn_good_bye() { setErrorContext(ret_good_bye); }
+void program::rpn_good_bye() { setErrorContext(kGoodbye); }
 
 /// @brief nop keyword implementation
 /// the result is written on stdout
@@ -60,23 +60,23 @@ void program::rpn_help() {
     for (auto& kw : _keywords)
         if (!kw.comment.empty()) {
             // titles in bold
-            if (kw.type == cmd_undef) cout << ATTR_BOLD;
+            if (kw.type == kUndef) cout << ATTR_BOLD;
             // show title or keyword + comment
             cout << kw.name << '\t' << kw.comment << endl;
-            if (kw.type == cmd_undef) cout << ATTR_OFF;
+            if (kw.type == kUndef) cout << ATTR_OFF;
         }
     cout << endl;
 
     // show mode
     cout << "Current float mode is ";
     switch (Number::s_mode) {
-        case Number::std:
+        case Number::kStd:
             cout << "'std'";
             break;
-        case Number::fix:
+        case Number::kFix:
             cout << "'fix'";
             break;
-        case Number::sci:
+        case Number::kSci:
             cout << "'sci'";
             break;
         default:
@@ -108,17 +108,17 @@ static bool check_decimal_digits(int precision) { return precision >= 0; }
 ///
 void program::rpn_std() {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int digits = static_cast<int>(_stack.value<Number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
-        Number::s_mode = Number::std;
+        Number::s_mode = Number::kStd;
         Number::s_digits = digits;
         _stack.pop();
     } else {
-        setErrorContext(ret_out_of_range);
+        setErrorContext(kOutOfRange);
     }
 }
 
@@ -126,17 +126,17 @@ void program::rpn_std() {
 ///
 void program::rpn_fix() {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int digits = static_cast<int>(_stack.value<Number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
-        Number::s_mode = Number::fix;
+        Number::s_mode = Number::kFix;
         Number::s_digits = digits;
         _stack.pop();
     } else {
-        setErrorContext(ret_out_of_range);
+        setErrorContext(kOutOfRange);
     }
 }
 
@@ -144,17 +144,17 @@ void program::rpn_fix() {
 ///
 void program::rpn_sci() {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     int digits = static_cast<int>(_stack.value<Number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
-        Number::s_mode = Number::sci;
+        Number::s_mode = Number::kSci;
         Number::s_digits = digits;
         _stack.pop();
     } else {
-        setErrorContext(ret_out_of_range);
+        setErrorContext(kOutOfRange);
     }
 }
 
@@ -195,7 +195,7 @@ void program::rpn_default() { program::apply_default(); }
 ///
 void program::rpn_precision() {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     // set precision
     int prec = static_cast<int>(_stack.value<Number>(0).toLong());
@@ -203,13 +203,13 @@ void program::rpn_precision() {
         mpreal::set_default_prec(prec);
 
         // modify digits seen by user if std mode
-        if (Number::s_mode == Number::std) {
+        if (Number::s_mode == Number::kStd) {
             // calc max nb of digits user can see with the current bit precision
             Number::s_digits = mpfr::bits2digits(mpreal::get_default_prec());
         }
         _stack.pop();
     } else {
-        setErrorContext(ret_out_of_range);
+        setErrorContext(kOutOfRange);
     }
 }
 
@@ -217,7 +217,7 @@ void program::rpn_precision() {
 ///
 void program::rpn_round() {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_string);
+    ARG_MUST_BE_OF_TYPE(0, kString);
 
     map<string, mpfr_rnd_t> matchRound{MPFR_ROUND};
 
@@ -225,6 +225,6 @@ void program::rpn_round() {
     if (found != matchRound.end())
         mpreal::set_default_rnd(found->second);
     else
-        setErrorContext(ret_out_of_range);
+        setErrorContext(kOutOfRange);
     _stack.pop();
 }
