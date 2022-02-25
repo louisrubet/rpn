@@ -4,7 +4,7 @@
 
 /// @brief e keyword implementation
 ///
-void program::rpn_e(void) { _stack.push(new number(const_euler())); }
+void program::rpn_e(void) { _stack.push(new number(mpfr::const_euler())); }
 
 /// @brief log10 keyword implementation
 ///
@@ -35,9 +35,9 @@ void program::rpn_alog10() {
 void program::rpn_log2() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number)
-        _stack.value<number>(0) = log(_stack.value<number>(0)) / const_log2();
+        _stack.value<number>(0) = log(_stack.value<number>(0)) / mpfr::const_log2();
     else if (_stack.type(0) == cmd_complex)
-        _stack.value<ocomplex>(0) = log(_stack.value<ocomplex>(0)) / const_log2();
+        _stack.value<ocomplex>(0) = log(_stack.value<ocomplex>(0)) / mpfr::const_log2();
     else
         setErrorContext(ret_bad_operand_type);
 }
@@ -47,9 +47,9 @@ void program::rpn_log2() {
 void program::rpn_alog2() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number)
-        _stack.value<number>(0) = exp(const_log2() * _stack.value<number>(0));
+        _stack.value<number>(0) = exp(mpfr::const_log2() * _stack.value<number>(0));
     else if (_stack.type(0) == cmd_complex)
-        _stack.value<ocomplex>(0) = exp(const_log2() * _stack.value<ocomplex>(0));
+        _stack.value<ocomplex>(0) = exp(mpfr::const_log2() * _stack.value<ocomplex>(0));
     else
         setErrorContext(ret_bad_operand_type);
 }

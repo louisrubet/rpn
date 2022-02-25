@@ -1,21 +1,21 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
 #include <string>
-using namespace std;
+using std::string;
 
 #include "program.hpp"
 #include "version.h"
 
 // foreground colors
-static const string FG_RED = "\33[31m";
-static const string FG_GREEN = "\33[32m";
-static const string COLOR_OFF = "\33[m";
+static const char FG_RED[] = "\33[31m";
+static const char FG_GREEN[] = "\33[32m";
+static const char COLOR_OFF[] = "\33[m";
 
-static void _findAndReplaceAll(std::string& data, std::string toSearch, std::string replaceStr) {
+static void findAndReplaceAll(string& data, string toSearch, string replaceStr) {
     // Get the first occurrence
     size_t pos = data.find(toSearch);
     // Repeat till end is reached
-    while (pos != std::string::npos) {
+    while (pos != string::npos) {
         // Replace this occurrence of Sub String
         data.replace(pos, toSearch.size(), replaceStr);
         // Get the next occurrence from the current position
@@ -242,7 +242,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 failed = true;
             } else {
                 // parse entry and run line
-                _findAndReplaceAll(entry, "`", "");
+                findAndReplaceAll(entry, "`", "");
                 if (!entry.empty()) {
                     program prog(stk, hp);
                     ret = prog.parse(entry);
