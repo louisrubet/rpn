@@ -6,28 +6,28 @@
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_if(Branch& myobj) {
     // myobj.arg1 = 'if' condition evaluation value
-    MIN_ARGUMENTS_RET(1, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
+    MIN_ARGUMENTS_RET(1, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
 
     if (_stack.value<Number>(0) != 0)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
     _stack.pop();
-    return step_out;
+    return kStepOut;
 }
 
 /// @brief then keyword (branch) implementation
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort Branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort Branch
 ///
 size_t program::rpn_then(Branch& myobj) {
     // myobj.arg1 = index of then + 1
@@ -36,9 +36,9 @@ size_t program::rpn_then(Branch& myobj) {
     // if condition is true -> arg1 (= jump to then + 1)
     // else -> arg2 (= jump to else + 1 or end + 1)
     Branch* if_cmd;
-    if (myobj.arg3 >= size() || at(myobj.arg3)->_type != cmd_branch) {
-        setErrorContext(ret_missing_operand);
-        return runtime_error;
+    if (myobj.arg3 >= size() || at(myobj.arg3)->_type != kBranch) {
+        setErrorContext(kMissingOperand);
+        return kRtError;
     }
     if_cmd = reinterpret_cast<Branch*>(at(myobj.arg3));
     if (if_cmd->arg1 == 1)
@@ -51,8 +51,8 @@ size_t program::rpn_then(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_else(Branch& myobj) {
     // myobj.arg1 = index of else + 1
@@ -61,9 +61,9 @@ size_t program::rpn_else(Branch& myobj) {
     // if condition was false -> arg1 (= jump to else + 1)
     // if condition was true -> arg2 (= jump to end + 1)
     Branch* if_cmd;
-    if (myobj.arg3 >= size() || at(myobj.arg3)->_type != cmd_branch) {
-        setErrorContext(ret_missing_operand);
-        return runtime_error;
+    if (myobj.arg3 >= size() || at(myobj.arg3)->_type != kBranch) {
+        setErrorContext(kMissingOperand);
+        return kRtError;
     }
     if_cmd = reinterpret_cast<Branch*>(at(myobj.arg3));
     if (if_cmd->arg1 == 1)
@@ -76,22 +76,22 @@ size_t program::rpn_else(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_end(Branch& myobj) {
-    size_t ret = step_out;
+    size_t ret = kStepOut;
 
     // arg1 = index of do+1 in case of do..unti..end
     if (myobj.arg1 != -1) {
         // in a template do..until..end
-        MIN_ARGUMENTS_RET(1, runtime_error);
-        ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
+        MIN_ARGUMENTS_RET(1, kRtError);
+        ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
 
         // check arg
         if (_stack.value<Number>(0) == 0) ret = myobj.arg1;
         _stack.pop();
-    } else if (myobj.arg2 != step_out) {
+    } else if (myobj.arg2 != kStepOut) {
         // arg2 = index of while+1 in case of while..repeat..end
         ret = myobj.arg2;
     }
@@ -103,36 +103,36 @@ size_t program::rpn_end(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_do(Branch& myobj) {
     // nothing
-    return step_out;
+    return kStepOut;
 }
 
 /// @brief until keyword (branch) implementation
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort Branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort Branch
 ///
 size_t program::rpn_until(Branch& myobj) {
     // nothing
-    return step_out;
+    return kStepOut;
 }
 
 /// @brief ift keyword (branch) implementation
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 void program::rpn_ift(void) {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+    ARG_MUST_BE_OF_TYPE(1, kNumber);
 
     // check ift arg
     // arg is true if Number != 0 or if is nan or +/-inf
@@ -146,12 +146,12 @@ void program::rpn_ift(void) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 void program::rpn_ifte(void) {
     MIN_ARGUMENTS(3);
-    ARG_MUST_BE_OF_TYPE(2, cmd_number);
+    ARG_MUST_BE_OF_TYPE(2, kNumber);
 
     // check ifte arg
     if (_stack.value<Number>(2) != 0) {
@@ -167,26 +167,26 @@ void program::rpn_ifte(void) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_while(Branch& myobj) {
     // nothing
-    return step_out;
+    return kStepOut;
 }
 
 /// @brief repeat keyword (branch) implementation
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_repeat(Branch& myobj) {
-    size_t ret = step_out;
+    size_t ret = kStepOut;
 
-    MIN_ARGUMENTS_RET(1, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
+    MIN_ARGUMENTS_RET(1, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
 
     // check arg
     // myobj.arg1 is end+1
@@ -200,15 +200,15 @@ size_t program::rpn_repeat(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_start(Branch& myobj) {
-    size_t ret = step_out;
+    size_t ret = kStepOut;
 
-    MIN_ARGUMENTS_RET(2, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, runtime_error);
+    MIN_ARGUMENTS_RET(2, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(1, kNumber, kRtError);
 
     // loop boundaries
     myobj.firstIndex = _stack.value<Number>(1);
@@ -229,20 +229,20 @@ size_t program::rpn_start(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_for(Branch& myobj) {
     size_t ret;
 
-    MIN_ARGUMENTS_RET(2, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, runtime_error);
+    MIN_ARGUMENTS_RET(2, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(1, kNumber, kRtError);
 
     Symbol* sym;
-    if (myobj.arg1 >= size() || at(myobj.arg1)->_type != cmd_symbol) {
-        setErrorContext(ret_missing_operand);
-        return runtime_error;
+    if (myobj.arg1 >= size() || at(myobj.arg1)->_type != kSymbol) {
+        setErrorContext(kMissingOperand);
+        return kRtError;
     }
     sym = reinterpret_cast<Symbol*>(at(myobj.arg1));  // arg1 = loop variable index
 
@@ -276,16 +276,16 @@ size_t program::rpn_for(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_next(Branch& myobj) {
     // arg1 = loop variable index
     // firstIndex = current point in the loop
     Branch* start_or_for;
-    if (myobj.arg1 >= size() || at(myobj.arg1)->_type != cmd_branch) {
-        setErrorContext(ret_missing_operand);
-        return runtime_error;
+    if (myobj.arg1 >= size() || at(myobj.arg1)->_type != kBranch) {
+        setErrorContext(kMissingOperand);
+        return kRtError;
     }
     start_or_for = reinterpret_cast<Branch*>(at(myobj.arg1));
     if (!myobj.arg_bool) {
@@ -301,9 +301,9 @@ size_t program::rpn_next(Branch& myobj) {
     if (start_or_for->arg1 != -1) {
         Object* obj;
         Symbol* var;
-        if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != cmd_symbol) {
-            setErrorContext(ret_missing_operand);
-            return runtime_error;
+        if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != kSymbol) {
+            setErrorContext(kMissingOperand);
+            return kRtError;
         }
         var = reinterpret_cast<Symbol*>(at(start_or_for->arg1));
 
@@ -315,7 +315,7 @@ size_t program::rpn_next(Branch& myobj) {
     if (myobj.firstIndex > start_or_for->lastIndex) {
         // end of loop
         myobj.arg_bool = false;  // init again next time
-        return step_out;
+        return kStepOut;
     } else {
         // for command: next instruction will be after symbol variable
         if (start_or_for->arg1 != -1) return start_or_for->arg1 + 1;
@@ -329,27 +329,27 @@ size_t program::rpn_next(Branch& myobj) {
 ///
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
-/// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return kStepOut next object to run in the current program is current + 1
+/// @return kRtError something went wrong with preprocess, abort branch
 ///
 size_t program::rpn_step(Branch& myobj) {
     size_t ret;
-    MIN_ARGUMENTS_RET(1, runtime_error);
-    ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
+    MIN_ARGUMENTS_RET(1, kRtError);
+    ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
 
     mpreal step = _stack.value<Number>(0);
     _stack.pop();
 
     // end of loop if step is negative or zero
     if (step <= 0) {
-        ret = step_out;
+        ret = kStepOut;
     } else {
         // arg1 = loop variable index
         // firstIndex = current count
         Branch* start_or_for;
-        if (myobj.arg1 >= size() || at(myobj.arg1)->_type != cmd_branch) {
-            setErrorContext(ret_missing_operand);
-            return runtime_error;
+        if (myobj.arg1 >= size() || at(myobj.arg1)->_type != kBranch) {
+            setErrorContext(kMissingOperand);
+            return kRtError;
         }
         start_or_for = reinterpret_cast<Branch*>(at(myobj.arg1));
         if (!myobj.arg_bool) {
@@ -366,9 +366,9 @@ size_t program::rpn_step(Branch& myobj) {
             Symbol* var;
 
             // for command: increment symbol too
-            if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != cmd_symbol) {
-                setErrorContext(ret_missing_operand);
-                return runtime_error;
+            if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != kSymbol) {
+                setErrorContext(kMissingOperand);
+                return kRtError;
             }
             var = reinterpret_cast<Symbol*>(at(start_or_for->arg1));
             // increase symbol variable
@@ -379,7 +379,7 @@ size_t program::rpn_step(Branch& myobj) {
         if (myobj.firstIndex > start_or_for->lastIndex) {
             // end of loop
             myobj.arg_bool = false;  // init again next time
-            ret = step_out;
+            ret = kStepOut;
         } else {
             // for command: next instruction will be after symbol variable
             if (start_or_for->arg1 != -1) ret = start_or_for->arg1 + 1;

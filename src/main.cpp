@@ -94,16 +94,16 @@ int main(int argc, char* argv[]) {
             program prog(stack, heap);
             string entry;
             switch (Input(entry, program::getAutocompletionWords()).status) {
-                case Input::ok:
+                case Input::InputStatus::kOk:
                     // user could stop prog with CtrlC
                     CatchSignals(&prog);
                     // run it
-                    if (prog.parse(entry) == ret_ok && prog.run() == ret_good_bye)
+                    if (prog.parse(entry) == kOk && prog.run() == kGoodbye)
                         go_on = false;
                     else
                         prog.show_stack();
                     break;
-                case Input::ctrlc:
+                case Input::InputStatus::kCtrlc:
                     go_on = false;
                     break;
                 default:
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]) {
 
         // make program
         ret = prog.parse(entry);
-        if (ret == ret_ok) {
+        if (ret == kOk) {
             // user could stop prog with CtrlC
             CatchSignals(&prog);
 
@@ -137,6 +137,6 @@ int main(int argc, char* argv[]) {
 
     mpfr_free_cache();
 
-    if (ret != ret_ok) return EXIT_FAILURE;
+    if (ret != kOk) return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }

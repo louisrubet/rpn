@@ -32,7 +32,7 @@ class rpnstack : public deque<Object*> {
 
     // access helpers
     //
-    cmd_type_t type(int level) {
+    ObjectType type(int level) {
         // carefull: caller must ensure that level is correct
         return at(level)->_type;
     }

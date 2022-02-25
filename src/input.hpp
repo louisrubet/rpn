@@ -14,13 +14,13 @@ using std::vector;
 class Input {
  public:
     Input(string& entry, vector<string>& autocompletion_list, string prompt = "rpn> ", string multiline_prompt = ">");
-    enum { ok, cont, abort, ctrlc, error } status;
+    enum class InputStatus { kOk, kContinue, kAbort, kCtrlc, kError } status;
 
     static void preload(const char* preloadText);
 
  private:
     static void entry_completion_generator(const char* text, linenoiseCompletions* lc);
-    static vector<string>* _ac_list;
+    static vector<string>* ac_list_;
 };
 
 #endif  // SRC_INPUT_HPP_

@@ -19,14 +19,14 @@ static int CmpStringOnStackTop(rpnstack& stk) {
 ///
 void program::rpn_sup(void) {
     MIN_ARGUMENTS(2);
-    if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
+    if (_stack.type(0) == kNumber && _stack.type(1) == kNumber) {
         _stack.push_front(new Number(_stack.value<Number>(1) > _stack.value<Number>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
+    } else if (_stack.type(0) == kString && _stack.type(1) == kString) {
         _stack.push_front(new Number(CmpStringOnStackTop(_stack) == 1));
         _stack.erase(1, 2);
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 }
 
@@ -34,14 +34,14 @@ void program::rpn_sup(void) {
 ///
 void program::rpn_sup_eq(void) {
     MIN_ARGUMENTS(2);
-    if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
+    if (_stack.type(0) == kNumber && _stack.type(1) == kNumber) {
         _stack.push_front(new Number(_stack.value<Number>(1) >= _stack.value<Number>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
+    } else if (_stack.type(0) == kString && _stack.type(1) == kString) {
         _stack.push_front(new Number(CmpStringOnStackTop(_stack) != -1));
         _stack.erase(1, 2);
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 }
 
@@ -50,14 +50,14 @@ void program::rpn_sup_eq(void) {
 void program::rpn_inf(void) {
     MIN_ARGUMENTS(2);
 
-    if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
+    if (_stack.type(0) == kNumber && _stack.type(1) == kNumber) {
         _stack.push_front(new Number(_stack.value<Number>(1) < _stack.value<Number>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
+    } else if (_stack.type(0) == kString && _stack.type(1) == kString) {
         _stack.push_front(new Number(CmpStringOnStackTop(_stack) == -1));
         _stack.erase(1, 2);
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 }
 
@@ -65,14 +65,14 @@ void program::rpn_inf(void) {
 ///
 void program::rpn_inf_eq(void) {
     MIN_ARGUMENTS(2);
-    if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
+    if (_stack.type(0) == kNumber && _stack.type(1) == kNumber) {
         _stack.push_front(new Number(_stack.value<Number>(1) <= _stack.value<Number>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
+    } else if (_stack.type(0) == kString && _stack.type(1) == kString) {
         _stack.push_front(new Number(CmpStringOnStackTop(_stack) != 1));
         _stack.erase(1, 2);
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 }
 
@@ -80,17 +80,17 @@ void program::rpn_inf_eq(void) {
 ///
 void program::rpn_diff(void) {
     MIN_ARGUMENTS(2);
-    if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
+    if (_stack.type(0) == kNumber && _stack.type(1) == kNumber) {
         _stack.push_front(new Number(_stack.value<Number>(1) != _stack.value<Number>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
+    } else if (_stack.type(0) == kComplex && _stack.type(1) == kComplex) {
         _stack.push_front(new Number(_stack.value<Complex>(1) != _stack.value<Complex>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
+    } else if (_stack.type(0) == kString && _stack.type(1) == kString) {
         _stack.push_front(new Number(CmpStringOnStackTop(_stack) != 0));
         _stack.erase(1, 2);
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 }
 
@@ -98,17 +98,17 @@ void program::rpn_diff(void) {
 ///
 void program::rpn_eq(void) {
     MIN_ARGUMENTS(2);
-    if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
+    if (_stack.type(0) == kNumber && _stack.type(1) == kNumber) {
         _stack.push_front(new Number(_stack.value<Number>(1) == _stack.value<Number>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
+    } else if (_stack.type(0) == kComplex && _stack.type(1) == kComplex) {
         _stack.push_front(new Number(_stack.value<Complex>(1) == _stack.value<Complex>(0)));
         _stack.erase(1, 2);
-    } else if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
+    } else if (_stack.type(0) == kString && _stack.type(1) == kString) {
         _stack.push_front(new Number(CmpStringOnStackTop(_stack) == 0));
         _stack.erase(1, 2);
     } else {
-        setErrorContext(ret_bad_operand_type);
+        setErrorContext(kBadOperandType);
     }
 }
 
@@ -116,8 +116,8 @@ void program::rpn_eq(void) {
 ///
 void program::rpn_test_and(void) {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
+    ARG_MUST_BE_OF_TYPE(1, kNumber);
     if (_stack.value<Number>(0) != 0 && _stack.value<Number>(1) != 0)
         _stack.push(new Number(1));
     else
@@ -129,8 +129,8 @@ void program::rpn_test_and(void) {
 ///
 void program::rpn_test_or(void) {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
+    ARG_MUST_BE_OF_TYPE(1, kNumber);
     if (_stack.value<Number>(0) != 0 || _stack.value<Number>(1) != 0)
         _stack.push(new Number(1));
     else
@@ -142,8 +142,8 @@ void program::rpn_test_or(void) {
 ///
 void program::rpn_test_xor(void) {
     MIN_ARGUMENTS(2);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    ARG_MUST_BE_OF_TYPE(1, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
+    ARG_MUST_BE_OF_TYPE(1, kNumber);
     if (_stack.value<Number>(0) != 0 ^ _stack.value<Number>(1) != 0)
         _stack.push(new Number(1));
     else
@@ -155,7 +155,7 @@ void program::rpn_test_xor(void) {
 ///
 void program::rpn_test_not(void) {
     MIN_ARGUMENTS(1);
-    ARG_MUST_BE_OF_TYPE(0, cmd_number);
+    ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     _stack.push(new Number(_stack.value<Number>(0) == 0 ? 1 : 0));
     _stack.erase(1, 1);
