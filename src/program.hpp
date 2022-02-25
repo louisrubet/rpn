@@ -29,25 +29,23 @@ class program : public deque<Object*>, public Lexer {
     }
 
     // parser
-    RetValue parse(string& entry);
-    static RetValue get_fn(const char* fn_name, program_fn_t& fn, ObjectType& type);
+    RetValue Parse(string& entry);
 
     // running
-    RetValue run();
-    void stop();
-    RetValue preprocess(void);
+    RetValue Run();
+    RetValue Preprocess();
 
-    RetValue show_error();
-    RetValue show_error(RetValue err, string& context);
-    RetValue show_error(RetValue err, const char* context);
-    void show_syntax_error(const char* context);
-    RetValue get_err(void);
+    RetValue ShowError();
+    RetValue ShowError(RetValue err, string& context);
+    RetValue ShowError(RetValue err, const char* context);
+    void ShowSyntaxError(const char* context);
+    RetValue GetLastError(void);
 
-    void show_stack(bool show_separator = true);
+    void ShowStack(bool show_separator = true);
 
-    static void apply_default();
+    static void ApplyDefault();
 
-    static vector<string>& getAutocompletionWords();
+    static vector<string>& GetAutocompletionWords();
 
  private:
     // current error and its context
@@ -80,178 +78,177 @@ class program : public deque<Object*>, public Lexer {
     ////
 
     // branch
-    size_t rpn_if(Branch& myobj);
-    size_t rpn_then(Branch& myobj);
-    size_t rpn_else(Branch& myobj);
-    size_t rpn_end(Branch& myobj);
-    size_t rpn_do(Branch& myobj);
-    size_t rpn_until(Branch& myobj);
-    void rpn_ift(void);
-    void rpn_ifte(void);
-    size_t rpn_while(Branch& myobj);
-    size_t rpn_repeat(Branch& myobj);
-    size_t rpn_start(Branch& myobj);
-    size_t rpn_for(Branch& myobj);
-    size_t rpn_next(Branch& myobj);
-    size_t rpn_step(Branch& myobj);
+    size_t RpnIf(Branch& myobj);
+    size_t RpnThen(Branch& myobj);
+    size_t RpnElse(Branch& myobj);
+    size_t RpnEnd(Branch& myobj);
+    size_t RpnDo(Branch& myobj);
+    size_t RpnUntil(Branch& myobj);
+    void RpnIft(void);
+    void RpnIfte(void);
+    size_t RpnWhile(Branch& myobj);
+    size_t RpnRepeat(Branch& myobj);
+    size_t RpnStart(Branch& myobj);
+    size_t RpnFor(Branch& myobj);
+    size_t RpnNext(Branch& myobj);
+    size_t RpnStep(Branch& myobj);
     enum { kStepOut = static_cast<size_t>(-1), kRtError = static_cast<size_t>(-2) };
 
     // complex
-    void rpn_re();
-    void rpn_im();
-    void rpn_arg();
-    void rpn_conj();
-    void rpn_r2c();
-    void rpn_c2r();
-    void rpn_r2p();
-    void rpn_p2r();
+    void RpnReal();
+    void RpnImag();
+    void RpnArg();
+    void RpnConj();
+    void RpnR2c();
+    void RpnC2r();
+    void RpnR2p();
+    void RpnP2r();
 
     // general
-    void rpn_nop();
-    void rpn_good_bye();
-    void rpn_help();
-    void rpn_std();
-    void rpn_fix();
-    void rpn_sci();
-    void rpn_version();
-    void rpn_uname();
-    void rpn_history();
-    void rpn_type();
-    void rpn_default();
-    void rpn_precision();
-    void rpn_round();
+    void RpnNop();
+    void RpnQuit();
+    void RpnHelp();
+    void RpnStd();
+    void RpnFix();
+    void RpnSci();
+    void RpnVersion();
+    void RpnUname();
+    void RpnHistory();
+    void RpnType();
+    void RpnDefault();
+    void RpnPrecision();
+    void RpnRound();
 
     // logs
-    void rpn_e(void);
-    void rpn_log10();
-    void rpn_alog10();
-    void rpn_log2();
-    void rpn_alog2();
-    void rpn_ln();
-    void rpn_exp();
-    void rpn_expm();
-    void rpn_lnp1();
-    void rpn_sinh();
-    void rpn_asinh();
-    void rpn_cosh();
-    void rpn_acosh();
-    void rpn_tanh();
-    void rpn_atanh();
+    void RpnE(void);
+    void RpnLog10();
+    void RpnAlog10();
+    void RpnLog2();
+    void RpnAlog2();
+    void RpnLn();
+    void RpnExp();
+    void RpnExpm();
+    void RpnLnp1();
+    void RpnSinh();
+    void RpnAsinh();
+    void RpnCosh();
+    void RpnAcosh();
+    void RpnTanh();
+    void RpnAtanh();
 
     // program
-    bool find_variable(string& variable, Object*& obj);
-    void rpn_eval(void);
-    int rpn_inprog(Branch& inprog_obj);
+    bool FindVariable(string& variable, Object*& obj);
+    void RpnEval(void);
+    int RpnInprog(Branch& inprog_obj);
 
     // real
-    void rpn_plus();
-    void rpn_minus();
-    void rpn_mul();
-    void do_divide_complexes();
-    void rpn_div();
-    void rpn_neg();
-    void rpn_inv();
-    void rpn_purcent();
-    void rpn_purcentCH();
-    void rpn_power();
-    void rpn_squareroot();
-    void rpn_square();
-    void rpn_modulo();
-    void rpn_abs();
-    void rpn_hex();
-    void rpn_bin();
-    void rpn_dec();
-    void rpn_base();
-    void rpn_fact();
-    void rpn_sign();
-    void rpn_mant();
-    void rpn_xpon();
-    void rpn_floor();
-    void rpn_ceil();
-    void rpn_fp();
-    void rpn_ip();
-    void rpn_min();
-    void rpn_max();
+    void RpnPlus();
+    void RpnMinus();
+    void RpnMul();
+    void RpnDiv();
+    void RpnNeg();
+    void RpnInv();
+    void RpnPurcent();
+    void RpnPurcentCH();
+    void RpnPower();
+    void RpnSquareroot();
+    void RpnSquare();
+    void RpnModulo();
+    void RpnAbs();
+    void RpnHex();
+    void RpnBin();
+    void RpnDec();
+    void RpnBase();
+    void RpnFact();
+    void RpnSign();
+    void RpnMant();
+    void RpnXpon();
+    void RpnFloor();
+    void RpnCeil();
+    void RpnFp();
+    void RpnIp();
+    void RpnMin();
+    void RpnMax();
 
     // stack
-    void rpn_swap(void);
-    void rpn_drop(void);
-    void rpn_drop2(void);
-    void rpn_dropn(void);
-    void rpn_erase(void);
-    void rpn_dup(void);
-    void rpn_dup2(void);
-    void rpn_dupn(void);
-    void rpn_pick(void);
-    void rpn_rot(void);
-    void rpn_depth(void);
-    void rpn_roll(void);
-    void rpn_rolld(void);
-    void rpn_over(void);
+    void RpnSwap(void);
+    void RpnDrop(void);
+    void RpnDrop2(void);
+    void RpnDropn(void);
+    void RpnErase(void);
+    void RpnDup(void);
+    void RpnDup2(void);
+    void RpnDupn(void);
+    void RpnPick(void);
+    void RpnRot(void);
+    void RpnDepth(void);
+    void RpnRoll(void);
+    void RpnRolld(void);
+    void RpnOver(void);
 
     // store
-    void rpn_sto(void);
-    void rpn_stoadd(void);
-    void rpn_stosub(void);
-    void rpn_stomul(void);
-    void rpn_stodiv(void);
-    void rpn_stoneg(void);
-    void rpn_stoinv(void);
-    void rpn_rcl(void);
-    void rpn_edit(void);
-    void auto_rcl(Symbol* symb);
-    void rpn_purge(void);
-    void rpn_vars(void);
-    void rpn_clusr(void);
+    void RpnSto(void);
+    void RpnStoadd(void);
+    void RpnStosub(void);
+    void RpnStomul(void);
+    void RpnStodiv(void);
+    void RpnStoneg(void);
+    void RpnStoinv(void);
+    void RpnRcl(void);
+    void RpnEdit(void);
+    void AutoRcl(Symbol* symb);
+    void RpnPurge(void);
+    void RpnVars(void);
+    void RpnClusr(void);
 
     // string
-    void rpn_instr();
-    void rpn_strout();
-    void rpn_chr();
-    void rpn_num();
-    void rpn_strsize();
-    void rpn_strpos();
-    void rpn_strsub();
+    void RpnInstr();
+    void RpnStrout();
+    void RpnChr();
+    void RpnNum();
+    void RpnStrsize();
+    void RpnStrpos();
+    void RpnStrsub();
 
     // test-core
-    void rpn_test();
-    void test(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
+    void RpnTest();
+    void RunTestFile(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
               int& total_steps_failed);
 
     // test
-    void rpn_sup(void);
-    void rpn_sup_eq(void);
-    void rpn_inf(void);
-    void rpn_inf_eq(void);
-    void rpn_diff(void);
-    void rpn_eq(void);
-    void rpn_test_and(void);
-    void rpn_test_or(void);
-    void rpn_test_xor(void);
-    void rpn_test_not(void);
-    void rpn_same(void);
+    void RpnSup(void);
+    void RpnSupEq(void);
+    void RpnInf(void);
+    void RpnInfEq(void);
+    void RpnDiff(void);
+    void RpnEq(void);
+    void RpnTestAnd(void);
+    void RpnTestOr(void);
+    void RpnTestXor(void);
+    void RpnTestNot(void);
+    void RpnSame(void);
 
     // trig
-    void rpn_pi(void);
-    void rpn_d2r(void);
-    void rpn_r2d(void);
-    void rpn_sin(void);
-    void rpn_asin(void);
-    void rpn_cos(void);
-    void rpn_acos(void);
-    void rpn_tan(void);
-    void rpn_atan(void);
+    void RpnPi(void);
+    void RpnD2r(void);
+    void RpnR2d(void);
+    void RpnSin(void);
+    void RpnAsin(void);
+    void RpnCos(void);
+    void RpnAcos(void);
+    void RpnTan(void);
+    void RpnAtan(void);
 
     // time
-    void rpn_time();
-    void rpn_date();
-    void rpn_ticks();
+    void RpnTime();
+    void RpnDate();
+    void RpnTicks();
 };
 
 // convenience macros for rpn_xx function
 // carefull : some of these macros modify program flow
 
-#define setErrorContext(err)         \
+#define ERROR_CONTEXT(err)         \
     do {                             \
         err_ = (err);                \
         err_context_ = __FUNCTION__; \
@@ -260,7 +257,7 @@ class program : public deque<Object*>, public Lexer {
 #define MIN_ARGUMENTS(num)                         \
     do {                                           \
         if ((num) >= 0 && stack_.size() < (num)) { \
-            setErrorContext(kMissingOperand);      \
+            ERROR_CONTEXT(kMissingOperand);      \
             return;                                \
         }                                          \
     } while (0)
@@ -268,7 +265,7 @@ class program : public deque<Object*>, public Lexer {
 #define MIN_ARGUMENTS_RET(num, ret)                \
     do {                                           \
         if ((num) >= 0 && stack_.size() < (num)) { \
-            setErrorContext(kMissingOperand);      \
+            ERROR_CONTEXT(kMissingOperand);      \
             return (ret);                          \
         }                                          \
     } while (0)
@@ -276,7 +273,7 @@ class program : public deque<Object*>, public Lexer {
 #define ARG_MUST_BE_OF_TYPE(num, type)                       \
     do {                                                     \
         if ((num) >= 0 && stack_.at(num)->_type != (type)) { \
-            setErrorContext(kBadOperandType);                \
+            ERROR_CONTEXT(kBadOperandType);                \
             return;                                          \
         }                                                    \
     } while (0)
@@ -284,7 +281,7 @@ class program : public deque<Object*>, public Lexer {
 #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)              \
     do {                                                     \
         if ((num) >= 0 && stack_.at(num)->_type != (type)) { \
-            setErrorContext(kBadOperandType);                \
+            ERROR_CONTEXT(kBadOperandType);                \
             return (ret);                                    \
         }                                                    \
     } while (0)

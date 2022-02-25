@@ -18,7 +18,7 @@ static void ExitInteractive() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
-        history_path << pw->pw_dir << "/.rpn_history";
+        history_path << pw->pw_dir << "/.RpnHistory";
 
         // trunc current history
         ofstream history(history_path.str(), ios_base::out | ios_base::trunc);
@@ -38,7 +38,7 @@ static void EnterInteractive() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
-        history_path << pw->pw_dir << "/.rpn_history";
+        history_path << pw->pw_dir << "/.RpnHistory";
 
         // don't care about errors
         linenoiseHistorySetMaxLen(100);
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     bool go_on = true;
 
     // apply default configuration
-    program::apply_default();
+    program::ApplyDefault();
 
     // run with interactive prompt
     if (argc == 1) {
@@ -93,15 +93,15 @@ int main(int argc, char* argv[]) {
             // make program from interactive entry
             program prog(stack, heap);
             string entry;
-            switch (Input(entry, program::getAutocompletionWords()).status) {
+            switch (Input(entry, program::GetAutocompletionWords()).status) {
                 case Input::InputStatus::kOk:
                     // user could stop prog with CtrlC
                     CatchSignals(&prog);
                     // run it
-                    if (prog.parse(entry) == kOk && prog.run() == kGoodbye)
+                    if (prog.Parse(entry) == kOk && prog.Run() == kGoodbye)
                         go_on = false;
                     else
-                        prog.show_stack();
+                        prog.ShowStack();
                     break;
                 case Input::InputStatus::kCtrlc:
                     go_on = false;
@@ -124,14 +124,14 @@ int main(int argc, char* argv[]) {
         for (i = 1; i < argc; i++) entry += string(argv[i]) + ' ';
 
         // make program
-        ret = prog.parse(entry);
+        ret = prog.Parse(entry);
         if (ret == kOk) {
             // user could stop prog with CtrlC
             CatchSignals(&prog);
 
             // run it
-            ret = prog.run();
-            prog.show_stack(false);
+            ret = prog.Run();
+            prog.ShowStack(false);
         }
     }
 

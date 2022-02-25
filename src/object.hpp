@@ -10,10 +10,7 @@ using mpfr::mpreal;
 #include <ostream>
 #include <sstream>
 #include <string>
-using std::complex;
-using std::ostream;
-using std::string;
-using std::stringstream;
+using std::complex, std::ostream, std::string, std::stringstream;
 
 #include "mpreal-out.hpp"
 
@@ -63,20 +60,18 @@ struct Object {
     explicit Object(ObjectType type = kUndef) : _type(type) {}
     virtual ~Object() {}
     ObjectType _type;
-    virtual Object* clone() {
+    virtual Object* Clone() {
         Object* o = new Object();
         if (o != nullptr) *o = *this;
         return o;
     }
 
-    virtual string name() { return string("Object"); }
-    virtual ostream& show(ostream& out) {
-        out << "(" << name() << " - unknown representation)";
+    virtual string Name() { return string("Object"); }
+    virtual ostream& Show(ostream& out) {
+        out << "(" << Name() << " - unknown representation)";
         return out;
     }
-    friend ostream& operator<<(ostream& os, Object* o) { return o->show(os); }
-
-    unsigned int size() { return sizeof(*this); }
+    friend ostream& operator<<(ostream& os, Object* o) { return o->Show(os); }
 };
 
 /// @brief stack objects derived from Object
@@ -89,14 +84,14 @@ struct Number : Object {
     int base;
     mpreal value;
 
-    virtual Object* clone() { return new Number(value, base); }
-    virtual string name() { return string("number"); }
-    virtual ostream& show(ostream& out) { return showValue(out, value, mode, digits, base); }
+    virtual Object* Clone() { return new Number(value, base); }
+    virtual string Name() { return string("number"); }
+    virtual ostream& Show(ostream& out) { return ShowValue(out, value, mode, digits, base); }
 
     // representation mode
     typedef enum { kStd, kFix, kSci } mode_enum;
     static mode_enum mode;
-    static constexpr mode_enum DEFAULT_MODE = Number::kStd;
+    static constexpr mode_enum kDefaultMode = Number::kStd;
 
     // precision
     static constexpr mpfr_prec_t kMpfrDefaultPrecBits = 128;
@@ -104,7 +99,7 @@ struct Number : Object {
     static int digits;
 
     // clang-format off
-    static string _makeNumberFormat(mode_enum mode, int digits) {
+    static string MakeNumberFormat(mode_enum mode, int digits) {
         stringstream format;
         format << "%." << digits;
         switch ( mode ) {
@@ -116,9 +111,9 @@ struct Number : Object {
     }
     // clang-format on
 
-    static ostream& showValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
+    static ostream& ShowValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
         if (base == 10)
-            return MprealOutput10Base(out, _makeNumberFormat(mode, digits), value);
+            return MprealOutput10Base(out, MakeNumberFormat(mode, digits), value);
         else
             return MprealOutputNBase(out, base, value);
     }
@@ -141,13 +136,13 @@ struct Complex : Object {
     int re_base, im_base;
     complex<mpreal> value;
 
-    virtual Object* clone() { return new Complex(value, re_base, im_base); }
-    virtual string name() { return string("complex"); }
-    virtual ostream& show(ostream& out) {
+    virtual Object* Clone() { return new Complex(value, re_base, im_base); }
+    virtual string Name() { return string("complex"); }
+    virtual ostream& Show(ostream& out) {
         out << '(';
-        Number::showValue(out, value.real(), Number::mode, Number::digits, re_base);
+        Number::ShowValue(out, value.real(), Number::mode, Number::digits, re_base);
         out << ',';
-        Number::showValue(out, value.imag(), Number::mode, Number::digits, im_base);
+        Number::ShowValue(out, value.imag(), Number::mode, Number::digits, im_base);
         return out << ')';
     }
 };
@@ -155,18 +150,18 @@ struct Complex : Object {
 struct String : Object {
     String() : Object(kString) {}
     explicit String(const string& value__) : Object(kString), value(value__) {}
-    virtual Object* clone() { return new String(value); }
-    virtual string name() { return string("string"); }
-    virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }
+    virtual Object* Clone() { return new String(value); }
+    virtual string Name() { return string("string"); }
+    virtual ostream& Show(ostream& out) { return out << "\"" << value << "\""; }
     string value;
 };
 
 struct Program : Object {
     Program() : Object(kProgram) {}
     explicit Program(const string& value__) : Object(kProgram), value(value__) {}
-    virtual Object* clone() { return new Program(value); }
-    virtual string name() { return string("program"); }
-    virtual ostream& show(ostream& out) { return out << "«" << value << "»"; }
+    virtual Object* Clone() { return new Program(value); }
+    virtual string Name() { return string("program"); }
+    virtual ostream& Show(ostream& out) { return out << "«" << value << "»"; }
     string value;
 };
 
@@ -174,9 +169,9 @@ struct Symbol : Object {
     explicit Symbol(bool auto_eval__ = true) : Object(kSymbol), auto_eval(auto_eval__) {}
     explicit Symbol(const string& value__, bool auto_eval__ = true)
         : Object(kSymbol), value(value__), auto_eval(auto_eval__) {}
-    virtual Object* clone() { return new Symbol(value, auto_eval); }
-    virtual string name() { return string("symbol"); }
-    virtual ostream& show(ostream& out) { return out << "'" << value << "'"; }
+    virtual Object* Clone() { return new Symbol(value, auto_eval); }
+    virtual string Name() { return string("symbol"); }
+    virtual ostream& Show(ostream& out) { return out << "'" << value << "'"; }
     bool auto_eval;
     string value;
 };
@@ -184,8 +179,8 @@ struct Symbol : Object {
 struct Keyword : Object {
     Keyword() : Object(kKeyword) {}
     explicit Keyword(program_fn_t fn__, const string& value__) : Object(kKeyword), fn(fn__), value(value__) {}
-    virtual Object* clone() { return new Keyword(fn, value); }
-    virtual string name() { return string("keyword"); }
+    virtual Object* Clone() { return new Keyword(fn, value); }
+    virtual string Name() { return string("keyword"); }
     program_fn_t fn;
     string value;
 };
@@ -208,8 +203,8 @@ struct Branch : Object {
         arg_bool = other.arg_bool;
         value = other.value;
     }
-    virtual Object* clone() { return new Branch(*this); }
-    virtual string name() { return string("branch"); }
+    virtual Object* Clone() { return new Branch(*this); }
+    virtual string Name() { return string("branch"); }
     branch_fn_t fn;
     size_t arg1, arg2, arg3;
     mpreal first_index, last_index;
