@@ -5,7 +5,7 @@
 
 /// @brief sto keyword implementation
 ///
-void program::rpn_sto(void) {
+void program::RpnSto(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
 
@@ -15,113 +15,113 @@ void program::rpn_sto(void) {
         delete it->second;
         heap_.erase(it);
     }
-    heap_[stack_.value<String>(0)] = stack_.at(1)->clone();
+    heap_[stack_.value<String>(0)] = stack_.at(1)->Clone();
     stack_.erase(0, 2);
 }
 
 /// @brief sto+ keyword implementation
 ///
-void program::rpn_stoadd(void) {
+void program::RpnStoadd(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
         return;
     }
-    rpn_dup();
-    rpn_rcl();  // TODO(louis) is rcl the good one? it will recall local variables too
-    rpn_rot();
-    rpn_plus();
-    rpn_swap();
-    rpn_sto();
+    RpnDup();
+    RpnRcl();  // TODO(louis) is rcl the good one? it will recall local variables too
+    RpnRot();
+    RpnPlus();
+    RpnSwap();
+    RpnSto();
 }
 
 /// @brief sto- keyword implementation
 ///
-void program::rpn_stosub(void) {
+void program::RpnStosub(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
         return;
     }
-    rpn_dup();
-    rpn_rcl();
-    rpn_rot();
-    rpn_minus();
-    rpn_swap();
-    rpn_sto();
+    RpnDup();
+    RpnRcl();
+    RpnRot();
+    RpnMinus();
+    RpnSwap();
+    RpnSto();
 }
 
 /// @brief sto* keyword implementation
 ///
-void program::rpn_stomul(void) {
+void program::RpnStomul(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
         return;
     }
-    rpn_dup();
-    rpn_rcl();
-    rpn_rot();
-    rpn_mul();
-    rpn_swap();
-    rpn_sto();
+    RpnDup();
+    RpnRcl();
+    RpnRot();
+    RpnMul();
+    RpnSwap();
+    RpnSto();
 }
 
 /// @brief sto/ keyword implementation
 ///
-void program::rpn_stodiv(void) {
+void program::RpnStodiv(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
         return;
     }
-    rpn_dup();
-    rpn_rcl();
-    rpn_rot();
-    rpn_div();
-    rpn_swap();
-    rpn_sto();
+    RpnDup();
+    RpnRcl();
+    RpnRot();
+    RpnDiv();
+    RpnSwap();
+    RpnSto();
 }
 
 /// @brief stosneg keyword implementation
 ///
-void program::rpn_stoneg(void) {
+void program::RpnStoneg(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
         return;
     }
-    rpn_dup();
-    rpn_rcl();
-    rpn_neg();
-    rpn_swap();
-    rpn_sto();
+    RpnDup();
+    RpnRcl();
+    RpnNeg();
+    RpnSwap();
+    RpnSto();
 }
 
 /// @brief sinv keyword implementation
 ///
-void program::rpn_stoinv(void) {
+void program::RpnStoinv(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
         return;
     }
-    rpn_dup();
-    rpn_rcl();
-    rpn_inv();
-    rpn_swap();
-    rpn_sto();
+    RpnDup();
+    RpnRcl();
+    RpnInv();
+    RpnSwap();
+    RpnSto();
 }
 
 /// @brief rcl keyword implementation
 ///
-void program::rpn_rcl(void) {
+void program::RpnRcl(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
 
@@ -130,53 +130,53 @@ void program::rpn_rcl(void) {
     string variable(stack_.value<Symbol>(0));
 
     // mind the order of heaps
-    if (find_variable(variable, obj)) {
+    if (FindVariable(variable, obj)) {
         (void)stack_.pop();
-        stack_.push_front(obj->clone());
+        stack_.push_front(obj->Clone());
     } else {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
     }
 }
 
 /// @brief edit keyword implementation
 ///
-void program::rpn_edit(void) {
+void program::RpnEdit(void) {
     MIN_ARGUMENTS(1);
 
     ostringstream st;
 
     // re-write stack_ objet in a stream
-    stack_.at(0)->show(st);
+    stack_.at(0)->Show(st);
     stack_.pop();
 
     // set it as the linenoise line entry
-    Input::preload(st.str().c_str());
+    Input::Preload(st.str().c_str());
 }
 
 /// @brief recall then eval a symbol variable if it is auto-evaluable
 ///
 /// @param symb the smlbol to recall and autoeval
 ///
-void program::auto_rcl(Symbol* symb) {
+void program::AutoRcl(Symbol* symb) {
     if (symb->auto_eval) {
         Object* obj;
         string variable(symb->value);
 
         // mind the order of heaps
-        if (find_variable(variable, obj)) {
-            stack_.push_front(obj->clone());
-            if (obj->_type == kProgram) rpn_eval();
+        if (FindVariable(variable, obj)) {
+            stack_.push_front(obj->Clone());
+            if (obj->_type == kProgram) RpnEval();
         } else {
-            stack_.push_front(symb->clone());
+            stack_.push_front(symb->Clone());
         }
     } else {
-        stack_.push_front(symb->clone());
+        stack_.push_front(symb->Clone());
     }
 }
 
 /// @brief purge keyword implementation
 ///
-void program::rpn_purge(void) {
+void program::RpnPurge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
 
@@ -185,14 +185,14 @@ void program::rpn_purge(void) {
         delete i->second;
         heap_.erase(i);
     } else {
-        setErrorContext(kUnknownVariable);
+        ERROR_CONTEXT(kUnknownVariable);
     }
     stack_.pop();
 }
 
 /// @brief vars keyword implementation
 ///
-void program::rpn_vars(void) {
+void program::RpnVars(void) {
     Object* obj;
     program* parent = parent_;
     string name;
@@ -200,21 +200,21 @@ void program::rpn_vars(void) {
 
     // heap variables
     for (auto i : heap_) {
-        cout << "var " << index++ << ": name '" << i.first << "', type " << i.second->name() << ", value ";
-        i.second->show(cout) << endl;
+        cout << "var " << index++ << ": name '" << i.first << "', type " << i.second->Name() << ", value ";
+        i.second->Show(cout) << endl;
     }
 
     // local variables
     for (auto i : local_heap_) {
-        cout << "var " << index++ << ": name '" << i.first << "', type " << i.second->name() << ", value ";
-        i.second->show(cout) << endl;
+        cout << "var " << index++ << ": name '" << i.first << "', type " << i.second->Name() << ", value ";
+        i.second->Show(cout) << endl;
     }
 
     // parents local variables
     while (parent != nullptr) {
         for (auto i : parent->local_heap_) {
-            cout << "parent var " << index++ << ": name '" << i.first << "', type " << i.second->name() << ", value ";
-            obj->show(cout) << endl;
+            cout << "parent var " << index++ << ": name '" << i.first << "', type " << i.second->Name() << ", value ";
+            obj->Show(cout) << endl;
         }
         parent = parent->parent_;
     }
@@ -222,4 +222,4 @@ void program::rpn_vars(void) {
 
 /// @brief clusr keyword implementation
 ///
-void program::rpn_clusr(void) { heap_.clear(); }
+void program::RpnClusr(void) { heap_.clear(); }

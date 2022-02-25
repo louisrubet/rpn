@@ -11,7 +11,7 @@ static const char FG_RED[] = "\33[31m";
 static const char FG_GREEN[] = "\33[32m";
 static const char COLOR_OFF[] = "\33[m";
 
-static void findAndReplaceAll(string& data, string toSearch, string replaceStr) {
+static void FindAndReplaceAll(string& data, string toSearch, string replaceStr) {
     // Get the first occurrence
     size_t pos = data.find(toSearch);
     // Repeat till end is reached
@@ -28,17 +28,17 @@ static void findAndReplaceAll(string& data, string toSearch, string replaceStr) 
 /// @param stack_is the output string
 /// @param stk the stack
 ///
-static void getStackAsString(string& stack_is, rpnstack& stk) {
+static void GetStackAsString(string& stack_is, rpnstack& stk) {
     ostringstream st;
     if (stk.empty()) {
         stack_is.clear();
         return;
     }
-    stk[stk.size() - 1]->show(st);
+    stk[stk.size() - 1]->Show(st);
     stack_is += st.str();
     for (int i = static_cast<int>(stk.size()) - 2; i >= 0; i--) {
         ostringstream st;
-        stk[i]->show(st);
+        stk[i]->Show(st);
         stack_is += ", " + st.str();
     }
 }
@@ -51,7 +51,7 @@ static void getStackAsString(string& stack_is, rpnstack& stk) {
 /// @param steps steps nb
 /// @param steps_failed failed steps nb
 ///
-static void testShowResult(string title, int tests, int tests_failed, int steps, int steps_failed) {
+static void ShowTestResult(string title, int tests, int tests_failed, int steps, int steps_failed) {
     if (!title.empty()) cout << title << ": ";
     cout << "run " << tests << " tests: " << tests - tests_failed << " passed, ";
     if (tests_failed > 0) cout << FG_RED;
@@ -67,7 +67,7 @@ static void testShowResult(string title, int tests, int tests_failed, int steps,
 
 /// @brief test keyword implementation
 ///
-void program::rpn_test() {
+void program::RpnTest() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 
@@ -79,8 +79,8 @@ void program::rpn_test() {
     string test_filename = stack_.value<String>(0);
     stack_.pop();
     cout << endl << "rpn version is " << RPN_VERSION << endl;
-    test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
-    testShowResult("\nTotal", total_tests, total_tests_failed, total_steps, total_steps_failed);
+    RunTestFile(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
+    ShowTestResult("\nTotal", total_tests, total_tests_failed, total_steps, total_steps_failed);
 
     // notify to caller that test succeeded or not
     if (total_tests_failed > 0) {
@@ -97,7 +97,7 @@ void program::rpn_test() {
 /// @param total_steps the total steps nb
 /// @param total_steps_failed the total failed steps nb
 ///
-void program::test(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
+void program::RunTestFile(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
                    int& total_steps_failed) {
     const string stack_size("-> stack size should be ");
     const string stack_value("-> stack should be ");
@@ -131,7 +131,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
             if (entry.empty()) continue;
 
             if (entry.substr(0, 8) == "@include") {
-                test(entry.substr(9), total_tests, total_tests_failed, total_steps, total_steps_failed);
+                RunTestFile(entry.substr(9), total_tests, total_tests_failed, total_steps, total_steps_failed);
             } else if (entry.substr(0, 2) == "# ") {
                 cout << endl << test_filename << ": " << entry.substr(2) << endl;
             } else if (entry.substr(0, 3) == "## ") {
@@ -179,7 +179,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 string stack_should_be = entry.substr(stack_value.size());
                 string stack_is;
 
-                getStackAsString(stack_is, stk);
+                GetStackAsString(stack_is, stk);
 
                 if (stack_is != stack_should_be) {
                     // count fail test and step
@@ -242,14 +242,14 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
                 failed = true;
             } else {
                 // parse entry and run line
-                findAndReplaceAll(entry, "`", "");
+                FindAndReplaceAll(entry, "`", "");
                 if (!entry.empty()) {
                     program prog(stk, hp);
-                    ret = prog.parse(entry);
+                    ret = prog.Parse(entry);
                     if (ret == kOk) {
                         // run it
-                        (void)prog.run();
-                        last_err = static_cast<int>(prog.get_err());
+                        (void)prog.Run();
+                        last_err = static_cast<int>(prog.GetLastError());
                     }
                 }
             }
@@ -264,7 +264,7 @@ void program::test(string test_filename, int& total_tests, int& total_tests_fail
 
         // conclusion: show and keep for total
         if (tests != 0) {
-            testShowResult("", tests, tests_failed, steps, steps_failed);
+            ShowTestResult("", tests, tests_failed, steps, steps_failed);
 
             total_tests += tests;
             total_tests_failed += tests_failed;

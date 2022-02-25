@@ -21,14 +21,7 @@ Changelog
   - cpplint used with a CPPLINT.cfg removing some warnings
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap
-- it seems cosh was giving sinh  (!)
-
-grosse perte en performances (!)
-- v2.3.2 fibo: 0,01s user 0,01s system 97% cpu 0,017 total
-- v3.0.0 fibo: 2,60s user 0,00s system 99% cpu 2,611 total
-- facteur 150 environ
-cf https://gmplib.org/manual/Custom-Allocation
-cf https://www.geeksforgeeks.org/overloading-new-delete-operator-c/
+- error string are slightly different, althought error codes are still the same
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid

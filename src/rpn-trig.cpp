@@ -4,13 +4,13 @@
 
 /// @brief pi keyword implementation
 ///
-void program::rpn_pi(void) {
+void program::RpnPi(void) {
     stack_.push_front(new Number(mpfr::const_pi()));
 }
 
 /// @brief d->r keyword implementation
 ///
-void program::rpn_d2r(void) {
+void program::RpnD2r(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) *= mpfr::const_pi();
@@ -19,7 +19,7 @@ void program::rpn_d2r(void) {
 
 /// @brief r->d keyword implementation
 ///
-void program::rpn_r2d(void) {
+void program::RpnR2d(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) /= mpfr::const_pi();
@@ -28,72 +28,72 @@ void program::rpn_r2d(void) {
 
 /// @brief sin keyword implementation
 ///
-void program::rpn_sin(void) {
+void program::RpnSin(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = sin(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = sin(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief asin keyword implementation
 ///
-void program::rpn_asin(void) {
+void program::RpnAsin(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = asin(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = asin(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief cos keyword implementation
 ///
-void program::rpn_cos(void) {
+void program::RpnCos(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = cos(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = cos(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief acos keyword implementation
 ///
-void program::rpn_acos(void) {
+void program::RpnAcos(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = acos(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = acos(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief tan keyword implementation
 ///
-void program::rpn_tan(void) {
+void program::RpnTan(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = tan(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = tan(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief atan keyword implementation
 ///
-void program::rpn_atan(void) {
+void program::RpnAtan(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = atan(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = atan(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
