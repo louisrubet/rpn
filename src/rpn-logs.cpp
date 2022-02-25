@@ -4,172 +4,172 @@
 
 /// @brief e keyword implementation
 ///
-void program::rpn_e(void) { stack_.push(new Number(mpfr::const_euler())); }
+void program::RpnE(void) { stack_.push(new Number(mpfr::const_euler())); }
 
 /// @brief log10 keyword implementation
 ///
-void program::rpn_log10() {
+void program::RpnLog10() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log10(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = log10(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief alog10 keyword implementation
 ///
-void program::rpn_alog10() {
+void program::RpnAlog10() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(log(mpreal(10)) * stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = exp(log(mpreal(10)) * stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief log2 keyword implementation
 ///
-void program::rpn_log2() {
+void program::RpnLog2() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log(stack_.value<Number>(0)) / mpfr::const_log2();
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = log(stack_.value<Complex>(0)) / mpfr::const_log2();
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief alog2 keyword implementation
 ///
-void program::rpn_alog2() {
+void program::RpnAlog2() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(mpfr::const_log2() * stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = exp(mpfr::const_log2() * stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief ln keyword implementation
 ///
-void program::rpn_ln() {
+void program::RpnLn() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = log(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief exp keyword implementation
 ///
-void program::rpn_exp() {
+void program::RpnExp() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = exp(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief expm keyword implementation
 ///
-void program::rpn_expm() {
+void program::RpnExpm() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(stack_.value<Number>(0)) - mpreal(1);
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = exp(stack_.value<Complex>(0)) - mpreal(1);
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief lnp1 keyword implementation
 ///
-void program::rpn_lnp1() {
+void program::RpnLnp1() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log(stack_.value<Number>(0) + 1);
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = log(stack_.value<Complex>(0) + mpreal(1));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief sinh keyword implementation
 ///
-void program::rpn_sinh() {
+void program::RpnSinh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = sinh(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = sinh(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief asinh keyword implementation
 ///
-void program::rpn_asinh() {
+void program::RpnAsinh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = asinh(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = asinh(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief cosh keyword implementation
 ///
-void program::rpn_cosh() {
+void program::RpnCosh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = cosh(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = cosh(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief acosh keyword implementation
 ///
-void program::rpn_acosh() {
+void program::RpnAcosh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = acosh(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = acosh(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief tanh keyword implementation
 ///
-void program::rpn_tanh() {
+void program::RpnTanh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = tanh(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = tanh(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }
 
 /// @brief atanh keyword implementation
 ///
-void program::rpn_atanh() {
+void program::RpnAtanh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = atanh(stack_.value<Number>(0));
     else if (stack_.type(0) == kComplex)
         stack_.value<Complex>(0) = atanh(stack_.value<Complex>(0));
     else
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
 }

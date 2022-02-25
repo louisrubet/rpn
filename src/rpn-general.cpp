@@ -3,9 +3,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
-using std::cout;
-using std::string;
-using std::pair;
+using std::cout, std::string, std::pair;
 
 #include "linenoise.h"
 #include "program.hpp"
@@ -34,18 +32,18 @@ static const char _syntax[] = ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\nwith
 
 /// @brief nop keyword implementation
 ///
-void program::rpn_nop() {
+void program::RpnNop() {
     // nop
 }
 
 /// @brief quit keyword implementation
 ///
-void program::rpn_good_bye() { setErrorContext(kGoodbye); }
+void program::RpnQuit() { ERROR_CONTEXT(kGoodbye); }
 
 /// @brief nop keyword implementation
 /// the result is written on stdout
 ///
-void program::rpn_help() {
+void program::RpnHelp() {
     // software name
     cout << endl << ATTR_BOLD << RPN_UNAME << ATTR_OFF << endl;
 
@@ -106,7 +104,7 @@ static bool check_decimal_digits(int precision) { return precision >= 0; }
 
 /// @brief std keyword implementation
 ///
-void program::rpn_std() {
+void program::RpnStd() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -118,13 +116,13 @@ void program::rpn_std() {
         Number::digits = digits;
         stack_.pop();
     } else {
-        setErrorContext(kOutOfRange);
+        ERROR_CONTEXT(kOutOfRange);
     }
 }
 
 /// @brief fix keyword implementation
 ///
-void program::rpn_fix() {
+void program::RpnFix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -136,13 +134,13 @@ void program::rpn_fix() {
         Number::digits = digits;
         stack_.pop();
     } else {
-        setErrorContext(kOutOfRange);
+        ERROR_CONTEXT(kOutOfRange);
     }
 }
 
 /// @brief sci keyword implementation
 ///
-void program::rpn_sci() {
+void program::RpnSci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -154,21 +152,21 @@ void program::rpn_sci() {
         Number::digits = digits;
         stack_.pop();
     } else {
-        setErrorContext(kOutOfRange);
+        ERROR_CONTEXT(kOutOfRange);
     }
 }
 
 /// @brief _version keyword implementation
 ///
-void program::rpn_version() { stack_.push_front(new String(RPN_VERSION)); }
+void program::RpnVersion() { stack_.push_front(new String(RPN_VERSION)); }
 
 /// @brief _uname keyword implementation
 ///
-void program::rpn_uname() { stack_.push_front(new String(RPN_UNAME)); }
+void program::RpnUname() { stack_.push_front(new String(RPN_UNAME)); }
 
 /// @brief history keyword implementation
 ///
-void program::rpn_history() {
+void program::RpnHistory() {
     // see command history on stdout
     int index = 0;
     char* line = linenoiseHistoryLine(index);
@@ -181,19 +179,19 @@ void program::rpn_history() {
 
 /// @brief type keyword implementation
 ///
-void program::rpn_type() {
+void program::RpnType() {
     MIN_ARGUMENTS(1);
-    stack_.push(new String(stack_.at(0)->name()));
+    stack_.push(new String(stack_.at(0)->Name()));
     stack_.erase(1);
 }
 
 /// @brief default keyword implementation
 ///
-void program::rpn_default() { program::apply_default(); }
+void program::RpnDefault() { program::ApplyDefault(); }
 
 /// @brief prec keyword implementation
 ///
-void program::rpn_precision() {
+void program::RpnPrecision() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -209,13 +207,13 @@ void program::rpn_precision() {
         }
         stack_.pop();
     } else {
-        setErrorContext(kOutOfRange);
+        ERROR_CONTEXT(kOutOfRange);
     }
 }
 
 /// @brief round keyword implementation
 ///
-void program::rpn_round() {
+void program::RpnRound() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 
@@ -225,6 +223,6 @@ void program::rpn_round() {
     if (found != matchRound.end())
         mpreal::set_default_rnd(found->second);
     else
-        setErrorContext(kOutOfRange);
+        ERROR_CONTEXT(kOutOfRange);
     stack_.pop();
 }

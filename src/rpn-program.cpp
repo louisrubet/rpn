@@ -9,7 +9,7 @@
 /// @return true variable was found
 /// @return false variable was not found
 ///
-bool program::find_variable(string& variable, Object*& obj) {
+bool program::FindVariable(string& variable, Object*& obj) {
     bool found = false;
     program* parent = parent_;
 
@@ -33,7 +33,7 @@ bool program::find_variable(string& variable, Object*& obj) {
 
 /// @brief eval keyword implementation
 ///
-void program::rpn_eval(void) {
+void program::RpnEval(void) {
     bool run_prog = false;
     string prog_text;
 
@@ -45,7 +45,7 @@ void program::rpn_eval(void) {
         stack_.pop();
 
         // if variable holds a program, run this program
-        if (find_variable(variable, obj)) {
+        if (FindVariable(variable, obj)) {
             if (obj->_type == kProgram) {
                 prog_text = stack_.value<Program>(0);
                 stack_.pop();
@@ -55,7 +55,7 @@ void program::rpn_eval(void) {
                 stack_.push_front(obj);
             }
         } else {
-            setErrorContext(kUnknownVariable);
+            ERROR_CONTEXT(kUnknownVariable);
         }
     } else if (stack_.type(0) == kProgram) {
         // eval a program
@@ -63,7 +63,7 @@ void program::rpn_eval(void) {
         stack_.pop();
         run_prog = true;
     } else {
-        setErrorContext(kBadOperandType);
+        ERROR_CONTEXT(kBadOperandType);
     }
 
     // run prog if any
@@ -71,22 +71,22 @@ void program::rpn_eval(void) {
         program prog(stack_, heap_, this);
 
         // make program from entry
-        if (prog.parse(prog_text) == kOk) {
+        if (prog.Parse(prog_text) == kOk) {
             // run it
-            prog.run();
+            prog.Run();
         }
     }
 }
 
 /// @brief -> keyword (Branch) implementation
 ///
-int program::rpn_inprog(Branch& inprog_obj) {
+int program::RpnInprog(Branch& inprog_obj) {
     string context("->");  // for showing errors
     int count_symbols = 0;
     bool prog_found = false;
 
     if (inprog_obj.arg1 == -1) {
-        setErrorContext(kUnknownError);
+        ERROR_CONTEXT(kUnknownError);
         return -1;
     }
 
@@ -104,36 +104,36 @@ int program::rpn_inprog(Branch& inprog_obj) {
             break;
         } else {
             // found something other than symbol
-            setErrorContext(kBadOperandType);
-            show_error(err_, context);
+            ERROR_CONTEXT(kBadOperandType);
+            ShowError(err_, context);
             return -1;
         }
     }
 
     // found 0 symbols
     if (count_symbols == 0) {
-        setErrorContext(kSyntaxError);
-        show_error(err_, context);
+        ERROR_CONTEXT(kSyntaxError);
+        ShowError(err_, context);
         return -1;
     }
 
     // <program> is missing
     if (!prog_found) {
-        setErrorContext(kSyntaxError);
-        show_error(err_, context);
+        ERROR_CONTEXT(kSyntaxError);
+        ShowError(err_, context);
         return -1;
     }
 
     // check symbols Number vs stack_ size
     if (stack_.size() < count_symbols) {
-        setErrorContext(kMissingOperand);
-        show_error(err_, context);
+        ERROR_CONTEXT(kMissingOperand);
+        ShowError(err_, context);
         return -1;
     }
 
     // load variables
     for (unsigned int i = inprog_obj.arg1 + count_symbols; i > inprog_obj.arg1; i--) {
-        local_heap_[reinterpret_cast<Symbol*>(at(i))->value] = stack_.at(0)->clone();
+        local_heap_[reinterpret_cast<Symbol*>(at(i))->value] = stack_.at(0)->Clone();
         stack_.pop();
     }
 
@@ -142,9 +142,9 @@ int program::rpn_inprog(Branch& inprog_obj) {
     program prog(stack_, heap_, this);
 
     // make the program from entry
-    if (prog.parse(entry) == kOk) {
+    if (prog.Parse(entry) == kOk) {
         // run it
-        prog.run();
+        prog.Run();
     }
 
     // point on next command

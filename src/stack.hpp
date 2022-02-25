@@ -3,11 +3,11 @@
 #ifndef SRC_STACK_HPP_
 #define SRC_STACK_HPP_
 
-#include <algorithm>
 #include <deque>
 #include <map>
 #include <string>
-using namespace std;
+#include <algorithm>
+using std::deque, std::map, std::string;
 
 #include "object.hpp"
 

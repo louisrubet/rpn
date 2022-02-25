@@ -6,7 +6,7 @@
 
 /// @brief time keyword implementation
 ///
-void program::rpn_time() {
+void program::RpnTime() {
     struct timespec ts;
     struct tm* tm;
     double date;
@@ -25,13 +25,13 @@ void program::rpn_time() {
         stack_.push(new Number(date));
         stack_.value<Number>(0) /= 10000000000.0;
     } else {
-        setErrorContext(kInternalError);
+        ERROR_CONTEXT(kInternalError);
     }
 }
 
 /// @brief date keyword implementation
 ///
-void program::rpn_date() {
+void program::RpnDate() {
     struct timespec ts;
     struct tm* tm;
     double date;
@@ -51,13 +51,13 @@ void program::rpn_date() {
         stack_.push(new Number(date));
         stack_.value<Number>(0) /= 1000000.0;
     } else {
-        setErrorContext(kInternalError);
+        ERROR_CONTEXT(kInternalError);
     }
 }
 
 /// @brief ticks keyword implementation
 ///
-void program::rpn_ticks() {
+void program::RpnTicks() {
     struct timespec ts;
     struct tm* tm;
     double date;
@@ -71,6 +71,6 @@ void program::rpn_ticks() {
         date = 1000000.0 * static_cast<double>(ts.tv_sec) + static_cast<double>(ts.tv_nsec / 1000);
         stack_.push(new Number(date));
     } else {
-        setErrorContext(kInternalError);
+        ERROR_CONTEXT(kInternalError);
     }
 }

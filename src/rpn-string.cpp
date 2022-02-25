@@ -6,7 +6,7 @@
 
 /// @brief ->str keyword implementation
 ///
-void program::rpn_instr() {
+void program::RpnInstr() {
     MIN_ARGUMENTS(1);
 
     // stringify only if not already a string
@@ -20,7 +20,7 @@ void program::rpn_instr() {
 
 /// @brief str-> keyword implementation
 ///
-void program::rpn_strout() {
+void program::RpnStrout() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 
@@ -29,14 +29,14 @@ void program::rpn_strout() {
     stack_.pop();
 
     // make program from string in stack_ level 1
-    if (prog.parse(entry) == kOk)
+    if (prog.Parse(entry) == kOk)
         // run it
-        prog.run();
+        prog.Run();
 }
 
 /// @brief chr keyword implementation
 ///
-void program::rpn_chr() {
+void program::RpnChr() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     char the_chr = static_cast<char>(stack_.value<Number>(0).toLong());
@@ -47,7 +47,7 @@ void program::rpn_chr() {
 
 /// @brief num keyword implementation
 ///
-void program::rpn_num() {
+void program::RpnNum() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
     if (stack_.value<String>(0).size() > 0)
@@ -59,7 +59,7 @@ void program::rpn_num() {
 
 /// @brief size keyword implementation
 ///
-void program::rpn_strsize() {
+void program::RpnStrsize() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
     stack_.push_front(new Number(stack_.value<String>(0).size()));
@@ -68,7 +68,7 @@ void program::rpn_strsize() {
 
 /// @brief pos keyword implementation
 ///
-void program::rpn_strpos() {
+void program::RpnStrpos() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kString);
     ARG_MUST_BE_OF_TYPE(1, kString);
@@ -80,7 +80,7 @@ void program::rpn_strpos() {
 
 /// @brief sub keyword implementation
 ///
-void program::rpn_strsub() {
+void program::RpnStrsub() {
     MIN_ARGUMENTS(3);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);

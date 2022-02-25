@@ -15,7 +15,7 @@ Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, 
     ac_list_ = &autocompletion_list;
 
     // linenoise for entry
-    linenoiseSetCompletionCallback(entry_completion_generator);
+    linenoiseSetCompletionCallback(EntryCompletionGenerator);
     while (status == InputStatus::kContinue) {
         // get user entry
         if (multiline)
@@ -53,7 +53,7 @@ Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, 
 /// @param text the text after wich the user entered TAB
 /// @param lc the completion object to add strings with linenoiseAddCompletion()
 ///
-void Input::entry_completion_generator(const char* text, linenoiseCompletions* lc) {
+void Input::EntryCompletionGenerator(const char* text, linenoiseCompletions* lc) {
     if (Input::ac_list_ == nullptr || text == nullptr) return;
 
     int text_len = strnlen(text, 6);
@@ -68,6 +68,6 @@ void Input::entry_completion_generator(const char* text, linenoiseCompletions* l
             if (ac.compare(0, text_len, text) == 0) linenoiseAddCompletion(lc, ac.c_str());
 }
 
-void Input::preload(const char* preloadText) {
+void Input::Preload(const char* preloadText) {
     if (preloadText != nullptr) linenoisePreloadBuffer(preloadText);
 }

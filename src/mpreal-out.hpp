@@ -8,8 +8,7 @@ using mpfr::mpreal;
 
 #include <string>
 #include <ostream>
-using std::string;
-using std::ostream;
+using std::string, std::ostream;
 
 ostream& MprealOutput10Base(ostream& out, const string& fmt, const mpreal& value);
 ostream& MprealOutputNBase(ostream& out, int base, const mpreal& value);

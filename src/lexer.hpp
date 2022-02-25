@@ -7,11 +7,9 @@
 using mpfr::mpreal;
 
 #include <map>
-#include <vector>
 #include <string>
-using std::map;
-using std::string;
-using std::vector;
+#include <vector>
+using std::map, std::string, std::vector;
 
 #include "object.hpp"
 
@@ -49,27 +47,27 @@ class Lexer {
     /// @param[in] keywords reserved keywords
     /// @return false=errors, the lexer must stop
     ///
-    bool lexer(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
-               vector<SynError>& errors);
+    bool Analyse(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
+                 vector<SynError>& errors);
 
  private:
-    bool parseString(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+    bool ParseString(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                      vector<SynElement>& elements);
-    bool parseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+    bool ParseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                      vector<SynElement>& elements);
-    bool parseProgram(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+    bool ParseProgram(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                       vector<SynElement>& elements);
-    bool parseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+    bool ParseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                      vector<SynElement>& elements);
-    bool parseComplex(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+    bool ParseComplex(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                       vector<SynElement>& elements);
-    bool parseReserved(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements,
+    bool ParseReserved(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements,
                        map<string, ReservedWord>& keywords);
-    bool parseUnknown(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements);
+    bool ParseUnknown(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements);
 
-    void trim(string& s);
-    int getBaseAt(string& entry, size_t& next_idx, bool& positive);
-    bool getNumberAt(string& entry, size_t idx, size_t& next_idx, int& base, mpreal** r, char delim = ' ');
+    void Trim(string& s);
+    int GetBaseAt(string& entry, size_t& next_idx, bool& positive);
+    bool GetNUmberAt(string& entry, size_t idx, size_t& next_idx, int& base, mpreal** r, char delim = ' ');
 };
 
 #endif  // SRC_LEXER_HPP_
