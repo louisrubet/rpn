@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "mpreal-out.hpp"
+#include "mpreal-out.h"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(h, i) ((h) > (i) ? (h) : (i))
@@ -33,7 +33,7 @@
 #define MPFR_IS_POS(x) (MPFR_SIGN(x) > 0)
 #define MPFR_PREC(x) ((x)->_mpfr_prec)
 
-ostream& mpreal_output10base(ostream& out, const string& fmt, const mpreal& value) {
+ostream& MprealOutput10Base(ostream& out, const string& fmt, const mpreal& value) {
     // cf std::ostream& mpreal::output(std::ostream& os) const
     char* s = NULL;
     if (!(mpfr_asprintf(&s, fmt.c_str(), mpreal::get_default_rnd(), value.mpfr_srcptr()) < 0)) {
@@ -195,7 +195,7 @@ ostream& _out_number(ostream& out, int base, const mpreal& value) {
     return out;
 }
 
-ostream& mpreal_outputNbase(ostream& out, int base, const mpreal& value) {
+ostream& MprealOutputNBase(ostream& out, int base, const mpreal& value) {
     // see mpfr_vasprintf code
     int digits = 0;  // forced 0 digits after separator
 
