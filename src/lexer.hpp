@@ -23,10 +23,10 @@ class Lexer {
         string value;
         mpreal* re;
         mpreal* im;
-        int reBase;
-        int imBase;
+        int re_base;
+        int im_base;
         program_fn_t fn;
-        bool autoEval;
+        bool auto_eval;
     };
 
     struct SynError {

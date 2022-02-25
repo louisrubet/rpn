@@ -3,7 +3,7 @@
 #include "program.hpp"
 
 //< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
-vector<program::keyword_t> program::_keywords{
+vector<program::keyword_t> program::keywords_{
     // GENERAL
     {kUndef, "", nullptr, "\nGENERAL"},
     {kKeyword, "nop", &program::rpn_nop, "no operation"},
@@ -207,7 +207,7 @@ vector<program::keyword_t> program::_keywords{
 vector<string>& program::getAutocompletionWords() {
     static vector<string> autocompletion_words;
     if (autocompletion_words.empty())
-        for (auto& kw : _keywords)
+        for (auto& kw : keywords_)
             if (!kw.name.empty()) autocompletion_words.push_back(kw.name);
     return autocompletion_words;
 }
@@ -221,15 +221,15 @@ RetValue program::run() {
     RetValue ret = kOk;
     ObjectType type;
 
-    _err = kOk;
-    _err_context = "";
+    err_ = kOk;
+    err_context_ = "";
 
     // branches for 'if'
     ret = preprocess();
     if (ret != kOk) {
         // free allocated
         for (Object* o : *this) delete o;
-        _local_heap.clear();
+        local_heap_.clear();
         return ret;
     }
 
@@ -248,7 +248,7 @@ RetValue program::run() {
                 Keyword* k = reinterpret_cast<Keyword*>(o);
                 // call the matching function
                 (this->*(k->fn))();
-                switch (_err) {
+                switch (err_) {
                     // no pb -> go on
                     case kOk:
                         break;
@@ -262,10 +262,10 @@ RetValue program::run() {
                         go_out = true;
 
                         // test error: make rpn return EXIT_FAILURE
-                        if (_err == kTestFailed) ret = kTestFailed;
+                        if (err_ == kTestFailed) ret = kTestFailed;
 
                         // error: show it
-                        if (show_error(_err, _err_context) == kDeadlyError)
+                        if (show_error(err_, err_context_) == kDeadlyError)
                             // pb showing error -> go out software
                             ret = kGoodbye;
                         break;
@@ -284,7 +284,7 @@ RetValue program::run() {
                         i++;        // meaning 'next command'
                         break;
                     case kRtError:  // runtime error
-                        (void)show_error(_err, _err_context);
+                        (void)show_error(err_, err_context_);
                         go_out = true;
                         break;
                     default:
@@ -297,7 +297,7 @@ RetValue program::run() {
             default:
                 // not a command, but a stack entry, manage it
                 // copy the program stack entry to the running stack
-                _stack.push_front(o->clone());
+                stack_.push_front(o->clone());
                 i++;
                 break;
         }
@@ -305,7 +305,7 @@ RetValue program::run() {
 
     // free allocated
     for (Object* o : *this) delete o;
-    _local_heap.clear();
+    local_heap_.clear();
 
     return ret;
 }
@@ -571,7 +571,7 @@ RetValue program::parse(string& entry) {
 
     // prepare map for finding reserved keywords
     if (keywords_map.empty())
-        for (auto& kw : _keywords)
+        for (auto& kw : keywords_)
             if (!kw.name.empty()) keywords_map[kw.name] = {kw.type, kw.fn};
 
     // separate the entry string
@@ -580,16 +580,16 @@ RetValue program::parse(string& entry) {
         for (Lexer::SynElement& element : elements) {
             switch (element.type) {
                 case kNumber:
-                    push_back(new Number(*element.re, element.reBase));
+                    push_back(new Number(*element.re, element.re_base));
                     break;
                 case kComplex:
-                    push_back(new Complex(*element.re, *element.im, element.reBase, element.imBase));
+                    push_back(new Complex(*element.re, *element.im, element.re_base, element.im_base));
                     break;
                 case kString:
                     push_back(new String(element.value));
                     break;
                 case kSymbol:
-                    push_back(new Symbol(element.value, element.autoEval));
+                    push_back(new Symbol(element.value, element.auto_eval));
                     break;
                 case kProgram:
                     push_back(new Program(element.value));
@@ -632,8 +632,8 @@ RetValue program::show_error() {
         {kBadValue, "bad value"}, {kTestFailed, "test failed"}
     };
     // clang-format on
-    cerr << _err_context << ": error " << _err << ": " << errorStrings[_err] << endl;
-    switch (_err) {
+    cerr << err_context_ << ": error " << err_ << ": " << errorStrings[err_] << endl;
+    switch (err_) {
         case kInternalError:
         case kDeadlyError:
             ret = kDeadlyError;
@@ -652,8 +652,8 @@ RetValue program::show_error() {
 ///
 RetValue program::show_error(RetValue err, string& context) {
     // record error
-    _err = err;
-    _err_context = context;
+    err_ = err;
+    err_context_ = context;
     return show_error();
 }
 
@@ -665,8 +665,8 @@ RetValue program::show_error(RetValue err, string& context) {
 ///
 RetValue program::show_error(RetValue err, const char* context) {
     // record error
-    _err = err;
-    _err_context = context;
+    err_ = err;
+    err_context_ = context;
     return show_error();
 }
 
@@ -678,8 +678,8 @@ RetValue program::show_error(RetValue err, const char* context) {
 ///
 void program::show_syntax_error(const char* context) {
     // record error
-    _err = kSyntaxError;
-    _err_context = context;
+    err_ = kSyntaxError;
+    err_context_ = context;
     (void)show_error();
 }
 
@@ -687,7 +687,7 @@ void program::show_syntax_error(const char* context) {
 ///
 /// @return RetValue see this type
 ///
-RetValue program::get_err(void) { return _err; }
+RetValue program::get_err(void) { return err_; }
 
 /// @brief show a stack (show its different objects)
 /// generally a stack is associated to a running program
@@ -695,12 +695,12 @@ RetValue program::get_err(void) { return _err; }
 /// @param show_separator whether to show a stack level prefix or not
 ///
 void program::show_stack(bool show_separator) {
-    if (_stack.size() == 1) {
-        cout << _stack[0] << endl;
+    if (stack_.size() == 1) {
+        cout << stack_[0] << endl;
     } else {
-        for (int i = _stack.size() - 1; i >= 0; i--) {
+        for (int i = stack_.size() - 1; i >= 0; i--) {
             if (show_separator) cout << i + 1 << "> ";
-            cout << _stack[i] << endl;
+            cout << stack_[i] << endl;
         }
     }
 }
@@ -709,9 +709,9 @@ void program::show_stack(bool show_separator) {
 ///
 void program::apply_default() {
     // default float precision, float mode
-    Number::s_mode = Number::DEFAULT_MODE;
-    Number::s_digits = Number::DEFAULT_DECIMAL_DIGITS;
-    mpreal::set_default_prec(Number::MPFR_DEFAULT_PREC_BITS);
+    Number::mode = Number::DEFAULT_MODE;
+    Number::digits = Number::kDefaultDecimalDigits;
+    mpreal::set_default_prec(Number::kMpfrDefaultPrecBits);
 
     static mp_rnd_t def_rnd = mpreal::get_default_rnd();
     mpreal::set_default_rnd(def_rnd);

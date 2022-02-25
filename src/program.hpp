@@ -21,9 +21,10 @@ using mpfr::mpreal;
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<Object*>, public Lexer {
  public:
-    program(rpnstack& stk, heap& hp, program* parent = nullptr) : _stack(stk), _heap(hp), _parent(parent) {}
+    program(rpnstack& stack__, heap& heap__, program* parent__ = nullptr)
+        : stack_(stack__), heap_(heap__), parent_(parent__) {}
     virtual ~program() {
-        _local_heap.clear();
+        local_heap_.clear();
         clear();
     }
 
@@ -50,20 +51,20 @@ class program : public deque<Object*>, public Lexer {
 
  private:
     // current error and its context
-    RetValue _err;
-    string _err_context;
+    RetValue err_;
+    string err_context_;
 
     // global stack holding results for user
-    rpnstack& _stack;
+    rpnstack& stack_;
 
     // global heap (sto, rcl)
-    heap& _heap;
+    heap& heap_;
 
     // local heap for local loop variables (for..next)
-    heap _local_heap;
+    heap local_heap_;
 
     // parent prog for inheriting heaps
-    program* _parent;
+    program* parent_;
 
  private:
     // keywords
@@ -73,7 +74,7 @@ class program : public deque<Object*>, public Lexer {
         program_fn_t fn;
         string comment;
     };
-    static vector<keyword_t> _keywords;
+    static vector<keyword_t> keywords_;
 
     // keywords implementation
     ////
@@ -252,38 +253,38 @@ class program : public deque<Object*>, public Lexer {
 
 #define setErrorContext(err)         \
     do {                             \
-        _err = (err);                \
-        _err_context = __FUNCTION__; \
+        err_ = (err);                \
+        err_context_ = __FUNCTION__; \
     } while (0)
 
 #define MIN_ARGUMENTS(num)                         \
     do {                                           \
-        if ((num) >= 0 && _stack.size() < (num)) { \
-            setErrorContext(kMissingOperand);  \
+        if ((num) >= 0 && stack_.size() < (num)) { \
+            setErrorContext(kMissingOperand);      \
             return;                                \
         }                                          \
     } while (0)
 
 #define MIN_ARGUMENTS_RET(num, ret)                \
     do {                                           \
-        if ((num) >= 0 && _stack.size() < (num)) { \
-            setErrorContext(kMissingOperand);  \
+        if ((num) >= 0 && stack_.size() < (num)) { \
+            setErrorContext(kMissingOperand);      \
             return (ret);                          \
         }                                          \
     } while (0)
 
 #define ARG_MUST_BE_OF_TYPE(num, type)                       \
     do {                                                     \
-        if ((num) >= 0 && _stack.at(num)->_type != (type)) { \
-            setErrorContext(kBadOperandType);           \
+        if ((num) >= 0 && stack_.at(num)->_type != (type)) { \
+            setErrorContext(kBadOperandType);                \
             return;                                          \
         }                                                    \
     } while (0)
 
 #define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)              \
     do {                                                     \
-        if ((num) >= 0 && _stack.at(num)->_type != (type)) { \
-            setErrorContext(kBadOperandType);           \
+        if ((num) >= 0 && stack_.at(num)->_type != (type)) { \
+            setErrorContext(kBadOperandType);                \
             return (ret);                                    \
         }                                                    \
     } while (0)

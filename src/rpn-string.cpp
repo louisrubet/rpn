@@ -10,11 +10,11 @@ void program::rpn_instr() {
     MIN_ARGUMENTS(1);
 
     // stringify only if not already a string
-    if (_stack.type(0) != kString) {
+    if (stack_.type(0) != kString) {
         stringstream ss;
-        ss << _stack.at(0);
-        _stack.pop();
-        _stack.push(new String(ss.str()));
+        ss << stack_.at(0);
+        stack_.pop();
+        stack_.push(new String(ss.str()));
     }
 }
 
@@ -24,11 +24,11 @@ void program::rpn_strout() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 
-    string entry(_stack.value<String>(0));
-    program prog(_stack, _heap);
-    _stack.pop();
+    string entry(stack_.value<String>(0));
+    program prog(stack_, heap_);
+    stack_.pop();
 
-    // make program from string in stack level 1
+    // make program from string in stack_ level 1
     if (prog.parse(entry) == kOk)
         // run it
         prog.run();
@@ -39,10 +39,10 @@ void program::rpn_strout() {
 void program::rpn_chr() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
-    char the_chr = static_cast<char>(_stack.value<Number>(0).toLong());
-    _stack.pop();
+    char the_chr = static_cast<char>(stack_.value<Number>(0).toLong());
+    stack_.pop();
     if (the_chr < 32 || the_chr > 126) the_chr = '.';
-    _stack.push_front(new String(string(1, the_chr)));
+    stack_.push_front(new String(string(1, the_chr)));
 }
 
 /// @brief num keyword implementation
@@ -50,11 +50,11 @@ void program::rpn_chr() {
 void program::rpn_num() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
-    if (_stack.value<String>(0).size() > 0)
-        _stack.push_front(new Number(_stack.value<String>(0)[0]));
+    if (stack_.value<String>(0).size() > 0)
+        stack_.push_front(new Number(stack_.value<String>(0)[0]));
     else
-        _stack.push_front(new Number(0));
-    _stack.erase(1);
+        stack_.push_front(new Number(0));
+    stack_.erase(1);
 }
 
 /// @brief size keyword implementation
@@ -62,8 +62,8 @@ void program::rpn_num() {
 void program::rpn_strsize() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
-    _stack.push_front(new Number(_stack.value<String>(0).size()));
-    _stack.erase(1);
+    stack_.push_front(new Number(stack_.value<String>(0).size()));
+    stack_.erase(1);
 }
 
 /// @brief pos keyword implementation
@@ -73,9 +73,9 @@ void program::rpn_strpos() {
     ARG_MUST_BE_OF_TYPE(0, kString);
     ARG_MUST_BE_OF_TYPE(1, kString);
 
-    size_t pos = _stack.value<String>(1).find(_stack.value<String>(0)) + 1;
-    _stack.erase(0, 2);
-    _stack.push_front(new Number(pos));
+    size_t pos = stack_.value<String>(1).find(stack_.value<String>(0)) + 1;
+    stack_.erase(0, 2);
+    stack_.push_front(new Number(pos));
 }
 
 /// @brief sub keyword implementation
@@ -86,11 +86,11 @@ void program::rpn_strsub() {
     ARG_MUST_BE_OF_TYPE(1, kNumber);
     ARG_MUST_BE_OF_TYPE(2, kString);
 
-    size_t first = _stack.value<Number>(1).toULong();
-    size_t len = _stack.value<Number>(0).toULong() - first + 1;
+    size_t first = stack_.value<Number>(1).toULong();
+    size_t len = stack_.value<Number>(0).toULong() - first + 1;
     first--;
 
-    if (first > _stack.value<String>(2).size()) first = len = 0;
-    _stack.push(new String(_stack.value<String>(2).substr(first, len)));
-    _stack.erase(1, 3);
+    if (first > stack_.value<String>(2).size()) first = len = 0;
+    stack_.push(new String(stack_.value<String>(2).substr(first, len)));
+    stack_.erase(1, 3);
 }

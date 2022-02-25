@@ -11,20 +11,20 @@
 ///
 bool program::find_variable(string& variable, Object*& obj) {
     bool found = false;
-    program* parent = _parent;
+    program* parent = parent_;
 
-    if (_local_heap.get(variable, obj)) {
+    if (local_heap_.get(variable, obj)) {
         found = true;
     } else {
         while (parent != nullptr) {
-            if (parent->_local_heap.get(variable, obj)) {
+            if (parent->local_heap_.get(variable, obj)) {
                 found = true;
                 break;
             }
-            parent = parent->_parent;
+            parent = parent->parent_;
         }
         if (!found) {
-            if (_heap.get(variable, obj)) found = true;
+            if (heap_.get(variable, obj)) found = true;
         }
     }
 
@@ -38,29 +38,29 @@ void program::rpn_eval(void) {
     string prog_text;
 
     MIN_ARGUMENTS(1);
-    if (_stack.type(0) == kSymbol) {
+    if (stack_.type(0) == kSymbol) {
         // recall a variable
         Object* obj;
-        string variable(_stack.value<Symbol>(0));
-        _stack.pop();
+        string variable(stack_.value<Symbol>(0));
+        stack_.pop();
 
         // if variable holds a program, run this program
         if (find_variable(variable, obj)) {
             if (obj->_type == kProgram) {
-                prog_text = _stack.value<Program>(0);
-                _stack.pop();
+                prog_text = stack_.value<Program>(0);
+                stack_.pop();
                 run_prog = true;
             } else {
-                // else recall this variable (i.e. stack its content)
-                _stack.push_front(obj);
+                // else recall this variable (i.e. stack_ its content)
+                stack_.push_front(obj);
             }
         } else {
             setErrorContext(kUnknownVariable);
         }
-    } else if (_stack.type(0) == kProgram) {
+    } else if (stack_.type(0) == kProgram) {
         // eval a program
-        prog_text = _stack.value<Program>(0);
-        _stack.pop();
+        prog_text = stack_.value<Program>(0);
+        stack_.pop();
         run_prog = true;
     } else {
         setErrorContext(kBadOperandType);
@@ -68,7 +68,7 @@ void program::rpn_eval(void) {
 
     // run prog if any
     if (run_prog) {
-        program prog(_stack, _heap, this);
+        program prog(stack_, heap_, this);
 
         // make program from entry
         if (prog.parse(prog_text) == kOk) {
@@ -105,7 +105,7 @@ int program::rpn_inprog(Branch& inprog_obj) {
         } else {
             // found something other than symbol
             setErrorContext(kBadOperandType);
-            show_error(_err, context);
+            show_error(err_, context);
             return -1;
         }
     }
@@ -113,33 +113,33 @@ int program::rpn_inprog(Branch& inprog_obj) {
     // found 0 symbols
     if (count_symbols == 0) {
         setErrorContext(kSyntaxError);
-        show_error(_err, context);
+        show_error(err_, context);
         return -1;
     }
 
     // <program> is missing
     if (!prog_found) {
         setErrorContext(kSyntaxError);
-        show_error(_err, context);
+        show_error(err_, context);
         return -1;
     }
 
-    // check symbols Number vs stack size
-    if (_stack.size() < count_symbols) {
+    // check symbols Number vs stack_ size
+    if (stack_.size() < count_symbols) {
         setErrorContext(kMissingOperand);
-        show_error(_err, context);
+        show_error(err_, context);
         return -1;
     }
 
     // load variables
     for (unsigned int i = inprog_obj.arg1 + count_symbols; i > inprog_obj.arg1; i--) {
-        _local_heap[reinterpret_cast<Symbol*>(at(i))->value] = _stack.at(0)->clone();
-        _stack.pop();
+        local_heap_[reinterpret_cast<Symbol*>(at(i))->value] = stack_.at(0)->clone();
+        stack_.pop();
     }
 
     // run the program
     string& entry = reinterpret_cast<Program*>(at(inprog_obj.arg1 + count_symbols + 1))->value;
-    program prog(_stack, _heap, this);
+    program prog(stack_, heap_, this);
 
     // make the program from entry
     if (prog.parse(entry) == kOk) {

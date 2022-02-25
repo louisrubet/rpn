@@ -6,14 +6,14 @@
 #include <mpreal.h>
 using mpfr::mpreal;
 
-#include <ostream>
-#include <string>
-#include <sstream>
 #include <complex>
+#include <ostream>
+#include <sstream>
+#include <string>
+using std::complex;
 using std::ostream;
 using std::string;
 using std::stringstream;
-using std::complex;
 
 #include "mpreal-out.hpp"
 
@@ -83,25 +83,25 @@ struct Object {
 ///
 struct Number : Object {
     Number() : Object(kNumber), base(10) {}
-    explicit Number(const mpreal& value_, int base_ = 10) : Object(kNumber), base(base_), value(value_) {}
-    explicit Number(int value_, int base_ = 10) : Object(kNumber), base(base_), value(value_) {}
+    explicit Number(const mpreal& value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
+    explicit Number(int value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
 
     int base;
     mpreal value;
 
     virtual Object* clone() { return new Number(value, base); }
     virtual string name() { return string("number"); }
-    virtual ostream& show(ostream& out) { return showValue(out, value, s_mode, s_digits, base); }
+    virtual ostream& show(ostream& out) { return showValue(out, value, mode, digits, base); }
 
     // representation mode
     typedef enum { kStd, kFix, kSci } mode_enum;
-    static mode_enum s_mode;
+    static mode_enum mode;
     static constexpr mode_enum DEFAULT_MODE = Number::kStd;
 
     // precision
-    static constexpr mpfr_prec_t MPFR_DEFAULT_PREC_BITS = 128;
-    static constexpr int DEFAULT_DECIMAL_DIGITS = 38;
-    static int s_digits;
+    static constexpr mpfr_prec_t kMpfrDefaultPrecBits = 128;
+    static constexpr int kDefaultDecimalDigits = 38;
+    static int digits;
 
     // clang-format off
     static string _makeNumberFormat(mode_enum mode, int digits) {
@@ -118,7 +118,7 @@ struct Number : Object {
 
     static ostream& showValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
         if (base == 10)
-            return MprealOutput10Base(out, _makeNumberFormat(s_mode, s_digits), value);
+            return MprealOutput10Base(out, _makeNumberFormat(mode, digits), value);
         else
             return MprealOutputNBase(out, base, value);
     }
@@ -127,34 +127,34 @@ struct Number : Object {
 /// @brief stack objects inheriting Object
 ///
 struct Complex : Object {
-    Complex() : Object(kComplex), reBase(10), imBase(10) {}
-    explicit Complex(complex<mpreal>& value_, int reb = 10, int imb = 10)
-        : Object(kComplex), reBase(reb), imBase(imb) {
-        value = value_;
+    Complex() : Object(kComplex), re_base(10), im_base(10) {}
+    explicit Complex(complex<mpreal>& value__, int re_base__ = 10, int im_base__ = 10)
+        : Object(kComplex), re_base(re_base__), im_base(im_base__) {
+        value = value__;
     }
-    explicit Complex(mpreal& re_, mpreal& im_, int reb = 10, int imb = 10)
-        : Object(kComplex), reBase(reb), imBase(imb) {
-        value.real(re_);
-        value.imag(im_);
+    explicit Complex(mpreal& re__, mpreal& im__, int re_base__ = 10, int im_base__ = 10)
+        : Object(kComplex), re_base(re_base__), im_base(im_base__) {
+        value.real(re__);
+        value.imag(im__);
     }
 
-    int reBase, imBase;
+    int re_base, im_base;
     complex<mpreal> value;
 
-    virtual Object* clone() { return new Complex(value, reBase, imBase); }
+    virtual Object* clone() { return new Complex(value, re_base, im_base); }
     virtual string name() { return string("complex"); }
     virtual ostream& show(ostream& out) {
         out << '(';
-        Number::showValue(out, value.real(), Number::s_mode, Number::s_digits, reBase);
+        Number::showValue(out, value.real(), Number::mode, Number::digits, re_base);
         out << ',';
-        Number::showValue(out, value.imag(), Number::s_mode, Number::s_digits, imBase);
+        Number::showValue(out, value.imag(), Number::mode, Number::digits, im_base);
         return out << ')';
     }
 };
 
 struct String : Object {
     String() : Object(kString) {}
-    explicit String(const string& value_) : Object(kString), value(value_) {}
+    explicit String(const string& value__) : Object(kString), value(value__) {}
     virtual Object* clone() { return new String(value); }
     virtual string name() { return string("string"); }
     virtual ostream& show(ostream& out) { return out << "\"" << value << "\""; }
@@ -163,7 +163,7 @@ struct String : Object {
 
 struct Program : Object {
     Program() : Object(kProgram) {}
-    explicit Program(const string& value_) : Object(kProgram), value(value_) {}
+    explicit Program(const string& value__) : Object(kProgram), value(value__) {}
     virtual Object* clone() { return new Program(value); }
     virtual string name() { return string("program"); }
     virtual ostream& show(ostream& out) { return out << "«" << value << "»"; }
@@ -171,19 +171,19 @@ struct Program : Object {
 };
 
 struct Symbol : Object {
-    explicit Symbol(bool autoEval_ = true) : Object(kSymbol), autoEval(autoEval_) {}
-    explicit Symbol(const string& value_, bool autoEval_ = true)
-        : Object(kSymbol), value(value_), autoEval(autoEval_) {}
-    virtual Object* clone() { return new Symbol(value, autoEval); }
+    explicit Symbol(bool auto_eval__ = true) : Object(kSymbol), auto_eval(auto_eval__) {}
+    explicit Symbol(const string& value__, bool auto_eval__ = true)
+        : Object(kSymbol), value(value__), auto_eval(auto_eval__) {}
+    virtual Object* clone() { return new Symbol(value, auto_eval); }
     virtual string name() { return string("symbol"); }
     virtual ostream& show(ostream& out) { return out << "'" << value << "'"; }
-    bool autoEval;
+    bool auto_eval;
     string value;
 };
 
 struct Keyword : Object {
     Keyword() : Object(kKeyword) {}
-    explicit Keyword(program_fn_t fn_, const string& value_) : Object(kKeyword), fn(fn_), value(value_) {}
+    explicit Keyword(program_fn_t fn__, const string& value__) : Object(kKeyword), fn(fn__), value(value__) {}
     virtual Object* clone() { return new Keyword(fn, value); }
     virtual string name() { return string("keyword"); }
     program_fn_t fn;
@@ -192,13 +192,13 @@ struct Keyword : Object {
 
 struct Branch : Object {
     Branch() : Object(kBranch) {}
-    explicit Branch(branch_fn_t fn_, const string& value_) : Object(kBranch) {
-        fn = fn_;
+    explicit Branch(branch_fn_t fn__, const string& value__) : Object(kBranch) {
+        fn = fn__;
         arg1 = static_cast<size_t>(-1);
         arg2 = static_cast<size_t>(-1);
         arg3 = static_cast<size_t>(-1);
         arg_bool = 0;
-        value = value_;
+        value = value__;
     }
     explicit Branch(Branch& other) : Object(kBranch) {
         fn = other.fn;
@@ -212,7 +212,7 @@ struct Branch : Object {
     virtual string name() { return string("branch"); }
     branch_fn_t fn;
     size_t arg1, arg2, arg3;
-    mpreal firstIndex, lastIndex;
+    mpreal first_index, last_index;
     bool arg_bool;
     string value;
 };
