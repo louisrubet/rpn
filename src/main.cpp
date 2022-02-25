@@ -6,7 +6,7 @@
 #include <cerrno>
 #include <csignal>
 #include <iostream>
-using namespace std;
+using std::cerr;
 
 // internal includes
 #include "input.hpp"
