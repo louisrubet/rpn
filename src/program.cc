@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "program.hpp"
+#include "program.h"
 
 //< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
 vector<program::keyword_t> program::keywords_{

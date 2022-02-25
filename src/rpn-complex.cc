@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "program.hpp"
+#include "program.h"
 
 /// @brief re keyword implementation
 /// the result is stacked on current program stack

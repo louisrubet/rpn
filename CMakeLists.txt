@@ -51,25 +51,25 @@ include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/linenoise-ng
 # build
 add_executable(
   rpn
-  ${PROJECT_SOURCE_DIR}/src/main.cpp
-  ${PROJECT_SOURCE_DIR}/src/object.cpp
-  ${PROJECT_SOURCE_DIR}/src/mpreal-out.cpp
-  ${PROJECT_SOURCE_DIR}/src/program.cpp
-  ${PROJECT_SOURCE_DIR}/src/lexer.cpp
-  ${PROJECT_SOURCE_DIR}/src/input.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-branch.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-complex.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-general.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-logs.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-program.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-real.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-stack.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-store.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-string.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-test.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-time.cpp
-  ${PROJECT_SOURCE_DIR}/src/rpn-trig.cpp
+  ${PROJECT_SOURCE_DIR}/src/main.cc
+  ${PROJECT_SOURCE_DIR}/src/object.cc
+  ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
+  ${PROJECT_SOURCE_DIR}/src/program.cc
+  ${PROJECT_SOURCE_DIR}/src/lexer.cc
+  ${PROJECT_SOURCE_DIR}/src/input.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-complex.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-general.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-logs.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-program.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-real.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-stack.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-store.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-string.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-test.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-time.cc
+  ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc
   ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
   ${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
   ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp

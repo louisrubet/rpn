@@ -9,7 +9,7 @@
 #include <algorithm>
 using std::deque, std::map, std::string;
 
-#include "object.hpp"
+#include "object.h"
 
 /// @brief stack object, parens of program, storing execution stack values or programs
 ///

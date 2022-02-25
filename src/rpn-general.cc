@@ -6,7 +6,7 @@
 using std::cout, std::string, std::pair;
 
 #include "linenoise.h"
-#include "program.hpp"
+#include "program.h"
 #include "version.h"
 
 // description
