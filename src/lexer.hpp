@@ -53,23 +53,23 @@ class Lexer {
                vector<SynError>& errors);
 
  private:
-    bool parseString(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
+    bool parseString(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                      vector<SynElement>& elements);
-    bool parseSymbol(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
+    bool parseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                      vector<SynElement>& elements);
-    bool parseProgram(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
+    bool parseProgram(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                       vector<SynElement>& elements);
-    bool parseNumber(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
+    bool parseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                      vector<SynElement>& elements);
-    bool parseComplex(string& entry, size_t idx, size_t& nextIdx, vector<SynError>& errors,
+    bool parseComplex(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                       vector<SynElement>& elements);
-    bool parseReserved(string& entry, size_t idx, size_t& nextIdx, vector<SynElement>& elements,
+    bool parseReserved(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements,
                        map<string, ReservedWord>& keywords);
-    bool parseUnknown(string& entry, size_t idx, size_t& nextIdx, vector<SynElement>& elements);
+    bool parseUnknown(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements);
 
     void trim(string& s);
-    int getBaseAt(string& entry, size_t& nextIdx, bool& positive);
-    bool getNumberAt(string& entry, size_t idx, size_t& nextIdx, int& base, mpreal** r, char delim = ' ');
+    int getBaseAt(string& entry, size_t& next_idx, bool& positive);
+    bool getNumberAt(string& entry, size_t idx, size_t& next_idx, int& base, mpreal** r, char delim = ' ');
 };
 
 #endif  // SRC_LEXER_HPP_

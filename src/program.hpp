@@ -19,7 +19,7 @@ using mpfr::mpreal;
 #include "stack.hpp"
 
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
-class program : public deque<object*>, public Lexer {
+class program : public deque<Object*>, public Lexer {
  public:
     program(rpnstack& stk, heap& hp, program* parent = nullptr) : _stack(stk), _heap(hp), _parent(parent) {}
     virtual ~program() {
@@ -79,20 +79,20 @@ class program : public deque<object*>, public Lexer {
     ////
 
     // branch
-    size_t rpn_if(branch& myobj);
-    size_t rpn_then(branch& myobj);
-    size_t rpn_else(branch& myobj);
-    size_t rpn_end(branch& myobj);
-    size_t rpn_do(branch& myobj);
-    size_t rpn_until(branch& myobj);
+    size_t rpn_if(Branch& myobj);
+    size_t rpn_then(Branch& myobj);
+    size_t rpn_else(Branch& myobj);
+    size_t rpn_end(Branch& myobj);
+    size_t rpn_do(Branch& myobj);
+    size_t rpn_until(Branch& myobj);
     void rpn_ift(void);
     void rpn_ifte(void);
-    size_t rpn_while(branch& myobj);
-    size_t rpn_repeat(branch& myobj);
-    size_t rpn_start(branch& myobj);
-    size_t rpn_for(branch& myobj);
-    size_t rpn_next(branch& myobj);
-    size_t rpn_step(branch& myobj);
+    size_t rpn_while(Branch& myobj);
+    size_t rpn_repeat(Branch& myobj);
+    size_t rpn_start(Branch& myobj);
+    size_t rpn_for(Branch& myobj);
+    size_t rpn_next(Branch& myobj);
+    size_t rpn_step(Branch& myobj);
     enum { step_out = static_cast<size_t>(-1), runtime_error = static_cast<size_t>(-2) };
 
     // complex
@@ -138,9 +138,9 @@ class program : public deque<object*>, public Lexer {
     void rpn_atanh();
 
     // program
-    bool find_variable(string& variable, object*& obj);
+    bool find_variable(string& variable, Object*& obj);
     void rpn_eval(void);
-    int rpn_inprog(branch& myobj);
+    int rpn_inprog(Branch& inprog_obj);
 
     // real
     void rpn_plus();
@@ -198,7 +198,7 @@ class program : public deque<object*>, public Lexer {
     void rpn_stoinv(void);
     void rpn_rcl(void);
     void rpn_edit(void);
-    void auto_rcl(symbol* symb);
+    void auto_rcl(Symbol* symb);
     void rpn_purge(void);
     void rpn_vars(void);
     void rpn_clusr(void);

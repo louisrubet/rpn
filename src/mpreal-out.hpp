@@ -11,7 +11,7 @@ using mpfr::mpreal;
 using std::string;
 using std::ostream;
 
-ostream& mpreal_output10base(ostream& out, const string& fmt, const mpreal& value);
-ostream& mpreal_outputNbase(ostream& out, int base, const mpreal& value);
+ostream& MprealOutput10Base(ostream& out, const string& fmt, const mpreal& value);
+ostream& MprealOutputNBase(ostream& out, int base, const mpreal& value);
 
 #endif  // SRC_MPREAL_OUT_HPP_

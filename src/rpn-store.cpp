@@ -10,12 +10,12 @@ void program::rpn_sto(void) {
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     // store symbol with first value
-    const auto it = _heap.find(_stack.value<ostring>(0));
+    const auto it = _heap.find(_stack.value<String>(0));
     if (it != _heap.end()) {
         delete it->second;
         _heap.erase(it);
     }
-    _heap[_stack.value<ostring>(0)] = _stack.at(1)->clone();
+    _heap[_stack.value<String>(0)] = _stack.at(1)->clone();
     _stack.erase(0, 2);
 }
 
@@ -24,7 +24,7 @@ void program::rpn_sto(void) {
 void program::rpn_stoadd(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<String>(0)) == _heap.end()) {
         setErrorContext(ret_unknown_variable);
         return;
     }
@@ -41,7 +41,7 @@ void program::rpn_stoadd(void) {
 void program::rpn_stosub(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<String>(0)) == _heap.end()) {
         setErrorContext(ret_unknown_variable);
         return;
     }
@@ -58,7 +58,7 @@ void program::rpn_stosub(void) {
 void program::rpn_stomul(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<String>(0)) == _heap.end()) {
         setErrorContext(ret_unknown_variable);
         return;
     }
@@ -75,7 +75,7 @@ void program::rpn_stomul(void) {
 void program::rpn_stodiv(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<String>(0)) == _heap.end()) {
         setErrorContext(ret_unknown_variable);
         return;
     }
@@ -92,7 +92,7 @@ void program::rpn_stodiv(void) {
 void program::rpn_stoneg(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<String>(0)) == _heap.end()) {
         setErrorContext(ret_unknown_variable);
         return;
     }
@@ -108,7 +108,7 @@ void program::rpn_stoneg(void) {
 void program::rpn_stoinv(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
-    if (_heap.find(_stack.value<ostring>(0)) == _heap.end()) {
+    if (_heap.find(_stack.value<String>(0)) == _heap.end()) {
         setErrorContext(ret_unknown_variable);
         return;
     }
@@ -126,8 +126,8 @@ void program::rpn_rcl(void) {
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
     // recall a variable
-    object* obj;
-    string variable(_stack.value<symbol>(0));
+    Object* obj;
+    string variable(_stack.value<Symbol>(0));
 
     // mind the order of heaps
     if (find_variable(variable, obj)) {
@@ -157,9 +157,9 @@ void program::rpn_edit(void) {
 ///
 /// @param symb the smlbol to recall and autoeval
 ///
-void program::auto_rcl(symbol* symb) {
+void program::auto_rcl(Symbol* symb) {
     if (symb->autoEval) {
-        object* obj;
+        Object* obj;
         string variable(symb->value);
 
         // mind the order of heaps
@@ -180,7 +180,7 @@ void program::rpn_purge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_symbol);
 
-    const auto i = _heap.find(_stack.value<symbol>(0));
+    const auto i = _heap.find(_stack.value<Symbol>(0));
     if (i != _heap.end()) {
         delete i->second;
         _heap.erase(i);
@@ -193,7 +193,7 @@ void program::rpn_purge(void) {
 /// @brief vars keyword implementation
 ///
 void program::rpn_vars(void) {
-    object* obj;
+    Object* obj;
     program* parent = _parent;
     string name;
     int index = 1;

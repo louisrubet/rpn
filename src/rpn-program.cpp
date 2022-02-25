@@ -9,7 +9,7 @@
 /// @return true variable was found
 /// @return false variable was not found
 ///
-bool program::find_variable(string& variable, object*& obj) {
+bool program::find_variable(string& variable, Object*& obj) {
     bool found = false;
     program* parent = _parent;
 
@@ -40,14 +40,14 @@ void program::rpn_eval(void) {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_symbol) {
         // recall a variable
-        object* obj;
-        string variable(_stack.value<symbol>(0));
+        Object* obj;
+        string variable(_stack.value<Symbol>(0));
         _stack.pop();
 
         // if variable holds a program, run this program
         if (find_variable(variable, obj)) {
             if (obj->_type == cmd_program) {
-                prog_text = _stack.value<oprogram>(0);
+                prog_text = _stack.value<Program>(0);
                 _stack.pop();
                 run_prog = true;
             } else {
@@ -59,7 +59,7 @@ void program::rpn_eval(void) {
         }
     } else if (_stack.type(0) == cmd_program) {
         // eval a program
-        prog_text = _stack.value<oprogram>(0);
+        prog_text = _stack.value<Program>(0);
         _stack.pop();
         run_prog = true;
     } else {
@@ -78,23 +78,23 @@ void program::rpn_eval(void) {
     }
 }
 
-/// @brief -> keyword (branch) implementation
+/// @brief -> keyword (Branch) implementation
 ///
-int program::rpn_inprog(branch& myobj) {
+int program::rpn_inprog(Branch& inprog_obj) {
     string context("->");  // for showing errors
     int count_symbols = 0;
     bool prog_found = false;
 
-    if (myobj.arg1 == -1) {
+    if (inprog_obj.arg1 == -1) {
         setErrorContext(ret_unknown_err);
         return -1;
     }
 
     // syntax must be
-    // -> <auto evaluated symbol #1> ... <auto evaluated symbol #n> <oprogram>
+    // -> <auto evaluated symbol #1> ... <auto evaluated symbol #n> <program>
 
-    // find next oprogram object
-    for (unsigned int i = myobj.arg1 + 1; i < size(); i++) {
+    // find next Program object
+    for (unsigned int i = inprog_obj.arg1 + 1; i < size(); i++) {
         // count symbol
         if (at(i)->_type == cmd_symbol) {
             count_symbols++;
@@ -117,14 +117,14 @@ int program::rpn_inprog(branch& myobj) {
         return -1;
     }
 
-    // <oprogram> is missing
+    // <program> is missing
     if (!prog_found) {
         setErrorContext(ret_syntax);
         show_error(_err, context);
         return -1;
     }
 
-    // check symbols number vs stack size
+    // check symbols Number vs stack size
     if (_stack.size() < count_symbols) {
         setErrorContext(ret_missing_operand);
         show_error(_err, context);
@@ -132,13 +132,13 @@ int program::rpn_inprog(branch& myobj) {
     }
 
     // load variables
-    for (unsigned int i = myobj.arg1 + count_symbols; i > myobj.arg1; i--) {
-        _local_heap[reinterpret_cast<symbol*>(at(i))->value] = _stack.at(0)->clone();
+    for (unsigned int i = inprog_obj.arg1 + count_symbols; i > inprog_obj.arg1; i--) {
+        _local_heap[reinterpret_cast<Symbol*>(at(i))->value] = _stack.at(0)->clone();
         _stack.pop();
     }
 
     // run the program
-    string& entry = reinterpret_cast<oprogram*>(at(myobj.arg1 + count_symbols + 1))->value;
+    string& entry = reinterpret_cast<Program*>(at(inprog_obj.arg1 + count_symbols + 1))->value;
     program prog(_stack, _heap, this);
 
     // make the program from entry
@@ -148,5 +148,5 @@ int program::rpn_inprog(branch& myobj) {
     }
 
     // point on next command
-    return myobj.arg1 + count_symbols + 2;
+    return inprog_obj.arg1 + count_symbols + 2;
 }

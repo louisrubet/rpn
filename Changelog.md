@@ -15,7 +15,9 @@ Changelog
   - static and global variables
     - common patterns (ex: no static maps or vectors)
   - classes (explicit)
-  - naming: file names (.cc .h), types (PascalCase), variables (snake_case), members (trailing _), static const (camelCase begining with k), enum (enum class, values like static const)
+  - naming:
+    - file names (.cc .h), types (PascalCase), variables (snake_case), members (trailing _), static const (camelCase begining with k), enum (enum class, values like static const
+    - consistent comments (//), class comments, functions comments
   - cpplint used with a CPPLINT.cfg removing some warnings
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap

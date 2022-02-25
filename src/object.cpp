@@ -3,5 +3,5 @@
 #include "object.hpp"
 
 // number statics
-number::mode_enum number::s_mode = number::DEFAULT_MODE;
-int number::s_digits = DEFAULT_DECIMAL_DIGITS;
+Number::mode_enum Number::s_mode = Number::DEFAULT_MODE;
+int Number::s_digits = DEFAULT_DECIMAL_DIGITS;

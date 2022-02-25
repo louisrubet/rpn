@@ -76,7 +76,7 @@ void program::rpn_test() {
     int total_steps = 0;
     int total_steps_failed = 0;
 
-    string test_filename = _stack.value<ostring>(0);
+    string test_filename = _stack.value<String>(0);
     _stack.pop();
     cout << endl << "rpn version is " << RPN_VERSION << endl;
     test(test_filename, total_tests, total_tests_failed, total_steps, total_steps_failed);
