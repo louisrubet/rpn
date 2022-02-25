@@ -7,20 +7,20 @@
 void program::rpn_plus() {
     MIN_ARGUMENTS(2);
     if (_stack.type(0) == cmd_string && _stack.type(1) == cmd_string) {
-        _stack.value<ostring>(1) += _stack.value<ostring>(0);
+        _stack.value<String>(1) += _stack.value<String>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
-        _stack.value<number>(1) += _stack.value<number>(0);
+        _stack.value<Number>(1) += _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) += _stack.value<ocomplex>(0);
+        _stack.value<Complex>(1) += _stack.value<Complex>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) += _stack.value<number>(0);
+        _stack.value<Complex>(1) += _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_number) {
         rpn_swap();
-        _stack.value<ocomplex>(1) += _stack.value<number>(0);
+        _stack.value<Complex>(1) += _stack.value<Number>(0);
         _stack.pop();
     } else {
         setErrorContext(ret_bad_operand_type);
@@ -32,17 +32,17 @@ void program::rpn_plus() {
 void program::rpn_minus() {
     MIN_ARGUMENTS(2);
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
-        _stack.value<number>(1) -= _stack.value<number>(0);
+        _stack.value<Number>(1) -= _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) -= _stack.value<ocomplex>(0);
+        _stack.value<Complex>(1) -= _stack.value<Complex>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) -= _stack.value<number>(0);
+        _stack.value<Complex>(1) -= _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_number) {
         rpn_swap();
-        _stack.value<ocomplex>(1) = _stack.value<number>(0) - _stack.value<ocomplex>(1);
+        _stack.value<Complex>(1) = _stack.value<Number>(0) - _stack.value<Complex>(1);
         _stack.pop();
     } else {
         setErrorContext(ret_bad_operand_type);
@@ -54,17 +54,17 @@ void program::rpn_minus() {
 void program::rpn_mul() {
     MIN_ARGUMENTS(2);
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
-        _stack.value<number>(1) *= _stack.value<number>(0);
+        _stack.value<Number>(1) *= _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) *= _stack.value<ocomplex>(0);
+        _stack.value<Complex>(1) *= _stack.value<Complex>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) *= _stack.value<number>(0);
+        _stack.value<Complex>(1) *= _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_number) {
         rpn_swap();
-        _stack.value<ocomplex>(1) *= _stack.value<number>(0);
+        _stack.value<Complex>(1) *= _stack.value<Number>(0);
         _stack.pop();
     } else {
         setErrorContext(ret_bad_operand_type);
@@ -76,17 +76,17 @@ void program::rpn_mul() {
 void program::rpn_div() {
     MIN_ARGUMENTS(2);
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
-        _stack.value<number>(1) /= _stack.value<number>(0);
+        _stack.value<Number>(1) /= _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) /= _stack.value<ocomplex>(0);
+        _stack.value<Complex>(1) /= _stack.value<Complex>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) /= _stack.value<number>(0);
+        _stack.value<Complex>(1) /= _stack.value<Number>(0);
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_number) {
         rpn_swap();
-        _stack.value<ocomplex>(1) = _stack.value<number>(0) / _stack.value<ocomplex>(1);
+        _stack.value<Complex>(1) = _stack.value<Number>(0) / _stack.value<Complex>(1);
         _stack.pop();
     } else {
         setErrorContext(ret_bad_operand_type);
@@ -98,9 +98,9 @@ void program::rpn_div() {
 void program::rpn_neg() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number)
-        _stack.value<number>(0) = -_stack.value<number>(0);
+        _stack.value<Number>(0) = -_stack.value<Number>(0);
     else if (_stack.type(0) == cmd_complex)
-        _stack.value<ocomplex>(0) = -_stack.value<ocomplex>(0);
+        _stack.value<Complex>(0) = -_stack.value<Complex>(0);
     else
         setErrorContext(ret_bad_operand_type);
 }
@@ -110,9 +110,9 @@ void program::rpn_neg() {
 void program::rpn_inv() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number)
-        _stack.value<number>(0) = 1 / _stack.value<number>(0);
+        _stack.value<Number>(0) = 1 / _stack.value<Number>(0);
     else if (_stack.type(0) == cmd_complex)
-        _stack.value<ocomplex>(0) = mpreal(1) / _stack.value<ocomplex>(0);
+        _stack.value<Complex>(0) = mpreal(1) / _stack.value<Complex>(0);
     else
         setErrorContext(ret_bad_operand_type);
 }
@@ -122,24 +122,24 @@ void program::rpn_inv() {
 void program::rpn_power() {
     MIN_ARGUMENTS(2);
     if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_number) {
-        if (_stack.value<number>(1) >= 0) {
-            _stack.value<number>(1) = pow(_stack.value<number>(1), _stack.value<number>(0));
+        if (_stack.value<Number>(1) >= 0) {
+            _stack.value<Number>(1) = pow(_stack.value<Number>(1), _stack.value<Number>(0));
             _stack.pop();
         } else {
             mpreal zero;
-            _stack.push(new ocomplex(_stack.value<number>(1), zero, _stack.obj<number>(1).base));
-            _stack.value<ocomplex>(0) = pow(_stack.value<ocomplex>(0), _stack.value<number>(1));
+            _stack.push(new Complex(_stack.value<Number>(1), zero, _stack.obj<Number>(1).base));
+            _stack.value<Complex>(0) = pow(_stack.value<Complex>(0), _stack.value<Number>(1));
             _stack.erase(1, 2);
         }
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) = pow(_stack.value<ocomplex>(1), _stack.value<ocomplex>(0));
+        _stack.value<Complex>(1) = pow(_stack.value<Complex>(1), _stack.value<Complex>(0));
         _stack.pop();
     } else if (_stack.type(0) == cmd_number && _stack.type(1) == cmd_complex) {
-        _stack.value<ocomplex>(1) = pow(_stack.value<ocomplex>(1), _stack.value<number>(0));
+        _stack.value<Complex>(1) = pow(_stack.value<Complex>(1), _stack.value<Number>(0));
         _stack.pop();
     } else if (_stack.type(0) == cmd_complex && _stack.type(1) == cmd_number) {
         rpn_swap();
-        _stack.value<ocomplex>(1) = pow(_stack.value<number>(0), _stack.value<ocomplex>(1));
+        _stack.value<Complex>(1) = pow(_stack.value<Number>(0), _stack.value<Complex>(1));
         _stack.pop();
     } else {
         setErrorContext(ret_bad_operand_type);
@@ -151,18 +151,18 @@ void program::rpn_power() {
 void program::rpn_squareroot() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number) {
-        if (_stack.value<number>(0) >= 0) {
-            _stack.value<number>(0) = sqrt(_stack.value<number>(0));
+        if (_stack.value<Number>(0) >= 0) {
+            _stack.value<Number>(0) = sqrt(_stack.value<Number>(0));
         } else {
             // negative number -> square root is complex
             mpreal zero;
-            _stack.push(new ocomplex(_stack.value<number>(0), zero,
-                                     _stack.obj<number>(0).base));  // TODO(louis) manage new errors
-            _stack.value<ocomplex>(0) = sqrt(_stack.value<ocomplex>(0));
+            _stack.push(new Complex(_stack.value<Number>(0), zero,
+                                     _stack.obj<Number>(0).base));  // TODO(louis) manage new errors
+            _stack.value<Complex>(0) = sqrt(_stack.value<Complex>(0));
             _stack.erase(1);
         }
     } else if (_stack.type(0) == cmd_complex) {
-        _stack.value<ocomplex>(0) = sqrt(_stack.value<ocomplex>(0));
+        _stack.value<Complex>(0) = sqrt(_stack.value<Complex>(0));
     } else {
         setErrorContext(ret_bad_operand_type);
     }
@@ -173,10 +173,10 @@ void program::rpn_squareroot() {
 void program::rpn_hex() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number) {
-        _stack.obj<number>(0).base = 16;
+        _stack.obj<Number>(0).base = 16;
     } else if (_stack.type(0) == cmd_complex) {
-        _stack.obj<ocomplex>(0).reBase = 16;
-        _stack.obj<ocomplex>(0).imBase = 16;
+        _stack.obj<Complex>(0).reBase = 16;
+        _stack.obj<Complex>(0).imBase = 16;
     } else {
         setErrorContext(ret_bad_operand_type);
     }
@@ -187,10 +187,10 @@ void program::rpn_hex() {
 void program::rpn_bin() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number) {
-        _stack.obj<number>(0).base = 2;
+        _stack.obj<Number>(0).base = 2;
     } else if (_stack.type(0) == cmd_complex) {
-        _stack.obj<ocomplex>(0).reBase = 2;
-        _stack.obj<ocomplex>(0).imBase = 2;
+        _stack.obj<Complex>(0).reBase = 2;
+        _stack.obj<Complex>(0).imBase = 2;
     } else {
         setErrorContext(ret_bad_operand_type);
     }
@@ -201,10 +201,10 @@ void program::rpn_bin() {
 void program::rpn_dec() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number) {
-        _stack.obj<number>(0).base = 10;
+        _stack.obj<Number>(0).base = 10;
     } else if (_stack.type(0) == cmd_complex) {
-        _stack.obj<ocomplex>(0).reBase = 10;
-        _stack.obj<ocomplex>(0).imBase = 10;
+        _stack.obj<Complex>(0).reBase = 10;
+        _stack.obj<Complex>(0).imBase = 10;
     } else {
         setErrorContext(ret_bad_operand_type);
     }
@@ -215,14 +215,14 @@ void program::rpn_dec() {
 void program::rpn_base() {
     MIN_ARGUMENTS(2);
     if (_stack.type(1) == cmd_number || _stack.type(1) == cmd_complex) {
-        int base = static_cast<int>(_stack.value<number>(0).toLong());
+        int base = static_cast<int>(_stack.value<Number>(0).toLong());
         _stack.pop();
         if (base >= 2 && base <= 62) {
             if (_stack.type(0) == cmd_number) {
-                _stack.obj<number>(0).base = base;
+                _stack.obj<Number>(0).base = base;
             } else {
-                _stack.obj<ocomplex>(0).reBase = base;
-                _stack.obj<ocomplex>(0).imBase = base;
+                _stack.obj<Complex>(0).reBase = base;
+                _stack.obj<Complex>(0).imBase = base;
             }
         } else {
             setErrorContext(ret_out_of_range);
@@ -238,7 +238,7 @@ void program::rpn_purcent() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    _stack.value<number>(1) *= _stack.value<number>(0) / 100;
+    _stack.value<Number>(1) *= _stack.value<Number>(0) / 100;
     _stack.pop();
 }
 
@@ -248,7 +248,7 @@ void program::rpn_purcentCH() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    _stack.value<number>(1) = (_stack.value<number>(0) * 100) / _stack.value<number>(1);
+    _stack.value<Number>(1) = (_stack.value<Number>(0) * 100) / _stack.value<Number>(1);
     _stack.pop();
 }
 
@@ -257,9 +257,9 @@ void program::rpn_purcentCH() {
 void program::rpn_square() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number)
-        _stack.value<number>(0) *= _stack.value<number>(0);
+        _stack.value<Number>(0) *= _stack.value<Number>(0);
     else if (_stack.at(0)->_type == cmd_complex)
-        _stack.value<ocomplex>(0) *= _stack.value<ocomplex>(0);
+        _stack.value<Complex>(0) *= _stack.value<Complex>(0);
     else
         setErrorContext(ret_bad_operand_type);
 }
@@ -270,7 +270,7 @@ void program::rpn_modulo() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    _stack.value<number>(1) = fmod(_stack.value<number>(1), _stack.value<number>(0));
+    _stack.value<Number>(1) = fmod(_stack.value<Number>(1), _stack.value<Number>(0));
     _stack.pop();
 }
 
@@ -279,9 +279,9 @@ void program::rpn_modulo() {
 void program::rpn_abs() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number) {
-        _stack.value<number>(0) = abs(_stack.value<number>(0));
+        _stack.value<Number>(0) = abs(_stack.value<Number>(0));
     } else if (_stack.type(0) == cmd_complex) {
-        _stack.push(new number(abs(_stack.value<ocomplex>(0))));
+        _stack.push(new Number(abs(_stack.value<Complex>(0))));
         _stack.erase(1);
     } else {
         setErrorContext(ret_bad_operand_type);
@@ -294,7 +294,7 @@ void program::rpn_fact() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     // fact(n) = gamma(n+1)
-    _stack.value<number>(0) = gamma(_stack.value<number>(0) + 1);
+    _stack.value<Number>(0) = gamma(_stack.value<Number>(0) + 1);
 }
 
 /// @brief sign keyword implementation
@@ -302,9 +302,9 @@ void program::rpn_fact() {
 void program::rpn_sign() {
     MIN_ARGUMENTS(1);
     if (_stack.type(0) == cmd_number)
-        _stack.value<number>(0) = sgn(_stack.value<number>(0));
+        _stack.value<Number>(0) = sgn(_stack.value<Number>(0));
     else if (_stack.at(0)->_type == cmd_complex)
-        _stack.value<ocomplex>(0) = _stack.value<ocomplex>(0) / abs(_stack.value<ocomplex>(0));
+        _stack.value<Complex>(0) = _stack.value<Complex>(0) / abs(_stack.value<Complex>(0));
     else
         setErrorContext(ret_bad_operand_type);
 }
@@ -314,12 +314,12 @@ void program::rpn_sign() {
 void program::rpn_mant() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    if (!isfinite(_stack.value<number>(0))) {
+    if (!isfinite(_stack.value<Number>(0))) {
         setErrorContext(ret_out_of_range);
         return;
     }
     mp_exp_t exp;
-    _stack.value<number>(0) = frexp(_stack.value<number>(0), &exp);
+    _stack.value<Number>(0) = frexp(_stack.value<Number>(0), &exp);
 }
 
 /// @brief xpon keyword implementation
@@ -327,13 +327,13 @@ void program::rpn_mant() {
 void program::rpn_xpon() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    if (!isfinite(_stack.value<number>(0))) {
+    if (!isfinite(_stack.value<Number>(0))) {
         setErrorContext(ret_out_of_range);
         return;
     }
     mp_exp_t exp;
-    (void)frexp(_stack.value<number>(0), &exp);
-    _stack.value<number>(0) = exp;
+    (void)frexp(_stack.value<Number>(0), &exp);
+    _stack.value<Number>(0) = exp;
 }
 
 /// @brief floor keyword implementation
@@ -341,7 +341,7 @@ void program::rpn_xpon() {
 void program::rpn_floor() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    _stack.value<number>(0) = floor(_stack.value<number>(0));
+    _stack.value<Number>(0) = floor(_stack.value<Number>(0));
 }
 
 /// @brief ceil keyword implementation
@@ -349,7 +349,7 @@ void program::rpn_floor() {
 void program::rpn_ceil() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    _stack.value<number>(0) = ceil(_stack.value<number>(0));
+    _stack.value<Number>(0) = ceil(_stack.value<Number>(0));
 }
 
 /// @brief fp keyword implementation
@@ -357,7 +357,7 @@ void program::rpn_ceil() {
 void program::rpn_fp() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    _stack.value<number>(0) = frac(_stack.value<number>(0));
+    _stack.value<Number>(0) = frac(_stack.value<Number>(0));
 }
 
 /// @brief ip keyword implementation
@@ -365,7 +365,7 @@ void program::rpn_fp() {
 void program::rpn_ip() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    _stack.value<number>(0) = trunc(_stack.value<number>(0));
+    _stack.value<Number>(0) = trunc(_stack.value<Number>(0));
 }
 
 /// @brief min keyword implementation
@@ -374,7 +374,7 @@ void program::rpn_min() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    _stack.value<number>(0) = min(_stack.value<number>(0), _stack.value<number>(1));
+    _stack.value<Number>(0) = min(_stack.value<Number>(0), _stack.value<Number>(1));
     _stack.erase(1);
 }
 
@@ -384,6 +384,6 @@ void program::rpn_max() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
-    _stack.value<number>(0) = max(_stack.value<number>(0), _stack.value<number>(1));
+    _stack.value<Number>(0) = max(_stack.value<Number>(0), _stack.value<Number>(1));
     _stack.erase(1);
 }

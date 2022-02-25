@@ -69,14 +69,14 @@ void program::rpn_help() {
 
     // show mode
     cout << "Current float mode is ";
-    switch (number::s_mode) {
-        case number::std:
+    switch (Number::s_mode) {
+        case Number::std:
             cout << "'std'";
             break;
-        case number::fix:
+        case Number::fix:
             cout << "'fix'";
             break;
-        case number::sci:
+        case Number::sci:
             cout << "'sci'";
             break;
         default:
@@ -85,7 +85,7 @@ void program::rpn_help() {
     }
 
     // bits precision, decimal digits and rounding mode
-    cout << " with " << number::s_digits << " digits after the decimal point" << endl;
+    cout << " with " << Number::s_digits << " digits after the decimal point" << endl;
     cout << "Current floating point precision is " << static_cast<int>(mpreal::get_default_prec()) << " bits" << endl;
     vector<pair<string, mpfr_rnd_t>> rnd{MPFR_ROUND};
     for (auto& rn : rnd)
@@ -110,12 +110,12 @@ void program::rpn_std() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int digits = static_cast<int>(_stack.value<number>(0).toLong());
+    int digits = static_cast<int>(_stack.value<Number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
-        number::s_mode = number::std;
-        number::s_digits = digits;
+        Number::s_mode = Number::std;
+        Number::s_digits = digits;
         _stack.pop();
     } else {
         setErrorContext(ret_out_of_range);
@@ -128,12 +128,12 @@ void program::rpn_fix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int digits = static_cast<int>(_stack.value<number>(0).toLong());
+    int digits = static_cast<int>(_stack.value<Number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
-        number::s_mode = number::fix;
-        number::s_digits = digits;
+        Number::s_mode = Number::fix;
+        Number::s_digits = digits;
         _stack.pop();
     } else {
         setErrorContext(ret_out_of_range);
@@ -146,12 +146,12 @@ void program::rpn_sci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
-    int digits = static_cast<int>(_stack.value<number>(0).toLong());
+    int digits = static_cast<int>(_stack.value<Number>(0).toLong());
 
     if (check_decimal_digits(digits)) {
         // set mode, decimal digits and print format
-        number::s_mode = number::sci;
-        number::s_digits = digits;
+        Number::s_mode = Number::sci;
+        Number::s_digits = digits;
         _stack.pop();
     } else {
         setErrorContext(ret_out_of_range);
@@ -160,11 +160,11 @@ void program::rpn_sci() {
 
 /// @brief _version keyword implementation
 ///
-void program::rpn_version() { _stack.push_front(new ostring(RPN_VERSION)); }
+void program::rpn_version() { _stack.push_front(new String(RPN_VERSION)); }
 
 /// @brief _uname keyword implementation
 ///
-void program::rpn_uname() { _stack.push_front(new ostring(RPN_UNAME)); }
+void program::rpn_uname() { _stack.push_front(new String(RPN_UNAME)); }
 
 /// @brief history keyword implementation
 ///
@@ -183,7 +183,7 @@ void program::rpn_history() {
 ///
 void program::rpn_type() {
     MIN_ARGUMENTS(1);
-    _stack.push(new ostring(_stack.at(0)->name()));
+    _stack.push(new String(_stack.at(0)->name()));
     _stack.erase(1);
 }
 
@@ -198,14 +198,14 @@ void program::rpn_precision() {
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
 
     // set precision
-    int prec = static_cast<int>(_stack.value<number>(0).toLong());
+    int prec = static_cast<int>(_stack.value<Number>(0).toLong());
     if (prec >= MPFR_PREC_MIN && prec <= MPFR_PREC_MAX) {
         mpreal::set_default_prec(prec);
 
         // modify digits seen by user if std mode
-        if (number::s_mode == number::std) {
+        if (Number::s_mode == Number::std) {
             // calc max nb of digits user can see with the current bit precision
-            number::s_digits = mpfr::bits2digits(mpreal::get_default_prec());
+            Number::s_digits = mpfr::bits2digits(mpreal::get_default_prec());
         }
         _stack.pop();
     } else {
@@ -221,7 +221,7 @@ void program::rpn_round() {
 
     map<string, mpfr_rnd_t> matchRound{MPFR_ROUND};
 
-    auto found = matchRound.find(_stack.value<ostring>(0));
+    auto found = matchRound.find(_stack.value<String>(0));
     if (found != matchRound.end())
         mpreal::set_default_rnd(found->second);
     else

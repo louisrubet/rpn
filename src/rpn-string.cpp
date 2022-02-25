@@ -14,7 +14,7 @@ void program::rpn_instr() {
         stringstream ss;
         ss << _stack.at(0);
         _stack.pop();
-        _stack.push(new ostring(ss.str()));
+        _stack.push(new String(ss.str()));
     }
 }
 
@@ -24,7 +24,7 @@ void program::rpn_strout() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
 
-    string entry(_stack.value<ostring>(0));
+    string entry(_stack.value<String>(0));
     program prog(_stack, _heap);
     _stack.pop();
 
@@ -39,10 +39,10 @@ void program::rpn_strout() {
 void program::rpn_chr() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_number);
-    char the_chr = static_cast<char>(_stack.value<number>(0).toLong());
+    char the_chr = static_cast<char>(_stack.value<Number>(0).toLong());
     _stack.pop();
     if (the_chr < 32 || the_chr > 126) the_chr = '.';
-    _stack.push_front(new ostring(string(1, the_chr)));
+    _stack.push_front(new String(string(1, the_chr)));
 }
 
 /// @brief num keyword implementation
@@ -50,10 +50,10 @@ void program::rpn_chr() {
 void program::rpn_num() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
-    if (_stack.value<ostring>(0).size() > 0)
-        _stack.push_front(new number(_stack.value<ostring>(0)[0]));
+    if (_stack.value<String>(0).size() > 0)
+        _stack.push_front(new Number(_stack.value<String>(0)[0]));
     else
-        _stack.push_front(new number(0));
+        _stack.push_front(new Number(0));
     _stack.erase(1);
 }
 
@@ -62,7 +62,7 @@ void program::rpn_num() {
 void program::rpn_strsize() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
-    _stack.push_front(new number(_stack.value<ostring>(0).size()));
+    _stack.push_front(new Number(_stack.value<String>(0).size()));
     _stack.erase(1);
 }
 
@@ -73,9 +73,9 @@ void program::rpn_strpos() {
     ARG_MUST_BE_OF_TYPE(0, cmd_string);
     ARG_MUST_BE_OF_TYPE(1, cmd_string);
 
-    size_t pos = _stack.value<ostring>(1).find(_stack.value<ostring>(0)) + 1;
+    size_t pos = _stack.value<String>(1).find(_stack.value<String>(0)) + 1;
     _stack.erase(0, 2);
-    _stack.push_front(new number(pos));
+    _stack.push_front(new Number(pos));
 }
 
 /// @brief sub keyword implementation
@@ -86,11 +86,11 @@ void program::rpn_strsub() {
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
     ARG_MUST_BE_OF_TYPE(2, cmd_string);
 
-    size_t first = _stack.value<number>(1).toULong();
-    size_t len = _stack.value<number>(0).toULong() - first + 1;
+    size_t first = _stack.value<Number>(1).toULong();
+    size_t len = _stack.value<Number>(0).toULong() - first + 1;
     first--;
 
-    if (first > _stack.value<ostring>(2).size()) first = len = 0;
-    _stack.push(new ostring(_stack.value<ostring>(2).substr(first, len)));
+    if (first > _stack.value<String>(2).size()) first = len = 0;
+    _stack.push(new String(_stack.value<String>(2).substr(first, len)));
     _stack.erase(1, 3);
 }

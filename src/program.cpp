@@ -205,11 +205,11 @@ vector<program::keyword_t> program::_keywords{
 
 /// autocompletion vector for linenoise autocompletion
 vector<string>& program::getAutocompletionWords() {
-    static vector<string> autocompletionWords;
-    if (autocompletionWords.empty())
+    static vector<string> autocompletion_words;
+    if (autocompletion_words.empty())
         for (auto& kw : _keywords)
-            if (!kw.name.empty()) autocompletionWords.push_back(kw.name);
-    return autocompletionWords;
+            if (!kw.name.empty()) autocompletion_words.push_back(kw.name);
+    return autocompletion_words;
 }
 
 /// @brief run a program on a stack and a heap
@@ -228,24 +228,24 @@ ret_value program::run() {
     ret = preprocess();
     if (ret != ret_ok) {
         // free allocated
-        for (object* o : *this) delete o;
+        for (Object* o : *this) delete o;
         _local_heap.clear();
         return ret;
     }
 
     // iterate commands
     for (size_t i = 0; (go_out == false) && (i < size());) {
-        object* o = at(i);
+        Object* o = at(i);
         switch (o->_type) {
             // could be an auto-evaluated symbol
             case cmd_symbol:
-                auto_rcl(reinterpret_cast<symbol*>(o));
+                auto_rcl(reinterpret_cast<Symbol*>(o));
                 i++;
                 break;
 
             // a keyword
             case cmd_keyword: {
-                keyword* k = reinterpret_cast<keyword*>(o);
+                Keyword* k = reinterpret_cast<Keyword*>(o);
                 // call the matching function
                 (this->*(k->fn))();
                 switch (_err) {
@@ -277,7 +277,7 @@ ret_value program::run() {
             // a branch keyword
             case cmd_branch: {
                 // call matching function
-                branch* b = reinterpret_cast<branch*>(o);
+                Branch* b = reinterpret_cast<Branch*>(o);
                 size_t next_cmd = (this->*(b->fn))(*b);
                 switch (next_cmd) {
                     case step_out:  // step out
@@ -304,7 +304,7 @@ ret_value program::run() {
     }
 
     // free allocated
-    for (object* o : *this) delete o;
+    for (Object* o : *this) delete o;
     _local_heap.clear();
 
     return ret;
@@ -336,13 +336,13 @@ ret_value program::preprocess(void) {
     vector<struct if_layout_t> vlayout;
     int layout_index = -1;
     // for start-end-step
-    vector<int> vstartindex;
+    vector<int> vstart_index;
 
     // analyse if-then-else-end branches
     // analyse start-{next, step} branches
     for (size_t i = 0; i < size(); i++) {
         if (at(i)->_type == cmd_branch) {
-            branch* k = reinterpret_cast<branch*>(at(i));
+            Branch* k = reinterpret_cast<Branch*>(at(i));
             if (k->value == "if") {
                 if_layout_t layout;
                 layout.index_if_or_do_or_while = i;
@@ -399,33 +399,33 @@ ret_value program::preprocess(void) {
                 vlayout[layout_index].index_else = i;
                 k->arg1 = next;  // fill branch1 (if was false) of 'else'
                 k->arg3 = vlayout[layout_index].index_if_or_do_or_while;
-                reinterpret_cast<branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))->arg2 =
+                reinterpret_cast<Branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))->arg2 =
                     next;  // fill branch2 (if was false) of 'then'
             } else if (k->value == "start") {
-                vstartindex.push_back(i);
+                vstart_index.push_back(i);
             } else if (k->value == "for") {
-                vstartindex.push_back(i);
+                vstart_index.push_back(i);
                 k->arg1 = i + 1;  // arg1 points on symbol variable
             } else if (k->value == "next") {
-                if (vstartindex.size() == 0) {
+                if (vstart_index.size() == 0) {
                     // error: show it
                     show_syntax_error("missing start or for before next");
                     return ret_syntax;
                 }
-                k->arg1 = vstartindex[vstartindex.size() - 1];  // 'next' arg1 = 'start' index
-                reinterpret_cast<branch*>(at(vstartindex[vstartindex.size() - 1]))->arg2 =
+                k->arg1 = vstart_index[vstart_index.size() - 1];  // 'next' arg1 = 'start' index
+                reinterpret_cast<Branch*>(at(vstart_index[vstart_index.size() - 1]))->arg2 =
                     i;  // 'for' or 'start' arg2 = 'next' index
-                vstartindex.pop_back();
+                vstart_index.pop_back();
             } else if (k->value == "step") {
-                if (vstartindex.size() == 0) {
+                if (vstart_index.size() == 0) {
                     // error: show it
                     show_syntax_error("missing start or for before step");
                     return ret_syntax;
                 }
-                k->arg1 = vstartindex[vstartindex.size() - 1];  // fill 'step' branch1 = 'start' index
-                reinterpret_cast<branch*>(at(vstartindex[vstartindex.size() - 1]))->arg2 =
+                k->arg1 = vstart_index[vstart_index.size() - 1];  // fill 'step' branch1 = 'start' index
+                reinterpret_cast<Branch*>(at(vstart_index[vstart_index.size() - 1]))->arg2 =
                     i;  // 'for' or 'start' arg2 = 'next' index
-                vstartindex.pop_back();
+                vstart_index.pop_back();
             } else if (k->value == "->") {
                 k->arg1 = i;  // arg1 is '->' command index in program
             } else if (k->value == "do") {
@@ -515,8 +515,7 @@ ret_value program::preprocess(void) {
                         }
 
                         // fill 'repeat' arg1 with 'end+1'
-                        reinterpret_cast<branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))->arg1 =
-                            i + 1;
+                        reinterpret_cast<Branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))->arg1 = i + 1;
                         layout_index--;
                     } else {
                         // this end closes an if..then..(else)
@@ -527,11 +526,11 @@ ret_value program::preprocess(void) {
                         }
                         if (vlayout[layout_index].index_else != -1) {
                             // fill 'end' branch of 'else'
-                            reinterpret_cast<branch*>(at(vlayout[layout_index].index_else))->arg2 = i;
+                            reinterpret_cast<Branch*>(at(vlayout[layout_index].index_else))->arg2 = i;
                         } else {
                             // fill 'end' branch of 'then'
                             if (vlayout[layout_index].index_then_or_unti_or_repeat != -1) {
-                                reinterpret_cast<branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))
+                                reinterpret_cast<Branch*>(at(vlayout[layout_index].index_then_or_unti_or_repeat))
                                     ->arg2 = i;
                             } else {
                                 // error: show it
@@ -550,7 +549,7 @@ ret_value program::preprocess(void) {
         show_syntax_error("missing end");
         return ret_syntax;
     }
-    if (vstartindex.size() > 0) {
+    if (vstart_index.size() > 0) {
         // error: show it
         show_syntax_error("missing next or step after for or start");
         return ret_syntax;
@@ -565,41 +564,41 @@ ret_value program::preprocess(void) {
 /// @return ret_value see this type
 ///
 ret_value program::parse(string& entry) {
-    static map<string, Lexer::ReservedWord> keywordsMap;
+    static map<string, Lexer::ReservedWord> keywords_map;
     vector<Lexer::SynElement> elements;
     vector<Lexer::SynError> errors;
     ret_value ret = ret_ok;
 
     // prepare map for finding reserved keywords
-    if (keywordsMap.empty())
+    if (keywords_map.empty())
         for (auto& kw : _keywords)
-            if (!kw.name.empty()) keywordsMap[kw.name] = {kw.type, kw.fn};
+            if (!kw.name.empty()) keywords_map[kw.name] = {kw.type, kw.fn};
 
     // separate the entry string
-    if (lexer(entry, keywordsMap, elements, errors)) {
+    if (lexer(entry, keywords_map, elements, errors)) {
         // make objects from parsed elements
         for (Lexer::SynElement& element : elements) {
             switch (element.type) {
                 case cmd_number:
-                    push_back(new number(*element.re, element.reBase));
+                    push_back(new Number(*element.re, element.reBase));
                     break;
                 case cmd_complex:
-                    push_back(new ocomplex(*element.re, *element.im, element.reBase, element.imBase));
+                    push_back(new Complex(*element.re, *element.im, element.reBase, element.imBase));
                     break;
                 case cmd_string:
-                    push_back(new ostring(element.value));
+                    push_back(new String(element.value));
                     break;
                 case cmd_symbol:
-                    push_back(new symbol(element.value, element.autoEval));
+                    push_back(new Symbol(element.value, element.autoEval));
                     break;
                 case cmd_program:
-                    push_back(new oprogram(element.value));
+                    push_back(new Program(element.value));
                     break;
                 case cmd_keyword:
-                    push_back(new keyword(element.fn, element.value));
+                    push_back(new Keyword(element.fn, element.value));
                     break;
                 case cmd_branch:
-                    push_back(new branch((branch_fn_t)element.fn, element.value));
+                    push_back(new Branch((branch_fn_t)element.fn, element.value));
                     break;
                 default:
                     show_error(ret_unknown_err, "error creating program from entry");
@@ -708,9 +707,9 @@ void program::show_stack(bool show_separator) {
 ///
 void program::apply_default() {
     // default float precision, float mode
-    number::s_mode = number::DEFAULT_MODE;
-    number::s_digits = number::DEFAULT_DECIMAL_DIGITS;
-    mpreal::set_default_prec(number::MPFR_DEFAULT_PREC_BITS);
+    Number::s_mode = Number::DEFAULT_MODE;
+    Number::s_digits = Number::DEFAULT_DECIMAL_DIGITS;
+    mpreal::set_default_prec(Number::MPFR_DEFAULT_PREC_BITS);
 
     static mp_rnd_t def_rnd = mpreal::get_default_rnd();
     mpreal::set_default_rnd(def_rnd);
