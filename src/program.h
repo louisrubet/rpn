@@ -14,9 +14,9 @@ using namespace std;
 using mpfr::mpreal;
 
 // internal includes
-#include "lexer.hpp"
-#include "object.hpp"
-#include "stack.hpp"
+#include "lexer.h"
+#include "object.h"
+#include "stack.h"
 
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class program : public deque<Object*>, public Lexer {

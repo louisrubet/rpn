@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "lexer.hpp"
+#include "lexer.h"
 
 bool Lexer::Analyse(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
                   vector<SynError>& errors) {

@@ -3,7 +3,7 @@
 #include <string>
 using std::string;
 
-#include "program.hpp"
+#include "program.h"
 #include "version.h"
 
 // foreground colors

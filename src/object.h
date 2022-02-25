@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#ifndef SRC_OBJECT_HPP_
-#define SRC_OBJECT_HPP_
+#ifndef SRC_OBJECT_H_
+#define SRC_OBJECT_H_
 
 #include <mpreal.h>
 using mpfr::mpreal;
@@ -12,7 +12,7 @@ using mpfr::mpreal;
 #include <string>
 using std::complex, std::ostream, std::string, std::stringstream;
 
-#include "mpreal-out.hpp"
+#include "mpreal-out.h"
 
 // definitions for objects
 ///
@@ -212,4 +212,4 @@ struct Branch : Object {
     string value;
 };
 
-#endif  // SRC_OBJECT_HPP_
+#endif  // SRC_OBJECT_H_

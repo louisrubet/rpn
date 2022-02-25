@@ -2,7 +2,7 @@
 
 #include <ctime>
 
-#include "program.hpp"
+#include "program.h"
 
 /// @brief time keyword implementation
 ///

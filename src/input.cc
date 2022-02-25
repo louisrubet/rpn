@@ -1,6 +1,6 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#include "input.hpp"
+#include "input.h"
 
 #include <cstring>
 
