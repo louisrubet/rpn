@@ -9,12 +9,12 @@
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_if(branch& myobj) {
+size_t program::rpn_if(Branch& myobj) {
     // myobj.arg1 = 'if' condition evaluation value
     MIN_ARGUMENTS_RET(1, runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
 
-    if (_stack.value<number>(0) != 0)
+    if (_stack.value<Number>(0) != 0)
         myobj.arg1 = 1;
     else
         myobj.arg1 = 0;
@@ -27,20 +27,20 @@ size_t program::rpn_if(branch& myobj) {
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
 /// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return runtime_error something went wrong with preprocess, abort Branch
 ///
-size_t program::rpn_then(branch& myobj) {
+size_t program::rpn_then(Branch& myobj) {
     // myobj.arg1 = index of then + 1
     // myobj.arg2 = index of else + 1 or end + 1
     // myobj.arg3 = index of if
     // if condition is true -> arg1 (= jump to then + 1)
     // else -> arg2 (= jump to else + 1 or end + 1)
-    branch* if_cmd;
+    Branch* if_cmd;
     if (myobj.arg3 >= size() || at(myobj.arg3)->_type != cmd_branch) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    if_cmd = reinterpret_cast<branch*>(at(myobj.arg3));
+    if_cmd = reinterpret_cast<Branch*>(at(myobj.arg3));
     if (if_cmd->arg1 == 1)
         return myobj.arg1;
     else
@@ -54,18 +54,18 @@ size_t program::rpn_then(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_else(branch& myobj) {
+size_t program::rpn_else(Branch& myobj) {
     // myobj.arg1 = index of else + 1
     // myobj.arg2 = index of end + 1
     // myobj.arg3 = index of if
     // if condition was false -> arg1 (= jump to else + 1)
     // if condition was true -> arg2 (= jump to end + 1)
-    branch* if_cmd;
+    Branch* if_cmd;
     if (myobj.arg3 >= size() || at(myobj.arg3)->_type != cmd_branch) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    if_cmd = reinterpret_cast<branch*>(at(myobj.arg3));
+    if_cmd = reinterpret_cast<Branch*>(at(myobj.arg3));
     if (if_cmd->arg1 == 1)
         return myobj.arg2;
     else
@@ -79,7 +79,7 @@ size_t program::rpn_else(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_end(branch& myobj) {
+size_t program::rpn_end(Branch& myobj) {
     size_t ret = step_out;
 
     // arg1 = index of do+1 in case of do..unti..end
@@ -89,7 +89,7 @@ size_t program::rpn_end(branch& myobj) {
         ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
 
         // check arg
-        if (_stack.value<number>(0) == 0) ret = myobj.arg1;
+        if (_stack.value<Number>(0) == 0) ret = myobj.arg1;
         _stack.pop();
     } else if (myobj.arg2 != step_out) {
         // arg2 = index of while+1 in case of while..repeat..end
@@ -106,7 +106,7 @@ size_t program::rpn_end(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_do(branch& myobj) {
+size_t program::rpn_do(Branch& myobj) {
     // nothing
     return step_out;
 }
@@ -116,9 +116,9 @@ size_t program::rpn_do(branch& myobj) {
 /// @param myobj the current branch object
 /// @return size_t index of the next object to run in the current program
 /// @return step_out next object to run in the current program is current + 1
-/// @return runtime_error something went wrong with preprocess, abort branch
+/// @return runtime_error something went wrong with preprocess, abort Branch
 ///
-size_t program::rpn_until(branch& myobj) {
+size_t program::rpn_until(Branch& myobj) {
     // nothing
     return step_out;
 }
@@ -135,8 +135,8 @@ void program::rpn_ift(void) {
     ARG_MUST_BE_OF_TYPE(1, cmd_number);
 
     // check ift arg
-    // arg is true if number != 0 or if is nan or +/-inf
-    if (_stack.value<number>(1) != 0)
+    // arg is true if Number != 0 or if is nan or +/-inf
+    if (_stack.value<Number>(1) != 0)
         _stack.erase(1);
     else
         _stack.erase(0, 2);
@@ -154,7 +154,7 @@ void program::rpn_ifte(void) {
     ARG_MUST_BE_OF_TYPE(2, cmd_number);
 
     // check ifte arg
-    if (_stack.value<number>(2) != 0) {
+    if (_stack.value<Number>(2) != 0) {
         _stack.erase(2);
         _stack.pop();
     } else {
@@ -170,7 +170,7 @@ void program::rpn_ifte(void) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_while(branch& myobj) {
+size_t program::rpn_while(Branch& myobj) {
     // nothing
     return step_out;
 }
@@ -182,7 +182,7 @@ size_t program::rpn_while(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_repeat(branch& myobj) {
+size_t program::rpn_repeat(Branch& myobj) {
     size_t ret = step_out;
 
     MIN_ARGUMENTS_RET(1, runtime_error);
@@ -190,7 +190,7 @@ size_t program::rpn_repeat(branch& myobj) {
 
     // check arg
     // myobj.arg1 is end+1
-    if (_stack.value<number>(0) == 0) ret = myobj.arg1;
+    if (_stack.value<Number>(0) == 0) ret = myobj.arg1;
     _stack.pop();
 
     return ret;
@@ -203,7 +203,7 @@ size_t program::rpn_repeat(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_start(branch& myobj) {
+size_t program::rpn_start(Branch& myobj) {
     size_t ret = step_out;
 
     MIN_ARGUMENTS_RET(2, runtime_error);
@@ -211,8 +211,8 @@ size_t program::rpn_start(branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, runtime_error);
 
     // loop boundaries
-    myobj.firstIndex = _stack.value<number>(1);
-    myobj.lastIndex = _stack.value<number>(0);
+    myobj.firstIndex = _stack.value<Number>(1);
+    myobj.lastIndex = _stack.value<Number>(0);
     _stack.erase(0, 2);
 
     // test value
@@ -232,23 +232,23 @@ size_t program::rpn_start(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_for(branch& myobj) {
+size_t program::rpn_for(Branch& myobj) {
     size_t ret;
 
     MIN_ARGUMENTS_RET(2, runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(1, cmd_number, runtime_error);
 
-    symbol* sym;
+    Symbol* sym;
     if (myobj.arg1 >= size() || at(myobj.arg1)->_type != cmd_symbol) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    sym = reinterpret_cast<symbol*>(at(myobj.arg1));  // arg1 = loop variable index
+    sym = reinterpret_cast<Symbol*>(at(myobj.arg1));  // arg1 = loop variable index
 
     // loop boundaries
-    myobj.firstIndex = _stack.value<number>(1);
-    myobj.lastIndex = _stack.value<number>(0);
+    myobj.firstIndex = _stack.value<Number>(1);
+    myobj.lastIndex = _stack.value<Number>(0);
 
     // test value
     if (myobj.firstIndex > myobj.lastIndex) {
@@ -263,7 +263,7 @@ size_t program::rpn_for(branch& myobj) {
             delete it->second;
             _local_heap.erase(it);
         }
-        _local_heap[sym->value] = _stack.obj<number>(1).clone();
+        _local_heap[sym->value] = _stack.obj<Number>(1).clone();
         ret = myobj.arg1 + 1;
     }
 
@@ -279,15 +279,15 @@ size_t program::rpn_for(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_next(branch& myobj) {
+size_t program::rpn_next(Branch& myobj) {
     // arg1 = loop variable index
     // firstIndex = current point in the loop
-    branch* start_or_for;
+    Branch* start_or_for;
     if (myobj.arg1 >= size() || at(myobj.arg1)->_type != cmd_branch) {
         setErrorContext(ret_missing_operand);
         return runtime_error;
     }
-    start_or_for = reinterpret_cast<branch*>(at(myobj.arg1));
+    start_or_for = reinterpret_cast<Branch*>(at(myobj.arg1));
     if (!myobj.arg_bool) {
         myobj.arg_bool = true;
         myobj.firstIndex = start_or_for->firstIndex;
@@ -299,16 +299,16 @@ size_t program::rpn_next(branch& myobj) {
 
     // for command: increment symbol too
     if (start_or_for->arg1 != -1) {
-        object* obj;
-        symbol* var;
+        Object* obj;
+        Symbol* var;
         if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != cmd_symbol) {
             setErrorContext(ret_missing_operand);
             return runtime_error;
         }
-        var = reinterpret_cast<symbol*>(at(start_or_for->arg1));
+        var = reinterpret_cast<Symbol*>(at(start_or_for->arg1));
 
         // store symbol variable (asserted existing in the local heap)
-        reinterpret_cast<number*>(_local_heap[var->value])->value = myobj.firstIndex;
+        reinterpret_cast<Number*>(_local_heap[var->value])->value = myobj.firstIndex;
     }
 
     // test value
@@ -332,12 +332,12 @@ size_t program::rpn_next(branch& myobj) {
 /// @return step_out next object to run in the current program is current + 1
 /// @return runtime_error something went wrong with preprocess, abort branch
 ///
-size_t program::rpn_step(branch& myobj) {
+size_t program::rpn_step(Branch& myobj) {
     size_t ret;
     MIN_ARGUMENTS_RET(1, runtime_error);
     ARG_MUST_BE_OF_TYPE_RET(0, cmd_number, runtime_error);
 
-    mpreal step = _stack.value<number>(0);
+    mpreal step = _stack.value<Number>(0);
     _stack.pop();
 
     // end of loop if step is negative or zero
@@ -346,12 +346,12 @@ size_t program::rpn_step(branch& myobj) {
     } else {
         // arg1 = loop variable index
         // firstIndex = current count
-        branch* start_or_for;
+        Branch* start_or_for;
         if (myobj.arg1 >= size() || at(myobj.arg1)->_type != cmd_branch) {
             setErrorContext(ret_missing_operand);
             return runtime_error;
         }
-        start_or_for = reinterpret_cast<branch*>(at(myobj.arg1));
+        start_or_for = reinterpret_cast<Branch*>(at(myobj.arg1));
         if (!myobj.arg_bool) {
             myobj.arg_bool = true;
             myobj.firstIndex = start_or_for->firstIndex;
@@ -362,17 +362,17 @@ size_t program::rpn_step(branch& myobj) {
         mpfr_add(myobj.firstIndex.mpfr_ptr(), myobj.firstIndex.mpfr_srcptr(), step.mpfr_srcptr(), MPFR_RNDD);
 
         if (start_or_for->arg1 != -1) {
-            object* obj;
-            symbol* var;
+            Object* obj;
+            Symbol* var;
 
             // for command: increment symbol too
             if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != cmd_symbol) {
                 setErrorContext(ret_missing_operand);
                 return runtime_error;
             }
-            var = reinterpret_cast<symbol*>(at(start_or_for->arg1));
+            var = reinterpret_cast<Symbol*>(at(start_or_for->arg1));
             // increase symbol variable
-            reinterpret_cast<number*>(_local_heap[var->value])->value = myobj.firstIndex;
+            reinterpret_cast<Number*>(_local_heap[var->value])->value = myobj.firstIndex;
         }
 
         // test loop value is out of range

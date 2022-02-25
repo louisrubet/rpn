@@ -14,7 +14,7 @@ using std::cerr;
 
 /// @brief actions to be done at rpn exit
 ///
-static void exit_interactive_rpn() {
+static void ExitInteractive() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
@@ -34,7 +34,7 @@ static void exit_interactive_rpn() {
 
 /// @brief actions to be done at rpn exit
 ///
-static void init_interactive_rpn() {
+static void EnterInteractive() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
@@ -52,16 +52,16 @@ static void init_interactive_rpn() {
 /// @param siginfo signal info, see POSIX sigaction
 /// @param context see POSIX sigaction
 ///
-static void ctrlc_handler(int sig, siginfo_t* siginfo, void* context) { exit_interactive_rpn(); }
+static void CtrlHandler(int sig, siginfo_t* siginfo, void* context) { ExitInteractive(); }
 
 /// @brief setup signals handlers to stop with honours
 ///
 /// @param prog the prog to catch the signals to, must be checked not nullptr by user
 ///
-static void catch_signals(program* prog) {
+static void CatchSignals(program* prog) {
     struct sigaction act = {0};
 
-    act.sa_sigaction = &ctrlc_handler;
+    act.sa_sigaction = &CtrlHandler;
     act.sa_flags = SA_SIGINFO;
     if (sigaction(SIGINT, &act, nullptr) < 0)
         cerr << "Warning, Ctrl-C cannot be caught [errno=" << errno << ' ' << strerror(errno) << "']" << endl;
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     // run with interactive prompt
     if (argc == 1) {
         // init history
-        init_interactive_rpn();
+        EnterInteractive();
 
         // entry loop
         heap heap;
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
             switch (Input(entry, program::getAutocompletionWords()).status) {
                 case Input::ok:
                     // user could stop prog with CtrlC
-                    catch_signals(&prog);
+                    CatchSignals(&prog);
                     // run it
                     if (prog.parse(entry) == ret_ok && prog.run() == ret_good_bye)
                         go_on = false;
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
         }
 
         // manage history and exit
-        exit_interactive_rpn();
+        ExitInteractive();
     } else {  // run with cmd line arguments
         heap heap;
         rpnstack stack;
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
         ret = prog.parse(entry);
         if (ret == ret_ok) {
             // user could stop prog with CtrlC
-            catch_signals(&prog);
+            CatchSignals(&prog);
 
             // run it
             ret = prog.run();
