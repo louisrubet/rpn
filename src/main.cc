@@ -52,13 +52,16 @@ static void EnterInteractive() {
 /// @param siginfo signal info, see POSIX sigaction
 /// @param context see POSIX sigaction
 ///
-static void CtrlHandler(int sig, siginfo_t* siginfo, void* context) { ExitInteractive(); }
+static void CtrlHandler(int sig __attribute__((unused)), siginfo_t* siginfo __attribute__((unused)),
+                        void* context __attribute__((unused))) {
+    ExitInteractive();
+}
 
 /// @brief setup signals handlers to stop with honours
 ///
 /// @param prog the prog to catch the signals to, must be checked not nullptr by user
 ///
-static void CatchSignals(program* prog) {
+static void CatchSignals() {
     struct sigaction act = {0};
 
     act.sa_sigaction = &CtrlHandler;
@@ -85,6 +88,9 @@ int main(int argc, char* argv[]) {
         // init history
         EnterInteractive();
 
+        // user could stop prog with CtrlC
+        CatchSignals();
+
         // entry loop
         heap heap;
         rpnstack stack;
@@ -95,8 +101,6 @@ int main(int argc, char* argv[]) {
             string entry;
             switch (Input(entry, program::GetAutocompletionWords()).status) {
                 case Input::InputStatus::kOk:
-                    // user could stop prog with CtrlC
-                    CatchSignals(&prog);
                     // run it
                     if (prog.Parse(entry) == kOk && prog.Run() == kGoodbye)
                         go_on = false;
@@ -127,7 +131,7 @@ int main(int argc, char* argv[]) {
         ret = prog.Parse(entry);
         if (ret == kOk) {
             // user could stop prog with CtrlC
-            CatchSignals(&prog);
+            CatchSignals();
 
             // run it
             ret = prog.Run();
