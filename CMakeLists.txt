@@ -46,16 +46,6 @@ set(RPN_LICENSE "LGPLv3")
 set(RPN_LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE")
 set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 
-# compiler options
-if(CMAKE_COMPILER_IS_GNUCXX)
-    message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
-    # TODO still up to date?
-    set(BASE_COMPILER_OPTIONS "-std=c++17 -Wl,--no-as-needed")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -s")
-endif()
-
 # custom linenoise-ng
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
     execute_process(command git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
@@ -73,32 +63,47 @@ endif()
 # includes
 include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/linenoise-ng/include ${PROJECT_SOURCE_DIR}/mpreal)
 
-# build
-add_executable(
-  rpn
-  ${PROJECT_SOURCE_DIR}/src/main.cc
-  ${PROJECT_SOURCE_DIR}/src/object.cc
-  ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
-  ${PROJECT_SOURCE_DIR}/src/program.cc
-  ${PROJECT_SOURCE_DIR}/src/lexer.cc
-  ${PROJECT_SOURCE_DIR}/src/input.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-complex.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-general.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-logs.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-program.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-real.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-stack.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-store.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-string.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-test.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-time.cc
-  ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc
-  ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
-  ${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
-  ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp
-)
+# src
+set(RPN_SRC_FILES
+    ${PROJECT_SOURCE_DIR}/src/main.cc
+    ${PROJECT_SOURCE_DIR}/src/object.cc
+    ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
+    ${PROJECT_SOURCE_DIR}/src/program.cc
+    ${PROJECT_SOURCE_DIR}/src/lexer.cc
+    ${PROJECT_SOURCE_DIR}/src/input.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-complex.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-general.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-logs.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-program.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-real.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-stack.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-store.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-string.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-test.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-time.cc
+    ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc)
+
+set(LINENOISE_NG_SRC_FILES
+${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
+${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
+${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
+
+# compiler options
+set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS # some harder warnings
+    "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
+    # TODO still up to date?
+    set(BASE_COMPILER_OPTIONS "-std=c++17 -Wl,--no-as-needed")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -s")
+endif()
+
+add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
 
 target_link_libraries(rpn mpfr)
 target_link_libraries(rpn gmp)

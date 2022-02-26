@@ -184,7 +184,7 @@ ostream& _out_number(ostream& out, int base, const mpreal& value) {
                 if (digits > 0) {
                     out << '.';
 
-                    int remaining = MIN(strlen(print_from) - nexp - 1, digits) + 1;
+                    int remaining = MIN(static_cast<int>(strlen(print_from)) - nexp - 1, digits) + 1;
                     for (int i = nexp; i < remaining + nexp; i++) out << print_from[i];
                     for (int i = 0; i < nexp + digits - len; i++) out << '0';
                 }
