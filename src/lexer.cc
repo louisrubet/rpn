@@ -2,8 +2,11 @@
 
 #include "lexer.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"  // allow designated initializers
+
 bool Lexer::Analyse(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
-                  vector<SynError>& errors) {
+                    vector<SynError>& errors) {
     size_t jump;
     for (size_t i = 0; i < entry.size(); i++) {
         if (isspace(entry[i])) continue;
@@ -49,7 +52,7 @@ void Lexer::Trim(string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
 }
 
-bool Lexer::ParseString(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+bool Lexer::ParseString(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
                         vector<SynElement>& elements) {
     // here we are sure that entry[0] is at least '"'
     for (size_t i = idx + 1; i < entry.size(); i++) {
@@ -66,7 +69,7 @@ bool Lexer::ParseString(string& entry, size_t idx, size_t& next_idx, vector<SynE
     return true;
 }
 
-bool Lexer::ParseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+bool Lexer::ParseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
                         vector<SynElement>& elements) {
     // here we are sure that entry[0] is at least '\''
     for (size_t i = idx + 1; i < entry.size(); i++) {
@@ -81,7 +84,7 @@ bool Lexer::ParseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynE
     return true;
 }
 
-bool Lexer::ParseProgram(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+bool Lexer::ParseProgram(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
                          vector<SynElement>& elements) {
     // here we are sure that entry is at least "<<"
     // find last ">>" or "»"
@@ -153,7 +156,6 @@ int Lexer::GetBaseAt(string& entry, size_t& next_idx, bool& positive) {
 
 bool Lexer::GetNUmberAt(string& entry, size_t idx, size_t& next_idx, int& base, mpreal** r, char delim) {
     stringstream ss;
-    int idxNumber = 0;
     string token;
     bool positive = true;
 
@@ -193,7 +195,7 @@ bool Lexer::ParseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynE
     }
 }
 
-bool Lexer::ParseComplex(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+bool Lexer::ParseComplex(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
                          vector<SynElement>& elements) {
     mpreal* re = nullptr;
     mpreal* im = nullptr;
@@ -253,3 +255,5 @@ bool Lexer::ParseUnknown(string& entry, size_t idx, size_t& next_idx, vector<Syn
     next_idx = token.size() + idx;
     return true;
 }
+
+#pragma GCC diagnostic pop

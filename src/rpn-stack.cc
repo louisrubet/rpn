@@ -31,7 +31,7 @@ void program::RpnDropn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
-    int args = static_cast<int>(stack_.value<Number>(0).toLong());
+    size_t args = stack_.value<Number>(0).toULong();
     MIN_ARGUMENTS(args + 1);
     stack_.erase(0, args + 1);
 }
@@ -53,11 +53,15 @@ void program::RpnDupn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
-    int args = static_cast<int>(stack_.value<Number>(0).toLong());
+    size_t args = stack_.value<Number>(0).toULong();
     stack_.pop();
+    if (args == 0) {
+        ERROR_CONTEXT(kOutOfRange);
+        return;
+    }
 
     MIN_ARGUMENTS(args);
-    for (int i = 0; i < args; i++) stack_.push_front(stack_.at(args - 1)->Clone());
+    for (size_t i = 0; i < args; i++) stack_.push_front(stack_.at(args - 1)->Clone());
 }
 
 /// @brief dup2 keyword implementation
@@ -74,7 +78,7 @@ void program::RpnPick(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
-    int to_pick = static_cast<int>(stack_.value<Number>(0).toLong());
+    size_t to_pick = static_cast<int>(stack_.value<Number>(0).toLong());
     stack_.pop();
 
     // treat stack_ depth errors
@@ -105,9 +109,13 @@ void program::RpnRoll(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
-    int args = static_cast<int>(stack_.value<Number>(0).toLong());
+    size_t args = static_cast<int>(stack_.value<Number>(0).toLong());
     stack_.pop();
     MIN_ARGUMENTS(args);
+    if (args == 0) {
+        ERROR_CONTEXT(kOutOfRange);
+        return;
+    }
 
     Object* tmp = stack_.at(args - 1);
     stack_.erase(args - 1, 1, false);
@@ -120,9 +128,13 @@ void program::RpnRolld(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
-    int args = static_cast<int>(stack_.value<Number>(0).toLong());
+    size_t args = static_cast<int>(stack_.value<Number>(0).toLong());
     stack_.pop();
     MIN_ARGUMENTS(args);
+    if (args == 0) {
+        ERROR_CONTEXT(kOutOfRange);
+        return;
+    }
 
     Object* tmp = stack_.at(0);
     stack_.erase(0, 1, false);
