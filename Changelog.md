@@ -22,6 +22,7 @@ Changelog
 - Test files are now markdown (.md) files, tests result are slightly changed
 - Delivery as flatpak and snap
 - error string are slightly different, althought error codes are still the same
+- automatic version string from git, slightly change from previous versions
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
