@@ -172,8 +172,8 @@ struct Symbol : Object {
     virtual Object* Clone() { return new Symbol(value, auto_eval); }
     virtual string Name() { return string("symbol"); }
     virtual ostream& Show(ostream& out) { return out << "'" << value << "'"; }
-    bool auto_eval;
     string value;
+    bool auto_eval;
 };
 
 struct Keyword : Object {
@@ -187,19 +187,19 @@ struct Keyword : Object {
 
 struct Branch : Object {
     Branch() : Object(kBranch) {}
-    explicit Branch(branch_fn_t fn__, const string& value__) : Object(kBranch) {
-        fn = fn__;
+    explicit Branch(branch_fn_t fn__, const string& value__) : Object(kBranch), fn(fn__), value(value__) {
         arg1 = static_cast<size_t>(-1);
         arg2 = static_cast<size_t>(-1);
         arg3 = static_cast<size_t>(-1);
         arg_bool = 0;
-        value = value__;
     }
     explicit Branch(Branch& other) : Object(kBranch) {
         fn = other.fn;
         arg1 = other.arg1;
         arg2 = other.arg2;
         arg3 = other.arg3;
+        first_index = other.first_index;
+        last_index = other.last_index;
         arg_bool = other.arg_bool;
         value = other.value;
     }

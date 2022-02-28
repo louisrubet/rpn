@@ -193,7 +193,6 @@ void program::RpnPurge(void) {
 /// @brief vars keyword implementation
 ///
 void program::RpnVars(void) {
-    Object* obj;
     program* parent = parent_;
     string name;
     int index = 1;
@@ -214,7 +213,7 @@ void program::RpnVars(void) {
     while (parent != nullptr) {
         for (auto i : parent->local_heap_) {
             cout << "parent var " << index++ << ": name '" << i.first << "', type " << i.second->Name() << ", value ";
-            obj->Show(cout) << endl;
+            i.second->Show(cout) << endl;
         }
         parent = parent->parent_;
     }

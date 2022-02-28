@@ -54,7 +54,6 @@ void program::RpnHelp() {
     cout << _syntax << endl;
 
     // keywords
-    unsigned int i = 0;
     for (auto& kw : keywords_)
         if (!kw.comment.empty()) {
             // titles in bold

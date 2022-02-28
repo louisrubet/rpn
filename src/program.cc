@@ -3,6 +3,8 @@
 #include "program.h"
 
 //< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"  // allow casting kBranch callbacks
 vector<program::keyword_t> program::keywords_{
     // GENERAL
     {kUndef, "", nullptr, "\nGENERAL"},
@@ -129,8 +131,7 @@ vector<program::keyword_t> program::keywords_{
     {kBranch, "else", (program_fn_t)&program::RpnElse, "used with if"},
     {kBranch, "end", (program_fn_t)&program::RpnEnd, "used with various branch instructions"},
     {kBranch, "start", (program_fn_t)&program::RpnStart, "<start> <end> start <instructions> next|<step> step"},
-    {kBranch, "for", (program_fn_t)&program::RpnFor,
-     "<start> <end> for <variable> <instructions> next|<step> step"},
+    {kBranch, "for", (program_fn_t)&program::RpnFor, "<start> <end> for <variable> <instructions> next|<step> step"},
     {kBranch, "next", (program_fn_t)&program::RpnNext, "used with start and for"},
     {kBranch, "step", (program_fn_t)&program::RpnStep, "used with start and for"},
     {kKeyword, "ift", &program::RpnIft, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
@@ -202,6 +203,7 @@ vector<program::keyword_t> program::keywords_{
     {kKeyword, "date", &program::RpnDate, "date in local format"},
     {kKeyword, "ticks", &program::RpnTicks, "system tick in µs"},
 };
+#pragma GCC diagnostic pop
 
 /// autocompletion vector for linenoise autocompletion
 vector<string>& program::GetAutocompletionWords() {
@@ -219,7 +221,6 @@ vector<string>& program::GetAutocompletionWords() {
 RetValue program::Run() {
     bool go_out = false;
     RetValue ret = kOk;
-    ObjectType type;
 
     err_ = kOk;
     err_context_ = "";
@@ -598,7 +599,10 @@ RetValue program::Parse(string& entry) {
                     push_back(new Keyword(element.fn, element.value));
                     break;
                 case kBranch:
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"  // allow casting kBranch callbacks
                     push_back(new Branch((branch_fn_t)element.fn, element.value));
+#pragma GCC diagnostic pop
                     break;
                 default:
                     ShowError(kUnknownError, "error creating program from entry");
@@ -637,8 +641,10 @@ RetValue program::ShowError() {
         case kInternalError:
         case kDeadlyError:
             ret = kDeadlyError;
+            break;
         default:
             ret = kOk;
+            break;
     }
 
     return ret;

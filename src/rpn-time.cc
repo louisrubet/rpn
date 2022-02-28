@@ -44,9 +44,6 @@ void program::RpnDate() {
         // date format = (M)M.DDYYYY
         date = static_cast<double>(tm->tm_mon + 1) * 1000000.0 + static_cast<double>(tm->tm_mday) * 10000.0 +
                static_cast<double>(tm->tm_year + 1900);
-
-        // push it
-        Number* num;
         // division after push for real precision
         stack_.push(new Number(date));
         stack_.value<Number>(0) /= 1000000.0;

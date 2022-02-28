@@ -82,10 +82,10 @@ void program::RpnEval(void) {
 ///
 int program::RpnInprog(Branch& inprog_obj) {
     string context("->");  // for showing errors
-    int count_symbols = 0;
+    size_t count_symbols = 0;
     bool prog_found = false;
 
-    if (inprog_obj.arg1 == -1) {
+    if (inprog_obj.arg1 == kStepOut) {
         ERROR_CONTEXT(kUnknownError);
         return -1;
     }
@@ -132,7 +132,7 @@ int program::RpnInprog(Branch& inprog_obj) {
     }
 
     // load variables
-    for (unsigned int i = inprog_obj.arg1 + count_symbols; i > inprog_obj.arg1; i--) {
+    for (size_t i = inprog_obj.arg1 + count_symbols; i > inprog_obj.arg1; i--) {
         local_heap_[reinterpret_cast<Symbol*>(at(i))->value] = stack_.at(0)->Clone();
         stack_.pop();
     }
