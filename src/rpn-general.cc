@@ -23,7 +23,7 @@ static const char _description[] =
 
 static const char _syntax[] = ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\nwith optional command = list of commands";
 
-static const char _uname[] = ATTR_BOLD "rpn v" RPN_VERSION ", (c) 2022 <louis@rubet.fr>" ATTR_OFF;
+static const char _uname[] = ATTR_BOLD "rpn " RPN_VERSION ", (c) 2022 <louis@rubet.fr>" ATTR_OFF;
 
 /// @brief nop keyword implementation
 ///
