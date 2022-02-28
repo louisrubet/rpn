@@ -69,9 +69,9 @@ vector<program::keyword_t> program::keywords_{
     {kKeyword, "sci", &program::RpnSci, "scientific floating point representation. ex: 20 sci"},
     {kKeyword, "prec", &program::RpnPrecision, "set float precision in bits. ex: 256 prec"},
     {kKeyword, "round", &program::RpnRound,
-     "set float rounding mode.\n\tex: [\"nearest (even)\", \"toward zero\", \"toward "
-     "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\"] round"},
-
+     "set float rounding mode in \n\t\"nearest (even)\", \"toward zero\", \"toward "
+     "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\""
+     "\n\tex: \"nearest (even)\" round"},
     {kKeyword, "default", &program::RpnDefault, "set float representation and precision to default"},
     {kKeyword, "type", &program::RpnType, "show type of stack first entry"},
     {kKeyword, "hex", &program::RpnHex, "hexadecimal representation, applies on stack level 0 only"},
