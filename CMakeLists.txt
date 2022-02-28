@@ -2,7 +2,7 @@
 
 project(rpn)
 
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.16)
 
 if((NOT CMAKE_BUILD_TYPE MATCHES Debug)
     AND (NOT CMAKE_BUILD_TYPE MATCHES Release))
@@ -18,7 +18,6 @@ else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
     set(GIT_VERSION "unknown")
 endif()
 add_definitions(-DGIT_VERSION="${GIT_VERSION}")
-message("GIT_VERSION is ${GIT_VERSION}")
 message("GIT_VERSION is ${GIT_VERSION}")
 
 # INFO
