@@ -91,13 +91,5 @@ add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
 target_link_libraries(rpn mpfr)
 target_link_libraries(rpn gmp)
 
-# man
-add_custom_target(man ALL)
-add_custom_command(
-    OUTPUT ${PROJECT_SOURCE_DIR}/doc/rpn.1.gz
-    COMMAND gzip -f -k ${PROJECT_SOURCE_DIR}/doc/rpn.1
-)
-
 # install
 install(TARGETS rpn DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/doc/rpn.1.gz DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1)

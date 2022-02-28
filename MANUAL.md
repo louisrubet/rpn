@@ -17,7 +17,7 @@ A help command is provided by rpn:
 ```
 rpn> help
 
-rpn v2.3.2, (c) 2017 <louis@rubet.fr>, GNU LGPL v3
+rpn v2.4.0, (c) 2022 <louis@rubet.fr>, GNU LGPL v3
 
 Reverse Polish Notation language
 
@@ -47,6 +47,7 @@ rpn> 2 sqrt
 ```
 
 ### **programs** and **variables**
+
 ```
 rpn> << rot * swap 2 / neg dup sq rot - sqrt >> 'quadratic_solution' sto
 rpn> 1 2 -3 quadratic_solution
@@ -77,7 +78,7 @@ rpn>
 
 ### object types
 
-The following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls)
+The following objects are managed: **floating numbers**, **complexes**, **symbols**, **strings**, **programs**, plus language **keywords** (commands and flow controls).
 ```
 5> 12.3456
 4> (1,-2.33)
@@ -89,7 +90,7 @@ rpn>
 
 ### structured programming
 
-Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat** and control keywords **if..then..[else]..end**, **ift**, **ifte** allow you to program powerfull algorithms
+Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat** and control keywords **if..then..[else]..end**, **ift**, **ifte** allow you to program powerfull algorithms.
 
 ### command line
 
@@ -99,15 +100,12 @@ Autocompletion works like those in Linux shells, with keys \<tab\>, Ctrl-R \<sea
 
 ## entry
 
-**reals** can be entered in decimal, binary, hexadecimal or arbitrary base from 2 to 62
+- **reals** can be entered in decimal, binary, hexadecimal or arbitrary base from 2 to 62.
+  - Binaries (base 2) are entered as `0b<number>` or `0B<number>`.
+  - Hexadecimals (base 16) are entered as `0x<number>` or `0X<number>`.
+  - Arbitrary base numbers are entered as `<base>b<number>`.
+  - Representation can be individualy changed with keywords `dec`, `bin`, `hex` and `<n> base`.
 
-binaries (base 2) are entered as `0b<number>` or `0B<number>`
-
-hexadecimals (base 16) are entered as `0x<number>` or `0X<number>`
-
-arbitrary base numbers are entered as `<base>b<number>`
-
-representation can be individualy changed with keywords `dec`, `bin`, `hex` and `<n> base`
 
 ex:
 ```
@@ -258,9 +256,9 @@ rpn> 7b1252 dec
 |`next`| used with start and for
 |`step`| used with start and for
 |`do`| `do (instructions) until (condition) end`
-|`until` `unti` | used with do
-|`while` `whil`| `while (test-instruction) repeat (loop-instructions) end`
-|`repeat` `repea`| used with while
+|`until` | used with do
+|`while` | `while (test-instruction) repeat (loop-instructions) end`
+|`repeat` | used with while
 
 ### store
 
