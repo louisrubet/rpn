@@ -83,7 +83,7 @@ size_t program::RpnEnd(Branch& myobj) {
     size_t ret = kStepOut;
 
     // arg1 = index of do+1 in case of do..unti..end
-    if (myobj.arg1 != -1) {
+    if (myobj.arg1 != kStepOut) {
         // in a template do..until..end
         MIN_ARGUMENTS_RET(1, kRtError);
         ARG_MUST_BE_OF_TYPE_RET(0, kNumber, kRtError);
@@ -106,7 +106,7 @@ size_t program::RpnEnd(Branch& myobj) {
 /// @return kStepOut next object to run in the current program is current + 1
 /// @return kRtError something went wrong with preprocess, abort branch
 ///
-size_t program::RpnDo(Branch& myobj) {
+size_t program::RpnDo(Branch& myobj __attribute__((unused))) {
     // nothing
     return kStepOut;
 }
@@ -118,7 +118,7 @@ size_t program::RpnDo(Branch& myobj) {
 /// @return kStepOut next object to run in the current program is current + 1
 /// @return kRtError something went wrong with preprocess, abort Branch
 ///
-size_t program::RpnUntil(Branch& myobj) {
+size_t program::RpnUntil(Branch& myobj __attribute__((unused))) {
     // nothing
     return kStepOut;
 }
@@ -170,7 +170,7 @@ void program::RpnIfte(void) {
 /// @return kStepOut next object to run in the current program is current + 1
 /// @return kRtError something went wrong with preprocess, abort branch
 ///
-size_t program::RpnWhile(Branch& myobj) {
+size_t program::RpnWhile(Branch& myobj __attribute__((unused))) {
     // nothing
     return kStepOut;
 }
@@ -298,8 +298,7 @@ size_t program::RpnNext(Branch& myobj) {
     mpfr_add(myobj.first_index.mpfr_ptr(), myobj.first_index.mpfr_srcptr(), mpreal(1).mpfr_srcptr(), MPFR_RNDD);
 
     // for command: increment symbol too
-    if (start_or_for->arg1 != -1) {
-        Object* obj;
+    if (start_or_for->arg1 != kStepOut) {
         Symbol* var;
         if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != kSymbol) {
             ERROR_CONTEXT(kMissingOperand);
@@ -318,7 +317,7 @@ size_t program::RpnNext(Branch& myobj) {
         return kStepOut;
     } else {
         // for command: next instruction will be after symbol variable
-        if (start_or_for->arg1 != -1) return start_or_for->arg1 + 1;
+        if (start_or_for->arg1 != kStepOut) return start_or_for->arg1 + 1;
         // start command: next instruction will be after start command
         else
             return myobj.arg1 + 1;
@@ -361,8 +360,7 @@ size_t program::RpnStep(Branch& myobj) {
         // carefull: round toward minus infinity to avoid missing last boundary (because growing step)
         mpfr_add(myobj.first_index.mpfr_ptr(), myobj.first_index.mpfr_srcptr(), step.mpfr_srcptr(), MPFR_RNDD);
 
-        if (start_or_for->arg1 != -1) {
-            Object* obj;
+        if (start_or_for->arg1 != kStepOut) {
             Symbol* var;
 
             // for command: increment symbol too
@@ -382,7 +380,7 @@ size_t program::RpnStep(Branch& myobj) {
             ret = kStepOut;
         } else {
             // for command: next instruction will be after symbol variable
-            if (start_or_for->arg1 != -1) ret = start_or_for->arg1 + 1;
+            if (start_or_for->arg1 != kStepOut) ret = start_or_for->arg1 + 1;
             // start command: next instruction will be after start command
             else
                 ret = myobj.arg1 + 1;

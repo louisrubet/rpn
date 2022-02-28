@@ -117,9 +117,9 @@ void program::RunTestFile(string test_filename, int& total_tests, int& total_tes
         rpnstack stk;
         heap hp;
         bool failed = false;
-        bool is_first_step;
-        bool is_test_error_shown;
-        int last_err;
+        bool is_first_step = true;
+        bool is_test_error_shown = false;
+        int last_err = static_cast<int>(kOk);
         stringstream cerr_buffer;
         streambuf* cerr_old_buffer;
 
