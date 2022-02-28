@@ -1,7 +1,5 @@
 # **rpn** - **R**everse **P**olish **N**otation CLI calculator  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
-A math functional language using reverse polish notation.
-
 ### A math functional language using reverse polish notation
 
 ```rpn
@@ -42,7 +40,7 @@ rpn> pi
 rpn>
 ```
 
-### Variables, strings, structured programming
+### Variables, structured programming
 
 ```rpn
 rpn> « rot * swap 2 / chs dup sq rot - sqrt » 'quad' sto
