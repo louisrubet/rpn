@@ -46,6 +46,7 @@ Be carefull, compatibility is broken on these points compared to last version 2.
 - Removed `sqr` function, please use `sq` instead (prev. existing for HP28S compatibility).
 - Removed CtrlC for interrupting a program (considered useless).
 - Removed old memory management, efficient but poorly maintainable.
+- Removed man page generation.
 
 ### Fixed
 
