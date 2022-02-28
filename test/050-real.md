@@ -49,6 +49,46 @@ dec swap dec swap
 
 `del`
 
+## real hex (3)
+
+`0x12.345 4 fix`
+
+-> stack should be 0x1.2345p+4
+
+`4 sci`
+
+-> stack should be 0x1.2345p+4
+
+`2 fix`
+
+-> stack should be 0x1.23p+4
+
+`8 fix`
+
+-> stack should be 0x1.23450000p+4
+
+`del default`
+
+## real hex (4)
+
+`0x0.0001234`
+
+-> stack should be 0x0
+
+`7 fix`
+
+-> stack should be 0x1.2340000p-16
+
+`7 sci`
+
+-> stack should be 0x1.2340000p-16
+
+`2 fix`
+
+-> stack should be 0x1.23p-16
+
+`del default`
+
 ## real binary
 
 `0b11001100`
@@ -56,6 +96,46 @@ dec swap dec swap
 -> stack should be 0b11001100
 
 `del`
+
+# real binary (2)
+
+`0b11.001 4 fix`
+
+-> stack should be 1.1001p+1
+
+`4 sci`
+
+-> stack should be 1.1001p+1
+
+`2 fix`
+
+-> stack should be 1.10p+1
+
+`8 fix`
+
+-> stack should be 1.10010000p+1
+
+`del default`
+
+# real binary (3)
+
+`0b0.0001101`
+
+-> stack should be 0b0
+
+`7 fix`
+
+-> stack should be 1.1010000p-4
+
+`7 sci`
+
+-> stack should be 1.1010000p-4
+
+`2 fix`
+
+-> stack should be 1.10p-4
+
+`del default`
 
 ## real inf, nan
 
