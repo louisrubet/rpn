@@ -213,7 +213,7 @@ class program : public deque<Object*>, public Lexer {
     // test-core
     void RpnTest();
     void RunTestFile(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
-              int& total_steps_failed);
+                     int& total_steps_failed);
 
     // test
     void RpnSup(void);
@@ -248,42 +248,42 @@ class program : public deque<Object*>, public Lexer {
 // convenience macros for rpn_xx function
 // carefull : some of these macros modify program flow
 
-#define ERROR_CONTEXT(err)         \
+#define ERROR_CONTEXT(err)           \
     do {                             \
         err_ = (err);                \
         err_context_ = __FUNCTION__; \
     } while (0)
 
-#define MIN_ARGUMENTS(num)                         \
-    do {                                           \
-        if ((num) >= 0 && stack_.size() < (num)) { \
-            ERROR_CONTEXT(kMissingOperand);      \
-            return;                                \
-        }                                          \
+#define MIN_ARGUMENTS(num)                           \
+    do {                                             \
+        if (stack_.size() < (num)) { \
+            ERROR_CONTEXT(kMissingOperand);          \
+            return;                                  \
+        }                                            \
     } while (0)
 
-#define MIN_ARGUMENTS_RET(num, ret)                \
-    do {                                           \
-        if ((num) >= 0 && stack_.size() < (num)) { \
-            ERROR_CONTEXT(kMissingOperand);      \
-            return (ret);                          \
-        }                                          \
+#define MIN_ARGUMENTS_RET(num, ret)                  \
+    do {                                             \
+        if (stack_.size() < (num)) { \
+            ERROR_CONTEXT(kMissingOperand);          \
+            return (ret);                            \
+        }                                            \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE(num, type)                       \
-    do {                                                     \
-        if ((num) >= 0 && stack_.at(num)->_type != (type)) { \
-            ERROR_CONTEXT(kBadOperandType);                \
-            return;                                          \
-        }                                                    \
+#define ARG_MUST_BE_OF_TYPE(num, type)                         \
+    do {                                                       \
+        if (stack_.at(num)->_type != (type)) { \
+            ERROR_CONTEXT(kBadOperandType);                    \
+            return;                                            \
+        }                                                      \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)              \
-    do {                                                     \
-        if ((num) >= 0 && stack_.at(num)->_type != (type)) { \
-            ERROR_CONTEXT(kBadOperandType);                \
-            return (ret);                                    \
-        }                                                    \
+#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)                \
+    do {                                                       \
+        if (stack_.at(num)->_type != (type)) { \
+            ERROR_CONTEXT(kBadOperandType);                    \
+            return (ret);                                      \
+        }                                                      \
     } while (0)
 
 #endif  // SRC_PROGRAM_HPP_

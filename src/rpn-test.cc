@@ -144,7 +144,7 @@ void program::RpnTestXor(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
-    if (stack_.value<Number>(0) != 0 ^ stack_.value<Number>(1) != 0)
+    if ((stack_.value<Number>(0) != 0) ^ (stack_.value<Number>(1) != 0))
         stack_.push(new Number(1));
     else
         stack_.push(new Number(0));
