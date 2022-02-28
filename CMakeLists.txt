@@ -34,7 +34,6 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/.git)
         add_definitions(-DGIT_VERSION="${GIT_VERSION}")
   else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
     add_definitions(-DGIT_VERSION="unknown")
-    message("Warning, built outside of a git repo, version set to ${GIT_VERSION}")
 endif(EXISTS ${PROJECT_SOURCE_DIR}/.git)
 
 # INFO
