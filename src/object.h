@@ -98,25 +98,8 @@ struct Number : Object {
     static constexpr int kDefaultDecimalDigits = 38;
     static int digits;
 
-    // clang-format off
-    static string MakeNumberFormat(mode_enum mode, int digits) {
-        stringstream format;
-        format << "%." << digits;
-        switch ( mode ) {
-            case kStd: format << "R*g"; break;
-            case kFix: format << "R*f"; break;
-            case kSci: format << "R*e"; break;
-        }
-        return format.str();
-    }
     // clang-format on
-
-    static ostream& ShowValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
-        if (base == 10)
-            return MprealOutput10Base(out, MakeNumberFormat(mode, digits), value);
-        else
-            return MprealOutputNBase(out, base, value);
-    }
+    static ostream& ShowValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base);
 };
 
 /// @brief stack objects inheriting Object

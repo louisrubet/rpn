@@ -23,6 +23,8 @@ Changelog
 - Delivery as flatpak and snap
 - error string are slightly different, althought error codes are still the same
 - automatic version string from git, slightly change from previous versions
+- hex and bin numbers accept floating point inputs
+  - std, fix and sci don't apply to hex and bin
 
 New
 - `«` and `»` are now valid as program delimiters. `<<` and `>>` are still valid
