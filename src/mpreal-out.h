@@ -10,7 +10,7 @@ using mpfr::mpreal;
 #include <ostream>
 using std::string, std::ostream;
 
-ostream& MprealOutput10Base(ostream& out, const string& fmt, const mpreal& value);
+ostream& MprealFmtOutput(ostream& out, const string& fmt, const mpreal& value);
 ostream& MprealOutputNBase(ostream& out, int base, const mpreal& value);
 
 #endif  // SRC_MPREAL_OUT_HPP_
