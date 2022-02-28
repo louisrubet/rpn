@@ -22,5 +22,11 @@
 *.x86_64
 *.hex
 
-# editors garbage
+# Tools workfiles
 *~
+.scannerwork/*
+*bw-output*/*
+.vscode/*
+build/*
+debug/*
+release/*
