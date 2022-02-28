@@ -2,7 +2,7 @@
 
 project(rpn)
 
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.16)
 
 if((NOT CMAKE_BUILD_TYPE MATCHES Debug)
     AND (NOT CMAKE_BUILD_TYPE MATCHES Release))
@@ -18,7 +18,6 @@ else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
     set(GIT_VERSION "unknown")
 endif()
 add_definitions(-DGIT_VERSION="${GIT_VERSION}")
-message("GIT_VERSION is ${GIT_VERSION}")
 message("GIT_VERSION is ${GIT_VERSION}")
 
 # INFO
@@ -92,13 +91,5 @@ add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
 target_link_libraries(rpn mpfr)
 target_link_libraries(rpn gmp)
 
-# man
-add_custom_target(man ALL)
-add_custom_command(
-    OUTPUT ${PROJECT_SOURCE_DIR}/doc/rpn.1.gz
-    COMMAND gzip -f -k ${PROJECT_SOURCE_DIR}/doc/rpn.1
-)
-
 # install
 install(TARGETS rpn DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/doc/rpn.1.gz DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1)
