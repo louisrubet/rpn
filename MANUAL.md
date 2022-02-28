@@ -93,7 +93,7 @@ Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat*
 
 ### command line
 
-**rpn** is a cli interface with an **interactive editor** with autocompletion provided by **linenoise-ng**, see https://github.com/arangodb/linenoise-ng
+**rpn** is a cli interface with an **interactive editor** with autocompletion provided by [linenoise-ng](https://github.com/arangodb/linenoise-ng).
 
 Autocompletion works like those in Linux shells, with keys \<tab\>, Ctrl-R \<search pattern\> etc.
 
