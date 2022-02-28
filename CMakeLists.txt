@@ -11,30 +11,15 @@ endif()
 
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/.git)
-  EXECUTE_PROCESS(
-    COMMAND git rev-parse --abbrev-ref --short=10 HEAD
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    OUTPUT_VARIABLE "BRANCH")
-    MESSAGE( STATUS "Source Git Branch: ${GIT_BRANCH}" )
-    EXECUTE_PROCESS(
-      COMMAND git describe --dirty --tags --long --always
-      WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-      OUTPUT_VARIABLE "TAG"
-      ERROR_QUIET
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-      MESSAGE( STATUS "Source Git Tag: ${GIT_TAG}" )
-      EXECUTE_PROCESS(
-        COMMAND echo ${TAG}-${BRANCH}
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-        OUTPUT_VARIABLE "GIT_VERSION"
-        ERROR_QUIET
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-        MESSAGE( STATUS "Source Git version: ${GIT_VERSION}" )
-        add_definitions(-DGIT_VERSION="${GIT_VERSION}")
-  else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
-    add_definitions(-DGIT_VERSION="unknown")
-endif(EXISTS ${PROJECT_SOURCE_DIR}/.git)
+if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
+    execute_process(COMMAND git describe --long HEAD OUTPUT_VARIABLE "GIT_VERSION" OUTPUT_STRIP_TRAILING_WHITESPACE)
+    add_definitions(-DGIT_VERSION="${GIT_VERSION}")
+else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
+    set(GIT_VERSION "unknown")
+endif()
+add_definitions(-DGIT_VERSION="${GIT_VERSION}")
+message("GIT_VERSION is ${GIT_VERSION}")
+message("GIT_VERSION is ${GIT_VERSION}")
 
 # INFO
 set(RPN_DISPLAY_NAME "rpn")
@@ -47,16 +32,16 @@ set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 
 # custom linenoise-ng
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
-    execute_process(command git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(command git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(command git checkout v1.1.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.1.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
 endif()
 
 # custom mpreal
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/mpreal/.git")
-    execute_process(command git submodule init ${PROJECT_SOURCE_DIR}/mpreal)
-    execute_process(command git submodule update ${PROJECT_SOURCE_DIR}/mpreal)
-    execute_process(command git checkout mpfrc++-3.6.9 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/mpreal)
+    execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/mpreal)
+    execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/mpreal)
+    execute_process(COMMAND git checkout mpfrc++-3.6.9 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/mpreal)
 endif()
 
 # includes
