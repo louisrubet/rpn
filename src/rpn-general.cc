@@ -9,26 +9,21 @@ using std::cout, std::string, std::pair;
 #include "program.h"
 #include "version.h"
 
-// description
 #define ATTR_BOLD "\33[1m"
 #define ATTR_OFF "\33[0m"
-
-#define XSTR(a) STR(a)
-#define STR(a) #a
-static const char _description[] = ATTR_BOLD
-    "R" ATTR_OFF "everse " ATTR_BOLD "P" ATTR_OFF "olish " ATTR_BOLD "N" ATTR_OFF "otation language\n\nusing " ATTR_BOLD
-    "GMP" ATTR_OFF " v" XSTR(__GNU_MP_VERSION) "." XSTR(__GNU_MP_VERSION_MINOR) "." XSTR(
-        __GNU_MP_VERSION_PATCHLEVEL) " under GNU LGPL\n" ATTR_BOLD "MPFR" ATTR_OFF " v" MPFR_VERSION_STRING
-                                     " under GNU LGPL\nand " ATTR_BOLD "linenoise-ng" ATTR_OFF " v" LINENOISE_VERSION
-                                     " under BSD\n";
-
-static const char _syntax[] = ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\nwith optional command = list of commands";
 
 #define MPFR_ROUND                                                                                                     \
     {"nearest (even)", MPFR_RNDN}, {"toward zero", MPFR_RNDZ}, {"toward +inf", MPFR_RNDU}, {"toward -inf", MPFR_RNDD}, \
         {"away from zero", MPFR_RNDA}, {"faithful rounding", MPFR_RNDF}, {                                             \
         "nearest (away from zero)", MPFR_RNDNA                                                                         \
     }
+
+static const char _description[] =
+    ATTR_BOLD "R" ATTR_OFF "everse " ATTR_BOLD "P" ATTR_OFF "olish " ATTR_BOLD "N" ATTR_OFF "otation CLI calculator";
+
+static const char _syntax[] = ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\nwith optional command = list of commands";
+
+static const char _uname[] = ATTR_BOLD "rpn v" RPN_VERSION ", (c) 2022 <louis@rubet.fr>" ATTR_OFF;
 
 /// @brief nop keyword implementation
 ///
@@ -45,7 +40,7 @@ void program::RpnQuit() { ERROR_CONTEXT(kGoodbye); }
 ///
 void program::RpnHelp() {
     // software name
-    cout << endl << ATTR_BOLD << RPN_UNAME << ATTR_OFF << endl;
+    cout << endl << _uname << endl;
 
     // _description
     cout << _description << endl << endl;
@@ -90,7 +85,7 @@ void program::RpnHelp() {
             cout << "Current rounding mode is '" << rn.first << '\'' << endl;
             break;
         }
-    cout << endl << endl;
+    cout << endl;
 }
 
 /// @brief whether a printed precision is in the precision min/max
@@ -161,7 +156,7 @@ void program::RpnVersion() { stack_.push_front(new String(RPN_VERSION)); }
 
 /// @brief _uname keyword implementation
 ///
-void program::RpnUname() { stack_.push_front(new String(RPN_UNAME)); }
+void program::RpnUname() { stack_.push_front(new String(_uname)); }
 
 /// @brief history keyword implementation
 ///
