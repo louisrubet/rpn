@@ -1,6 +1,6 @@
-[submodule "build/linenoise-ng"]
-	path = build/linenoise-ng
-	url = git@github.com:louisrubet/linenoise-ng.git
 [submodule "linenoise-ng"]
 	path = linenoise-ng
-	url = git@github.com:louisrubet/linenoise-ng.git
+	url = https://github.com/louisrubet/linenoise-ng.git
+[submodule "mpreal"]
+	path = mpreal
+	url = https://github.com/advanpix/mpreal

@@ -1,0 +1,75 @@
+# MODE
+`default del`
+
+## std (1)
+
+```
+del
+38 std
+```
+
+-> stack size should be 0
+
+-> error should be 0
+
+`del`
+
+## std (2)
+
+`1 3 /`
+
+-> stack should be 0.33333333333333333333333333333333333333
+
+`del`
+
+## fix (1)
+
+`10 fix 1`
+
+-> stack should be 1.0000000000
+
+`del`
+
+## fix (2)
+
+`1 4 fix`
+
+-> stack should be 1.0000
+
+`del`
+
+## fix (3)
+
+`-1 fix`
+
+-> error should be 4
+
+`del`
+
+## sci (1)
+
+`1 12 sci`
+
+-> stack should be 1.000000000000e+00
+
+`del`
+
+## sci (2)
+
+`1 2 sci`
+
+-> stack should be 1.00e+00
+
+## default
+
+`default`
+
+-> stack should be 1
+
+## sci (3)
+
+`-1 sci`
+
+-> error should be 4
+
+`del`
