@@ -1,14 +1,16 @@
 # **rpn** - **R**everse **P**olish **N**otation CLI calculator  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
-### A math functional language using reverse polish notation
+### A math functional language using reverse (postfix) polish notation
 
 ```rpn
-rpn> 1 2 + 2 sqrt
+rpn> 1 2 +
+3
+rpn> 2 sqrt
 2> 3
-1> 1.4142135623730950488
+1> 1.4142135623730950488016887242096980786
 ```
 
-### Manipulating reals, complexes, strings, variables on a stack
+### Manipulating reals, complexes, strings, symbols on a stack
 
 ```rpn
 rpn> 1 2 + 2
@@ -19,8 +21,15 @@ rpn> r->c sq conj (1,1) /
 ```
 
 ```rpn
-rpn> "sqrt of 2 is " 2 sqrt ->str +
-"sqrt of 2 is 1.4142135623730950488016887242096980786"
+rpn> 0x1234 dec
+4660
+rpn> bin
+0b1001000110100
+```
+
+```rpn
+rpn> 4 fix "sqrt of 2 is about " 2 sqrt ->str +
+"sqrt of 2 is about 1.4142"
 ```
 
 ```rpn
@@ -31,7 +40,7 @@ rpn> (1,2) f
 (-10,-6)
 ```
 
-### Arbitrary precision provided by GNU MPFR
+### Arbitrary precision
 
 ```rpn
 rpn> 256 prec
@@ -43,10 +52,24 @@ rpn>
 ### Variables, structured programming
 
 ```rpn
-rpn> « rot * swap 2 / chs dup sq rot - sqrt » 'quad' sto
 rpn> 0 1 10000 for i i sq + next
 333383335000
+```
+
+```rpn
 rpn> a 1 > if then a sq 'calc' eval else 'stop' eval end
+```
+
+```rpn
+rpn> << dup
+>  1 > if then
+>    dup 1 - fibo swap 2 - fibo +
+>  else
+>    1 == 1 0 ifte
+>  end >>
+>'fibo' sto
+rpn> 12 fibo
+144
 ```
 
 ### Available functions
@@ -85,12 +108,12 @@ A reference manual is provided [here](MANUAL.md)
 
 ## Generation
 
-rpn is written in C++ and is dynamically linked against GNU MP and GNU MPFR.
-It integrates [linenoise-ng](https://github.com/louisrubet/linenoise-ng.git) and [mpreal](http://www.holoborodko.com/pavel/mpfr/) code as git submodules.
+rpn is written in C++ and is dynamically linked to GNU MP and GNU MPFR.
+It integrates [linenoise-ng](https://github.com/louisrubet/linenoise-ng.git) and [mpreal](http://www.holoborodko.com/pavel/mpfr/) source code as git submodules.
 
 It can be generated following the steps below:
 
-## Generate and install under Ubuntu 20.04 LTS
+## Generate and install under Ubuntu 20.04 LTS and superior
 
 ```shell
 sudo apt install git cmake g++ libmpfr6 libmpfr-dev
@@ -104,7 +127,7 @@ sudo make install
 ## Generate and install under Fedora 35
 
 ```shell
-sudo dnf install git cmake g++ mpfrf mpfr-devel
+sudo dnf install git cmake g++ mpfr mpfr-devel
 git clone https://github.com/louisrubet/rpn/ 
 mkdir -p rpn/build && cd rpn/build
 cmake ..
