@@ -12,7 +12,7 @@ endif()
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
 if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
-    execute_process(COMMAND git describe --long HEAD OUTPUT_VARIABLE "GIT_VERSION" OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND git describe HEAD OUTPUT_VARIABLE "GIT_VERSION" OUTPUT_STRIP_TRAILING_WHITESPACE)
     add_definitions(-DGIT_VERSION="${GIT_VERSION}")
 else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
     set(GIT_VERSION "unknown")
