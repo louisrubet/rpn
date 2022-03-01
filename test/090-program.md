@@ -95,7 +95,6 @@
 ## fibo
 
 ```
-«dup 1 > if then dup 1 - fibo swap 2 - fibo + else 1 == if then 1 else 0 end end» 'fibo' sto
 «dup 1 > if then dup 1 - fibo swap 2 - fibo + else 1 == 1 0 ifte end» 'fibo' sto
 7 fibo
 13 == if then 'ok!' end
