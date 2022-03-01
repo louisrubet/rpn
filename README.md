@@ -1,67 +1,139 @@
-# **rpn** - **R**everse **P**olish **N**otation language  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
+# **rpn** - **R**everse **P**olish **N**otation CLI calculator  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
-### a math functional language using reverse polish notation
+### A math functional language using reverse (postfix) polish notation
 
-```
-rpn> 1 2 + 2 sqrt
+```rpn
+rpn> 1 2 +
+3
+rpn> 2 sqrt
 2> 3
-1> 1.4142135623730950488
+1> 1.4142135623730950488016887242096980786
 ```
 
-### arbitrary precision provided by GNU MPFR
+### Manipulating reals, complexes, strings, symbols on a stack
+
+```rpn
+rpn> 1 2 + 2
+2> 3
+1> 2
+rpn> r->c sq conj (1,1) /
+(-3.5,-8.5)
 ```
+
+```rpn
+rpn> 0x1234 dec
+4660
+rpn> bin
+0b1001000110100
+```
+
+```rpn
+rpn> 4 fix "sqrt of 2 is about " 2 sqrt ->str +
+"sqrt of 2 is about 1.4142"
+```
+
+```rpn
+rpn> << -> x << x 3 ^ 2 x * - 3 + >> >> 'f' sto
+rpn> 2 f
+7
+rpn> (1,2) f
+(-10,-6)
+```
+
+### Arbitrary precision
+
+```rpn
 rpn> 256 prec
 rpn> pi
 3.1415926535897932384626433832795028841971693993751058209749445923078164062862
 rpn>
 ```
 
-### variables, programs
-```
-rpn> << rot * swap 2 / chs dup sq rot - sqrt >> 'quad' sto
-rpn> << -> x y << x y + ln >> >> 'P' sto
+### Variables, structured programming
+
+```rpn
+rpn> 0 1 10000 for i i sq + next
+333383335000
 ```
 
-### and a bunch of functions
+```rpn
+rpn> a 1 > if then a sq 'calc' eval else 'stop' eval end
 ```
+
+```rpn
+rpn> << dup
+>  1 > if then
+>    dup 1 - fibo swap 2 - fibo +
+>  else
+>    1 == 1 0 ifte
+>  end >>
+>'fibo' sto
+rpn> 12 fibo
+144
+```
+
+### Available functions
+
+```rpn
 rpn> 
-Display all 150 possibilities? (y or n)
-nop      pow      fp       >=       dupn     next     sto*     exp
-help     sqrt     min      <        pick     step     sto/     expm
-h        sq       max      <=       depth    ift      sneg     log10
-?        sqr      re       !=       roll     ifte     sinv     alog10
-quit     abs      im       ==       rolld    do       eval     exp10
-q        dec      conj     and      over     until    ->       log2
-exit     hex      arg      or       ->str    unti     pi       alog2
-test     bin      c->r     xor      str->    while    sin      exp2
-version  base     r->c     not      chr      whil     asin     sinh
-uname    sign     p->r     same     num      repeat   cos      asinh
-history  %        r->p     swap     size     repea    acos     cosh
-+        %CH      std      drop     pos      sto      tan      acosh
--        mod      fix      drop2    sub      rcl      atan     tanh
-chs      fact     sci      dropn    if       purge    d->r     atanh
-neg      mant     prec     del      then     vars     r->d     time
-*        xpon     round    erase    else     clusr    e        date
-/        floor    default  rot      end      edit     ln       ticks
-inv      ceil     type     dup      start    sto+     log
-^        ip       >        dup2     for      sto-     lnp1
+Display all 146 possibilities? (y or n)
+nop      pow      conj     <        pick     step     eval     exp10
+help     sqrt     arg      <=       depth    ift      ->       log2
+h        sq       c->r     !=       roll     ifte     pi       alog2
+?        abs      r->c     ==       rolld    do       sin      exp2
+quit     sign     p->r     and      over     until    asin     sinh
+q        %        r->p     or       ->str    while    cos      asinh
+exit     %CH      std      xor      str->    repeat   acos     cosh
+test     mod      fix      not      chr      sto      tan      acosh
+version  fact     sci      same     num      rcl      atan     tanh
+uname    mant     prec     swap     size     purge    d->r     atanh
+history  xpon     round    drop     pos      vars     r->d     time
++        floor    default  drop2    sub      clusr    e        date
+-        ceil     type     dropn    if       edit     ln       ticks
+*        ip       hex      del      then     sto+     log
+/        fp       dec      erase    else     sto-     lnp1
+inv      min      bin      rot      end      sto*     exp
+chs      max      base     dup      start    sto/     expm
+neg      re       >        dup2     for      sneg     log10
+^        im       >=       dupn     next     sinv     alog10
 ```
 
 ## Download
 
-deb, rpm and tgz files can be found [there](liv/)
+Available as source code and flatpak under [flathub](https://flathub.org/apps/category/Science) (_coming soon_).
 
 ## Manual
 
 A reference manual is provided [here](MANUAL.md)
 
-## Methods
-
-Development methods are set at [this page](METHODS.md)
-
 ## Generation
 
-Generation instructions can be found [here](GENERATION.md)
+rpn is written in C++ and is dynamically linked to GNU MP and GNU MPFR.
+It integrates [linenoise-ng](https://github.com/louisrubet/linenoise-ng.git) and [mpreal](http://www.holoborodko.com/pavel/mpfr/) source code as git submodules.
+
+It can be generated following the steps below:
+
+## Generate and install under Ubuntu 20.04 LTS and superior
+
+```shell
+sudo apt install git cmake g++ libmpfr6 libmpfr-dev
+git clone https://github.com/louisrubet/rpn/ 
+mkdir -p rpn/build && cd rpn/build
+cmake ..
+make -j
+sudo make install
+```
+
+## Generate and install under Fedora 35
+
+```shell
+sudo dnf install git cmake g++ mpfr mpfr-devel
+git clone https://github.com/louisrubet/rpn/ 
+mkdir -p rpn/build && cd rpn/build
+cmake ..
+make -j
+sudo make install
+```
 
 ## Contact, contribution, bug report
 
