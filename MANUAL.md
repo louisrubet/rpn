@@ -17,14 +17,13 @@ A help command is provided by rpn:
 ```rpn
 rpn> help
 
-rpn v2.4.0, (c) 2022 <louis@rubet.fr>
+rpn v2.4.1, (c) 2022 <louis@rubet.fr>
 Reverse Polish Notation CLI calculator
 
 Syntax: rpn [command]
 with optional command = list of commands
 
 GENERAL
-nop     no operation
 help    this help message
 (...)
 ```
@@ -123,7 +122,6 @@ rpn> 7b1252 dec
 
 | keyword           | description                             |
 |-------------------|-----------------------------------------|
-| `nop`             | no operation                            |
 | `help` `h` `?`    | this help message                       |
 | `quit` `q` `exit` | quit software                           |
 | `version`         | show rpn version                        |
@@ -316,9 +314,9 @@ rpn> 7b1252 dec
 | `acosh`          | inverse hyperbolic cosine                     |
 | `tanh`           | hyperbolic tangent                            |
 | `atanh`          | inverse hyperbolic tangent                    |
-| `time`           | time in format HH.MMSSssssss                  |
-| `date`           | date in format (M)M.DDYYYY                    |
-| `ticks`          | system tick in µs                             |
+| `time`           | local time in ISO 8601 format HH:MM:SS        |
+| `date`           | local date in ISO 8601 format YYYY-MM-DD      |
+| `ticks`          | local date and time in µs                     |
 
 ### default
 
