@@ -23,13 +23,9 @@ static const char _description[] =
 
 static const char _syntax[] = ATTR_BOLD "Syntax" ATTR_OFF ": rpn [command]\nwith optional command = list of commands";
 
-static const char _uname[] = ATTR_BOLD "rpn v" RPN_VERSION ", (c) 2022 <louis@rubet.fr>" ATTR_OFF;
+static const char _uname[] = ATTR_BOLD "rpn " RPN_VERSION ", (c) 2022 <louis@rubet.fr>" ATTR_OFF;
 
-/// @brief nop keyword implementation
-///
-void program::RpnNop() {
-    // nop
-}
+static const char _welcome[] = ATTR_BOLD "rpn " RPN_VERSION ATTR_OFF "\nType h or help for more information.";
 
 /// @brief quit keyword implementation
 ///
@@ -87,6 +83,10 @@ void program::RpnHelp() {
         }
     cout << endl;
 }
+
+/// @brief welcome string
+///
+void program::Welcome() { cout << _welcome << endl; }
 
 /// @brief whether a printed precision is in the precision min/max
 ///
