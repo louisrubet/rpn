@@ -76,8 +76,7 @@ rpn> 12 fibo
 
 ```rpn
 rpn> 
-Display all 146 possibilities? (y or n)
-nop      pow      conj     <        pick     step     eval     exp10
+Display all 145 possibilities? (y or n)
 help     sqrt     arg      <=       depth    ift      ->       log2
 h        sq       c->r     !=       roll     ifte     pi       alog2
 ?        abs      r->c     ==       rolld    do       sin      exp2
@@ -96,6 +95,7 @@ inv      min      bin      rot      end      sto*     exp
 chs      max      base     dup      start    sto/     expm
 neg      re       >        dup2     for      sneg     log10
 ^        im       >=       dupn     next     sinv     alog10
+pow      conj     <        pick     step     eval     exp10
 ```
 
 ## Download

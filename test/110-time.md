@@ -8,7 +8,7 @@
 
 -> error should be 0
 
--> stack should be "number"
+-> stack should be "string"
 
 `del`
 
@@ -18,7 +18,7 @@
 
 -> error should be 0
 
--> stack should be "number"
+-> stack should be "string"
 
 `del`
 
