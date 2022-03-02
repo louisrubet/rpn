@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
 
     // run with interactive prompt
     if (argc == 1) {
+        program::Welcome();
+
         // init history
         EnterInteractive();
 

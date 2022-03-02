@@ -30,16 +30,6 @@
 
 `del`
 
-## nop
-
-`nop`
-
--> stack size should be 0
-
--> error should be 0
-
-`del`
-
 ## quit
 
 `q`
