@@ -8,7 +8,6 @@
 vector<program::keyword_t> program::keywords_{
     // GENERAL
     {kUndef, "", nullptr, "\nGENERAL"},
-    {kKeyword, "nop", &program::RpnNop, "no operation"},
     {kKeyword, "help", &program::RpnHelp, "this help message"},
     {kKeyword, "h", &program::RpnHelp, ""},
     {kKeyword, "?", &program::RpnHelp, ""},
@@ -199,9 +198,9 @@ vector<program::keyword_t> program::keywords_{
 
     // TIME AND DATE
     {kUndef, "", nullptr, "\nTIME AND DATE"},
-    {kKeyword, "time", &program::RpnTime, "time in local format"},
-    {kKeyword, "date", &program::RpnDate, "date in local format"},
-    {kKeyword, "ticks", &program::RpnTicks, "system tick in µs"},
+    {kKeyword, "time", &program::RpnTime, "local time in ISO 8601 format"},
+    {kKeyword, "date", &program::RpnDate, "local date in ISO 8601 format"},
+    {kKeyword, "ticks", &program::RpnTicks, "local date and time in µs"}
 };
 #pragma GCC diagnostic pop
 

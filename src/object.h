@@ -80,6 +80,7 @@ struct Number : Object {
     Number() : Object(kNumber), base(10) {}
     explicit Number(const mpreal& value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
     explicit Number(int value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
+    explicit Number(uint64_t value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
 
     int base;
     mpreal value;
