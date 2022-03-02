@@ -44,6 +44,7 @@ class program : public deque<Object*>, public Lexer {
     void ShowStack(bool show_separator = true);
 
     static void ApplyDefault();
+    static void Welcome();
 
     static vector<string>& GetAutocompletionWords();
 
@@ -105,7 +106,6 @@ class program : public deque<Object*>, public Lexer {
     void RpnP2r();
 
     // general
-    void RpnNop();
     void RpnQuit();
     void RpnHelp();
     void RpnStd();
