@@ -2,7 +2,7 @@ name: CMake
 
 on:
   pull_request:
-    branches: [ v2.4.0-devel, master ]
+    branches: [ develop, master ]
 
 env:
   BUILD_TYPE: Release
