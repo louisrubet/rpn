@@ -11,14 +11,16 @@ endif()
 
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
 
-if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
-    execute_process(COMMAND git describe HEAD OUTPUT_VARIABLE "GIT_VERSION" OUTPUT_STRIP_TRAILING_WHITESPACE)
-    add_definitions(-DGIT_VERSION="${GIT_VERSION}")
-else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
-    set(GIT_VERSION "unknown")
+if(NOT DEFINED RPN_VERSION)
+    if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
+        execute_process(COMMAND git describe HEAD OUTPUT_VARIABLE "RPN_VERSION" OUTPUT_STRIP_TRAILING_WHITESPACE)
+    else(EXISTS ${PROJECT_SOURCE_DIR}/.git)
+        set(VERSION "unknown")
+    endif()
+    add_definitions(-DGIT_VERSION="${RPN_VERSION}")
 endif()
-add_definitions(-DGIT_VERSION="${GIT_VERSION}")
-message("GIT_VERSION is ${GIT_VERSION}")
+message("RPN_VERSION is ${RPN_VERSION}")
+add_definitions(-DRPN_VERSION="${RPN_VERSION}")
 
 # INFO
 set(RPN_DISPLAY_NAME "rpn")
