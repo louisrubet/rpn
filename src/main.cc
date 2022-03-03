@@ -18,7 +18,7 @@ static void ExitInteractive() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
-        history_path << pw->pw_dir << "/.RpnHistory";
+        history_path << pw->pw_dir << "/.rpn_history";
 
         // trunc current history
         ofstream history(history_path.str(), ios_base::out | ios_base::trunc);
@@ -38,7 +38,7 @@ static void EnterInteractive() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
-        history_path << pw->pw_dir << "/.RpnHistory";
+        history_path << pw->pw_dir << "/.rpn_history";
 
         // don't care about errors
         linenoiseHistorySetMaxLen(100);
