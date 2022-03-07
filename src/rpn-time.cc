@@ -8,7 +8,7 @@ using namespace std::chrono;
 
 /// @brief time keyword implementation
 ///
-void program::RpnTime() {
+void Program::RpnTime() {
     std::time_t rawtime = system_clock::to_time_t(system_clock::now());
     struct tm tm;
 
@@ -26,7 +26,7 @@ void program::RpnTime() {
 
 /// @brief date keyword implementation
 ///
-void program::RpnDate() {
+void Program::RpnDate() {
     std::time_t rawtime = system_clock::to_time_t(system_clock::now());
     struct tm tm;
 
@@ -44,7 +44,7 @@ void program::RpnDate() {
 
 /// @brief ticks keyword implementation
 ///
-void program::RpnTicks() {
+void Program::RpnTicks() {
     uint64_t time_span = (uint64_t)duration_cast<microseconds>(high_resolution_clock::now().time_since_epoch()).count();
     stack_.push(new Number(time_span));
 }

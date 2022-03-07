@@ -5,7 +5,7 @@
 
 /// @brief sto keyword implementation
 ///
-void program::RpnSto(void) {
+void Program::RpnSto(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
 
@@ -21,7 +21,7 @@ void program::RpnSto(void) {
 
 /// @brief sto+ keyword implementation
 ///
-void program::RpnStoadd(void) {
+void Program::RpnStoadd(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
@@ -38,7 +38,7 @@ void program::RpnStoadd(void) {
 
 /// @brief sto- keyword implementation
 ///
-void program::RpnStosub(void) {
+void Program::RpnStosub(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
@@ -55,7 +55,7 @@ void program::RpnStosub(void) {
 
 /// @brief sto* keyword implementation
 ///
-void program::RpnStomul(void) {
+void Program::RpnStomul(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
@@ -72,7 +72,7 @@ void program::RpnStomul(void) {
 
 /// @brief sto/ keyword implementation
 ///
-void program::RpnStodiv(void) {
+void Program::RpnStodiv(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
@@ -89,7 +89,7 @@ void program::RpnStodiv(void) {
 
 /// @brief stosneg keyword implementation
 ///
-void program::RpnStoneg(void) {
+void Program::RpnStoneg(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
@@ -105,7 +105,7 @@ void program::RpnStoneg(void) {
 
 /// @brief sinv keyword implementation
 ///
-void program::RpnStoinv(void) {
+void Program::RpnStoinv(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
     if (heap_.find(stack_.value<String>(0)) == heap_.end()) {
@@ -121,7 +121,7 @@ void program::RpnStoinv(void) {
 
 /// @brief rcl keyword implementation
 ///
-void program::RpnRcl(void) {
+void Program::RpnRcl(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
 
@@ -140,7 +140,7 @@ void program::RpnRcl(void) {
 
 /// @brief edit keyword implementation
 ///
-void program::RpnEdit(void) {
+void Program::RpnEdit(void) {
     MIN_ARGUMENTS(1);
 
     ostringstream st;
@@ -157,7 +157,7 @@ void program::RpnEdit(void) {
 ///
 /// @param symb the smlbol to recall and autoeval
 ///
-void program::AutoRcl(Symbol* symb) {
+void Program::AutoRcl(Symbol* symb) {
     if (symb->auto_eval) {
         Object* obj;
         string variable(symb->value);
@@ -167,7 +167,10 @@ void program::AutoRcl(Symbol* symb) {
             stack_.push_front(obj->Clone());
             if (obj->_type == kProgram) RpnEval();
         } else {
-            stack_.push_front(symb->Clone());
+            // not found, keep it as a simple symbol
+            Symbol* s = reinterpret_cast<Symbol*>(symb->Clone());
+            s->auto_eval = false;
+            stack_.push_front(s);
         }
     } else {
         stack_.push_front(symb->Clone());
@@ -176,7 +179,7 @@ void program::AutoRcl(Symbol* symb) {
 
 /// @brief purge keyword implementation
 ///
-void program::RpnPurge(void) {
+void Program::RpnPurge(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kSymbol);
 
@@ -192,8 +195,8 @@ void program::RpnPurge(void) {
 
 /// @brief vars keyword implementation
 ///
-void program::RpnVars(void) {
-    program* parent = parent_;
+void Program::RpnVars(void) {
+    Program* parent = parent_;
     string name;
     int index = 1;
 
@@ -221,4 +224,4 @@ void program::RpnVars(void) {
 
 /// @brief clusr keyword implementation
 ///
-void program::RpnClusr(void) { heap_.clear(); }
+void Program::RpnClusr(void) { heap_.clear(); }

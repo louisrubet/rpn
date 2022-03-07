@@ -5,7 +5,7 @@
 /// @brief re keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnReal() {
+void Program::RpnReal() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     stack_.push_front(new Number(real(stack_.value<Complex>(0))));
@@ -15,7 +15,7 @@ void program::RpnReal() {
 /// @brief im keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnImag() {
+void Program::RpnImag() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     stack_.push_front(new Number(imag(stack_.value<Complex>(0))));
@@ -25,7 +25,7 @@ void program::RpnImag() {
 /// @brief arg keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnArg() {
+void Program::RpnArg() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     stack_.push_front(new Number(arg(stack_.value<Complex>(0))));
@@ -35,7 +35,7 @@ void program::RpnArg() {
 /// @brief conj keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnConj() {
+void Program::RpnConj() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     stack_.value<Complex>(0) = conj(stack_.value<Complex>(0));
@@ -44,7 +44,7 @@ void program::RpnConj() {
 /// @brief r2c keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnR2c() {
+void Program::RpnR2c() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -55,7 +55,7 @@ void program::RpnR2c() {
 /// @brief c2r keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnC2r() {
+void Program::RpnC2r() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     stack_.push(new Number(real(stack_.value<Complex>(0)), stack_.obj<Complex>(0).re_base));
@@ -66,7 +66,7 @@ void program::RpnC2r() {
 /// @brief r2p keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnR2p() {
+void Program::RpnR2p() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     mpreal rho = abs(stack_.value<Complex>(0));
@@ -78,7 +78,7 @@ void program::RpnR2p() {
 /// @brief p2r keyword implementation
 /// the result is stacked on current program stack
 ///
-void program::RpnP2r() {
+void Program::RpnP2r() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kComplex);
     stack_.value<Complex>(0) = polar(abs(stack_.value<Complex>(0)), arg(stack_.value<Complex>(0)));

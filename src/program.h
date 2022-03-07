@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#ifndef SRC_PROGRAM_HPP_
-#define SRC_PROGRAM_HPP_
+#ifndef SRC_PROGRAM_H_
+#define SRC_PROGRAM_H_
 
 // std c++
 #include <deque>
@@ -18,18 +18,39 @@ using mpfr::mpreal;
 #include "object.h"
 #include "stack.h"
 
+// struct Program : Object {
+//     Program() : Object(kProgram) {}
+//     explicit Program(const string& value__) : Object(kProgram), value(value__) {}
+//     virtual Object* Clone() { return new Program(value); }
+//     virtual string Name() { return string("program"); }
+//     virtual ostream& Show(ostream& out) { return out << "«" << value << "»"; }
+//     string value;
+// };
+
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
-class program : public deque<Object*>, public Lexer {
+class Program : public deque<Object*>, public Lexer, public Object {
  public:
-    program(rpnstack& stack__, heap& heap__, program* parent__ = nullptr)
-        : stack_(stack__), heap_(heap__), parent_(parent__) {}
-    virtual ~program() {
+    Program(rpnstack& stack__, heap& heap__, Program* parent__ = nullptr)
+        : Object(kProgram), stack_(stack__), heap_(heap__), parent_(parent__) {}
+    Program(const string& value__, rpnstack& stack__, heap& heap__, Program* parent__ = nullptr)
+        : Object(kProgram), value(value__), stack_(stack__), heap_(heap__), parent_(parent__) {}
+
+    virtual ~Program() {
         local_heap_.clear();
         clear();
     }
 
+    virtual Object* Clone() {
+        Program* prog = new Program(value, stack_, heap_, parent_);
+        prog->value = value;
+        for (auto& obj : *this) prog->push_back(obj->Clone());
+        return prog;
+    }
+    virtual string Name() { return string("program"); }
+    virtual ostream& Show(ostream& out) { return out << "« " << value << " »"; }
+
     // parser
-    RetValue Parse(string& entry);
+    RetValue Parse(const string& entry);
 
     // running
     RetValue Run();
@@ -42,6 +63,8 @@ class program : public deque<Object*>, public Lexer {
     RetValue GetLastError(void);
 
     void ShowStack(bool show_separator = true);
+
+    string value;
 
     static void ApplyDefault();
     static void Welcome();
@@ -63,9 +86,8 @@ class program : public deque<Object*>, public Lexer {
     heap local_heap_;
 
     // parent prog for inheriting heaps
-    program* parent_;
+    Program* parent_;
 
- private:
     // keywords
     struct keyword_t {
         ObjectType type;
@@ -245,7 +267,7 @@ class program : public deque<Object*>, public Lexer {
     void RpnTicks();
 };
 
-// convenience macros for rpn_xx function
+// convenience macros for RpnXxx functions
 // carefull : some of these macros modify program flow
 
 #define ERROR_CONTEXT(err)           \
@@ -254,36 +276,36 @@ class program : public deque<Object*>, public Lexer {
         err_context_ = __FUNCTION__; \
     } while (0)
 
-#define MIN_ARGUMENTS(num)                           \
-    do {                                             \
-        if (stack_.size() < (num)) { \
-            ERROR_CONTEXT(kMissingOperand);          \
-            return;                                  \
-        }                                            \
+#define MIN_ARGUMENTS(num)                  \
+    do {                                    \
+        if (stack_.size() < (num)) {        \
+            ERROR_CONTEXT(kMissingOperand); \
+            return;                         \
+        }                                   \
     } while (0)
 
-#define MIN_ARGUMENTS_RET(num, ret)                  \
-    do {                                             \
-        if (stack_.size() < (num)) { \
-            ERROR_CONTEXT(kMissingOperand);          \
-            return (ret);                            \
-        }                                            \
+#define MIN_ARGUMENTS_RET(num, ret)         \
+    do {                                    \
+        if (stack_.size() < (num)) {        \
+            ERROR_CONTEXT(kMissingOperand); \
+            return (ret);                   \
+        }                                   \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE(num, type)                         \
-    do {                                                       \
+#define ARG_MUST_BE_OF_TYPE(num, type)         \
+    do {                                       \
         if (stack_.at(num)->_type != (type)) { \
-            ERROR_CONTEXT(kBadOperandType);                    \
-            return;                                            \
-        }                                                      \
+            ERROR_CONTEXT(kBadOperandType);    \
+            return;                            \
+        }                                      \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret)                \
-    do {                                                       \
-        if (stack_.at(num)->_type != (type)) { \
-            ERROR_CONTEXT(kBadOperandType);                    \
-            return (ret);                                      \
-        }                                                      \
+#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) \
+    do {                                        \
+        if (stack_.at(num)->_type != (type)) {  \
+            ERROR_CONTEXT(kBadOperandType);     \
+            return (ret);                       \
+        }                                       \
     } while (0)
 
-#endif  // SRC_PROGRAM_HPP_
+#endif  // SRC_PROGRAM_H_
