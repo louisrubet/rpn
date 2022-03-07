@@ -29,12 +29,12 @@ static const char _welcome[] = ATTR_BOLD "rpn " RPN_VERSION ATTR_OFF "\nType h o
 
 /// @brief quit keyword implementation
 ///
-void program::RpnQuit() { ERROR_CONTEXT(kGoodbye); }
+void Program::RpnQuit() { ERROR_CONTEXT(kGoodbye); }
 
 /// @brief nop keyword implementation
 /// the result is written on stdout
 ///
-void program::RpnHelp() {
+void Program::RpnHelp() {
     // software name
     cout << endl << _uname << endl;
 
@@ -86,7 +86,7 @@ void program::RpnHelp() {
 
 /// @brief welcome string
 ///
-void program::Welcome() { cout << _welcome << endl; }
+void Program::Welcome() { cout << _welcome << endl; }
 
 /// @brief whether a printed precision is in the precision min/max
 ///
@@ -98,7 +98,7 @@ static bool check_decimal_digits(int precision) { return precision >= 0; }
 
 /// @brief std keyword implementation
 ///
-void program::RpnStd() {
+void Program::RpnStd() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -116,7 +116,7 @@ void program::RpnStd() {
 
 /// @brief fix keyword implementation
 ///
-void program::RpnFix() {
+void Program::RpnFix() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -134,7 +134,7 @@ void program::RpnFix() {
 
 /// @brief sci keyword implementation
 ///
-void program::RpnSci() {
+void Program::RpnSci() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -152,15 +152,15 @@ void program::RpnSci() {
 
 /// @brief _version keyword implementation
 ///
-void program::RpnVersion() { stack_.push_front(new String(RPN_VERSION)); }
+void Program::RpnVersion() { stack_.push_front(new String(RPN_VERSION)); }
 
 /// @brief _uname keyword implementation
 ///
-void program::RpnUname() { stack_.push_front(new String(_uname)); }
+void Program::RpnUname() { stack_.push_front(new String(_uname)); }
 
 /// @brief history keyword implementation
 ///
-void program::RpnHistory() {
+void Program::RpnHistory() {
     // see command history on stdout
     int index = 0;
     char* line = linenoiseHistoryLine(index);
@@ -173,7 +173,7 @@ void program::RpnHistory() {
 
 /// @brief type keyword implementation
 ///
-void program::RpnType() {
+void Program::RpnType() {
     MIN_ARGUMENTS(1);
     stack_.push(new String(stack_.at(0)->Name()));
     stack_.erase(1);
@@ -181,11 +181,11 @@ void program::RpnType() {
 
 /// @brief default keyword implementation
 ///
-void program::RpnDefault() { program::ApplyDefault(); }
+void Program::RpnDefault() { Program::ApplyDefault(); }
 
 /// @brief prec keyword implementation
 ///
-void program::RpnPrecision() {
+void Program::RpnPrecision() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -207,7 +207,7 @@ void program::RpnPrecision() {
 
 /// @brief round keyword implementation
 ///
-void program::RpnRound() {
+void Program::RpnRound() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 

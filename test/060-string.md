@@ -136,7 +136,7 @@
 
 `"<< -> n << n >> >>" str->`
 
--> stack should be «-> n << n >>»
+-> stack should be « -> n « n » »
 
 `del`
 

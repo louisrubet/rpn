@@ -4,11 +4,11 @@
 
 /// @brief e keyword implementation
 ///
-void program::RpnE(void) { stack_.push(new Number(mpfr::const_euler())); }
+void Program::RpnE(void) { stack_.push(new Number(mpfr::const_euler())); }
 
 /// @brief log10 keyword implementation
 ///
-void program::RpnLog10() {
+void Program::RpnLog10() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log10(stack_.value<Number>(0));
@@ -20,7 +20,7 @@ void program::RpnLog10() {
 
 /// @brief alog10 keyword implementation
 ///
-void program::RpnAlog10() {
+void Program::RpnAlog10() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(log(mpreal(10)) * stack_.value<Number>(0));
@@ -32,7 +32,7 @@ void program::RpnAlog10() {
 
 /// @brief log2 keyword implementation
 ///
-void program::RpnLog2() {
+void Program::RpnLog2() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log(stack_.value<Number>(0)) / mpfr::const_log2();
@@ -44,7 +44,7 @@ void program::RpnLog2() {
 
 /// @brief alog2 keyword implementation
 ///
-void program::RpnAlog2() {
+void Program::RpnAlog2() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(mpfr::const_log2() * stack_.value<Number>(0));
@@ -56,7 +56,7 @@ void program::RpnAlog2() {
 
 /// @brief ln keyword implementation
 ///
-void program::RpnLn() {
+void Program::RpnLn() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log(stack_.value<Number>(0));
@@ -68,7 +68,7 @@ void program::RpnLn() {
 
 /// @brief exp keyword implementation
 ///
-void program::RpnExp() {
+void Program::RpnExp() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(stack_.value<Number>(0));
@@ -80,7 +80,7 @@ void program::RpnExp() {
 
 /// @brief expm keyword implementation
 ///
-void program::RpnExpm() {
+void Program::RpnExpm() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = exp(stack_.value<Number>(0)) - mpreal(1);
@@ -92,7 +92,7 @@ void program::RpnExpm() {
 
 /// @brief lnp1 keyword implementation
 ///
-void program::RpnLnp1() {
+void Program::RpnLnp1() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = log(stack_.value<Number>(0) + 1);
@@ -104,7 +104,7 @@ void program::RpnLnp1() {
 
 /// @brief sinh keyword implementation
 ///
-void program::RpnSinh() {
+void Program::RpnSinh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = sinh(stack_.value<Number>(0));
@@ -116,7 +116,7 @@ void program::RpnSinh() {
 
 /// @brief asinh keyword implementation
 ///
-void program::RpnAsinh() {
+void Program::RpnAsinh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = asinh(stack_.value<Number>(0));
@@ -128,7 +128,7 @@ void program::RpnAsinh() {
 
 /// @brief cosh keyword implementation
 ///
-void program::RpnCosh() {
+void Program::RpnCosh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = cosh(stack_.value<Number>(0));
@@ -140,7 +140,7 @@ void program::RpnCosh() {
 
 /// @brief acosh keyword implementation
 ///
-void program::RpnAcosh() {
+void Program::RpnAcosh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = acosh(stack_.value<Number>(0));
@@ -152,7 +152,7 @@ void program::RpnAcosh() {
 
 /// @brief tanh keyword implementation
 ///
-void program::RpnTanh() {
+void Program::RpnTanh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = tanh(stack_.value<Number>(0));
@@ -164,7 +164,7 @@ void program::RpnTanh() {
 
 /// @brief atanh keyword implementation
 ///
-void program::RpnAtanh() {
+void Program::RpnAtanh() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = atanh(stack_.value<Number>(0));
