@@ -14,7 +14,7 @@
 
 `<< I am a program >>`
 
--> stack should be «I am a program»
+-> stack should be « I am a program »
 
 `del`
 
@@ -22,7 +22,7 @@
 
 `<<I am a program>>`
 
--> stack should be «I am a program»
+-> stack should be « I am a program »
 
 `del`
 
@@ -30,7 +30,7 @@
 
 `<< I am a program >>`
 
--> stack should be «I am a program»
+-> stack should be « I am a program »
 
 `del`
 
@@ -38,7 +38,7 @@
 
 `«I am a program»`
 
--> stack should be «I am a program»
+-> stack should be « I am a program »
 
 `del`
 
@@ -46,7 +46,7 @@
 
 `« I am a program  »`
 
--> stack should be «I am a program»
+-> stack should be « I am a program »
 
 `del`
 
@@ -54,7 +54,7 @@
 
 `<< prog`
 
--> stack should be «prog»
+-> stack should be « prog »
 
 `del`
 
@@ -62,7 +62,7 @@
 
 `« prog`
 
--> stack should be «prog»
+-> stack should be « prog »
 
 `del`
 
@@ -70,7 +70,7 @@
 
 `<< prog>`
 
--> stack should be «prog>»
+-> stack should be « prog> »
 
 `del`
 
@@ -81,6 +81,6 @@
 «
 ```
 
--> stack should be «», «»
+-> stack should be «  », «  »
 
 `del`

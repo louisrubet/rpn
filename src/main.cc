@@ -81,11 +81,11 @@ int main(int argc, char* argv[]) {
     bool go_on = true;
 
     // apply default configuration
-    program::ApplyDefault();
+    Program::ApplyDefault();
 
     // run with interactive prompt
     if (argc == 1) {
-        program::Welcome();
+        Program::Welcome();
 
         // init history
         EnterInteractive();
@@ -99,9 +99,9 @@ int main(int argc, char* argv[]) {
         while (go_on) {
             //
             // make program from interactive entry
-            program prog(stack, heap);
+            Program prog(stack, heap);
             string entry;
-            switch (Input(entry, program::GetAutocompletionWords()).status) {
+            switch (Input(entry, Program::GetAutocompletionWords()).status) {
                 case Input::InputStatus::kOk:
                     // run it
                     if (prog.Parse(entry) == kOk && prog.Run() == kGoodbye)
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
     } else {  // run with cmd line arguments
         heap heap;
         rpnstack stack;
-        program prog(stack, heap);
+        Program prog(stack, heap);
         string entry;
         int i;
 

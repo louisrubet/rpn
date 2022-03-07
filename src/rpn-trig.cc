@@ -4,13 +4,13 @@
 
 /// @brief pi keyword implementation
 ///
-void program::RpnPi(void) {
+void Program::RpnPi(void) {
     stack_.push_front(new Number(mpfr::const_pi()));
 }
 
 /// @brief d->r keyword implementation
 ///
-void program::RpnD2r(void) {
+void Program::RpnD2r(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) *= mpfr::const_pi();
@@ -19,7 +19,7 @@ void program::RpnD2r(void) {
 
 /// @brief r->d keyword implementation
 ///
-void program::RpnR2d(void) {
+void Program::RpnR2d(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) /= mpfr::const_pi();
@@ -28,7 +28,7 @@ void program::RpnR2d(void) {
 
 /// @brief sin keyword implementation
 ///
-void program::RpnSin(void) {
+void Program::RpnSin(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = sin(stack_.value<Number>(0));
@@ -40,7 +40,7 @@ void program::RpnSin(void) {
 
 /// @brief asin keyword implementation
 ///
-void program::RpnAsin(void) {
+void Program::RpnAsin(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = asin(stack_.value<Number>(0));
@@ -52,7 +52,7 @@ void program::RpnAsin(void) {
 
 /// @brief cos keyword implementation
 ///
-void program::RpnCos(void) {
+void Program::RpnCos(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = cos(stack_.value<Number>(0));
@@ -64,7 +64,7 @@ void program::RpnCos(void) {
 
 /// @brief acos keyword implementation
 ///
-void program::RpnAcos(void) {
+void Program::RpnAcos(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = acos(stack_.value<Number>(0));
@@ -76,7 +76,7 @@ void program::RpnAcos(void) {
 
 /// @brief tan keyword implementation
 ///
-void program::RpnTan(void) {
+void Program::RpnTan(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = tan(stack_.value<Number>(0));
@@ -88,7 +88,7 @@ void program::RpnTan(void) {
 
 /// @brief atan keyword implementation
 ///
-void program::RpnAtan(void) {
+void Program::RpnAtan(void) {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = atan(stack_.value<Number>(0));

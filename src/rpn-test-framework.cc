@@ -67,7 +67,7 @@ static void ShowTestResult(string title, int tests, int tests_failed, int steps,
 
 /// @brief test keyword implementation
 ///
-void program::RpnTest() {
+void Program::RpnTest() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 
@@ -97,8 +97,8 @@ void program::RpnTest() {
 /// @param total_steps the total steps nb
 /// @param total_steps_failed the total failed steps nb
 ///
-void program::RunTestFile(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
-                   int& total_steps_failed) {
+void Program::RunTestFile(string test_filename, int& total_tests, int& total_tests_failed, int& total_steps,
+                          int& total_steps_failed) {
     const string stack_size("-> stack size should be ");
     const string stack_value("-> stack should be ");
     const string cmd_error("-> error should be ");
@@ -244,13 +244,10 @@ void program::RunTestFile(string test_filename, int& total_tests, int& total_tes
                 // parse entry and run line
                 FindAndReplaceAll(entry, "`", "");
                 if (!entry.empty()) {
-                    program prog(stk, hp);
+                    Program prog(stk, hp);
                     ret = prog.Parse(entry);
-                    if (ret == kOk) {
-                        // run it
-                        (void)prog.Run();
-                        last_err = static_cast<int>(prog.GetLastError());
-                    }
+                    if (ret == kOk) (void)prog.Run();
+                    last_err = static_cast<int>(prog.GetLastError());
                 }
             }
         }
