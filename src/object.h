@@ -51,9 +51,9 @@ typedef enum {
 /// @brief Object - a generic stack object
 ///
 struct Object {
-    explicit Object(ObjectType type = kUndef) : _type(type) {}
+    explicit Object(ObjectType type__ = kUndef) : type(type__) {}
     virtual ~Object() {}
-    ObjectType _type;
+    ObjectType type;
     virtual Object* Clone() {
         Object* o = new Object();
         if (o != nullptr) *o = *this;
