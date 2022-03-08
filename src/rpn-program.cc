@@ -46,7 +46,7 @@ void Program::RpnEval(void) {
 
         // if variable holds a program, run this program
         if (FindVariable(variable, obj)) {
-            if (obj->_type == kProgram) {
+            if (obj->type == kProgram) {
                 prog = reinterpret_cast<Program*>(stack_[0]);
                 stack_.erase(0, 1, false);
                 run_prog = true;
@@ -91,9 +91,9 @@ int Program::RpnInprog(Branch& inprog_obj) {
     // find next Program object
     for (unsigned int i = inprog_obj.arg1 + 1; i < size(); i++) {
         // count symbol
-        if (at(i)->_type == kSymbol) {
+        if (at(i)->type == kSymbol) {
             count_symbols++;
-        } else if (at(i)->_type == kProgram) {
+        } else if (at(i)->type == kProgram) {
             // stop if prog
             prog_found = true;
             break;

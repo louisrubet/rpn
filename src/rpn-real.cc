@@ -258,7 +258,7 @@ void Program::RpnSquare() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) *= stack_.value<Number>(0);
-    else if (stack_.at(0)->_type == kComplex)
+    else if (stack_.at(0)->type == kComplex)
         stack_.value<Complex>(0) *= stack_.value<Complex>(0);
     else
         ERROR_CONTEXT(kBadOperandType);
@@ -303,7 +303,7 @@ void Program::RpnSign() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = sgn(stack_.value<Number>(0));
-    else if (stack_.at(0)->_type == kComplex)
+    else if (stack_.at(0)->type == kComplex)
         stack_.value<Complex>(0) = stack_.value<Complex>(0) / abs(stack_.value<Complex>(0));
     else
         ERROR_CONTEXT(kBadOperandType);

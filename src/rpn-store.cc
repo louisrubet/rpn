@@ -165,7 +165,7 @@ void Program::AutoRcl(Symbol* symb) {
         // mind the order of heaps
         if (FindVariable(variable, obj)) {
             stack_.push_front(obj->Clone());
-            if (obj->_type == kProgram) RpnEval();
+            if (obj->type == kProgram) RpnEval();
         } else {
             // not found, keep it as a simple symbol
             Symbol* s = reinterpret_cast<Symbol*>(symb->Clone());
