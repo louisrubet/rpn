@@ -17,7 +17,7 @@ static int CmpStringOnStackTop(rpnstack& stk) {
 
 /// @brief > keyword implementation
 ///
-void program::RpnSup(void) {
+void Program::RpnSup(void) {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.push_front(new Number(stack_.value<Number>(1) > stack_.value<Number>(0)));
@@ -32,7 +32,7 @@ void program::RpnSup(void) {
 
 /// @brief >= keyword implementation
 ///
-void program::RpnSupEq(void) {
+void Program::RpnSupEq(void) {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.push_front(new Number(stack_.value<Number>(1) >= stack_.value<Number>(0)));
@@ -47,7 +47,7 @@ void program::RpnSupEq(void) {
 
 /// @brief < keyword implementation
 ///
-void program::RpnInf(void) {
+void Program::RpnInf(void) {
     MIN_ARGUMENTS(2);
 
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
@@ -63,7 +63,7 @@ void program::RpnInf(void) {
 
 /// @brief <= keyword implementation
 ///
-void program::RpnInfEq(void) {
+void Program::RpnInfEq(void) {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.push_front(new Number(stack_.value<Number>(1) <= stack_.value<Number>(0)));
@@ -78,7 +78,7 @@ void program::RpnInfEq(void) {
 
 /// @brief != keyword implementation
 ///
-void program::RpnDiff(void) {
+void Program::RpnDiff(void) {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.push_front(new Number(stack_.value<Number>(1) != stack_.value<Number>(0)));
@@ -96,7 +96,7 @@ void program::RpnDiff(void) {
 
 /// @brief == keyword implementation
 ///
-void program::RpnEq(void) {
+void Program::RpnEq(void) {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.push_front(new Number(stack_.value<Number>(1) == stack_.value<Number>(0)));
@@ -114,7 +114,7 @@ void program::RpnEq(void) {
 
 /// @brief and keyword implementation
 ///
-void program::RpnTestAnd(void) {
+void Program::RpnTestAnd(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -127,7 +127,7 @@ void program::RpnTestAnd(void) {
 
 /// @brief or keyword implementation
 ///
-void program::RpnTestOr(void) {
+void Program::RpnTestOr(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -140,7 +140,7 @@ void program::RpnTestOr(void) {
 
 /// @brief xor keyword implementation
 ///
-void program::RpnTestXor(void) {
+void Program::RpnTestXor(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -153,7 +153,7 @@ void program::RpnTestXor(void) {
 
 /// @brief not keyword implementation
 ///
-void program::RpnTestNot(void) {
+void Program::RpnTestNot(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -163,4 +163,4 @@ void program::RpnTestNot(void) {
 
 /// @brief test same implementation
 ///
-void program::RpnSame(void) { RpnEq(); }
+void Program::RpnSame(void) { RpnEq(); }

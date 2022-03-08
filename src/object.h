@@ -48,18 +48,12 @@ typedef enum {
     kBranch    // langage (reserved) branch keyword (for, if, then ..)
 } ObjectType;
 
-class program;
-class Branch;
-
-typedef void (program::*program_fn_t)(void);
-typedef size_t (program::*branch_fn_t)(Branch&);
-
 /// @brief Object - a generic stack object
 ///
 struct Object {
-    explicit Object(ObjectType type = kUndef) : _type(type) {}
+    explicit Object(ObjectType type__ = kUndef) : type(type__) {}
     virtual ~Object() {}
-    ObjectType _type;
+    ObjectType type;
     virtual Object* Clone() {
         Object* o = new Object();
         if (o != nullptr) *o = *this;
@@ -73,6 +67,11 @@ struct Object {
     }
     friend ostream& operator<<(ostream& os, Object* o) { return o->Show(os); }
 };
+
+class Program;
+class Branch;
+typedef void (Program::*program_fn_t)(void);
+typedef size_t (Program::*branch_fn_t)(Branch&);
 
 /// @brief stack objects derived from Object
 ///
@@ -140,22 +139,18 @@ struct String : Object {
     string value;
 };
 
-struct Program : Object {
-    Program() : Object(kProgram) {}
-    explicit Program(const string& value__) : Object(kProgram), value(value__) {}
-    virtual Object* Clone() { return new Program(value); }
-    virtual string Name() { return string("program"); }
-    virtual ostream& Show(ostream& out) { return out << "«" << value << "»"; }
-    string value;
-};
-
 struct Symbol : Object {
     explicit Symbol(bool auto_eval__ = true) : Object(kSymbol), auto_eval(auto_eval__) {}
     explicit Symbol(const string& value__, bool auto_eval__ = true)
         : Object(kSymbol), value(value__), auto_eval(auto_eval__) {}
     virtual Object* Clone() { return new Symbol(value, auto_eval); }
     virtual string Name() { return string("symbol"); }
-    virtual ostream& Show(ostream& out) { return out << "'" << value << "'"; }
+    virtual ostream& Show(ostream& out) {
+        if (auto_eval)
+            return out << value;
+        else
+            return out << "'" << value << "'";
+    }
     string value;
     bool auto_eval;
 };
@@ -165,6 +160,7 @@ struct Keyword : Object {
     explicit Keyword(program_fn_t fn__, const string& value__) : Object(kKeyword), fn(fn__), value(value__) {}
     virtual Object* Clone() { return new Keyword(fn, value); }
     virtual string Name() { return string("keyword"); }
+    virtual ostream& Show(ostream& out) { return out << value; }
     program_fn_t fn;
     string value;
 };
@@ -189,6 +185,7 @@ struct Branch : Object {
     }
     virtual Object* Clone() { return new Branch(*this); }
     virtual string Name() { return string("branch"); }
+    virtual ostream& Show(ostream& out) { return out << value; }
     branch_fn_t fn;
     size_t arg1, arg2, arg3;
     mpreal first_index, last_index;
