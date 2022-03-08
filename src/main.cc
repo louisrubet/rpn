@@ -12,9 +12,21 @@ using std::cerr;
 #include "input.h"
 #include "program.h"
 
-/// @brief actions to be done at rpn exit
+/// @brief lines history management: load file
 ///
-static void ExitInteractive() {
+static void StartHistory() {
+    struct passwd* pw = getpwuid(getuid());
+    if (pw != nullptr) {
+        stringstream history_path;
+        history_path << pw->pw_dir << "/.rpn_history";
+        linenoiseHistorySetMaxLen(100);
+        linenoiseHistoryLoad(history_path.str().c_str());
+    }
+}
+
+/// @brief lines history management: save
+///
+static void StopHistory() {
     struct passwd* pw = getpwuid(getuid());
     if (pw != nullptr) {
         stringstream history_path;
@@ -24,7 +36,6 @@ static void ExitInteractive() {
         ofstream history(history_path.str(), ios_base::out | ios_base::trunc);
         history.close();
 
-        // save it
         if (linenoiseHistorySave(history_path.str().c_str()) != 0)
             cerr << "warning, could not save " << history_path.str() << " [errno=" << errno << ' ' << strerror(errno)
                  << "']" << endl;
@@ -32,38 +43,13 @@ static void ExitInteractive() {
     }
 }
 
-/// @brief actions to be done at rpn exit
-///
-static void EnterInteractive() {
-    struct passwd* pw = getpwuid(getuid());
-    if (pw != nullptr) {
-        stringstream history_path;
-        history_path << pw->pw_dir << "/.rpn_history";
-
-        // don't care about errors
-        linenoiseHistorySetMaxLen(100);
-        linenoiseHistoryLoad(history_path.str().c_str());
-    }
-}
-
-/// @brief handle CtrlC signal (sigaction handler): exit rpn
-///
-/// @param sig signal, see POSIX sigaction
-/// @param siginfo signal info, see POSIX sigaction
-/// @param context see POSIX sigaction
-///
 static void CtrlHandler(int sig __attribute__((unused)), siginfo_t* siginfo __attribute__((unused)),
                         void* context __attribute__((unused))) {
-    ExitInteractive();
+    StopHistory();  // don't put an entry line canceled with CtrlC in history
 }
 
-/// @brief setup signals handlers to stop with honours
-///
-/// @param prog the prog to catch the signals to, must be checked not nullptr by user
-///
-static void CatchSignals() {
+static void CatchCtrlC() {
     struct sigaction act = {0};
-
     act.sa_sigaction = &CtrlHandler;
     act.sa_flags = SA_SIGINFO;
     if (sigaction(SIGINT, &act, nullptr) < 0)
@@ -87,23 +73,16 @@ int main(int argc, char* argv[]) {
     if (argc == 1) {
         Program::Welcome();
 
-        // init history
-        EnterInteractive();
+        StartHistory();
+        CatchCtrlC();
 
-        // user could stop prog with CtrlC
-        CatchSignals();
-
-        // entry loop
         heap heap;
         rpnstack stack;
         while (go_on) {
-            //
-            // make program from interactive entry
             Program prog(stack, heap);
             string entry;
             switch (Input(entry, Program::GetAutocompletionWords()).status) {
                 case Input::InputStatus::kOk:
-                    // run it
                     if (prog.Parse(entry) == kOk && prog.Run() == kGoodbye)
                         go_on = false;
                     else
@@ -116,10 +95,9 @@ int main(int argc, char* argv[]) {
                     break;
             }
         }
-
-        // manage history and exit
-        ExitInteractive();
-    } else {  // run with cmd line arguments
+        StopHistory();
+    } else {
+        // run with cmd line arguments
         heap heap;
         rpnstack stack;
         Program prog(stack, heap);
@@ -132,10 +110,6 @@ int main(int argc, char* argv[]) {
         // make program
         ret = prog.Parse(entry);
         if (ret == kOk) {
-            // user could stop prog with CtrlC
-            CatchSignals();
-
-            // run it
             ret = prog.Run();
             prog.ShowStack(false);
         }
