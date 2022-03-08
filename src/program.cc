@@ -5,7 +5,7 @@
 //< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-function-type"  // allow casting kBranch callbacks
-#pragma GCC diagnostic ignored "-Wpedantic"            // allow designated initializers
+#pragma GCC diagnostic ignored "-Wpedantic"            // allow designated initializers for keywords_
 vector<Program::keyword_t> Program::keywords_{
     // GENERAL
     {kUndef, "", nullptr, "\nGENERAL"},
@@ -224,7 +224,7 @@ RetValue Program::Run() {
     err_ = kOk;
     err_context_ = "";
 
-    // iterate commands
+    // iterate objects
     for (size_t i = 0; (go_out == false) && (i < size());) {
         Object* o = at(i);
         switch (o->_type) {
@@ -293,10 +293,6 @@ RetValue Program::Run() {
                 break;
         }
     }
-
-    // free allocated
-    for (Object* o : *this) delete o;
-    local_heap_.clear();
 
     return ret;
 }
@@ -585,12 +581,9 @@ RetValue Program::Parse(const string& entry) {
                 case kProgram: {
                     Program* p = new Program(stack_, heap_, this);
                     if (p->Parse(element.value) == kOk) {
+                        // give a clean format to the program string
                         stringstream ss;
-                        for (size_t i = 0; i < p->size(); i++)
-                            if (i > 0)
-                                ss << ' ' << p->at(i);
-                            else
-                                ss << p->at(i);
+                        for (size_t i = 0; i < p->size(); i++) ss << ((i > 0) ? " " : "") << p->at(i);
                         p->value = ss.str();
                         push_back(p);
                     }
