@@ -50,10 +50,11 @@ include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/linenoise-ng
 
 # src
 set(RPN_SRC_FILES
+    ${PROJECT_SOURCE_DIR}/src/object.cc
+    ${PROJECT_SOURCE_DIR}/src/program.cc
     ${PROJECT_SOURCE_DIR}/src/main.cc
     ${PROJECT_SOURCE_DIR}/src/object.cc
     ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
-    ${PROJECT_SOURCE_DIR}/src/program.cc
     ${PROJECT_SOURCE_DIR}/src/lexer.cc
     ${PROJECT_SOURCE_DIR}/src/input.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc

@@ -4,7 +4,7 @@
 
 /// @brief + keyword implementation
 ///
-void program::RpnPlus() {
+void Program::RpnPlus() {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kString && stack_.type(1) == kString) {
         stack_.value<String>(1) += stack_.value<String>(0);
@@ -29,7 +29,7 @@ void program::RpnPlus() {
 
 /// @brief - keyword implementation
 ///
-void program::RpnMinus() {
+void Program::RpnMinus() {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) -= stack_.value<Number>(0);
@@ -51,7 +51,7 @@ void program::RpnMinus() {
 
 /// @brief * keyword implementation
 ///
-void program::RpnMul() {
+void Program::RpnMul() {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) *= stack_.value<Number>(0);
@@ -73,7 +73,7 @@ void program::RpnMul() {
 
 /// @brief / keyword implementation
 ///
-void program::RpnDiv() {
+void Program::RpnDiv() {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) /= stack_.value<Number>(0);
@@ -95,7 +95,7 @@ void program::RpnDiv() {
 
 /// @brief neg keyword implementation
 ///
-void program::RpnNeg() {
+void Program::RpnNeg() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = -stack_.value<Number>(0);
@@ -107,7 +107,7 @@ void program::RpnNeg() {
 
 /// @brief inv keyword implementation
 ///
-void program::RpnInv() {
+void Program::RpnInv() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = 1 / stack_.value<Number>(0);
@@ -119,7 +119,7 @@ void program::RpnInv() {
 
 /// @brief power keyword implementation
 ///
-void program::RpnPower() {
+void Program::RpnPower() {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         if (stack_.value<Number>(1) >= 0) {
@@ -148,7 +148,7 @@ void program::RpnPower() {
 
 /// @brief sqrt keyword implementation
 ///
-void program::RpnSquareroot() {
+void Program::RpnSquareroot() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber) {
         if (stack_.value<Number>(0) >= 0) {
@@ -170,7 +170,7 @@ void program::RpnSquareroot() {
 
 /// @brief hex keyword implementation
 ///
-void program::RpnHex() {
+void Program::RpnHex() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber) {
         stack_.obj<Number>(0).base = 16;
@@ -184,7 +184,7 @@ void program::RpnHex() {
 
 /// @brief bin keyword implementation
 ///
-void program::RpnBin() {
+void Program::RpnBin() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber) {
         stack_.obj<Number>(0).base = 2;
@@ -198,7 +198,7 @@ void program::RpnBin() {
 
 /// @brief dec keyword implementation
 ///
-void program::RpnDec() {
+void Program::RpnDec() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber) {
         stack_.obj<Number>(0).base = 10;
@@ -212,7 +212,7 @@ void program::RpnDec() {
 
 /// @brief base keyword implementation
 ///
-void program::RpnBase() {
+void Program::RpnBase() {
     MIN_ARGUMENTS(2);
     if (stack_.type(1) == kNumber || stack_.type(1) == kComplex) {
         int base = static_cast<int>(stack_.value<Number>(0).toLong());
@@ -234,7 +234,7 @@ void program::RpnBase() {
 
 /// @brief % (purcent) keyword implementation
 ///
-void program::RpnPurcent() {
+void Program::RpnPurcent() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -244,7 +244,7 @@ void program::RpnPurcent() {
 
 /// @brief %CH keyword implementation
 ///
-void program::RpnPurcentCH() {
+void Program::RpnPurcentCH() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -254,11 +254,11 @@ void program::RpnPurcentCH() {
 
 /// @brief sq keyword implementation
 ///
-void program::RpnSquare() {
+void Program::RpnSquare() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) *= stack_.value<Number>(0);
-    else if (stack_.at(0)->_type == kComplex)
+    else if (stack_.at(0)->type == kComplex)
         stack_.value<Complex>(0) *= stack_.value<Complex>(0);
     else
         ERROR_CONTEXT(kBadOperandType);
@@ -266,7 +266,7 @@ void program::RpnSquare() {
 
 /// @brief mod keyword implementation
 ///
-void program::RpnModulo() {
+void Program::RpnModulo() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -276,7 +276,7 @@ void program::RpnModulo() {
 
 /// @brief abs keyword implementation
 ///
-void program::RpnAbs() {
+void Program::RpnAbs() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber) {
         stack_.value<Number>(0) = abs(stack_.value<Number>(0));
@@ -290,7 +290,7 @@ void program::RpnAbs() {
 
 /// @brief fact (factorial) keyword implementation
 ///
-void program::RpnFact() {
+void Program::RpnFact() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     // fact(n) = gamma(n+1)
@@ -299,11 +299,11 @@ void program::RpnFact() {
 
 /// @brief sign keyword implementation
 ///
-void program::RpnSign() {
+void Program::RpnSign() {
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kNumber)
         stack_.value<Number>(0) = sgn(stack_.value<Number>(0));
-    else if (stack_.at(0)->_type == kComplex)
+    else if (stack_.at(0)->type == kComplex)
         stack_.value<Complex>(0) = stack_.value<Complex>(0) / abs(stack_.value<Complex>(0));
     else
         ERROR_CONTEXT(kBadOperandType);
@@ -311,7 +311,7 @@ void program::RpnSign() {
 
 /// @brief mant keyword implementation
 ///
-void program::RpnMant() {
+void Program::RpnMant() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     if (!isfinite(stack_.value<Number>(0))) {
@@ -324,7 +324,7 @@ void program::RpnMant() {
 
 /// @brief xpon keyword implementation
 ///
-void program::RpnXpon() {
+void Program::RpnXpon() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     if (!isfinite(stack_.value<Number>(0))) {
@@ -338,7 +338,7 @@ void program::RpnXpon() {
 
 /// @brief floor keyword implementation
 ///
-void program::RpnFloor() {
+void Program::RpnFloor() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) = floor(stack_.value<Number>(0));
@@ -346,7 +346,7 @@ void program::RpnFloor() {
 
 /// @brief ceil keyword implementation
 ///
-void program::RpnCeil() {
+void Program::RpnCeil() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) = ceil(stack_.value<Number>(0));
@@ -354,7 +354,7 @@ void program::RpnCeil() {
 
 /// @brief fp keyword implementation
 ///
-void program::RpnFp() {
+void Program::RpnFp() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) = frac(stack_.value<Number>(0));
@@ -362,7 +362,7 @@ void program::RpnFp() {
 
 /// @brief ip keyword implementation
 ///
-void program::RpnIp() {
+void Program::RpnIp() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     stack_.value<Number>(0) = trunc(stack_.value<Number>(0));
@@ -370,7 +370,7 @@ void program::RpnIp() {
 
 /// @brief min keyword implementation
 ///
-void program::RpnMin() {
+void Program::RpnMin() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
@@ -380,7 +380,7 @@ void program::RpnMin() {
 
 /// @brief max keyword implementation
 ///
-void program::RpnMax() {
+void Program::RpnMax() {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
     ARG_MUST_BE_OF_TYPE(1, kNumber);
