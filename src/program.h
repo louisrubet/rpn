@@ -18,15 +18,6 @@ using mpfr::mpreal;
 #include "object.h"
 #include "stack.h"
 
-// struct Program : Object {
-//     Program() : Object(kProgram) {}
-//     explicit Program(const string& value__) : Object(kProgram), value(value__) {}
-//     virtual Object* Clone() { return new Program(value); }
-//     virtual string Name() { return string("program"); }
-//     virtual ostream& Show(ostream& out) { return out << "«" << value << "»"; }
-//     string value;
-// };
-
 //< program class: the class containing a string parser, all the programs keywords, a stack for running the program
 class Program : public deque<Object*>, public Lexer, public Object {
  public:
@@ -37,6 +28,7 @@ class Program : public deque<Object*>, public Lexer, public Object {
 
     virtual ~Program() {
         local_heap_.clear();
+        for (Object* obj : *this) delete obj;
         clear();
     }
 
