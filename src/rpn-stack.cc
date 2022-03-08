@@ -4,7 +4,7 @@
 
 /// @brief swap keyword implementation
 ///
-void program::RpnSwap(void) {
+void Program::RpnSwap(void) {
     MIN_ARGUMENTS(2);
     Object* tmp = stack_.front();
     stack_.erase(0, 1, false);
@@ -13,21 +13,21 @@ void program::RpnSwap(void) {
 
 /// @brief drop keyword implementation
 ///
-void program::RpnDrop(void) {
+void Program::RpnDrop(void) {
     MIN_ARGUMENTS(1);
     stack_.pop();
 }
 
 /// @brief drop2 keyword implementation
 ///
-void program::RpnDrop2(void) {
+void Program::RpnDrop2(void) {
     MIN_ARGUMENTS(2);
     stack_.erase(0, 2);
 }
 
 /// @brief dropn keyword implementation
 ///
-void program::RpnDropn(void) {
+void Program::RpnDropn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -38,18 +38,18 @@ void program::RpnDropn(void) {
 
 /// @brief erase / del keyword implementation
 ///
-void program::RpnErase(void) { stack_.erase(0, stack_.size()); }
+void Program::RpnErase(void) { stack_.erase(0, stack_.size()); }
 
 /// @brief dup keyword implementation
 ///
-void program::RpnDup(void) {
+void Program::RpnDup(void) {
     MIN_ARGUMENTS(1);
     stack_.push_front(stack_.at(0)->Clone());
 }
 
 /// @brief dupn keyword implementation
 ///
-void program::RpnDupn(void) {
+void Program::RpnDupn(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -66,7 +66,7 @@ void program::RpnDupn(void) {
 
 /// @brief dup2 keyword implementation
 ///
-void program::RpnDup2(void) {
+void Program::RpnDup2(void) {
     MIN_ARGUMENTS(2);
     stack_.push_front(stack_.at(1)->Clone());
     stack_.push_front(stack_.at(1)->Clone());
@@ -74,7 +74,7 @@ void program::RpnDup2(void) {
 
 /// @brief pick keyword implementation
 ///
-void program::RpnPick(void) {
+void Program::RpnPick(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -92,7 +92,7 @@ void program::RpnPick(void) {
 
 /// @brief rot keyword implementation
 ///
-void program::RpnRot(void) {
+void Program::RpnRot(void) {
     MIN_ARGUMENTS(3);
     Object* tmp = stack_.at(2);
     stack_.erase(2, 1, false);
@@ -101,11 +101,11 @@ void program::RpnRot(void) {
 
 /// @brief depth keyword implementation
 ///
-void program::RpnDepth(void) { stack_.push_front(new Number(stack_.size())); }
+void Program::RpnDepth(void) { stack_.push_front(new Number(stack_.size())); }
 
 /// @brief roll keyword implementation
 ///
-void program::RpnRoll(void) {
+void Program::RpnRoll(void) {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -124,7 +124,7 @@ void program::RpnRoll(void) {
 
 /// @brief rolld keyword implementation
 ///
-void program::RpnRolld(void) {
+void Program::RpnRolld(void) {
     MIN_ARGUMENTS(2);
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
@@ -143,7 +143,7 @@ void program::RpnRolld(void) {
 
 /// @brief over keyword implementation
 ///
-void program::RpnOver(void) {
+void Program::RpnOver(void) {
     MIN_ARGUMENTS(2);
     stack_.push_front(stack_.at(1)->Clone());
 }

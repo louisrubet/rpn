@@ -8,7 +8,7 @@
 
 -> stack size should be 1
 
--> stack should be «'one'»
+-> stack should be « 'one' »
 
 `del`
 
@@ -18,7 +18,7 @@
 
 -> stack size should be 1
 
--> stack should be «'one' 2»
+-> stack should be « 'one' 2 »
 
 `del`
 
@@ -28,7 +28,7 @@
 
 -> stack size should be 1
 
--> stack should be «»
+-> stack should be «  »
 
 `del`
 
@@ -38,7 +38,7 @@
 
 -> stack size should be 1
 
--> stack should be «<< << <<»
+-> stack should be « « « «  » » » »
 
 `del`
 
@@ -48,7 +48,7 @@
 
 -> stack size should be 1
 
--> stack should be «-> n << n 2 * >>»
+-> stack should be « -> n « n 2 * » »
 
 `del`
 
@@ -56,7 +56,7 @@
 
 `<< 1 << 2 >> >>`
 
--> stack should be «1 << 2 >>»
+-> stack should be « 1 « 2 » »
 
 `del`
 
@@ -64,7 +64,7 @@
 
 `<< 1 << 2 >> >> dup eval`
 
--> stack should be «1 << 2 >>», 1, «2»
+-> stack should be « 1 « 2 » », 1, « 2 »
 
 `del`
 
