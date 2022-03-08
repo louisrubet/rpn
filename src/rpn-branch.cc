@@ -36,7 +36,7 @@ size_t Program::RpnThen(Branch& myobj) {
     // if condition is true -> arg1 (= jump to then + 1)
     // else -> arg2 (= jump to else + 1 or end + 1)
     Branch* if_cmd;
-    if (myobj.arg3 >= size() || at(myobj.arg3)->_type != kBranch) {
+    if (myobj.arg3 >= size() || at(myobj.arg3)->type != kBranch) {
         ERROR_CONTEXT(kMissingOperand);
         return kRtError;
     }
@@ -61,7 +61,7 @@ size_t Program::RpnElse(Branch& myobj) {
     // if condition was false -> arg1 (= jump to else + 1)
     // if condition was true -> arg2 (= jump to end + 1)
     Branch* if_cmd;
-    if (myobj.arg3 >= size() || at(myobj.arg3)->_type != kBranch) {
+    if (myobj.arg3 >= size() || at(myobj.arg3)->type != kBranch) {
         ERROR_CONTEXT(kMissingOperand);
         return kRtError;
     }
@@ -240,7 +240,7 @@ size_t Program::RpnFor(Branch& myobj) {
     ARG_MUST_BE_OF_TYPE_RET(1, kNumber, kRtError);
 
     Symbol* sym;
-    if (myobj.arg1 >= size() || at(myobj.arg1)->_type != kSymbol) {
+    if (myobj.arg1 >= size() || at(myobj.arg1)->type != kSymbol) {
         ERROR_CONTEXT(kMissingOperand);
         return kRtError;
     }
@@ -283,7 +283,7 @@ size_t Program::RpnNext(Branch& myobj) {
     // arg1 = loop variable index
     // first_index = current point in the loop
     Branch* start_or_for;
-    if (myobj.arg1 >= size() || at(myobj.arg1)->_type != kBranch) {
+    if (myobj.arg1 >= size() || at(myobj.arg1)->type != kBranch) {
         ERROR_CONTEXT(kMissingOperand);
         return kRtError;
     }
@@ -300,7 +300,7 @@ size_t Program::RpnNext(Branch& myobj) {
     // for command: increment symbol too
     if (start_or_for->arg1 != kStepOut) {
         Symbol* var;
-        if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != kSymbol) {
+        if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->type != kSymbol) {
             ERROR_CONTEXT(kMissingOperand);
             return kRtError;
         }
@@ -346,7 +346,7 @@ size_t Program::RpnStep(Branch& myobj) {
         // arg1 = loop variable index
         // first_index = current count
         Branch* start_or_for;
-        if (myobj.arg1 >= size() || at(myobj.arg1)->_type != kBranch) {
+        if (myobj.arg1 >= size() || at(myobj.arg1)->type != kBranch) {
             ERROR_CONTEXT(kMissingOperand);
             return kRtError;
         }
@@ -364,7 +364,7 @@ size_t Program::RpnStep(Branch& myobj) {
             Symbol* var;
 
             // for command: increment symbol too
-            if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->_type != kSymbol) {
+            if (start_or_for->arg1 >= size() || at(start_or_for->arg1)->type != kSymbol) {
                 ERROR_CONTEXT(kMissingOperand);
                 return kRtError;
             }

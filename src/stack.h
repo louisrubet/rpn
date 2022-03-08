@@ -34,7 +34,7 @@ class rpnstack : public deque<Object*> {
     //
     ObjectType type(int level) {
         // carefull: caller must ensure that level is correct
-        return at(level)->_type;
+        return at(level)->type;
     }
 
     template <class objectType>

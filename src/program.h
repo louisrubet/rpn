@@ -284,17 +284,17 @@ class Program : public deque<Object*>, public Lexer, public Object {
         }                                   \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE(num, type)         \
+#define ARG_MUST_BE_OF_TYPE(num, typ)         \
     do {                                       \
-        if (stack_.at(num)->_type != (type)) { \
+        if (stack_.at(num)->type != (typ)) { \
             ERROR_CONTEXT(kBadOperandType);    \
             return;                            \
         }                                      \
     } while (0)
 
-#define ARG_MUST_BE_OF_TYPE_RET(num, type, ret) \
+#define ARG_MUST_BE_OF_TYPE_RET(num, typ, ret) \
     do {                                        \
-        if (stack_.at(num)->_type != (type)) {  \
+        if (stack_.at(num)->type != (typ)) {  \
             ERROR_CONTEXT(kBadOperandType);     \
             return (ret);                       \
         }                                       \

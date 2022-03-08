@@ -227,7 +227,7 @@ RetValue Program::Run() {
     // iterate objects
     for (size_t i = 0; (go_out == false) && (i < size());) {
         Object* o = at(i);
-        switch (o->_type) {
+        switch (o->type) {
             // could be an auto-evaluated symbol
             case kSymbol:
                 AutoRcl(reinterpret_cast<Symbol*>(o));
@@ -328,7 +328,7 @@ RetValue Program::Preprocess() {
     // analyse if-then-else-end branches
     // analyse start-{next, step} branches
     for (size_t i = 0; i < size(); i++) {
-        if (at(i)->_type == kBranch) {
+        if (at(i)->type == kBranch) {
             Branch* k = reinterpret_cast<Branch*>(at(i));
             if (k->value == "if") {
                 if_layout_t layout;
