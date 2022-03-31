@@ -80,10 +80,13 @@ ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
 set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS # some harder warnings
     "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
 
+set_source_files_properties(${LINENOISE_NG_SRC_FILES} COMPILE_FLAGS
+    "-fpermissive") # removing error on redeclaration of char8_t
+
 if(CMAKE_COMPILER_IS_GNUCXX)
     message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
     # TODO still up to date?
-    set(BASE_COMPILER_OPTIONS "-std=c++17 -Wl,--no-as-needed")
+    set(BASE_COMPILER_OPTIONS "-std=c++20 -Wl,--no-as-needed")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -s")
