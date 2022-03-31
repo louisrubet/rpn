@@ -94,3 +94,9 @@ void Program::RpnStrsub() {
     stack_.push(new String(stack_.value<String>(2).substr(first, len)));
     stack_.erase(1, 3);
 }
+
+/// @brief endline character
+///
+void Program::RpnEndl() {
+    stack_.push_front(new String("\n"));
+}
