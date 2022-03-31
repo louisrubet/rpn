@@ -223,6 +223,7 @@ class Program : public deque<Object*>, public Lexer, public Object {
     void RpnStrsize();
     void RpnStrpos();
     void RpnStrsub();
+    void RpnEndl();
 
     // test-core
     void RpnTest();
