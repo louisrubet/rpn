@@ -23,7 +23,7 @@ class Lexer {
         mpreal* im;
         int re_base;
         int im_base;
-        program_fn_t fn;
+        object_cb_t fn;
         bool auto_eval;
     };
 
@@ -34,7 +34,7 @@ class Lexer {
 
     struct ReservedWord {
         ObjectType type;
-        program_fn_t fn;
+        object_cb_t fn;
     };
 
     Lexer() {}

@@ -84,7 +84,7 @@ class Program : public deque<Object*>, public Lexer, public Object {
     struct keyword_t {
         ObjectType type;
         string name;
-        program_fn_t fn;
+        object_cb_t fn;
         string comment;
     };
     static vector<keyword_t> keywords_;
@@ -153,7 +153,7 @@ class Program : public deque<Object*>, public Lexer, public Object {
     // program
     bool FindVariable(string& variable, Object*& obj);
     void RpnEval(void);
-    int RpnInprog(Branch& inprog_obj);
+    size_t RpnInprog(Branch& inprog_obj);
 
     // real
     void RpnPlus();
