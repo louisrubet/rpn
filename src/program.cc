@@ -3,209 +3,203 @@
 #include "program.h"
 
 //< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-function-type"  // allow casting kBranch callbacks
-vector<program::keyword_t> program::keywords_{
+// clang-format off
+vector<Program::keyword_t> Program::keywords_ = {
     // GENERAL
-    {kUndef, "", nullptr, "\nGENERAL"},
-    {kKeyword, "help", &program::RpnHelp, "this help message"},
-    {kKeyword, "h", &program::RpnHelp, ""},
-    {kKeyword, "?", &program::RpnHelp, ""},
-    {kKeyword, "quit", &program::RpnQuit, "quit software"},
-    {kKeyword, "q", &program::RpnQuit, ""},
-    {kKeyword, "exit", &program::RpnQuit, ""},
-    {kKeyword, "test", &program::RpnTest, ""},  // not seen by user
-    {kKeyword, "version", &program::RpnVersion, "show rpn version"},
-    {kKeyword, "uname", &program::RpnUname, "show rpn complete identification string"},
-    {kKeyword, "history", &program::RpnHistory, "see commands history"},
+    {kUndef, "", {.prog = nullptr}, "\nGENERAL"},
+    {kKeyword, "help",    {.prog = &Program::RpnHelp}, "this help message"},
+    {kKeyword, "h",       {.prog = &Program::RpnHelp}, ""},
+    {kKeyword, "?",       {.prog = &Program::RpnHelp}, ""},
+    {kKeyword, "quit",    {.prog = &Program::RpnQuit}, "quit software"},
+    {kKeyword, "q",       {.prog = &Program::RpnQuit}, ""},
+    {kKeyword, "exit",    {.prog = &Program::RpnQuit}, ""},
+    {kKeyword, "test",    {.prog = &Program::RpnTest}, ""},
+    {kKeyword, "version", {.prog = &Program::RpnVersion}, "show rpn version"},
+    {kKeyword, "uname",   {.prog = &Program::RpnUname}, "show rpn complete identification string"},
+    {kKeyword, "history", {.prog = &Program::RpnHistory}, "see commands history"},
 
     // USUAL OPERATIONS ON REALS AND COMPLEXES
-    {kUndef, "", nullptr, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
-    {kKeyword, "+", &program::RpnPlus, "addition"},
-    {kKeyword, "-", &program::RpnMinus, "substraction"},
-    {kKeyword, "*", &program::RpnMul, "multiplication"},
-    {kKeyword, "/", &program::RpnDiv, "division"},
-    {kKeyword, "inv", &program::RpnInv, "inverse"},
-    {kKeyword, "chs", &program::RpnNeg, "negation"},
-    {kKeyword, "neg", &program::RpnNeg, ""},
-    {kKeyword, "^", &program::RpnPower, "power"},
-    {kKeyword, "pow", &program::RpnPower, ""},
-    {kKeyword, "sqrt", &program::RpnSquareroot, "RpnSquare root"},
-    {kKeyword, "sq", &program::RpnSquare, "RpnSquare"},
-    {kKeyword, "abs", &program::RpnAbs, "absolute value (norm for a complex)"},
-    {kKeyword, "sign", &program::RpnSign, "sign of a number or z/|z| for a complex"},
+    {kUndef, "", {.prog = nullptr}, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
+    {kKeyword, "+",    {.prog = &Program::RpnPlus}, "addition"},
+    {kKeyword, "-",    {.prog = &Program::RpnMinus}, "substraction"},
+    {kKeyword, "*",    {.prog = &Program::RpnMul}, "multiplication"},
+    {kKeyword, "/",    {.prog = &Program::RpnDiv}, "division"},
+    {kKeyword, "inv",  {.prog = &Program::RpnInv}, "inverse"},
+    {kKeyword, "chs",  {.prog = &Program::RpnNeg}, "negation"},
+    {kKeyword, "neg",  {.prog = &Program::RpnNeg}, ""},
+    {kKeyword, "^",    {.prog = &Program::RpnPower}, "power"},
+    {kKeyword, "pow",  {.prog = &Program::RpnPower}, ""},
+    {kKeyword, "sqrt", {.prog = &Program::RpnSquareroot}, "RpnSquare root"},
+    {kKeyword, "sq",   {.prog = &Program::RpnSquare}, "RpnSquare"},
+    {kKeyword, "abs",  {.prog = &Program::RpnAbs}, "absolute value (norm for a complex)"},
+    {kKeyword, "sign", {.prog = &Program::RpnSign}, "sign of a number or z/|z| for a complex"},
 
     // OPERATIONS ON REALS
-    {kUndef, "", nullptr, "\nOPERATIONS ON REALS"},
-    {kKeyword, "%", &program::RpnPurcent, "purcent"},
-    {kKeyword, "%CH", &program::RpnPurcentCH, "inverse purcent"},
-    {kKeyword, "mod", &program::RpnModulo, "modulo"},
-    {kKeyword, "fact", &program::RpnFact, "n! for integer n or Gamma(x+1) for fractional x"},
-    {kKeyword, "mant", &program::RpnMant, "mantissa of a real number"},
-    {kKeyword, "xpon", &program::RpnXpon, "exponant of a real number"},
-    {kKeyword, "floor", &program::RpnFloor, "largest number <="},
-    {kKeyword, "ceil", &program::RpnCeil, "smallest number >="},
-    {kKeyword, "ip", &program::RpnIp, "integer part"},
-    {kKeyword, "fp", &program::RpnFp, "fractional part"},
-    {kKeyword, "min", &program::RpnMin, "min of 2 real numbers"},
-    {kKeyword, "max", &program::RpnMax, "max of 2 real numbers"},
+    {kUndef, "", {.prog = nullptr}, "\nOPERATIONS ON REALS"},
+    {kKeyword, "%",     {.prog = &Program::RpnPurcent}, "purcent"},
+    {kKeyword, "%CH",   {.prog = &Program::RpnPurcentCH}, "inverse purcent"},
+    {kKeyword, "mod",   {.prog = &Program::RpnModulo}, "modulo"},
+    {kKeyword, "fact",  {.prog = &Program::RpnFact}, "n! for integer n or Gamma(x+1) for fractional x"},
+    {kKeyword, "mant",  {.prog = &Program::RpnMant}, "mantissa of a real number"},
+    {kKeyword, "xpon",  {.prog = &Program::RpnXpon}, "exponant of a real number"},
+    {kKeyword, "floor", {.prog = &Program::RpnFloor}, "largest number <="},
+    {kKeyword, "ceil",  {.prog = &Program::RpnCeil}, "smallest number >="},
+    {kKeyword, "ip",    {.prog = &Program::RpnIp}, "integer part"},
+    {kKeyword, "fp",    {.prog = &Program::RpnFp}, "fractional part"},
+    {kKeyword, "min",   {.prog = &Program::RpnMin}, "min of 2 real numbers"},
+    {kKeyword, "max",   {.prog = &Program::RpnMax}, "max of 2 real numbers"},
 
     // OPERATIONS ON COMPLEXES
-    {kUndef, "", nullptr, "\nOPERATIONS ON COMPLEXES"},
-    {kKeyword, "re", &program::RpnReal, "complex real part"},
-    {kKeyword, "im", &program::RpnImag, "complex imaginary part"},
-    {kKeyword, "conj", &program::RpnConj, "complex conjugate"},
-    {kKeyword, "arg", &program::RpnArg, "complex argument in radians"},
-    {kKeyword, "c->r", &program::RpnC2r, "transform a complex in 2 reals"},
-    {kKeyword, "r->c", &program::RpnR2c, "transform 2 reals in a complex"},
-    {kKeyword, "p->r", &program::RpnP2r, "cartesian to polar"},
-    {kKeyword, "r->p", &program::RpnR2p, "polar to cartesian"},
+    {kUndef, "", {.prog = nullptr}, "\nOPERATIONS ON COMPLEXES"},
+    {kKeyword, "re",   {.prog = &Program::RpnReal}, "complex real part"},
+    {kKeyword, "im",   {.prog = &Program::RpnImag}, "complex imaginary part"},
+    {kKeyword, "conj", {.prog = &Program::RpnConj}, "complex conjugate"},
+    {kKeyword, "arg",  {.prog = &Program::RpnArg}, "complex argument in radians"},
+    {kKeyword, "c->r", {.prog = &Program::RpnC2r}, "transform a complex in 2 reals"},
+    {kKeyword, "r->c", {.prog = &Program::RpnR2c}, "transform 2 reals in a complex"},
+    {kKeyword, "p->r", {.prog = &Program::RpnP2r}, "cartesian to polar"},
+    {kKeyword, "r->p", {.prog = &Program::RpnR2p}, "polar to cartesian"},
 
     // MODE
-    {kUndef, "", nullptr, "\nMODE"},
-    {kKeyword, "std", &program::RpnStd, "standard floating numbers representation. ex: std"},
-    {kKeyword, "fix", &program::RpnFix, "fixed point representation. ex: 6 fix"},
-    {kKeyword, "sci", &program::RpnSci, "scientific floating point representation. ex: 20 sci"},
-    {kKeyword, "prec", &program::RpnPrecision, "set float precision in bits. ex: 256 prec"},
-    {kKeyword, "round", &program::RpnRound,
-     "set float rounding mode in \n\t\"nearest (even)\", \"toward zero\", \"toward "
-     "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\""
-     "\n\tex: \"nearest (even)\" round"},
-    {kKeyword, "default", &program::RpnDefault, "set float representation and precision to default"},
-    {kKeyword, "type", &program::RpnType, "show type of stack first entry"},
-    {kKeyword, "hex", &program::RpnHex, "hexadecimal representation, applies on stack level 0 only"},
-    {kKeyword, "dec", &program::RpnDec, "decimal representation, applies on stack level 0 only"},
-    {kKeyword, "bin", &program::RpnBin, "binary representation, applies on stack level 0 only"},
-    {kKeyword, "base", &program::RpnBase, "arbitrary base representation, applies on stack level 0 only"},
+    {kUndef, "", {.prog = nullptr}, "\nMODE"},
+    {kKeyword, "std",   {.prog = &Program::RpnStd}, "standard floating numbers representation. ex: std"},
+    {kKeyword, "fix",   {.prog = &Program::RpnFix}, "fixed point representation. ex: 6 fix"},
+    {kKeyword, "sci",   {.prog = &Program::RpnSci}, "scientific floating point representation. ex: 20 sci"},
+    {kKeyword, "prec",  {.prog = &Program::RpnPrecision}, "set float precision in bits. ex: 256 prec"},
+    {kKeyword, "round", {.prog = &Program::RpnRound},
+        "set float rounding mode in \n\t\"nearest (even)\", \"toward zero\", \"toward "
+        "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\""
+        "\n\tex: \"nearest (even)\" round"},
+    {kKeyword, "default", {.prog = &Program::RpnDefault}, "set float representation and precision to default"},
+    {kKeyword, "type",    {.prog = &Program::RpnType}, "show type of stack first entry"},
+    {kKeyword, "hex",     {.prog = &Program::RpnHex}, "hexadecimal representation, applies on stack level 0 only"},
+    {kKeyword, "dec",     {.prog = &Program::RpnDec}, "decimal representation, applies on stack level 0 only"},
+    {kKeyword, "bin",     {.prog = &Program::RpnBin}, "binary representation, applies on stack level 0 only"},
+    {kKeyword, "base",    {.prog = &Program::RpnBase}, "arbitrary base representation, applies on stack level 0 only"},
 
     // TESTS
-    {kUndef, "", nullptr, "\nTEST"},
-    {kKeyword, ">", &program::RpnSup, "binary operator >"},
-    {kKeyword, ">=", &program::RpnSupEq, "binary operator >="},
-    {kKeyword, "<", &program::RpnInf, "binary operator <"},
-    {kKeyword, "<=", &program::RpnInfEq, "binary operator <="},
-    {kKeyword, "!=", &program::RpnDiff, "binary operator != (different)"},
-    {kKeyword, "==", &program::RpnEq, "binary operator == (equal)"},
-    {kKeyword, "and", &program::RpnTestAnd, "boolean operator and"},
-    {kKeyword, "or", &program::RpnTestOr, "boolean operator or"},
-    {kKeyword, "xor", &program::RpnTestXor, "boolean operator xor"},
-    {kKeyword, "not", &program::RpnTestNot, "boolean operator not"},
-    {kKeyword, "same", &program::RpnSame, "boolean operator same (equal)"},
+    {kUndef, "", {.prog = nullptr}, "\nTEST"},
+    {kKeyword, ">",     {.prog = &Program::RpnSup}, "binary operator >"},
+    {kKeyword, ">=",    {.prog = &Program::RpnSupEq}, "binary operator >="},
+    {kKeyword, "<",     {.prog = &Program::RpnInf}, "binary operator <"},
+    {kKeyword, "<=",    {.prog = &Program::RpnInfEq}, "binary operator <="},
+    {kKeyword, "!=",    {.prog = &Program::RpnDiff}, "binary operator != (different)"},
+    {kKeyword, "==",    {.prog = &Program::RpnEq}, "binary operator == (equal)"},
+    {kKeyword, "and",   {.prog = &Program::RpnTestAnd}, "boolean operator and"},
+    {kKeyword, "or",    {.prog = &Program::RpnTestOr}, "boolean operator or"},
+    {kKeyword, "xor",   {.prog = &Program::RpnTestXor}, "boolean operator xor"},
+    {kKeyword, "not",   {.prog = &Program::RpnTestNot}, "boolean operator not"},
+    {kKeyword, "same",  {.prog = &Program::RpnSame}, "boolean operator same (equal)"},
 
     // STACK
-    {kUndef, "", nullptr, "\nSTACK"},
-    {kKeyword, "swap", &program::RpnSwap, "swap 2 first stack entries"},
-    {kKeyword, "drop", &program::RpnDrop, "drop first stack entry"},
-    {kKeyword, "drop2", &program::RpnDrop2, "drop 2 first stack entries"},
-    {kKeyword, "dropn", &program::RpnDropn, "drop n first stack entries"},
-    {kKeyword, "del", &program::RpnErase, "drop all stack entries"},
-    {kKeyword, "erase", &program::RpnErase, ""},
-    {kKeyword, "rot", &program::RpnRot, "rotate 3 first stack entries"},
-    {kKeyword, "dup", &program::RpnDup, "duplicate first stack entry"},
-    {kKeyword, "dup2", &program::RpnDup2, "duplicate 2 first stack entries"},
-    {kKeyword, "dupn", &program::RpnDupn, "duplicate n first stack entries"},
-    {kKeyword, "pick", &program::RpnPick, "push a copy of  the given stack level onto the stack"},
-    {kKeyword, "depth", &program::RpnDepth, "give stack depth"},
-    {kKeyword, "roll", &program::RpnRoll, "move a stack entry to the top of the stack"},
-    {kKeyword, "rolld", &program::RpnRolld, "move the element on top of the stack to a higher stack position"},
-    {kKeyword, "over", &program::RpnOver, "push a copy of the element in stack level 2 onto the stack"},
+    {kUndef, "", {.prog = nullptr}, "\nSTACK"},
+    {kKeyword, "swap",  {.prog = &Program::RpnSwap}, "swap 2 first stack entries"},
+    {kKeyword, "drop",  {.prog = &Program::RpnDrop}, "drop first stack entry"},
+    {kKeyword, "drop2", {.prog = &Program::RpnDrop2}, "drop 2 first stack entries"},
+    {kKeyword, "dropn", {.prog = &Program::RpnDropn}, "drop n first stack entries"},
+    {kKeyword, "del",   {.prog = &Program::RpnErase}, "drop all stack entries"},
+    {kKeyword, "erase", {.prog = &Program::RpnErase}, ""},
+    {kKeyword, "rot",   {.prog = &Program::RpnRot}, "rotate 3 first stack entries"},
+    {kKeyword, "dup",   {.prog = &Program::RpnDup}, "duplicate first stack entry"},
+    {kKeyword, "dup2",  {.prog = &Program::RpnDup2}, "duplicate 2 first stack entries"},
+    {kKeyword, "dupn",  {.prog = &Program::RpnDupn}, "duplicate n first stack entries"},
+    {kKeyword, "pick",  {.prog = &Program::RpnPick}, "push a copy of  the given stack level onto the stack"},
+    {kKeyword, "depth", {.prog = &Program::RpnDepth}, "give stack depth"},
+    {kKeyword, "roll",  {.prog = &Program::RpnRoll}, "move a stack entry to the top of the stack"},
+    {kKeyword, "rolld", {.prog = &Program::RpnRolld}, "move the element on top of the stack to a higher stack position"},
+    {kKeyword, "over",  {.prog = &Program::RpnOver}, "push a copy of the element in stack level 2 onto the stack"},
 
     // STRING
-    {kUndef, "", nullptr, "\nSTRING"},
-    {kKeyword, "->str", &program::RpnInstr, "convert an object into a string"},
-    {kKeyword, "str->", &program::RpnStrout, "convert a string into an object"},
-    {kKeyword, "chr", &program::RpnChr, "convert ASCII character code in stack level 1 into a string"},
-    {kKeyword, "num", &program::RpnNum,
-     "return ASCII code of the first character of the string in stack level 1 as a real number"},
-    {kKeyword, "size", &program::RpnStrsize, "return the length of the string"},
-    {kKeyword, "pos", &program::RpnStrpos, "seach for the string in level 1 within the string in level 2"},
-    {kKeyword, "sub", &program::RpnStrsub, "return a substring of the string in level 3"},
+    {kUndef, "", {.prog = nullptr}, "\nSTRING"},
+    {kKeyword, "->str", {.prog = &Program::RpnInstr}, "convert an object into a string"},
+    {kKeyword, "str->", {.prog = &Program::RpnStrout}, "convert a string into an object"},
+    {kKeyword, "chr",   {.prog = &Program::RpnChr}, "convert ASCII character code in stack level 1 into a string"},
+    {kKeyword, "num",   {.prog = &Program::RpnNum}, "return ASCII code of the first character of the string in stack level 1 as a real number"},
+    {kKeyword, "size",  {.prog = &Program::RpnStrsize}, "return the length of the string"},
+    {kKeyword, "pos",   {.prog = &Program::RpnStrpos}, "seach for the string in level 1 within the string in level 2"},
+    {kKeyword, "sub",   {.prog = &Program::RpnStrsub}, "return a substring of the string in level 3"},
+    {kKeyword, "endl",  {.prog = &Program::RpnEndl}, "end line character"},
 
     // BRANCH
-    {kUndef, "", nullptr, "\nBRANCH"},
-    {kBranch, "if", (program_fn_t)&program::RpnIf,
-     "if <test-instruction> then <true-instructions> else <false-instructions> "
-     "end"},
-    {kBranch, "then", (program_fn_t)&program::RpnThen, "used with if"},
-    {kBranch, "else", (program_fn_t)&program::RpnElse, "used with if"},
-    {kBranch, "end", (program_fn_t)&program::RpnEnd, "used with various branch instructions"},
-    {kBranch, "start", (program_fn_t)&program::RpnStart, "<start> <end> start <instructions> next|<step> step"},
-    {kBranch, "for", (program_fn_t)&program::RpnFor, "<start> <end> for <variable> <instructions> next|<step> step"},
-    {kBranch, "next", (program_fn_t)&program::RpnNext, "used with start and for"},
-    {kBranch, "step", (program_fn_t)&program::RpnStep, "used with start and for"},
-    {kKeyword, "ift", &program::RpnIft, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
-    {kKeyword, "ifte", &program::RpnIfte,
-     "similar to if-then-else-end, <test-instruction> <true-instruction> "
-     "<false-instruction> ifte"},
-    {kBranch, "do", (program_fn_t)&program::RpnDo, "do <instructions> until <condition> end"},
-    {kBranch, "until", (program_fn_t)&program::RpnUntil, "used with do"},
-    {kBranch, "while", (program_fn_t)&program::RpnWhile, "while <test-instruction> repeat <loop-instructions> end"},
-    {kBranch, "repeat", (program_fn_t)&program::RpnRepeat, "used with while"},
+    {kUndef, "", {.prog = nullptr}, "\nBRANCH"},
+    {kBranch, "if",     {.branch = &Program::RpnIf}, "if <test-instruction> then <true-instructions> else <false-instructions> end"},
+    {kBranch, "then",   {.branch = &Program::RpnThen}, "used with if"},
+    {kBranch, "else",   {.branch = &Program::RpnElse}, "used with if"},
+    {kBranch, "end",    {.branch = &Program::RpnEnd}, "used with various branch instructions"},
+    {kBranch, "start",  {.branch = &Program::RpnStart}, "<start> <end> start <instructions> next|<step> step"},
+    {kBranch, "for",    {.branch = &Program::RpnFor}, "<start> <end> for <variable> <instructions> next|<step> step"},
+    {kBranch, "next",   {.branch = &Program::RpnNext}, "used with start and for"},
+    {kBranch, "step",   {.branch = &Program::RpnStep}, "used with start and for"},
+    {kKeyword, "ift",   {.prog = &Program::RpnIft}, "similar to if-then-end, <test-instruction> <true-instruction> ift"},
+    {kKeyword, "ifte",  {.prog = &Program::RpnIfte}, "similar to if-then-else-end, <test-instruction> <true-instruction> <false-instruction> ifte"},
+    {kBranch, "do",     {.branch = &Program::RpnDo}, "do <instructions> until <condition> end"},
+    {kBranch, "until",  {.branch = &Program::RpnUntil}, "used with do"},
+    {kBranch, "while",  {.branch = &Program::RpnWhile}, "while <test-instruction> repeat <loop-instructions> end"},
+    {kBranch, "repeat", {.branch = &Program::RpnRepeat}, "used with while"},
 
     // STORE
-    {kUndef, "", nullptr, "\nSTORE"},
-    {kKeyword, "sto", &program::RpnSto, "store a variable. ex: 1 'name' sto"},
-    {kKeyword, "rcl", &program::RpnRcl, "recall a variable. ex: 'name' rcl"},
-    {kKeyword, "purge", &program::RpnPurge, "delete a variable. ex: 'name' purge"},
-    {kKeyword, "vars", &program::RpnVars, "list all variables"},
-    {kKeyword, "clusr", &program::RpnClusr, "erase all variables"},
-    {kKeyword, "edit", &program::RpnEdit, "edit a variable content"},
-    {kKeyword, "sto+", &program::RpnStoadd, "add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+"},
-    {kKeyword, "sto-", &program::RpnStosub, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-"},
-    {kKeyword, "sto*", &program::RpnStomul, "multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*"},
-    {kKeyword, "sto/", &program::RpnStodiv, "divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/"},
-    {kKeyword, "sneg", &program::RpnStoneg, "negate a variable. ex: 'name' sneg"},
-    {kKeyword, "sinv", &program::RpnStoinv, "inverse a variable. ex: 1 'name' sinv"},
+    {kUndef, "", {.prog = nullptr}, "\nSTORE"},
+    {kKeyword, "sto",   {.prog = &Program::RpnSto}, "store a variable. ex: 1 'name' sto"},
+    {kKeyword, "rcl",   {.prog = &Program::RpnRcl}, "recall a variable. ex: 'name' rcl"},
+    {kKeyword, "purge", {.prog = &Program::RpnPurge}, "delete a variable. ex: 'name' purge"},
+    {kKeyword, "vars",  {.prog = &Program::RpnVars}, "list all variables"},
+    {kKeyword, "clusr", {.prog = &Program::RpnClusr}, "erase all variables"},
+    {kKeyword, "edit",  {.prog = &Program::RpnEdit}, "edit a variable content"},
+    {kKeyword, "sto+",  {.prog = &Program::RpnStoadd}, "add to a stored variable. ex: 1 'name' sto+ 'name' 2 sto+"},
+    {kKeyword, "sto-",  {.prog = &Program::RpnStosub}, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-"},
+    {kKeyword, "sto*",  {.prog = &Program::RpnStomul}, "multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*"},
+    {kKeyword, "sto/",  {.prog = &Program::RpnStodiv}, "divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/"},
+    {kKeyword, "sneg",  {.prog = &Program::RpnStoneg}, "negate a variable. ex: 'name' sneg"},
+    {kKeyword, "sinv",  {.prog = &Program::RpnStoinv}, "inverse a variable. ex: 1 'name' sinv"},
+
     // PROGRAM
-    {kUndef, "", nullptr, "\nPROGRAM"},
-    {kKeyword, "eval", &program::RpnEval, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval"},
-    {kBranch, "->", (program_fn_t)&program::RpnInprog,
-     "load program local variables. ex: << -> n m << 0 n m for i i + next >> "
-     ">>"},
+    {kUndef, "", {.prog = nullptr}, "\nPROGRAM"},
+    {kKeyword, "eval", {.prog = &Program::RpnEval}, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval"},
+    {kBranch, "->", {.branch = &Program::RpnInprog}, "load program local variables. ex: << -> n m << 0 n m for i i + next >> >>"},
 
     // TRIG ON REALS AND COMPLEXES
-    {kUndef, "", nullptr, "\nTRIG ON REALS AND COMPLEXES"},
-    {kKeyword, "pi", &program::RpnPi, "pi constant"},
-    {kKeyword, "sin", &program::RpnSin, "sinus"},
-    {kKeyword, "asin", &program::RpnAsin, "arg sinus"},
-    {kKeyword, "cos", &program::RpnCos, "cosinus"},
-    {kKeyword, "acos", &program::RpnAcos, "arg cosinus"},
-    {kKeyword, "tan", &program::RpnTan, "tangent"},
-    {kKeyword, "atan", &program::RpnAtan, "arg tangent"},
-    {kKeyword, "d->r", &program::RpnD2r, "convert degrees to radians"},
-    {kKeyword, "r->d", &program::RpnR2d, "convert radians to degrees"},
+    {kUndef, "", {.prog = nullptr}, "\nTRIG ON REALS AND COMPLEXES"},
+    {kKeyword, "pi",    {.prog = &Program::RpnPi}, "pi constant"},
+    {kKeyword, "sin",   {.prog = &Program::RpnSin}, "sinus"},
+    {kKeyword, "asin",  {.prog = &Program::RpnAsin}, "arg sinus"},
+    {kKeyword, "cos",   {.prog = &Program::RpnCos}, "cosinus"},
+    {kKeyword, "acos",  {.prog = &Program::RpnAcos}, "arg cosinus"},
+    {kKeyword, "tan",   {.prog = &Program::RpnTan}, "tangent"},
+    {kKeyword, "atan",  {.prog = &Program::RpnAtan}, "arg tangent"},
+    {kKeyword, "d->r",  {.prog = &Program::RpnD2r}, "convert degrees to radians"},
+    {kKeyword, "r->d",  {.prog = &Program::RpnR2d}, "convert radians to degrees"},
 
     // LOGS ON REALS AND COMPLEXES
-    {kUndef, "", nullptr, "\nLOGS ON REALS AND COMPLEXES"},
-    {kKeyword, "e", &program::RpnE, "Euler constant"},
-    {kKeyword, "ln", &program::RpnLn, "logarithm base e"},
-    {kKeyword, "log", &program::RpnLn, ""},
-    {kKeyword, "lnp1", &program::RpnLnp1, "ln(1+x) which is useful when x is close to 0"},
-    {kKeyword, "exp", &program::RpnExp, "exponential"},
-    {kKeyword, "expm", &program::RpnExpm, "exp(x)-1 which is useful when x is close to 0"},
-    {kKeyword, "log10", &program::RpnLog10, "logarithm base 10"},
-    {kKeyword, "alog10", &program::RpnAlog10, "exponential base 10"},
-    {kKeyword, "exp10", &program::RpnAlog10, ""},
-    {kKeyword, "log2", &program::RpnLog2, "logarithm base 2"},
-    {kKeyword, "alog2", &program::RpnAlog2, "exponential base 2"},
-    {kKeyword, "exp2", &program::RpnAlog2, ""},
-    {kKeyword, "sinh", &program::RpnSinh, "hyperbolic sine"},
-    {kKeyword, "asinh", &program::RpnAsinh, "inverse hyperbolic sine"},
-    {kKeyword, "cosh", &program::RpnCosh, "hyperbolic cosine"},
-    {kKeyword, "acosh", &program::RpnAcosh, "inverse hyperbolic cosine"},
-    {kKeyword, "tanh", &program::RpnTanh, "hyperbolic tangent"},
-    {kKeyword, "atanh", &program::RpnAtanh, "inverse hyperbolic tangent"},
+    {kUndef, "", {.prog = nullptr}, "\nLOGS ON REALS AND COMPLEXES"},
+    {kKeyword, "e",      {.prog = &Program::RpnE}, "Euler constant"},
+    {kKeyword, "ln",     {.prog = &Program::RpnLn}, "logarithm base e"},
+    {kKeyword, "log",    {.prog = &Program::RpnLn}, ""},
+    {kKeyword, "lnp1",   {.prog = &Program::RpnLnp1}, "ln(1+x) which is useful when x is close to 0"},
+    {kKeyword, "exp",    {.prog = &Program::RpnExp}, "exponential"},
+    {kKeyword, "expm",   {.prog = &Program::RpnExpm}, "exp(x)-1 which is useful when x is close to 0"},
+    {kKeyword, "log10",  {.prog = &Program::RpnLog10}, "logarithm base 10"},
+    {kKeyword, "alog10", {.prog = &Program::RpnAlog10}, "exponential base 10"},
+    {kKeyword, "exp10",  {.prog = &Program::RpnAlog10}, ""},
+    {kKeyword, "log2",   {.prog = &Program::RpnLog2}, "logarithm base 2"},
+    {kKeyword, "alog2",  {.prog = &Program::RpnAlog2}, "exponential base 2"},
+    {kKeyword, "exp2",   {.prog = &Program::RpnAlog2}, ""},
+    {kKeyword, "sinh",   {.prog = &Program::RpnSinh}, "hyperbolic sine"},
+    {kKeyword, "asinh",  {.prog = &Program::RpnAsinh}, "inverse hyperbolic sine"},
+    {kKeyword, "cosh",   {.prog = &Program::RpnCosh}, "hyperbolic cosine"},
+    {kKeyword, "acosh",  {.prog = &Program::RpnAcosh}, "inverse hyperbolic cosine"},
+    {kKeyword, "tanh",   {.prog = &Program::RpnTanh}, "hyperbolic tangent"},
+    {kKeyword, "atanh",  {.prog = &Program::RpnAtanh}, "inverse hyperbolic tangent"},
 
     // TIME AND DATE
-    {kUndef, "", nullptr, "\nTIME AND DATE"},
-    {kKeyword, "time", &program::RpnTime, "local time in ISO 8601 format"},
-    {kKeyword, "date", &program::RpnDate, "local date in ISO 8601 format"},
-    {kKeyword, "ticks", &program::RpnTicks, "local date and time in µs"}
+    {kUndef, "", {.prog = nullptr}, "\nTIME AND DATE"},
+    {kKeyword, "time",  {.prog = &Program::RpnTime}, "local time in ISO 8601 format"},
+    {kKeyword, "date",  {.prog = &Program::RpnDate}, "local date in ISO 8601 format"},
+    {kKeyword, "ticks", {.prog = &Program::RpnTicks}, "local date and time in µs"}
 };
-#pragma GCC diagnostic pop
+// clang-format on
 
 /// autocompletion vector for linenoise autocompletion
-vector<string>& program::GetAutocompletionWords() {
+vector<string>& Program::GetAutocompletionWords() {
     static vector<string> autocompletion_words;
     if (autocompletion_words.empty())
         for (auto& kw : keywords_)
@@ -217,26 +211,17 @@ vector<string>& program::GetAutocompletionWords() {
 ///
 /// @return RetValue see this type
 ///
-RetValue program::Run() {
+RetValue Program::Run() {
     bool go_out = false;
     RetValue ret = kOk;
 
     err_ = kOk;
     err_context_ = "";
 
-    // branches for 'if'
-    ret = Preprocess();
-    if (ret != kOk) {
-        // free allocated
-        for (Object* o : *this) delete o;
-        local_heap_.clear();
-        return ret;
-    }
-
-    // iterate commands
+    // iterate objects
     for (size_t i = 0; (go_out == false) && (i < size());) {
         Object* o = at(i);
-        switch (o->_type) {
+        switch (o->type) {
             // could be an auto-evaluated symbol
             case kSymbol:
                 AutoRcl(reinterpret_cast<Symbol*>(o));
@@ -264,7 +249,7 @@ RetValue program::Run() {
                         // test error: make rpn return EXIT_FAILURE
                         if (err_ == kTestFailed) ret = kTestFailed;
 
-                        // error: show it
+                        // other deadly error
                         if (ShowError(err_, err_context_) == kDeadlyError)
                             // pb showing error -> go out software
                             ret = kGoodbye;
@@ -303,10 +288,6 @@ RetValue program::Run() {
         }
     }
 
-    // free allocated
-    for (Object* o : *this) delete o;
-    local_heap_.clear();
-
     return ret;
 }
 
@@ -317,7 +298,7 @@ RetValue program::Run() {
 ///
 /// @return RetValue see this type
 ///
-RetValue program::Preprocess() {
+RetValue Program::Preprocess() {
     struct if_layout_t {
         if_layout_t()
             : index_then_or_unti_or_repeat(-1),
@@ -341,7 +322,7 @@ RetValue program::Preprocess() {
     // analyse if-then-else-end branches
     // analyse start-{next, step} branches
     for (size_t i = 0; i < size(); i++) {
-        if (at(i)->_type == kBranch) {
+        if (at(i)->type == kBranch) {
             Branch* k = reinterpret_cast<Branch*>(at(i));
             if (k->value == "if") {
                 if_layout_t layout;
@@ -563,7 +544,7 @@ RetValue program::Preprocess() {
 /// @param prog the program to be filled
 /// @return RetValue see this type
 ///
-RetValue program::Parse(string& entry) {
+RetValue Program::Parse(const string& entry) {
     static map<string, Lexer::ReservedWord> keywords_map;
     vector<Lexer::SynElement> elements;
     vector<Lexer::SynError> errors;
@@ -591,17 +572,21 @@ RetValue program::Parse(string& entry) {
                 case kSymbol:
                     push_back(new Symbol(element.value, element.auto_eval));
                     break;
-                case kProgram:
-                    push_back(new Program(element.value));
-                    break;
+                case kProgram: {
+                    Program* p = new Program(stack_, heap_, this);
+                    if (p->Parse(element.value) == kOk) {
+                        // give a clean format to the program string
+                        stringstream ss;
+                        for (size_t i = 0; i < p->size(); i++) ss << ((i > 0) ? " " : "") << p->at(i);
+                        p->value = ss.str();
+                        push_back(p);
+                    }
+                } break;
                 case kKeyword:
-                    push_back(new Keyword(element.fn, element.value));
+                    push_back(new Keyword(element.fn.prog, element.value));
                     break;
                 case kBranch:
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-function-type"  // allow casting kBranch callbacks
-                    push_back(new Branch((branch_fn_t)element.fn, element.value));
-#pragma GCC diagnostic pop
+                    push_back(new Branch(element.fn.branch, element.value));
                     break;
                 default:
                     ShowError(kUnknownError, "error creating program from entry");
@@ -610,6 +595,9 @@ RetValue program::Parse(string& entry) {
             if (element.re != nullptr) delete element.re;
             if (element.im != nullptr) delete element.im;
         }
+
+        // compute links between the objects
+        return Preprocess();
     } else {
         for (SynError& err : errors) ShowSyntaxError(err.err.c_str());
     }
@@ -621,7 +609,7 @@ RetValue program::Parse(string& entry) {
 ///
 /// @return RetValue see this type
 ///
-RetValue program::ShowError() {
+RetValue Program::ShowError() {
     RetValue ret;
     // clang-format off
     map<RetValue, string> errorStrings{{kOk, "ok"}, {kUnknownError, "unknown command"},
@@ -655,7 +643,7 @@ RetValue program::ShowError() {
 /// @param context a context string
 /// @return RetValue see this type
 ///
-RetValue program::ShowError(RetValue err, string& context) {
+RetValue Program::ShowError(RetValue err, string& context) {
     // record error
     err_ = err;
     err_context_ = context;
@@ -668,7 +656,7 @@ RetValue program::ShowError(RetValue err, string& context) {
 /// @param context a context string
 /// @return RetValue see this type
 ///
-RetValue program::ShowError(RetValue err, const char* context) {
+RetValue Program::ShowError(RetValue err, const char* context) {
     // record error
     err_ = err;
     err_context_ = context;
@@ -681,7 +669,7 @@ RetValue program::ShowError(RetValue err, const char* context) {
 /// @param context a context string
 /// @return RetValue see this type
 ///
-void program::ShowSyntaxError(const char* context) {
+void Program::ShowSyntaxError(const char* context) {
     // record error
     err_ = kSyntaxError;
     err_context_ = context;
@@ -692,14 +680,14 @@ void program::ShowSyntaxError(const char* context) {
 ///
 /// @return RetValue see this type
 ///
-RetValue program::GetLastError(void) { return err_; }
+RetValue Program::GetLastError(void) { return err_; }
 
 /// @brief show a stack (show its different objects)
 /// generally a stack is associated to a running program
 ///
 /// @param show_separator whether to show a stack level prefix or not
 ///
-void program::ShowStack(bool show_separator) {
+void Program::ShowStack(bool show_separator) {
     if (stack_.size() == 1) {
         cout << stack_[0] << endl;
     } else {
@@ -712,7 +700,7 @@ void program::ShowStack(bool show_separator) {
 
 /// @brief apply default precision mode and digits
 ///
-void program::ApplyDefault() {
+void Program::ApplyDefault() {
     // default float precision, float mode
     Number::mode = Number::kDefaultMode;
     Number::digits = Number::kDefaultDecimalDigits;

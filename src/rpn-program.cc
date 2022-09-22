@@ -9,9 +9,9 @@
 /// @return true variable was found
 /// @return false variable was not found
 ///
-bool program::FindVariable(string& variable, Object*& obj) {
+bool Program::FindVariable(string& variable, Object*& obj) {
     bool found = false;
-    program* parent = parent_;
+    Program* parent = parent_;
 
     if (local_heap_.get(variable, obj)) {
         found = true;
@@ -33,9 +33,9 @@ bool program::FindVariable(string& variable, Object*& obj) {
 
 /// @brief eval keyword implementation
 ///
-void program::RpnEval(void) {
+void Program::RpnEval(void) {
     bool run_prog = false;
-    string prog_text;
+    Program* prog = nullptr;
 
     MIN_ARGUMENTS(1);
     if (stack_.type(0) == kSymbol) {
@@ -46,9 +46,9 @@ void program::RpnEval(void) {
 
         // if variable holds a program, run this program
         if (FindVariable(variable, obj)) {
-            if (obj->_type == kProgram) {
-                prog_text = stack_.value<Program>(0);
-                stack_.pop();
+            if (obj->type == kProgram) {
+                prog = reinterpret_cast<Program*>(stack_[0]);
+                stack_.erase(0, 1, false);
                 run_prog = true;
             } else {
                 // else recall this variable (i.e. stack_ its content)
@@ -59,35 +59,30 @@ void program::RpnEval(void) {
         }
     } else if (stack_.type(0) == kProgram) {
         // eval a program
-        prog_text = stack_.value<Program>(0);
-        stack_.pop();
+        prog = reinterpret_cast<Program*>(stack_[0]);
+        stack_.erase(0, 1, false);
         run_prog = true;
     } else {
         ERROR_CONTEXT(kBadOperandType);
     }
 
     // run prog if any
-    if (run_prog) {
-        program prog(stack_, heap_, this);
-
-        // make program from entry
-        if (prog.Parse(prog_text) == kOk) {
-            // run it
-            prog.Run();
-        }
+    if (run_prog && prog != nullptr) {
+        prog->Run();
+        delete prog;
     }
 }
 
 /// @brief -> keyword (Branch) implementation
 ///
-int program::RpnInprog(Branch& inprog_obj) {
+size_t Program::RpnInprog(Branch& inprog_obj) {
     string context("->");  // for showing errors
     size_t count_symbols = 0;
     bool prog_found = false;
 
     if (inprog_obj.arg1 == kStepOut) {
         ERROR_CONTEXT(kUnknownError);
-        return -1;
+        return kStepOut;
     }
 
     // syntax must be
@@ -96,9 +91,9 @@ int program::RpnInprog(Branch& inprog_obj) {
     // find next Program object
     for (unsigned int i = inprog_obj.arg1 + 1; i < size(); i++) {
         // count symbol
-        if (at(i)->_type == kSymbol) {
+        if (at(i)->type == kSymbol) {
             count_symbols++;
-        } else if (at(i)->_type == kProgram) {
+        } else if (at(i)->type == kProgram) {
             // stop if prog
             prog_found = true;
             break;
@@ -106,7 +101,7 @@ int program::RpnInprog(Branch& inprog_obj) {
             // found something other than symbol
             ERROR_CONTEXT(kBadOperandType);
             ShowError(err_, context);
-            return -1;
+            return kStepOut;
         }
     }
 
@@ -114,21 +109,21 @@ int program::RpnInprog(Branch& inprog_obj) {
     if (count_symbols == 0) {
         ERROR_CONTEXT(kSyntaxError);
         ShowError(err_, context);
-        return -1;
+        return kStepOut;
     }
 
     // <program> is missing
     if (!prog_found) {
         ERROR_CONTEXT(kSyntaxError);
         ShowError(err_, context);
-        return -1;
+        return kStepOut;
     }
 
     // check symbols Number vs stack_ size
     if (stack_.size() < count_symbols) {
         ERROR_CONTEXT(kMissingOperand);
         ShowError(err_, context);
-        return -1;
+        return kStepOut;
     }
 
     // load variables
@@ -139,7 +134,7 @@ int program::RpnInprog(Branch& inprog_obj) {
 
     // run the program
     string& entry = reinterpret_cast<Program*>(at(inprog_obj.arg1 + count_symbols + 1))->value;
-    program prog(stack_, heap_, this);
+    Program prog(stack_, heap_, this);
 
     // make the program from entry
     if (prog.Parse(entry) == kOk) {
