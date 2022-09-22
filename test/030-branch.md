@@ -288,7 +288,7 @@
 
 `1 2 start «ok» next`
 
--> stack should be «ok», «ok»
+-> stack should be « ok », « ok »
 
 `del`
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
-#ifndef SRC_INPUT_HPP_
-#define SRC_INPUT_HPP_
+#ifndef SRC_INPUT_H_
+#define SRC_INPUT_H_
 
 #include <cstdio>
 #include <string>
@@ -13,7 +13,12 @@ using std::string, std::vector;
 class Input {
  public:
     Input(string& entry, vector<string>& autocompletion_list, string prompt = "rpn> ", string multiline_prompt = ">");
-    enum class InputStatus { kOk, kContinue, kAbort, kCtrlc, kError } status;
+    enum class InputStatus {
+        kOk,     // user entered a good string
+        kCtrlc,  // user pressed CtrlC
+        kAbort,  // user aborted current line
+        kError   // entry internal error
+    } status;
 
     static void Preload(const char* preloadText);
 
@@ -22,4 +27,4 @@ class Input {
     static vector<string>* ac_list_;
 };
 
-#endif  // SRC_INPUT_HPP_
+#endif  // SRC_INPUT_H_

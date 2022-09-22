@@ -2,10 +2,7 @@
 
 #include "lexer.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"  // allow designated initializers
-
-bool Lexer::Analyse(string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
+bool Lexer::Analyse(const string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
                     vector<SynError>& errors) {
     size_t jump;
     for (size_t i = 0; i < entry.size(); i++) {
@@ -52,40 +49,40 @@ void Lexer::Trim(string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
 }
 
-bool Lexer::ParseString(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                        vector<SynElement>& elements) {
+bool Lexer::ParseString(const string& entry, size_t idx, size_t& next_idx,
+                        vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     // here we are sure that entry[0] is at least '"'
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '"') {
             if (entry[i] - 1 != '\\') {
-                elements.push_back({kString, .value = entry.substr(idx + 1, i - idx - 1)});
+                elements.push_back({.type = kString, .value = entry.substr(idx + 1, i - idx - 1)});
                 next_idx = i + 1;
                 return true;
             }
         }
     }
-    elements.push_back({kString, .value = entry.substr(idx + 1, entry.size() - idx - 1)});
+    elements.push_back({.type = kString, .value = entry.substr(idx + 1, entry.size() - idx - 1)});
     next_idx = entry.size();
     return true;
 }
 
-bool Lexer::ParseSymbol(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                        vector<SynElement>& elements) {
+bool Lexer::ParseSymbol(const string& entry, size_t idx, size_t& next_idx,
+                        vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     // here we are sure that entry[0] is at least '\''
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '\'') {
-            elements.push_back({kSymbol, .value = entry.substr(idx + 1, i - idx - 1), .auto_eval = false});
+            elements.push_back({.type = kSymbol, .value = entry.substr(idx + 1, i - idx - 1), .auto_eval = false});
             next_idx = i + 1;
             return true;
         }
     }
-    elements.push_back({kSymbol, .value = entry.substr(idx + 1, entry.size() - idx - 1)});
+    elements.push_back({.type = kSymbol, .value = entry.substr(idx + 1, entry.size() - idx - 1)});
     next_idx = entry.size();
     return true;
 }
 
-bool Lexer::ParseProgram(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                         vector<SynElement>& elements) {
+bool Lexer::ParseProgram(const string& entry, size_t idx, size_t& next_idx,
+                         vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     // here we are sure that entry is at least "<<"
     // find last ">>" or "»"
     int countNested = 0;
@@ -96,7 +93,7 @@ bool Lexer::ParseProgram(string& entry, size_t idx, size_t& next_idx, vector<Syn
             if (countNested == 0) {
                 string prg = entry.substr(idx + 2, i - idx - 2);
                 Trim(prg);
-                elements.push_back({kProgram, .value = prg});
+                elements.push_back({.type = kProgram, .value = prg});
                 next_idx = i + 2;
                 return true;
             } else {
@@ -106,12 +103,12 @@ bool Lexer::ParseProgram(string& entry, size_t idx, size_t& next_idx, vector<Syn
     }
     string prg = entry.substr(idx + 2, entry.size() - idx - 2);
     Trim(prg);
-    elements.push_back({kProgram, .value = prg});
+    elements.push_back({.type = kProgram, .value = prg});
     next_idx = entry.size();
     return true;
 }
 
-int Lexer::GetBaseAt(string& entry, size_t& next_idx, bool& positive) {
+int Lexer::GetBaseAt(const string& entry, size_t& next_idx, bool& positive) {
     // a regex could be "([+-])?((0[xX])|([0-9][0-9]?[bB]))"
     // regex is not use because dramatically slow
     // entry is scanned from idxStart, searching for [s]abc (sign and 3 first chars)
@@ -154,7 +151,7 @@ int Lexer::GetBaseAt(string& entry, size_t& next_idx, bool& positive) {
     return 10;
 }
 
-bool Lexer::GetNUmberAt(string& entry, size_t idx, size_t& next_idx, int& base, mpreal** r, char delim) {
+bool Lexer::GetNumberAt(const string& entry, size_t idx, size_t& next_idx, int& base, mpreal** r, char delim) {
     stringstream ss;
     string token;
     bool positive = true;
@@ -182,12 +179,12 @@ bool Lexer::GetNUmberAt(string& entry, size_t idx, size_t& next_idx, int& base, 
     return false;
 }
 
-bool Lexer::ParseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
+bool Lexer::ParseNumber(const string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors,
                         vector<SynElement>& elements) {
     mpreal* r = nullptr;
     int base = 10;
-    if (GetNUmberAt(entry, idx, next_idx, base, &r)) {
-        elements.push_back({kNumber, .re = r, .re_base = base});
+    if (GetNumberAt(entry, idx, next_idx, base, &r)) {
+        elements.push_back({.type = kNumber, .re = r, .re_base = base});
         return true;
     } else {
         errors.push_back({entry.size(), "unterminated number"});
@@ -195,44 +192,44 @@ bool Lexer::ParseNumber(string& entry, size_t idx, size_t& next_idx, vector<SynE
     }
 }
 
-bool Lexer::ParseComplex(string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                         vector<SynElement>& elements) {
+bool Lexer::ParseComplex(const string& entry, size_t idx, size_t& next_idx,
+                         vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     mpreal* re = nullptr;
     mpreal* im = nullptr;
     int re_base, im_base = 10;
     if (idx + 1 == entry.size()) {
-        elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
+        elements.push_back({.type = kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         return true;  // complex format error, return a symbol
     }
-    if (!GetNUmberAt(entry, idx + 1, next_idx, re_base, &re, ',')) {
-        elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
+    if (!GetNumberAt(entry, idx + 1, next_idx, re_base, &re, ',')) {
+        elements.push_back({.type = kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         return true;  // complex format error, return a symbol
     }
 
     size_t i = next_idx;
     if (i >= entry.size()) {
-        elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
+        elements.push_back({.type = kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         if (re != nullptr) delete re;
         if (im != nullptr) delete im;
         return true;  // complex format error, return a symbol
     }
 
-    if (!GetNUmberAt(entry, i, next_idx, im_base, &im, ')')) {
-        elements.push_back({kSymbol, .value = entry.substr(idx, entry.size() - idx)});
+    if (!GetNumberAt(entry, i, next_idx, im_base, &im, ')')) {
+        elements.push_back({.type = kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         if (re != nullptr) delete re;
         if (im != nullptr) delete im;
         return true;  // complex format error, return a symbol
     }
-    elements.push_back({kComplex, .re = re, .im = im, .re_base = re_base, .im_base = im_base});
+    elements.push_back({.type = kComplex, .re = re, .im = im, .re_base = re_base, .im_base = im_base});
     next_idx++;
     return true;
 }
 
-bool Lexer::ParseReserved(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements,
+bool Lexer::ParseReserved(const string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements,
                           map<string, ReservedWord>& keywords) {
     stringstream ss(entry.substr(idx));
     string token;
@@ -240,20 +237,18 @@ bool Lexer::ParseReserved(string& entry, size_t idx, size_t& next_idx, vector<Sy
 
     auto resa = keywords.find(token);
     if (resa != keywords.end()) {
-        elements.push_back({resa->second.type, .value = token, .fn = resa->second.fn});
+        elements.push_back({.type = resa->second.type, .value = token, .fn = resa->second.fn});
         next_idx = token.size() + idx;
         return true;
     }
     return false;
 }
 
-bool Lexer::ParseUnknown(string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements) {
+bool Lexer::ParseUnknown(const string& entry, size_t idx, size_t& next_idx, vector<SynElement>& elements) {
     stringstream ss(entry.substr(idx));
     string token;
     ss >> token;
-    elements.push_back({kSymbol, .value = token, .auto_eval = true});
+    elements.push_back({.type = kSymbol, .value = token, .auto_eval = true});
     next_idx = token.size() + idx;
     return true;
 }
-
-#pragma GCC diagnostic pop
