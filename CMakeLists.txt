@@ -35,7 +35,7 @@ set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
     execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
     execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(COMMAND git checkout v1.1.3-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.1.4-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
 endif()
 
 # custom mpreal
@@ -79,12 +79,9 @@ set(LINENOISE_NG_SRC_FILES
 # compiler options
 set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
 
-add_compile_options("-std=c++20" "-Wl,--no-as-needed"
+add_compile_options("-std=c++20"
     "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>"
     "$<$<CONFIG:RELEASE>:-O3>")
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    add_compile_options("-Wl,--no-as-needed -Wc++20-extensions")
-endif()
 
 add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
 

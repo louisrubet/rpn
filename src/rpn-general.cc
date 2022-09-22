@@ -190,7 +190,7 @@ void Program::RpnPrecision() {
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     // set precision
-    int prec = static_cast<int>(stack_.value<Number>(0).toLong());
+    mpfr_prec_t prec = static_cast<int>(stack_.value<Number>(0).toLong());
     if (prec >= MPFR_PREC_MIN && prec <= MPFR_PREC_MAX) {
         mpreal::set_default_prec(prec);
 
