@@ -118,6 +118,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "size",  {.prog = &Program::RpnStrsize}, "return the length of the string"},
     {kKeyword, "pos",   {.prog = &Program::RpnStrpos}, "seach for the string in level 1 within the string in level 2"},
     {kKeyword, "sub",   {.prog = &Program::RpnStrsub}, "return a substring of the string in level 3"},
+    {kKeyword, "endl",  {.prog = &Program::RpnEndl}, "end line character"},
 
     // BRANCH
     {kUndef, "", nullptr, "\nBRANCH"},
