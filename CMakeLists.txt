@@ -35,7 +35,7 @@ set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
     execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
     execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(COMMAND git checkout v1.1.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.1.3-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
 endif()
 
 # custom mpreal
@@ -72,21 +72,18 @@ set(RPN_SRC_FILES
     ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc)
 
 set(LINENOISE_NG_SRC_FILES
-${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
-${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
-${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
 
 # compiler options
-set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS # some harder warnings
-    "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
+set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
-    # TODO still up to date?
-    set(BASE_COMPILER_OPTIONS "-std=c++17 -Wl,--no-as-needed")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -s")
+add_compile_options("-std=c++20" "-Wl,--no-as-needed"
+    "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>"
+    "$<$<CONFIG:RELEASE>:-O3>")
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    add_compile_options("-Wl,--no-as-needed -Wc++20-extensions")
 endif()
 
 add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
