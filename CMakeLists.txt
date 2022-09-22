@@ -35,7 +35,7 @@ set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
     execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
     execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(COMMAND git checkout v1.1.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.1.3-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
 endif()
 
 # custom mpreal
