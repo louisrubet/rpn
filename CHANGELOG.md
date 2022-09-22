@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5] - 2022-09-22
+
+### Added
+
+- A new command `endl`, meaning end-line was added for line formatting sake.
+- Clang compilation is now warning-free (tested with clang 14.0).
+- Program run now optimized. Programs were parsed then linked at each run ; now the parsing and linking phases are done only once at entry time, avoiding terrible performance loss.
+
+### Changed
+
+- C++20 standard is used instead of C++17. This detected some warnings (now corrected).
+
+### Fixed
+
+- Syntax errors (and other errors) are now shown after the stack, which is much more convenient.
+- Warnings shown by clang and C++20 (braces initializers, some bad types, removed dangerous #pragma).
+- The linenoise-ng submodule version was well set in CMakeLists.txt but not in the submodule, which showed a permanent linenoise-ng modification in git although the version was the good one.
+
 ## [2.4.2] - 2022-03-03
 
 ### Fixed
