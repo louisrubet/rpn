@@ -75,14 +75,14 @@ void Program::RpnEval(void) {
 
 /// @brief -> keyword (Branch) implementation
 ///
-int Program::RpnInprog(Branch& inprog_obj) {
+size_t Program::RpnInprog(Branch& inprog_obj) {
     string context("->");  // for showing errors
     size_t count_symbols = 0;
     bool prog_found = false;
 
     if (inprog_obj.arg1 == kStepOut) {
         ERROR_CONTEXT(kUnknownError);
-        return -1;
+        return kStepOut;
     }
 
     // syntax must be
@@ -101,7 +101,7 @@ int Program::RpnInprog(Branch& inprog_obj) {
             // found something other than symbol
             ERROR_CONTEXT(kBadOperandType);
             ShowError(err_, context);
-            return -1;
+            return kStepOut;
         }
     }
 
@@ -109,21 +109,21 @@ int Program::RpnInprog(Branch& inprog_obj) {
     if (count_symbols == 0) {
         ERROR_CONTEXT(kSyntaxError);
         ShowError(err_, context);
-        return -1;
+        return kStepOut;
     }
 
     // <program> is missing
     if (!prog_found) {
         ERROR_CONTEXT(kSyntaxError);
         ShowError(err_, context);
-        return -1;
+        return kStepOut;
     }
 
     // check symbols Number vs stack_ size
     if (stack_.size() < count_symbols) {
         ERROR_CONTEXT(kMissingOperand);
         ShowError(err_, context);
-        return -1;
+        return kStepOut;
     }
 
     // load variables
