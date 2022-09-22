@@ -49,8 +49,8 @@ void Lexer::Trim(string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
 }
 
-bool Lexer::ParseString(const string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                        vector<SynElement>& elements) {
+bool Lexer::ParseString(const string& entry, size_t idx, size_t& next_idx,
+                        vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     // here we are sure that entry[0] is at least '"'
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '"') {
@@ -66,8 +66,8 @@ bool Lexer::ParseString(const string& entry, size_t idx, size_t& next_idx, vecto
     return true;
 }
 
-bool Lexer::ParseSymbol(const string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                        vector<SynElement>& elements) {
+bool Lexer::ParseSymbol(const string& entry, size_t idx, size_t& next_idx,
+                        vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     // here we are sure that entry[0] is at least '\''
     for (size_t i = idx + 1; i < entry.size(); i++) {
         if (entry[i] == '\'') {
@@ -81,8 +81,8 @@ bool Lexer::ParseSymbol(const string& entry, size_t idx, size_t& next_idx, vecto
     return true;
 }
 
-bool Lexer::ParseProgram(const string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                         vector<SynElement>& elements) {
+bool Lexer::ParseProgram(const string& entry, size_t idx, size_t& next_idx,
+                         vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     // here we are sure that entry is at least "<<"
     // find last ">>" or "»"
     int countNested = 0;
@@ -192,8 +192,8 @@ bool Lexer::ParseNumber(const string& entry, size_t idx, size_t& next_idx, vecto
     }
 }
 
-bool Lexer::ParseComplex(const string& entry, size_t idx, size_t& next_idx, vector<SynError>& errors __attribute__((unused)),
-                         vector<SynElement>& elements) {
+bool Lexer::ParseComplex(const string& entry, size_t idx, size_t& next_idx,
+                         vector<SynError>& errors __attribute__((unused)), vector<SynElement>& elements) {
     mpreal* re = nullptr;
     mpreal* im = nullptr;
     int re_base, im_base = 10;

@@ -77,8 +77,7 @@ set(LINENOISE_NG_SRC_FILES
     ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
 
 # compiler options
-# set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
-set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic")
+set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
 
 add_compile_options("-std=c++20" "-Wl,--no-as-needed"
     "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>"
