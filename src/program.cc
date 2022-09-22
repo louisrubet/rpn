@@ -6,7 +6,7 @@
 // clang-format off
 vector<Program::keyword_t> Program::keywords_ = {
     // GENERAL
-    {kUndef, "", nullptr, "\nGENERAL"},
+    {kUndef, "", {.prog = nullptr}, "\nGENERAL"},
     {kKeyword, "help",    {.prog = &Program::RpnHelp}, "this help message"},
     {kKeyword, "h",       {.prog = &Program::RpnHelp}, ""},
     {kKeyword, "?",       {.prog = &Program::RpnHelp}, ""},
@@ -19,7 +19,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "history", {.prog = &Program::RpnHistory}, "see commands history"},
 
     // USUAL OPERATIONS ON REALS AND COMPLEXES
-    {kUndef, "", nullptr, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
+    {kUndef, "", {.prog = nullptr}, "\nUSUAL OPERATIONS ON REALS AND COMPLEXES"},
     {kKeyword, "+",    {.prog = &Program::RpnPlus}, "addition"},
     {kKeyword, "-",    {.prog = &Program::RpnMinus}, "substraction"},
     {kKeyword, "*",    {.prog = &Program::RpnMul}, "multiplication"},
@@ -35,7 +35,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "sign", {.prog = &Program::RpnSign}, "sign of a number or z/|z| for a complex"},
 
     // OPERATIONS ON REALS
-    {kUndef, "", nullptr, "\nOPERATIONS ON REALS"},
+    {kUndef, "", {.prog = nullptr}, "\nOPERATIONS ON REALS"},
     {kKeyword, "%",     {.prog = &Program::RpnPurcent}, "purcent"},
     {kKeyword, "%CH",   {.prog = &Program::RpnPurcentCH}, "inverse purcent"},
     {kKeyword, "mod",   {.prog = &Program::RpnModulo}, "modulo"},
@@ -50,7 +50,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "max",   {.prog = &Program::RpnMax}, "max of 2 real numbers"},
 
     // OPERATIONS ON COMPLEXES
-    {kUndef, "", nullptr, "\nOPERATIONS ON COMPLEXES"},
+    {kUndef, "", {.prog = nullptr}, "\nOPERATIONS ON COMPLEXES"},
     {kKeyword, "re",   {.prog = &Program::RpnReal}, "complex real part"},
     {kKeyword, "im",   {.prog = &Program::RpnImag}, "complex imaginary part"},
     {kKeyword, "conj", {.prog = &Program::RpnConj}, "complex conjugate"},
@@ -61,7 +61,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "r->p", {.prog = &Program::RpnR2p}, "polar to cartesian"},
 
     // MODE
-    {kUndef, "", nullptr, "\nMODE"},
+    {kUndef, "", {.prog = nullptr}, "\nMODE"},
     {kKeyword, "std",   {.prog = &Program::RpnStd}, "standard floating numbers representation. ex: std"},
     {kKeyword, "fix",   {.prog = &Program::RpnFix}, "fixed point representation. ex: 6 fix"},
     {kKeyword, "sci",   {.prog = &Program::RpnSci}, "scientific floating point representation. ex: 20 sci"},
@@ -78,7 +78,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "base",    {.prog = &Program::RpnBase}, "arbitrary base representation, applies on stack level 0 only"},
 
     // TESTS
-    {kUndef, "", nullptr, "\nTEST"},
+    {kUndef, "", {.prog = nullptr}, "\nTEST"},
     {kKeyword, ">",     {.prog = &Program::RpnSup}, "binary operator >"},
     {kKeyword, ">=",    {.prog = &Program::RpnSupEq}, "binary operator >="},
     {kKeyword, "<",     {.prog = &Program::RpnInf}, "binary operator <"},
@@ -92,7 +92,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "same",  {.prog = &Program::RpnSame}, "boolean operator same (equal)"},
 
     // STACK
-    {kUndef, "", nullptr, "\nSTACK"},
+    {kUndef, "", {.prog = nullptr}, "\nSTACK"},
     {kKeyword, "swap",  {.prog = &Program::RpnSwap}, "swap 2 first stack entries"},
     {kKeyword, "drop",  {.prog = &Program::RpnDrop}, "drop first stack entry"},
     {kKeyword, "drop2", {.prog = &Program::RpnDrop2}, "drop 2 first stack entries"},
@@ -110,7 +110,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "over",  {.prog = &Program::RpnOver}, "push a copy of the element in stack level 2 onto the stack"},
 
     // STRING
-    {kUndef, "", nullptr, "\nSTRING"},
+    {kUndef, "", {.prog = nullptr}, "\nSTRING"},
     {kKeyword, "->str", {.prog = &Program::RpnInstr}, "convert an object into a string"},
     {kKeyword, "str->", {.prog = &Program::RpnStrout}, "convert a string into an object"},
     {kKeyword, "chr",   {.prog = &Program::RpnChr}, "convert ASCII character code in stack level 1 into a string"},
@@ -121,7 +121,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "endl",  {.prog = &Program::RpnEndl}, "end line character"},
 
     // BRANCH
-    {kUndef, "", nullptr, "\nBRANCH"},
+    {kUndef, "", {.prog = nullptr}, "\nBRANCH"},
     {kBranch, "if",     {.branch = &Program::RpnIf}, "if <test-instruction> then <true-instructions> else <false-instructions> end"},
     {kBranch, "then",   {.branch = &Program::RpnThen}, "used with if"},
     {kBranch, "else",   {.branch = &Program::RpnElse}, "used with if"},
@@ -138,7 +138,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kBranch, "repeat", {.branch = &Program::RpnRepeat}, "used with while"},
 
     // STORE
-    {kUndef, "", nullptr, "\nSTORE"},
+    {kUndef, "", {.prog = nullptr}, "\nSTORE"},
     {kKeyword, "sto",   {.prog = &Program::RpnSto}, "store a variable. ex: 1 'name' sto"},
     {kKeyword, "rcl",   {.prog = &Program::RpnRcl}, "recall a variable. ex: 'name' rcl"},
     {kKeyword, "purge", {.prog = &Program::RpnPurge}, "delete a variable. ex: 'name' purge"},
@@ -153,12 +153,12 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "sinv",  {.prog = &Program::RpnStoinv}, "inverse a variable. ex: 1 'name' sinv"},
 
     // PROGRAM
-    {kUndef, "", nullptr, "\nPROGRAM"},
+    {kUndef, "", {.prog = nullptr}, "\nPROGRAM"},
     {kKeyword, "eval", {.prog = &Program::RpnEval}, "evaluate (run) a program, or recall a variable. ex: 'my_prog' eval"},
     {kBranch, "->", {.branch = &Program::RpnInprog}, "load program local variables. ex: << -> n m << 0 n m for i i + next >> >>"},
 
     // TRIG ON REALS AND COMPLEXES
-    {kUndef, "", nullptr, "\nTRIG ON REALS AND COMPLEXES"},
+    {kUndef, "", {.prog = nullptr}, "\nTRIG ON REALS AND COMPLEXES"},
     {kKeyword, "pi",    {.prog = &Program::RpnPi}, "pi constant"},
     {kKeyword, "sin",   {.prog = &Program::RpnSin}, "sinus"},
     {kKeyword, "asin",  {.prog = &Program::RpnAsin}, "arg sinus"},
@@ -170,7 +170,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "r->d",  {.prog = &Program::RpnR2d}, "convert radians to degrees"},
 
     // LOGS ON REALS AND COMPLEXES
-    {kUndef, "", nullptr, "\nLOGS ON REALS AND COMPLEXES"},
+    {kUndef, "", {.prog = nullptr}, "\nLOGS ON REALS AND COMPLEXES"},
     {kKeyword, "e",      {.prog = &Program::RpnE}, "Euler constant"},
     {kKeyword, "ln",     {.prog = &Program::RpnLn}, "logarithm base e"},
     {kKeyword, "log",    {.prog = &Program::RpnLn}, ""},
@@ -191,7 +191,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "atanh",  {.prog = &Program::RpnAtanh}, "inverse hyperbolic tangent"},
 
     // TIME AND DATE
-    {kUndef, "", nullptr, "\nTIME AND DATE"},
+    {kUndef, "", {.prog = nullptr}, "\nTIME AND DATE"},
     {kKeyword, "time",  {.prog = &Program::RpnTime}, "local time in ISO 8601 format"},
     {kKeyword, "date",  {.prog = &Program::RpnDate}, "local date in ISO 8601 format"},
     {kKeyword, "ticks", {.prog = &Program::RpnTicks}, "local date and time in µs"}
