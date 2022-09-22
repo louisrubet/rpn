@@ -65,7 +65,7 @@ static void CatchCtrlC() {
 ///
 int main(int argc, char* argv[]) {
     int ret = 0;
-    bool go_on = true;
+    bool goodbye = false;
 
     // apply default configuration
     Program::ApplyDefault();
@@ -79,19 +79,22 @@ int main(int argc, char* argv[]) {
 
         heap heap;
         rpnstack stack;
-        while (go_on) {
+        while (!goodbye) {
             Program prog(stack, heap);
             string entry;
             switch (Input(entry, Program::GetAutocompletionWords()).status) {
                 case Input::InputStatus::kOk:
-                    if (prog.Parse(entry) == kOk && prog.Run() == kGoodbye)
-                        go_on = false;
-                    else
-                        prog.ShowStack();
+                    if (prog.Parse(entry) == kOk) {
+                        if (prog.Run() != kGoodbye)
+                            prog.ShowStack();
+                        else
+                            goodbye = true;
+                        continue;
+                    }
                     break;
                 case Input::InputStatus::kCtrlc:
-                    go_on = false;
-                    break;
+                    goodbye = true;
+                    continue;
                 default:
                     break;
             }
