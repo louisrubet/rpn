@@ -249,7 +249,7 @@ RetValue Program::Run() {
                         // test error: make rpn return EXIT_FAILURE
                         if (err_ == kTestFailed) ret = kTestFailed;
 
-                        // error: show it
+                        // other deadly error
                         if (ShowError(err_, err_context_) == kDeadlyError)
                             // pb showing error -> go out software
                             ret = kGoodbye;

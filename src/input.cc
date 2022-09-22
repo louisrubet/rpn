@@ -7,43 +7,44 @@
 vector<string>* Input::ac_list_ = nullptr;
 
 Input::Input(string& entry, vector<string>& autocompletion_list, string prompt, string multiline_prompt)
-    : status(InputStatus::kContinue) {
+    : status(InputStatus::kOk) {
     char* c_entry = nullptr;
     bool multiline = false;
     int entry_len;
+    bool goodbye;
 
     ac_list_ = &autocompletion_list;
 
     // linenoise for entry
     linenoiseSetCompletionCallback(EntryCompletionGenerator);
-    while (status == InputStatus::kContinue) {
-        // get user entry
+    do {
+        // prompt
+        goodbye = true;
         if (multiline)
             c_entry = linenoise(multiline_prompt.c_str(), &entry_len);
         else
             c_entry = linenoise(prompt.c_str(), &entry_len);
 
-        // Ctrl-C
-        if (linenoiseKeyType() == 1) {
-            if (entry_len > 0 || multiline)
+        if (linenoiseKeyType() == 1 || linenoiseKeyType() == 2) {
+            if (entry_len > 0 || multiline)  // Ctrl-C or Ctrl-D
                 status = InputStatus::kAbort;
             else
                 status = InputStatus::kCtrlc;
         } else if (linenoiseKeyType() == 3) {
-            multiline = true;
+            multiline = true;  // Alt-Enter (multiline)
             if (c_entry != nullptr) entry += c_entry;
             entry += " ";
+            goodbye = false;
         } else {
+            status = InputStatus::kError;
             if (c_entry != nullptr) {
-                entry += c_entry;
-                // keep history
-                if (c_entry[0] != 0) (void)linenoiseHistoryAdd(entry.c_str());
+                entry += c_entry;                                                                // string entry
+                if (entry_len > 0 && c_entry[0] != 0) (void)linenoiseHistoryAdd(entry.c_str());  // keep history
                 status = InputStatus::kOk;
-            } else {
-                status = InputStatus::kError;
             }
         }
-    }
+    } while (!goodbye);
+
     free(c_entry);
 }
 
