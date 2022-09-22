@@ -35,7 +35,7 @@ set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
     execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
     execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(COMMAND git checkout v1.1.1-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
+    execute_process(COMMAND git checkout v1.1.4-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
 endif()
 
 # custom mpreal
@@ -50,10 +50,11 @@ include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/linenoise-ng
 
 # src
 set(RPN_SRC_FILES
+    ${PROJECT_SOURCE_DIR}/src/object.cc
+    ${PROJECT_SOURCE_DIR}/src/program.cc
     ${PROJECT_SOURCE_DIR}/src/main.cc
     ${PROJECT_SOURCE_DIR}/src/object.cc
     ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
-    ${PROJECT_SOURCE_DIR}/src/program.cc
     ${PROJECT_SOURCE_DIR}/src/lexer.cc
     ${PROJECT_SOURCE_DIR}/src/input.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc
@@ -71,22 +72,16 @@ set(RPN_SRC_FILES
     ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc)
 
 set(LINENOISE_NG_SRC_FILES
-${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
-${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
-${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/src/linenoise.cpp
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
 
 # compiler options
-set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS # some harder warnings
-    "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
+set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    message(STATUS "Compiler type GNU: ${CMAKE_CXX_COMPILER}")
-    # TODO still up to date?
-    set(BASE_COMPILER_OPTIONS "-std=c++17 -Wl,--no-as-needed")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BASE_COMPILER_OPTIONS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${BASE_COMPILER_OPTIONS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${BASE_COMPILER_OPTIONS} -O3 -s")
-endif()
+add_compile_options("-std=c++20"
+    "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>"
+    "$<$<CONFIG:RELEASE>:-O3>")
 
 add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
 

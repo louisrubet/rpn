@@ -136,7 +136,7 @@
 
 `"<< -> n << n >> >>" str->`
 
--> stack should be «-> n << n >>»
+-> stack should be « -> n « n » »
 
 `del`
 
@@ -305,3 +305,15 @@
 -> stack should be "sub"
 
 `del`
+
+## endl 1
+`endl type`
+
+-> stack should be "string"
+
+`del`
+
+## endl 2
+`endl num`
+
+-> stack should be 10
