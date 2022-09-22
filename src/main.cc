@@ -49,7 +49,8 @@ static void CtrlHandler(int sig __attribute__((unused)), siginfo_t* siginfo __at
 }
 
 static void CatchCtrlC() {
-    struct sigaction act = {0};
+    struct sigaction act;
+    memset(&act, 0, sizeof(act));
     act.sa_sigaction = &CtrlHandler;
     act.sa_flags = SA_SIGINFO;
     if (sigaction(SIGINT, &act, nullptr) < 0)

@@ -69,9 +69,13 @@ struct Object {
 };
 
 class Program;
-class Branch;
+struct Branch;
 typedef void (Program::*program_fn_t)(void);
 typedef size_t (Program::*branch_fn_t)(Branch&);
+union object_cb_t {
+    program_fn_t prog;
+    branch_fn_t branch;
+};
 
 /// @brief stack objects derived from Object
 ///
