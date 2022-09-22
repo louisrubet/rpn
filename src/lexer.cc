@@ -2,9 +2,6 @@
 
 #include "lexer.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"  // allow designated initializers
-
 bool Lexer::Analyse(const string& entry, map<string, ReservedWord>& keywords, vector<SynElement>& elements,
                     vector<SynError>& errors) {
     size_t jump;
@@ -186,7 +183,7 @@ bool Lexer::ParseNumber(const string& entry, size_t idx, size_t& next_idx, vecto
                         vector<SynElement>& elements) {
     mpreal* r = nullptr;
     int base = 10;
-    if (GetNUmberAt(entry, idx, next_idx, base, &r)) {
+    if (GetNumberAt(entry, idx, next_idx, base, &r)) {
         elements.push_back({.type = kNumber, .re = r, .re_base = base});
         return true;
     } else {
@@ -205,7 +202,7 @@ bool Lexer::ParseComplex(const string& entry, size_t idx, size_t& next_idx, vect
         next_idx = entry.size();
         return true;  // complex format error, return a symbol
     }
-    if (!GetNUmberAt(entry, idx + 1, next_idx, re_base, &re, ',')) {
+    if (!GetNumberAt(entry, idx + 1, next_idx, re_base, &re, ',')) {
         elements.push_back({.type = kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         return true;  // complex format error, return a symbol
@@ -220,7 +217,7 @@ bool Lexer::ParseComplex(const string& entry, size_t idx, size_t& next_idx, vect
         return true;  // complex format error, return a symbol
     }
 
-    if (!GetNUmberAt(entry, i, next_idx, im_base, &im, ')')) {
+    if (!GetNumberAt(entry, i, next_idx, im_base, &im, ')')) {
         elements.push_back({.type = kSymbol, .value = entry.substr(idx, entry.size() - idx)});
         next_idx = entry.size();
         if (re != nullptr) delete re;
@@ -255,5 +252,3 @@ bool Lexer::ParseUnknown(const string& entry, size_t idx, size_t& next_idx, vect
     next_idx = token.size() + idx;
     return true;
 }
-
-#pragma GCC diagnostic pop
