@@ -101,7 +101,7 @@ void Program::RpnRot(void) {
 
 /// @brief depth keyword implementation
 ///
-void Program::RpnDepth(void) { stack_.push_front(new Number(stack_.size())); }
+void Program::RpnDepth(void) { stack_.push_front(new Number((uint64_t)stack_.size())); }
 
 /// @brief roll keyword implementation
 ///
