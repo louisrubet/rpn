@@ -4,3 +4,6 @@
 [submodule "mpreal"]
 	path = mpreal
 	url = https://github.com/advanpix/mpreal
+[submodule "libbf"]
+	path = libbf
+	url = https://github.com/louisrubet/libbf
