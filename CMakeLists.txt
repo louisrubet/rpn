@@ -31,22 +31,14 @@ set(RPN_LICENSE "LGPLv3")
 set(RPN_LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE")
 set(RPN_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
 
-# custom linenoise-ng
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linenoise-ng/.git")
-    execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/linenoise-ng)
-    execute_process(COMMAND git checkout v1.1.4-rpn WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/linenoise-ng)
-endif()
-
-# custom mpreal
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/mpreal/.git")
-    execute_process(COMMAND git submodule init ${PROJECT_SOURCE_DIR}/mpreal)
-    execute_process(COMMAND git submodule update ${PROJECT_SOURCE_DIR}/mpreal)
-    execute_process(COMMAND git checkout mpfrc++-3.6.9 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/mpreal)
-endif()
+add_subdirectory(libbfdec-cpp)
 
 # includes
-include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/linenoise-ng/include ${PROJECT_SOURCE_DIR}/mpreal)
+include_directories(${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/linenoise-ng/include
+    ${PROJECT_SOURCE_DIR}/libbfdec-cpp
+    ${PROJECT_SOURCE_DIR}/libbfdec-cpp/libbf
+    ${PROJECT_SOURCE_DIR}/libbfdec-cpp/quickjs-fake)
 
 # src
 set(RPN_SRC_FILES
@@ -54,13 +46,13 @@ set(RPN_SRC_FILES
     ${PROJECT_SOURCE_DIR}/src/program.cc
     ${PROJECT_SOURCE_DIR}/src/main.cc
     ${PROJECT_SOURCE_DIR}/src/object.cc
-    ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
+    # ${PROJECT_SOURCE_DIR}/src/mpreal-out.cc
     ${PROJECT_SOURCE_DIR}/src/lexer.cc
     ${PROJECT_SOURCE_DIR}/src/input.cc
-    ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc
-    ${PROJECT_SOURCE_DIR}/src/rpn-complex.cc
+    # ${PROJECT_SOURCE_DIR}/src/rpn-branch.cc
+    # ${PROJECT_SOURCE_DIR}/src/rpn-complex.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-general.cc
-    ${PROJECT_SOURCE_DIR}/src/rpn-logs.cc
+    # ${PROJECT_SOURCE_DIR}/src/rpn-logs.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-program.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-real.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-stack.cc
@@ -69,7 +61,11 @@ set(RPN_SRC_FILES
     ${PROJECT_SOURCE_DIR}/src/rpn-test.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-test-framework.cc
     ${PROJECT_SOURCE_DIR}/src/rpn-time.cc
-    ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc)
+    # ${PROJECT_SOURCE_DIR}/src/rpn-trig.cc
+    # ${PROJECT_SOURCE_DIR}/libbfdec-cpp/libbf/libbf.c
+    # ${PROJECT_SOURCE_DIR}/libbfdec-cpp/libbf/cutils.c
+    # ${PROJECT_SOURCE_DIR}/libbfdec-cpp/libbfdec++.cpp
+    )
 
 set(LINENOISE_NG_SRC_FILES
     ${PROJECT_SOURCE_DIR}/linenoise-ng/src/ConvertUTF.cpp
@@ -77,16 +73,14 @@ set(LINENOISE_NG_SRC_FILES
     ${PROJECT_SOURCE_DIR}/linenoise-ng/src/wcwidth.cpp)
 
 # compiler options
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set_source_files_properties(${RPN_SRC_FILES} COMPILE_FLAGS "-Wall -Wextra -pedantic -Wno-missing-field-initializers")
+add_compile_options("$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>" "$<$<CONFIG:RELEASE>:-O3>")
 
-add_compile_options("-std=c++20"
-    "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>"
-    "$<$<CONFIG:RELEASE>:-O3>")
-
-add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES})
-
-target_link_libraries(rpn mpfr)
-target_link_libraries(rpn gmp)
+# executable
+add_executable(rpn ${RPN_SRC_FILES} ${LINENOISE_NG_SRC_FILES} ${LIBBF_SRC_FILES})
+target_link_libraries(rpn libbf)
 
 # install
 install(TARGETS rpn DESTINATION bin)

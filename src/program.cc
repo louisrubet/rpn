@@ -1,5 +1,8 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
+#include <iostream>
+using namespace std;
+
 #include "program.h"
 
 //< language reserved keywords (allowed types are kKeyword, kBranch or kUndef)
@@ -24,6 +27,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "-",    {.prog = &Program::RpnMinus}, "substraction"},
     {kKeyword, "*",    {.prog = &Program::RpnMul}, "multiplication"},
     {kKeyword, "/",    {.prog = &Program::RpnDiv}, "division"},
+#if 0
     {kKeyword, "inv",  {.prog = &Program::RpnInv}, "inverse"},
     {kKeyword, "chs",  {.prog = &Program::RpnNeg}, "negation"},
     {kKeyword, "neg",  {.prog = &Program::RpnNeg}, ""},
@@ -136,7 +140,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kBranch, "until",  {.branch = &Program::RpnUntil}, "used with do"},
     {kBranch, "while",  {.branch = &Program::RpnWhile}, "while <test-instruction> repeat <loop-instructions> end"},
     {kBranch, "repeat", {.branch = &Program::RpnRepeat}, "used with while"},
-
+#endif
     // STORE
     {kUndef, "", {.prog = nullptr}, "\nSTORE"},
     {kKeyword, "sto",   {.prog = &Program::RpnSto}, "store a variable. ex: 1 'name' sto"},
@@ -149,6 +153,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "sto-",  {.prog = &Program::RpnStosub}, "substract to a stored variable. ex: 1 'name' sto- 'name' 2 sto-"},
     {kKeyword, "sto*",  {.prog = &Program::RpnStomul}, "multiply a stored variable. ex: 3 'name' sto* 'name' 2 sto*"},
     {kKeyword, "sto/",  {.prog = &Program::RpnStodiv}, "divide a stored variable. ex: 3 'name' sto/ 'name' 2 sto/"},
+#if 0
     {kKeyword, "sneg",  {.prog = &Program::RpnStoneg}, "negate a variable. ex: 'name' sneg"},
     {kKeyword, "sinv",  {.prog = &Program::RpnStoinv}, "inverse a variable. ex: 1 'name' sinv"},
 
@@ -195,6 +200,7 @@ vector<Program::keyword_t> Program::keywords_ = {
     {kKeyword, "time",  {.prog = &Program::RpnTime}, "local time in ISO 8601 format"},
     {kKeyword, "date",  {.prog = &Program::RpnDate}, "local date in ISO 8601 format"},
     {kKeyword, "ticks", {.prog = &Program::RpnTicks}, "local date and time in µs"}
+#endif
 };
 // clang-format on
 

@@ -51,9 +51,9 @@ void Program::RpnNum() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
     if (stack_.value<String>(0).size() > 0)
-        stack_.push_front(new Number(stack_.value<String>(0)[0]));
+        stack_.push_front(new Number((int64_t)stack_.value<String>(0)[0]));
     else
-        stack_.push_front(new Number(0));
+        stack_.push_front(new Number((int64_t)0));
     stack_.erase(1);
 }
 

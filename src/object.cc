@@ -2,11 +2,15 @@
 
 #include "object.h"
 
+#include <stdlib.h>
+
 // number statics
 Number::mode_enum Number::mode = Number::kDefaultMode;
-int Number::digits = kDefaultDecimalDigits;
+limb_t Number::digits = kDefaultDecimalDigits;
 
-ostream& Number::ShowValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base) {
+ostream& Number::ShowValue(ostream& out, const Bfdec& value, mode_enum mode, int digits, int base) {
+    return out << bfdec_ftoa(NULL, &value.toBfdec(), (limb_t)BF_PREC_INF, (bf_flags_t)(BF_RNDZ | BF_FTOA_FORMAT_FREE));
+    #if 0
     stringstream format;
     switch (base) {
         case 10:
@@ -40,4 +44,5 @@ ostream& Number::ShowValue(ostream& out, const mpreal& value, mode_enum mode, in
             // base other than 2, 10, 16
             return MprealOutputNBase(out, base, value);
     }
+    #endif
 }

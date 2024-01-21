@@ -12,16 +12,16 @@ void Program::RpnPlus() {
     } else if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) += stack_.value<Number>(0);
         stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) += stack_.value<Complex>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) += stack_.value<Number>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
-        RpnSwap();
-        stack_.value<Complex>(1) += stack_.value<Number>(0);
-        stack_.pop();
+    // } else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
+    //     stack_.value<Complex>(1) += stack_.value<Complex>(0);
+    //     stack_.pop();
+    //} else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) += stack_.value<Number>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
+    //    RpnSwap();
+    //    stack_.value<Complex>(1) += stack_.value<Number>(0);
+    //    stack_.pop();
     } else {
         ERROR_CONTEXT(kBadOperandType);
     }
@@ -34,16 +34,16 @@ void Program::RpnMinus() {
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) -= stack_.value<Number>(0);
         stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) -= stack_.value<Complex>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) -= stack_.value<Number>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
-        RpnSwap();
-        stack_.value<Complex>(1) = stack_.value<Number>(0) - stack_.value<Complex>(1);
-        stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) -= stack_.value<Complex>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) -= stack_.value<Number>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
+    //    RpnSwap();
+    //    stack_.value<Complex>(1) = stack_.value<Number>(0) - stack_.value<Complex>(1);
+    //    stack_.pop();
     } else {
         ERROR_CONTEXT(kBadOperandType);
     }
@@ -56,16 +56,16 @@ void Program::RpnMul() {
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) *= stack_.value<Number>(0);
         stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) *= stack_.value<Complex>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) *= stack_.value<Number>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
-        RpnSwap();
-        stack_.value<Complex>(1) *= stack_.value<Number>(0);
-        stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) *= stack_.value<Complex>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) *= stack_.value<Number>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
+    //    RpnSwap();
+    //    stack_.value<Complex>(1) *= stack_.value<Number>(0);
+    //    stack_.pop();
     } else {
         ERROR_CONTEXT(kBadOperandType);
     }
@@ -78,21 +78,22 @@ void Program::RpnDiv() {
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
         stack_.value<Number>(1) /= stack_.value<Number>(0);
         stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) /= stack_.value<Complex>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
-        stack_.value<Complex>(1) /= stack_.value<Number>(0);
-        stack_.pop();
-    } else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
-        RpnSwap();
-        stack_.value<Complex>(1) = stack_.value<Number>(0) / stack_.value<Complex>(1);
-        stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) /= stack_.value<Complex>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kNumber && stack_.type(1) == kComplex) {
+    //    stack_.value<Complex>(1) /= stack_.value<Number>(0);
+    //    stack_.pop();
+    //} else if (stack_.type(0) == kComplex && stack_.type(1) == kNumber) {
+    //    RpnSwap();
+    //    stack_.value<Complex>(1) = stack_.value<Number>(0) / stack_.value<Complex>(1);
+    //    stack_.pop();
     } else {
         ERROR_CONTEXT(kBadOperandType);
     }
 }
 
+#if 0
 /// @brief neg keyword implementation
 ///
 void Program::RpnNeg() {
@@ -122,7 +123,7 @@ void Program::RpnInv() {
 void Program::RpnPower() {
     MIN_ARGUMENTS(2);
     if (stack_.type(0) == kNumber && stack_.type(1) == kNumber) {
-        if (stack_.value<Number>(1) >= 0) {
+        if (stack_.value<Number>(1).gt0()) {
             stack_.value<Number>(1) = pow(stack_.value<Number>(1), stack_.value<Number>(0));
             stack_.pop();
         } else {
@@ -387,3 +388,4 @@ void Program::RpnMax() {
     stack_.value<Number>(0) = max(stack_.value<Number>(0), stack_.value<Number>(1));
     stack_.erase(1);
 }
+#endif

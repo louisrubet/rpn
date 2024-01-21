@@ -3,16 +3,13 @@
 #ifndef SRC_OBJECT_H_
 #define SRC_OBJECT_H_
 
-#include <mpreal.h>
-using mpfr::mpreal;
+#include <libbfdec++.h>
 
 #include <complex>
 #include <ostream>
 #include <sstream>
 #include <string>
 using std::complex, std::ostream, std::string, std::stringstream;
-
-#include "mpreal-out.h"
 
 // definitions for objects
 ///
@@ -81,12 +78,14 @@ union object_cb_t {
 ///
 struct Number : Object {
     Number() : Object(kNumber), base(10) {}
-    explicit Number(const mpreal& value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
-    explicit Number(int value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
+    explicit Number(const Bfdec& value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
+    explicit Number(int64_t value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
     explicit Number(uint64_t value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
+    explicit Number(bool value__, int base__ = 10) : Object(kNumber), base(base__), value(value__ ? 1 : 0) {}
+    explicit Number(int value__, int base__ = 10) : Object(kNumber), base(base__), value(value__) {}
 
     int base;
-    mpreal value;
+    Bfdec value;
 
     virtual Object* Clone() { return new Number(value, base); }
     virtual string Name() { return string("number"); }
@@ -98,30 +97,30 @@ struct Number : Object {
     static constexpr mode_enum kDefaultMode = Number::kStd;
 
     // precision
-    static constexpr mpfr_prec_t kMpfrDefaultPrecBits = 128;
+    static constexpr mp_prec_t kMpfrDefaultPrecBits = 128;
     static constexpr int kDefaultDecimalDigits = 38;
-    static int digits;
+    static limb_t digits;
 
-    // clang-format on
-    static ostream& ShowValue(ostream& out, const mpreal& value, mode_enum mode, int digits, int base);
+    static ostream& ShowValue(ostream& out, const Bfdec& value, mode_enum mode, int digits, int base);
+
+    static void* rpn_bf_realloc(void*, void* ptr, size_t size);
+    static bf_context_t rpn_bf_ctx;
 };
 
 /// @brief stack objects inheriting Object
 ///
 struct Complex : Object {
     Complex() : Object(kComplex), re_base(10), im_base(10) {}
-    explicit Complex(complex<mpreal>& value__, int re_base__ = 10, int im_base__ = 10)
-        : Object(kComplex), re_base(re_base__), im_base(im_base__) {
-        value = value__;
-    }
-    explicit Complex(mpreal& re__, mpreal& im__, int re_base__ = 10, int im_base__ = 10)
+    explicit Complex(complex<Bfdec>& value__, int re_base__ = 10, int im_base__ = 10)
+        : Object(kComplex), re_base(re_base__), im_base(im_base__), value(value__) {}
+    explicit Complex(Bfdec& re__, Bfdec& im__, int re_base__ = 10, int im_base__ = 10)
         : Object(kComplex), re_base(re_base__), im_base(im_base__) {
         value.real(re__);
         value.imag(im__);
     }
 
     int re_base, im_base;
-    complex<mpreal> value;
+    complex<Bfdec> value;
 
     virtual Object* Clone() { return new Complex(value, re_base, im_base); }
     virtual string Name() { return string("complex"); }

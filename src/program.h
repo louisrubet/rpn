@@ -10,8 +10,7 @@
 #include <vector>
 using namespace std;
 
-#include <mpreal.h>
-using mpfr::mpreal;
+#include <libbfdec++.h>
 
 // internal includes
 #include "lexer.h"

@@ -13,9 +13,9 @@ using std::cout, std::string, std::pair;
 #define ATTR_OFF "\33[0m"
 
 #define MPFR_ROUND                                                                                                     \
-    {"nearest (even)", MPFR_RNDN}, {"toward zero", MPFR_RNDZ}, {"toward +inf", MPFR_RNDU}, {"toward -inf", MPFR_RNDD}, \
-        {"away from zero", MPFR_RNDA}, {"faithful rounding", MPFR_RNDF}, {                                             \
-        "nearest (away from zero)", MPFR_RNDNA                                                                         \
+    {"nearest (even)", BF_RNDN}, {"toward zero", BF_RNDZ}, {"toward +inf", BF_RNDU}, {"toward -inf", BF_RNDD}, \
+        {"away from zero", BF_RNDA}, {"faithful rounding", BF_RNDF}, {                                             \
+        "nearest (away from zero)", BF_RNDNA                                                                         \
     }
 
 static const char _description[] =
@@ -75,7 +75,7 @@ void Program::RpnHelp() {
     // bits precision, decimal digits and rounding mode
     cout << " with " << Number::digits << " digits after the decimal point" << endl;
     cout << "Current floating point precision is " << static_cast<int>(mpreal::get_default_prec()) << " bits" << endl;
-    vector<pair<string, mpfr_rnd_t>> rnd{MPFR_ROUND};
+    vector<pair<string, mp_rnd_t>> rnd{MPFR_ROUND};
     for (auto& rn : rnd)
         if (rn.second == mpreal::get_default_rnd()) {
             cout << "Current rounding mode is '" << rn.first << '\'' << endl;
@@ -190,14 +190,14 @@ void Program::RpnPrecision() {
     ARG_MUST_BE_OF_TYPE(0, kNumber);
 
     // set precision
-    mpfr_prec_t prec = static_cast<int>(stack_.value<Number>(0).toLong());
-    if (prec >= MPFR_PREC_MIN && prec <= MPFR_PREC_MAX) {
+    mp_prec_t prec = static_cast<int>(stack_.value<Number>(0).toLong());
+    if (prec >= BF_PREC_MIN && prec <= BF_PREC_MAX) {
         mpreal::set_default_prec(prec);
 
         // modify digits seen by user if std mode
         if (Number::mode == Number::kStd) {
             // calc max nb of digits user can see with the current bit precision
-            Number::digits = mpfr::bits2digits(mpreal::get_default_prec());
+            Number::digits = Bfdec::bits2digits(mpreal::get_default_prec());
         }
         stack_.pop();
     } else {
@@ -211,7 +211,7 @@ void Program::RpnRound() {
     MIN_ARGUMENTS(1);
     ARG_MUST_BE_OF_TYPE(0, kString);
 
-    map<string, mpfr_rnd_t> matchRound{MPFR_ROUND};
+    map<string, mp_rnd_t> matchRound{MPFR_ROUND};
 
     auto found = matchRound.find(stack_.value<String>(0));
     if (found != matchRound.end())

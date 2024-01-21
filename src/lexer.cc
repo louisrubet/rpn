@@ -45,8 +45,8 @@ bool Lexer::Analyse(const string& entry, map<string, ReservedWord>& keywords, ve
 }
 
 void Lexer::Trim(string& s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
+    s.erase(s.begin(), std::ranges::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+    s.erase(std::ranges::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
 }
 
 bool Lexer::ParseString(const string& entry, size_t idx, size_t& next_idx,
@@ -167,7 +167,7 @@ bool Lexer::GetNumberAt(const string& entry, size_t idx, size_t& next_idx, int& 
         if (base < 2 || base > 62) return false;
         if (numberIdx != 0) token = token.substr(numberIdx);
         *r = new mpreal;
-        if (mpfr_set_str((*r)->mpfr_ptr(), token.c_str(), base, mpreal::get_default_rnd()) == 0) {
+        if (bfdec_atof(&(*r)->toBfdec(), token.c_str(), nullptr, (limb_t)Bfdec::get_default_prec(), (bf_flags_t)Bfdec::get_default_rnd()) == 0) {
             if (!positive) *(*r) = -*(*r);
             return true;
         } else {

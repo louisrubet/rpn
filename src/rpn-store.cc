@@ -1,5 +1,8 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
+#include <iostream>
+using namespace std;
+
 #include "input.h"
 #include "program.h"
 
@@ -87,6 +90,7 @@ void Program::RpnStodiv(void) {
     RpnSto();
 }
 
+#if 0
 /// @brief stosneg keyword implementation
 ///
 void Program::RpnStoneg(void) {
@@ -118,6 +122,7 @@ void Program::RpnStoinv(void) {
     RpnSwap();
     RpnSto();
 }
+#endif
 
 /// @brief rcl keyword implementation
 ///

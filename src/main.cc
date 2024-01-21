@@ -6,6 +6,7 @@
 #include <cerrno>
 #include <csignal>
 #include <iostream>
+#include <cstring>
 using std::cerr;
 
 // internal includes
@@ -119,7 +120,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    mpfr_free_cache();
+    Bfdec::clear_cache();
 
     if (ret != kOk) return EXIT_FAILURE;
     return EXIT_SUCCESS;

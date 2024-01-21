@@ -3,8 +3,7 @@
 #ifndef SRC_LEXER_H_
 #define SRC_LEXER_H_
 
-#include <mpreal.h>
-using mpfr::mpreal;
+#include <libbfdec++.h>
 
 #include <map>
 #include <string>

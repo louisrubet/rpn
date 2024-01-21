@@ -1,7 +1,8 @@
 // Copyright (c) 2014-2022 Louis Rubet
 
 #include <string>
-using std::string;
+#include <iostream>
+using namespace std;
 
 #include "program.h"
 #include "version.h"
