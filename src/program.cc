@@ -74,7 +74,9 @@ vector<Program::keyword_t> Program::keywords_ = {
         "set float rounding mode in \n\t\"nearest (even)\", \"toward zero\", \"toward "
         "+inf\", \"toward -inf\", \"away from zero\", \"faithful rounding\", \"nearest (away from zero)\""
         "\n\tex: \"nearest (even)\" round"},
+#endif
     {kKeyword, "default", {.prog = &Program::RpnDefault}, "set float representation and precision to default"},
+#if 0
     {kKeyword, "type",    {.prog = &Program::RpnType}, "show type of stack first entry"},
     {kKeyword, "hex",     {.prog = &Program::RpnHex}, "hexadecimal representation, applies on stack level 0 only"},
     {kKeyword, "dec",     {.prog = &Program::RpnDec}, "decimal representation, applies on stack level 0 only"},
@@ -98,11 +100,15 @@ vector<Program::keyword_t> Program::keywords_ = {
     // STACK
     {kUndef, "", {.prog = nullptr}, "\nSTACK"},
     {kKeyword, "swap",  {.prog = &Program::RpnSwap}, "swap 2 first stack entries"},
+#endif
     {kKeyword, "drop",  {.prog = &Program::RpnDrop}, "drop first stack entry"},
+#if 0
     {kKeyword, "drop2", {.prog = &Program::RpnDrop2}, "drop 2 first stack entries"},
     {kKeyword, "dropn", {.prog = &Program::RpnDropn}, "drop n first stack entries"},
+#endif
     {kKeyword, "del",   {.prog = &Program::RpnErase}, "drop all stack entries"},
     {kKeyword, "erase", {.prog = &Program::RpnErase}, ""},
+#if 0
     {kKeyword, "rot",   {.prog = &Program::RpnRot}, "rotate 3 first stack entries"},
     {kKeyword, "dup",   {.prog = &Program::RpnDup}, "duplicate first stack entry"},
     {kKeyword, "dup2",  {.prog = &Program::RpnDup2}, "duplicate 2 first stack entries"},

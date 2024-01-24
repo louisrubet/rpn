@@ -167,7 +167,7 @@ bool Lexer::GetNumberAt(const string& entry, size_t idx, size_t& next_idx, int& 
         if (base < 2 || base > 62) return false;
         if (numberIdx != 0) token = token.substr(numberIdx);
         *r = new mpreal;
-        if (bfdec_atof(&(*r)->toBfdec(), token.c_str(), nullptr, (limb_t)Bfdec::get_default_prec(), (bf_flags_t)Bfdec::get_default_rnd()) == 0) {
+        if (bfdec_atof(&(*r)->toBfdec(), token.c_str(), nullptr, Bfdec::get_default_prec(), Bfdec::get_default_rnd()) == 0 && !isnan(**r)) {
             if (!positive) *(*r) = -*(*r);
             return true;
         } else {
