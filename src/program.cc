@@ -76,8 +76,8 @@ vector<Program::keyword_t> Program::keywords_ = {
         "\n\tex: \"nearest (even)\" round"},
 #endif
     {kKeyword, "default", {.prog = &Program::RpnDefault}, "set float representation and precision to default"},
-#if 0
     {kKeyword, "type",    {.prog = &Program::RpnType}, "show type of stack first entry"},
+#if 0
     {kKeyword, "hex",     {.prog = &Program::RpnHex}, "hexadecimal representation, applies on stack level 0 only"},
     {kKeyword, "dec",     {.prog = &Program::RpnDec}, "decimal representation, applies on stack level 0 only"},
     {kKeyword, "bin",     {.prog = &Program::RpnBin}, "binary representation, applies on stack level 0 only"},
