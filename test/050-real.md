@@ -137,20 +137,16 @@ dec swap dec swap
 
 `del default`
 
-## real inf, nan
+## real Inf, NaN
 
 ```
-inf
-@inf@
-+inf
-+@inf@
--inf
--@inf@
-nan
-@nan@
+Inf
++Inf
+-Inf
+0 0 /
 ```
 
--> stack should be inf, inf, inf, inf, -inf, -inf, nan, nan
+-> stack should be Inf, Inf, Inf, Inf, -Inf, -Inf, NaN, NaN
 
 `del`
 
@@ -212,7 +208,7 @@ pi
 
 ## round (3)
 
-`"toward +inf" round`
+`"toward +Inf" round`
 
 -> error should be 0
 
@@ -220,7 +216,7 @@ pi
 
 ## round (4)
 
-`"toward -inf" round`
+`"toward -Inf" round`
 
 -> error should be 0
 
@@ -613,15 +609,15 @@ pi
 
 ## mant (2)
 
-`inf mant`
+`Inf mant`
 
 -> error should be 4
 
-`-inf mant`
+`-Inf mant`
 
 -> error should be 4
 
-`nan mant`
+`0 0 / mant`
 
 -> error should be 4
 
@@ -637,15 +633,15 @@ pi
 
 ## xpon (2)
 
-`inf xpon`
+`Inf xpon`
 
 -> error should be 4
 
-`-inf xpon`
+`-Inf xpon`
 
 -> error should be 4
 
-`nan xpon`
+`0 0 / xpon`
 
 -> error should be 4
 

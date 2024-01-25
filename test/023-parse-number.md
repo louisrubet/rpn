@@ -66,11 +66,11 @@
 
 `del`
 
-## inf nan
+## Inf nan
 
-`+inf inf -inf nan`
+`+Inf Inf -Inf 0 0 /`
 
--> stack should be inf, inf, -inf, nan
+-> stack should be Inf, Inf, -Inf, NaN
 
 `del`
 

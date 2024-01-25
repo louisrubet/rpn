@@ -28,21 +28,13 @@
 
 ## entry (4)
 
-`(nan,+inf)`
-
--> stack should be (nan,inf)
-
-`del`
-
-## entry (5)
-
 `(0x1234,0x1010)`
 
 -> stack should be (0x1234,0x1010)
 
 `del`
 
-## entry (6)
+## entry (5)
 
 `(0b11,0b101)`
 

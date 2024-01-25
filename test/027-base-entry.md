@@ -50,10 +50,10 @@
 
 ```
 4 fix
-nan @nan@ -nan inf -inf @inf@ -@inf@
+inf -inf
 ```
 
--> stack should be nan, nan, nan, inf, -inf, inf, -inf
+-> stack should be Inf, -Inf
 
 `del default`
 
@@ -330,7 +330,7 @@ nan @nan@ -nan inf -inf @inf@ -@inf@
 
 `-0 bin 0 bin / 0 3 base 0 3 base /`
 
--> stack should be nan, nan
+-> stack should be NaN, NaN
 
 `del default`
 

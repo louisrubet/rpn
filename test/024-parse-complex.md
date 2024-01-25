@@ -18,14 +18,13 @@
 
 `del`
 
-## cplx inf nan
+## cplx Inf
 
 ```
-(inf,3)
-(-inf,nan) (inf,-inf)
+(Inf,3) (Inf,-Inf)
 ```
 
--> stack should be (inf,3), (-inf,nan), (inf,-inf)
+-> stack should be (Inf,3), (Inf,-Inf)
 
 `del`
 
@@ -34,14 +33,6 @@
 `( 3.14e2 , -2`
 
 -> stack should be (314,-2)
-
-`del`
-
-## unterminated 2
-
-`(-inf, nan`
-
--> stack should be (-inf,nan)
 
 `del`
 
