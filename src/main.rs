@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Reverse Polish Notation Calculator
 
 use rpn_rust::{program, repl, Context};

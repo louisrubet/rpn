@@ -1,11 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Number formatting and configuration
-// Based on C++ Number class display settings from object.h
 
 use rug::ops::Pow;
 use rug::Float;
 
 /// Display mode for numbers
-/// Based on C++ Number::mode_enum (object.h lines 96)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DisplayMode {
     /// Standard mode (auto-select between fixed and scientific)
@@ -23,7 +22,6 @@ impl Default for DisplayMode {
 }
 
 /// Number formatting configuration
-/// Based on C++ Number static members (object.h lines 95-103)
 #[derive(Debug, Clone)]
 pub struct NumberConfig {
     /// Display mode (std, fix, sci)
@@ -37,7 +35,6 @@ pub struct NumberConfig {
 }
 
 impl NumberConfig {
-    /// Create a new configuration with defaults from C++ version
     pub fn new() -> Self {
         Self {
             mode: DisplayMode::Std,

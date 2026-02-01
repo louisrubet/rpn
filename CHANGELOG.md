@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.0] - 2026-01-31
 
 ### Added
+- Syntax coloring
 - New commands `error` and `strerror` giving the last error encountered (integer and string), works like errno
 - New bitwise operators `& \| ^ ~`
 - New command `%ch` duplicated from `%CH` (still available but hidden)

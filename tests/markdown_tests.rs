@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Integration tests using markdown test files
 
 use rpn_rust::test_framework;

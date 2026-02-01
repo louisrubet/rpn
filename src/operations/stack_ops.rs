@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Stack manipulation operations
-// Based on C++ rpn-stack.cc
 
 use crate::context::Context;
 use crate::error::{Error, Result};

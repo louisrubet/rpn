@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Operations modules for RPN calculator
 // Registry of all built-in operations
 

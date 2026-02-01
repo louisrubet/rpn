@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Lexer for RPN calculator
-// Based on C++ lexer.h and lexer.cc
 
 use crate::error::{Error, Result};
 use rug::ops::CompleteRound;
@@ -37,7 +37,6 @@ fn parse_base_37_to_62(digits_str: &str, base: i32) -> Option<Float> {
 }
 
 /// Token types produced by lexical analysis
-/// Based on C++ SynElement struct (lexer.h lines 19-28)
 #[derive(Debug, Clone)]
 pub enum Token {
     /// Number with value and base (2-62)
@@ -73,7 +72,6 @@ pub struct Lexer;
 
 impl Lexer {
     /// Analyze source string and produce tokens
-    /// Based on C++ Lexer::Analyse (lexer.h line 50)
     pub fn analyze(source: &str) -> Result<Vec<Token>> {
         let mut tokens = Vec::new();
         let mut chars = source.chars().peekable();

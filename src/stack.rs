@@ -1,11 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Stack and Heap data structures
-// Based on C++ stack.h
 
 use crate::object::Object;
 use std::collections::{HashMap, VecDeque};
 
 /// RPN stack using front-based operations (LIFO)
-/// Based on C++ rpnstack (deque with push_front)
 #[derive(Debug, Clone)]
 pub struct RpnStack {
     data: VecDeque<Object>,
@@ -80,7 +79,6 @@ impl Default for RpnStack {
 }
 
 /// Heap for variable storage (name -> object mapping)
-/// Based on C++ heap (map<string, Object*>)
 #[derive(Debug, Clone)]
 pub struct Heap {
     vars: HashMap<String, Object>,

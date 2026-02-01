@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Parser for converting tokens to objects
-// Based on C++ Program::Parse
 
 use crate::error::{Error, Result};
 use crate::lexer::Token;

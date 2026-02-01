@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Complex number operations
-// Based on C++ rpn-complex.cc
 
 use crate::context::Context;
 use crate::error::{Error, Result};

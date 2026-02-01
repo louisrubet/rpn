@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Execution context for RPN calculator
 // Holds stack, heaps, and configuration state
 

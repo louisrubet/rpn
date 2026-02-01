@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Test framework for parsing and running markdown test files
 // Parses test/*.md files with commands and expectations
 

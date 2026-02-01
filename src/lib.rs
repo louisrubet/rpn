@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 //! # rpn-rust
 //!
 //! A modern Reverse Polish Notation (RPN) calculator with arbitrary precision arithmetic.

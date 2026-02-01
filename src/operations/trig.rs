@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Trigonometric operations
-// Based on C++ rpn-trig.cc
 
 use crate::context::Context;
 use crate::error::Result;

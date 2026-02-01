@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Program evaluation operations
-// Based on C++ rpn-program.cc
 
 use crate::context::Context;
 use crate::error::Result;

@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Comparison and test operations
-// Based on C++ rpn-test.cc
 
 use crate::context::Context;
 use crate::error::{Error, Result};

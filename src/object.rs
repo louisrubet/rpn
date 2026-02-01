@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Object types for RPN calculator
-// Based on C++ Object types from object.h
 
 use crate::context::Context;
 use crate::error::Result;
@@ -16,7 +16,6 @@ pub struct Program {
 }
 
 /// Branch arguments for control flow operations
-/// Based on C++ Branch struct (object.h lines 173-198)
 #[derive(Debug, Clone, Copy)]
 pub struct BranchArgs {
     pub arg1: usize,
@@ -53,7 +52,6 @@ pub type KeywordFn = fn(&mut Context) -> Result<()>;
 pub type BranchFn = fn(&mut Context, &mut BranchArgs) -> Result<usize>;
 
 /// Object enum representing all stack object types
-/// Based on C++ ObjectType enum (object.h lines 40-49)
 #[derive(Debug, Clone)]
 pub enum Object {
     /// Number with arbitrary precision (MPFR-based)

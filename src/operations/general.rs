@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // General operations: modes, bases, precision, utility
-// Based on C++ rpn-general.cc and rpn-real.cc
 
 use crate::context::Context;
 use crate::error::{Error, Result};
@@ -35,138 +35,137 @@ pub fn help(ctx: &mut Context) -> Result<()> {
 
     // Arithmetic operations
     println!("{T}ARITHMETIC{R}");
-    println!("  {O}+{R}, {O}-{R}, {O}*{R}, {O}/{R}           Basic arithmetic");
-    println!("  {K}neg{R}, {K}chs{R}             Negate");
-    println!("  {K}inv{R}                  Inverse");
-    println!("  {K}pow{R}                  Power");
-    println!("  {K}sqrt{R}                 Square root");
-    println!("  {K}sq{R}                   Square");
-    println!("  {K}abs{R}                  Absolute value of real, magnitude of complex");
-    println!("  {K}sign{R}                 Sign of real ({N}-1{R}, {N}0{R}, {N}1{R}), signum of complex");
-    println!("  {K}min{R}, {K}max{R}             Minimum, maximum");
-    println!("  {K}mod{R}                  Modulo");
-    println!("  {O}%{R}                    Percent");
-    println!("  {K}%ch{R}                  Percent change");
-    println!("  {K}fact{R}                 Factorial");
-    println!("  {K}floor{R}, {K}ceil{R}          Rounding");
-    println!("  {K}ip{R}, {K}fp{R}               Integer and fractional parts");
-    println!("  {K}mant{R}, {K}xpon{R}           Mantissa and exponent");
+    println!("  {O}+{R}, {O}-{R}, {O}*{R}, {O}/{R}              Basic arithmetic");
+    println!("  {K}neg{R}, {K}chs{R}                Negate");
+    println!("  {K}inv{R}                     Inverse");
+    println!("  {K}pow{R}                     Power");
+    println!("  {K}sqrt{R}                    Square root");
+    println!("  {K}sq{R}                      Square");
+    println!("  {K}abs{R}                     Absolute value of real, magnitude of complex");
+    println!("  {K}sign{R}                    Sign of a real number ({N}-1{R}, {N}0{R}, {N}1{R}), signum of a complex number");
+    println!("  {K}min{R}, {K}max{R}                Minimum, maximum");
+    println!("  {K}mod{R}                     Modulo");
+    println!("  {O}%{R}                       Percent");
+    println!("  {K}%ch{R}                     Percent change");
+    println!("  {K}fact{R}                    Factorial");
+    println!("  {K}floor{R}, {K}ceil{R}             Rounding");
+    println!("  {K}ip{R}, {K}fp{R}                  Integer and fractional parts");
+    println!("  {K}mant{R}, {K}xpon{R}              Mantissa and exponent");
 
     // Bitwise operations
     println!("\n{T}BITWISE{R}");
-    println!("  {O}&{R}, {O}|{R}, {O}^{R}              And, or, xor");
-    println!("  {O}~{R}                    Not (complement)");
+    println!("  {O}&{R}, {O}|{R}, {O}^{R}, {O}~{R}              And, or, xor, not (complement)");
 
     // Stack operations
     println!("\n{T}STACK{R}");
-    println!("  {K}swap{R}                 Swap top items");
-    println!("  {K}dup{R}, {K}dup2{R}, {K}dupn{R}      Duplicate top item(s)");
-    println!("  {K}drop{R}, {K}drop2{R}, {K}dropn{R}   Remove top item(s)");
-    println!("  {K}pop{R}                  Alias for {K}drop{R}");
-    println!("  {K}erase{R}, {K}del{R}, {K}clear{R}    Clear entire stack");
-    println!("  {K}pick{R}                 Copy level n item to top");
-    println!("  {K}depth{R}                Push stack size");
-    println!("  {K}rot{R}                  Rotate top 3 items");
-    println!("  {K}roll{R}, {K}rolld{R}          Roll stack items");
-    println!("  {K}over{R}                 Copy second item to top");
+    println!("  {K}swap{R}                    Swap top items");
+    println!("  {K}dup{R}, {K}dup2{R}, {K}dupn{R}         Duplicate top item(s)");
+    println!("  {K}drop{R}, {K}drop2{R}, {K}dropn{R}      Remove top item(s)");
+    println!("  {K}pop{R}                     Alias for {K}drop{R}");
+    println!("  {K}erase{R}, {K}del{R}, {K}clear{R}       Clear entire stack");
+    println!("  {K}pick{R}                    Copy level n item to top");
+    println!("  {K}depth{R}                   Push stack size");
+    println!("  {K}rot{R}                     Rotate top 3 items");
+    println!("  {K}roll{R}, {K}rolld{R}             Roll stack items");
+    println!("  {K}over{R}                    Copy second item to top");
 
     // Comparison and logic
     println!("\n{T}COMPARISON & LOGIC{R}");
-    println!("  {O}>{R}, {O}>={R}, {O}<{R}, {O}<={R}         Comparison operators");
-    println!("  {O}=={R}, {K}same{R}, {O}!={R}         Equality operators");
-    println!("  {K}and{R}, {K}or{R}, {K}xor{R}, {K}not{R}    Logical operators");
+    println!("  {O}>{R}, {O}>={R}, {O}<{R}, {O}<={R}            Comparison operators");
+    println!("  {O}=={R}, {K}same{R}, {O}!={R}            Equality operators");
+    println!("  {K}and{R}, {K}or{R}, {K}xor{R}, {K}not{R}       Logical operators");
 
     // Complex numbers
     println!("\n{T}COMPLEX NUMBERS{R}");
-    println!("  {N}(re,im){R}              Complex number notation");
-    println!("  {K}re{R}, {K}im{R}               Extract real and imaginary part");
-    println!("  {K}arg{R}                  Argument (angle)");
-    println!("  {K}conj{R}                 Conjugate");
-    println!("  {K}c->r{R}, {K}r->c{R}           real to complex, complex to real");
-    println!("  {K}p->r{R}, {K}r->p{R}           polar / rectangular conversions");
+    println!("  {N}(re,im){R}                 Complex number notation");
+    println!("  {K}re{R}, {K}im{R}                  Extract real and imaginary part");
+    println!("  {K}arg{R}                     Argument (angle)");
+    println!("  {K}conj{R}                    Conjugate");
+    println!("  {K}c->r{R}, {K}r->c{R}              real to complex, complex to real");
+    println!("  {K}p->r{R}, {K}r->p{R}              polar / rectangular conversions");
 
     // Trigonometry
     println!("\n{T}TRIGONOMETRY{R}");
-    println!("  {K}sin{R}, {K}cos{R}, {K}tan{R}        Sine, cosine, tangent");
-    println!("  {K}asin{R}, {K}acos{R}, {K}atan{R}     Arc functions");
-    println!("  {K}atan2{R}                Two-argument arctangent");
-    println!("  {K}sinh{R}, {K}cosh{R}, {K}tanh{R}     Hyperbolic functions");
-    println!("  {K}asinh{R}, {K}acosh{R}, {K}atanh{R}  Inverse hyperbolic");
-    println!("  {K}d->r{R}, {K}r->d{R}           Degrees / radians conversions");
-    println!("  {K}pi{R}                   Pi constant");
+    println!("  {K}sin{R}, {K}cos{R}, {K}tan{R}           Sine, cosine, tangent");
+    println!("  {K}asin{R}, {K}acos{R}, {K}atan{R}        Arc functions");
+    println!("  {K}atan2{R}                   Two-argument arctangent");
+    println!("  {K}sinh{R}, {K}cosh{R}, {K}tanh{R}        Hyperbolic functions");
+    println!("  {K}asinh{R}, {K}acosh{R}, {K}atanh{R}     Inverse hyperbolic");
+    println!("  {K}d->r{R}, {K}r->d{R}              Degrees / radians conversions");
+    println!("  {K}pi{R}                      Pi constant");
 
     // Logarithms
     println!("\n{T}LOGARITHMS{R}");
-    println!("  {K}ln{R}, {K}log{R}              Natural logarithm");
-    println!("  {K}exp{R}                  Exponential");
-    println!("  {K}log10{R}, {K}alog10{R}        Base 10 logarithm / antilog");
-    println!("  {K}exp10{R}                Alias for {K}alog10{R}");
-    println!("  {K}log2{R}, {K}alog2{R}          Base 2 logarithm / antilog");
-    println!("  {K}exp2{R}                 Alias for {K}alog2{R}");
-    println!("  {K}logn{R}, {K}alogn{R}          Arbitrary base log / antilog");
-    println!("  {K}lnp1{R}, {K}expm{R}           ln({N}1{R}+x), exp(x)-{N}1{R}");
-    println!("  {K}e{R}                    Euler's number'");
+    println!("  {K}ln{R}, {K}log{R}                 Natural logarithm");
+    println!("  {K}exp{R}                     Exponential");
+    println!("  {K}log10{R}, {K}alog10{R}           Base 10 logarithm / antilog");
+    println!("  {K}exp10{R}                   Alias for {K}alog10{R}");
+    println!("  {K}log2{R}, {K}alog2{R}             Base 2 logarithm / antilog");
+    println!("  {K}exp2{R}                    Alias for {K}alog2{R}");
+    println!("  {K}logn{R}, {K}alogn{R}             Arbitrary base log / antilog");
+    println!("  {K}lnp1{R}, {K}expm{R}              ln({N}1{R}+x), exp(x)-{N}1{R}");
+    println!("  {K}e{R}                       Euler's number");
 
     // Variables
     println!("\n{T}VARIABLES{R}");
-    println!("  {Y}'name'{R}               Variable notation");
-    println!("  {K}sto{R}                  Store in avariable");
-    println!("  {K}rcl{R}                  Recall a variable");
-    println!("  {K}purge{R}                Delete a variable");
-    println!("  {K}sto+{R}, {K}sto-{R}, {K}sto*{R}, {K}sto/{R}  Arithmetic on a variable");
-    println!("  {K}sneg{R}, {K}stoneg{R}         Negate a variable");
-    println!("  {K}sinv{R}, {K}stoinv{R}         Invert a variable");
-    println!("  {K}vars{R}                 List all variables");
-    println!("  {K}clusr{R}                Clear all variables");
+    println!("  {Y}'name'{R}                  Variable notation");
+    println!("  {K}sto{R}                     Store in a variable");
+    println!("  {K}rcl{R}                     Recall a variable");
+    println!("  {K}purge{R}                   Delete a variable");
+    println!("  {K}sto+{R}, {K}sto-{R}, {K}sto*{R}, {K}sto/{R}  Arithmetic with a variable");
+    println!("  {K}sneg{R}, {K}stoneg{R}            Negate a variable");
+    println!("  {K}sinv{R}, {K}stoinv{R}            Invert a variable");
+    println!("  {K}vars{R}                    List all variables");
+    println!("  {K}clusr{R}                   Clear all variables");
 
     // Strings
     println!("\n{T}STRINGS{R}");
-    println!("  {S}\"text\"{R}               String notation");
-    println!("  {K}->str{R}                Convert to string");
-    println!("  {K}str->{R}                Convert from string");
-    println!("  {K}chr{R}                  ASCII code to character");
-    println!("  {K}num{R}                  Character to ASCII code");
-    println!("  {K}size{R}                 String length");
-    println!("  {K}pos{R}                  Find substring position");
-    println!("  {K}sub{R}                  Extract substring");
+    println!("  {S}\"text\"{R}                  String notation");
+    println!("  {K}->str{R}                   Convert to a string");
+    println!("  {K}str->{R}                   Convert from a string");
+    println!("  {K}chr{R}                     ASCII code to character");
+    println!("  {K}num{R}                     Character to ASCII code");
+    println!("  {K}size{R}                    String length");
+    println!("  {K}pos{R}                     Find substring index");
+    println!("  {K}sub{R}                     Extract substring");
 
     // Control flow
     println!("\n{T}CONTROL FLOW{R}");
-    println!("  {K}if{R}, {K}then{R}, {K}else{R}, {K}end{R}  Conditional execution");
-    println!("  {K}ift{R}, {K}ifte{R}            Inline conditionals");
-    println!("  {K}for{R}, {K}next{R}            For loop with variable");
-    println!("  {K}start{R}, {K}next{R}          For loop without variable");
-    println!("  {K}step{R}                 For loop with custom step");
-    println!("  {K}while{R}, {K}repeat{R}, {K}end{R}   While loop");
-    println!("  {K}do{R}, {K}until{R}, {K}end{R}       Do-until loop");
+    println!("  {K}if{R}, {K}then{R}, {K}else{R}, {K}end{R}     Conditional execution");
+    println!("  {K}ift{R}, {K}ifte{R}               Inline conditionals");
+    println!("  {K}for{R}, {K}next{R}               For loop with variable");
+    println!("  {K}start{R}, {K}next{R}             For loop without variable");
+    println!("  {K}step{R}                    For loop with custom step");
+    println!("  {K}while{R}, {K}repeat{R}, {K}end{R}      While loop");
+    println!("  {K}do{R}, {K}until{R}, {K}end{R}          Do-until loop");
 
     // Programs
     println!("\n{T}PROGRAMS{R}");
-    println!("  {P}<< ... >>{R}            Program notation");
-    println!("  {P}« ... »{R}              Alternative delimiter");
-    println!("  {K}eval{R}                 Execute a program");
+    println!("  {P}<< ... >>{R}               Program notation");
+    println!("  {P}« ... »{R}                 Alternative delimiter");
+    println!("  {K}eval{R}                    Execute a program");
 
     // Configuration
     println!("\n{T}CONFIGURATION{R}");
-    println!("  {K}std{R}                  Standard display mode");
-    println!("  {K}fix{R}                  Fixed-point mode");
-    println!("  {K}sci{R}                  Scientific notation");
-    println!("  {K}prec{R}                 Set precision (bits)");
-    println!("  {K}default{R}              Reset to defaults");
-    println!("  {K}hex{R}, {K}dec{R}, {K}bin{R}        Set number base");
-    println!("  {K}base{R}                 Set arbitrary base ({N}2{R}-{N}62{R})");
-    println!("  {K}type{R}                 Show object type");
+    println!("  {K}std{R}                     Standard display mode");
+    println!("  {K}fix{R}                     Fixed-point mode");
+    println!("  {K}sci{R}                     Scientific notation");
+    println!("  {K}prec{R}                    Set precision (bits)");
+    println!("  {K}default{R}                 Reset to defaults");
+    println!("  {K}hex{R}, {K}dec{R}, {K}bin{R}           Set number base");
+    println!("  {K}base{R}                    Set arbitrary base ({N}2{R}-{N}62{R})");
+    println!("  {K}type{R}                    Show object type");
 
     // General
     println!("\n{T}GENERAL{R}");
-    println!("  {K}help{R}, {K}h{R}, {K}?{R}           This help");
-    println!("  {K}history{R}              Show the command history");
-    println!("  {K}version{R}              Show rpn version");
-    println!("  {K}uname{R}                Show system info");
-    println!("  {K}error{R}                Push last error code");
-    println!("  {K}strerror{R}             Push last error message");
-    println!("  {K}test{R}                 Run test file");
-    println!("  {K}quit{R}, {K}q{R}, {K}exit{R}        Exit rpn");
+    println!("  {K}help{R}, {K}h{R}, {K}?{R}              This help");
+    println!("  {K}history{R}                 Show the command history");
+    println!("  {K}version{R}                 Show rpn version");
+    println!("  {K}uname{R}                   Show system info");
+    println!("  {K}error{R}                   Push last error code");
+    println!("  {K}strerror{R}                Push last error message");
+    println!("  {K}test{R}                    Run test file");
+    println!("  {K}quit{R}, {K}q{R}, {K}exit{R}           Exit rpn");
 
     println!("\n{T}CURRENT SETTINGS{R}");
     println!("  Mode: {:?}", ctx.config.mode);

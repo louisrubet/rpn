@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Helper macros for operation implementations
-// Based on C++ macros from program.h lines 266-302
 
 /// Check minimum number of arguments on stack
 /// Returns MissingOperand error if insufficient

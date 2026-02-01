@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Logarithmic and exponential operations
-// Based on C++ rpn-logs.cc
 
 use crate::context::Context;
 use crate::error::Result;

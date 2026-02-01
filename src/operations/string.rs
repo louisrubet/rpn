@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // String operations
-// Based on C++ rpn-string.cc
 
 use crate::context::Context;
 use crate::error::Result;
@@ -112,7 +112,6 @@ pub fn pos(ctx: &mut Context) -> Result<()> {
         _ => unreachable!(),
     };
 
-    // Find position (C++ returns pos+1, 0 if not found becomes 0)
     let position = if let Some(pos) = string.find(&substring) {
         pos + 1 // 1-indexed
     } else {

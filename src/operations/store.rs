@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Variable storage operations
-// Based on C++ rpn-store.cc
 
 use crate::context::Context;
 use crate::error::{Error, Result};

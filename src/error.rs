@@ -1,9 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Error types for RPN calculator
-// Based on C++ RetValue enum from object.h
 
 use thiserror::Error;
 
-/// Error types matching C++ RetValue enum
 #[derive(Error, Debug, Clone, PartialEq)]
 pub enum Error {
     #[error("unknown error")]
@@ -60,7 +59,6 @@ pub enum Error {
 
 impl Error {
     /// Get the integer error code for this error
-    /// Matches C++ RetValue enum exactly:
     /// kOk=0, kUnknownError=1, kMissingOperand=2, kBadOperandType=3,
     /// kOutOfRange=4, kUnknownVariable=5, kInternalError=6, kDeadlyError=7,
     /// kGoodbye=8, kNotImplemented=9, kNop=10, kSyntaxError=11,

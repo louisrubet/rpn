@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Branch operations for control flow
-// Based on C++ rpn-branch.cc
 
 use crate::context::Context;
 use crate::error::{Error, Result};

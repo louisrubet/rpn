@@ -48,7 +48,7 @@ n non-compatibility
 * [x] "024-parse-complex.md"
 * [x] "025-parse-other.md"
 * [x] "026-parse-program.md"
-* [x] "027-base-entry.md"
+* [x] "027-parse-hex-bin-base.md"
 * [x] "030-branch.md"
 * [x] "040-stack.md"
 * [x] "050-real.md"
@@ -66,26 +66,27 @@ n non-compatibility
 * [x] "999-manual-tests.md"
 * [x] "all.md"
 
-* [ ] 027-parse-hex-bin-base
-
 ## doc
 
 * [x] help
 * [x] CHANGELOG.md
-* [ ] README.md
-* [ ] license inside the files
+* [x] README.md
+* [x] license inside the files
 * [ ] files headers / comments
 
 ## process changes
 
+* [ ] cleaning gha
 * [ ] cleaning tickets, trash gh project if decided
 * [ ] simplest git branching model, no-ticket commits allowed
 
 ## deploying
 
 * [ ] flathub
-* [ ] snap
 * [ ] ubuntu
 * [ ] fedora
-* [ ] arch
+
 * [ ] crate
+
+* [ ] snap
+* [ ] arch

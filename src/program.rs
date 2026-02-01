@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Program execution engine
-// Based on C++ Program::Run (program.cc lines 214-292)
 
 use crate::context::Context;
 use crate::error::{Error, Result};
@@ -23,7 +23,6 @@ pub fn execute(source: &str, ctx: &mut Context) -> Result<()> {
 }
 
 /// Execute a vector of objects
-/// Based on C++ Program::Run
 pub fn run_objects(objects: &[Object], ctx: &mut Context) -> Result<()> {
     use crate::operations::branch::{RT_ERROR, STEP_OUT};
 
@@ -329,7 +328,6 @@ fn auto_recall(ctx: &mut Context, name: &str) -> Result<()> {
 }
 
 /// Control flow preprocessing: link branch instructions
-/// Based on C++ Program::Preprocess (program.cc lines 301-539)
 pub fn link_control_flow(objects: &mut [Object]) -> Result<()> {
     use crate::operations::branch::STEP_OUT;
 

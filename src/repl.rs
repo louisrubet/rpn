@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // REPL (Read-Eval-Print Loop) for interactive mode
 // Uses rustyline for line editing and history
 
