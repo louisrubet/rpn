@@ -76,10 +76,9 @@
 
 ## unterminated 4
 
-```
-<<
-«
-```
+`<<`
+
+`«`
 
 -> stack should be «  », «  »
 

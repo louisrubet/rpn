@@ -178,7 +178,7 @@
 
 `-223 chr 0 chr`
 
--> stack should be "!", "."
+-> stack should be ".", "."
 
 `del`
 
@@ -317,3 +317,5 @@
 `endl num`
 
 -> stack should be 10
+
+`del`

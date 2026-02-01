@@ -1,8 +1,10 @@
 # TRIGONOMETRY
 
-`del default 6 fix 128 prec`
+`del default`
 
 ## pi
+
+`6 fix 128 prec`
 
 `pi`
 

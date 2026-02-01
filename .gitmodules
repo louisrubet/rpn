@@ -1,6 +1,0 @@
-[submodule "linenoise-ng"]
-	path = linenoise-ng
-	url = https://github.com/louisrubet/linenoise-ng.git
-[submodule "mpreal"]
-	path = mpreal
-	url = https://github.com/advanpix/mpreal

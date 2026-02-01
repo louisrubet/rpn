@@ -1,0 +1,30 @@
+[package]
+name = "rpn-rust"
+version = "3.0.0"
+edition = "2021"
+authors = ["Louis Rubet <louis@rubet.fr>"]
+description = "Reverse Polish Notation CLI calculator (Rust port)"
+license = "LGPL-3.0"
+repository = "https://github.com/louisrubet/rpn"
+
+[[bin]]
+name = "rpn"
+path = "src/main.rs"
+
+[dependencies]
+rug = { version = "1.24", features = ["float", "complex", "rand"] }
+rustyline = "14.0"
+lazy_static = "1.5"
+regex = "1.11"
+thiserror = "2.0"
+chrono = "0.4"
+dirs = "5.0"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+overflow-checks = true

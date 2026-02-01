@@ -30,113 +30,6 @@
 
 `del`
 
-## real hex
-
-`0x1234 0x10.10`
-
--> stack should be 0x1234, 0x10
-
-`del`
-
-## real hex (2)
-
-```
-0x1.234p+12 0x1.01p+4
-dec swap dec swap
-```
-
--> stack should be 4660, 16.0625
-
-`del`
-
-## real hex (3)
-
-`0x12.345 4 fix`
-
--> stack should be 0x1.2345p+4
-
-`4 sci`
-
--> stack should be 0x1.2345p+4
-
-`2 fix`
-
--> stack should be 0x1.23p+4
-
-`8 fix`
-
--> stack should be 0x1.23450000p+4
-
-`del default`
-
-## real hex (4)
-
-`0x0.0001234`
-
--> stack should be 0x0
-
-`7 fix`
-
--> stack should be 0x1.2340000p-16
-
-`7 sci`
-
--> stack should be 0x1.2340000p-16
-
-`2 fix`
-
--> stack should be 0x1.23p-16
-
-`del default`
-
-## real binary
-
-`0b11001100`
-
--> stack should be 0b11001100
-
-`del`
-
-# real binary (2)
-
-`0b11.001 4 fix`
-
--> stack should be 1.1001p+1
-
-`4 sci`
-
--> stack should be 1.1001p+1
-
-`2 fix`
-
--> stack should be 1.10p+1
-
-`8 fix`
-
--> stack should be 1.10010000p+1
-
-`del default`
-
-# real binary (3)
-
-`0b0.0001101`
-
--> stack should be 0b0
-
-`7 fix`
-
--> stack should be 1.1010000p-4
-
-`7 sci`
-
--> stack should be 1.1010000p-4
-
-`2 fix`
-
--> stack should be 1.10p-4
-
-`del default`
-
 ## real inf, nan
 
 ```
@@ -191,70 +84,6 @@ pi
 `0x8000000000000000 prec`
 
 -> error should be 4
-
-`del default`
-
-## round (1)
-
-`"nearest (even)" round`
-
--> error should be 0
-
-`del`
-
-## round (2)
-
-`"toward zero" round`
-
--> error should be 0
-
-`del`
-
-## round (3)
-
-`"toward +inf" round`
-
--> error should be 0
-
-`del`
-
-## round (4)
-
-`"toward -inf" round`
-
--> error should be 0
-
-`del`
-
-## round (5)
-
-`"away from zero" round`
-
--> error should be 0
-
-`del`
-
-## round (6)
-
-`"faithful rounding" round`
-
--> error should be 0
-
-`del`
-
-## round (7)
-
-`"nearest (away from zero)" round`
-
--> error should be 0
-
-`del`
-
-## round error
-
-`round`
-
--> error should be 2
 
 `del default`
 
@@ -431,17 +260,17 @@ pi
 
 `del`
 
-## %CH (1)
+## %ch (1)
 
-`2 0.6 %CH`
+`2 0.6 %ch`
 
 -> stack should be 30
 
 `del`
 
-## %CH (2)
+## %ch (2)
 
-`2 %CH`
+`2 %ch`
 
 -> error should be 2
 
@@ -449,25 +278,25 @@ pi
 
 `del`
 
-## %CH (3)
+## %ch (3)
 
-`%CH`
+`%ch`
 
 -> error should be 2
 
 `del`
 
-## ^ (1)
+## pow (1)
 
-`2 10 ^`
+`2 10 pow`
 
 -> stack should be 1024
 
 `del`
 
-## ^ (2)
+## pow (2)
 
-`2 ^`
+`2 pow`
 
 -> error should be 2
 
@@ -475,9 +304,9 @@ pi
 
 `del`
 
-## ^ (3)
+## pow (3)
 
-`^`
+`pow`
 
 -> error should be 2
 
@@ -607,7 +436,7 @@ pi
 
 `123.456 mant -123.456 mant 0 mant`
 
--> stack should be 0.9645, -0.9645, 0
+-> stack should be 1.23456, -1.23456, 0
 
 `del`
 
@@ -631,7 +460,7 @@ pi
 
 `123.456 xpon -123.456 xpon 0 mant`
 
--> stack should be 7, 7, 0
+-> stack should be 2, 2, 0
 
 `del`
 

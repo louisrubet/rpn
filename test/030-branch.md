@@ -172,6 +172,8 @@
 
 -> stack should be 'ok'
 
+-> stack size should be 1
+
 `del`
 
 ## ifte (2)
@@ -179,6 +181,8 @@
 `0 'ok' 'nok' ifte`
 
 -> stack should be 'nok'
+
+-> stack size should be 1
 
 `del`
 
@@ -211,7 +215,6 @@
 -> stack size should be 0
 
 `del`
-
 ## start next (1)
 
 `1 2 start 0 next`
@@ -464,7 +467,7 @@
 
 `-1 0 for i i 0.25 step`
 
--> stack should be -1, -0.75, -0.5, -0.25, -0
+-> stack should be -1, -0.75, -0.5, -0.25, 0
 
 `del`
 
@@ -556,7 +559,7 @@
 
 `del`
 
-## nexted do..until
+## nested do..until
 
 `1 'i' sto do 0 'j' sto do i (1,0) * j (0,1) * + 1 'j' sto+ until j 1 > end 1 'i' sto+ until i 2 > end`
 

@@ -1,8 +1,8 @@
-# **rpn** - reference manual
+# **rpn v3.0** - reference manual
 
 **rpn**
-- is a structured full-featured **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** and **HP48GX** user manuals are provided as references), including **real**, **complex**, **stack**, **store**, **branch**, **program**, **test**, **trig** and **logs** commands and more to come,
-- is implemented as a **command-line calculator**,
+- is a structured full-featured **math-oriented language** inspired by Hewlett-Packard **R**everse **P**olish **L**isp (**HP28S** and **HP48GX** user manuals are provided as references), including **real**, **complex**, **stack**, **store**, **branch**, **program**, **test**, **trig** and **logs** commands,
+- is implemented as a **command-line calculator**, with interactive REPL
 - brings powerfull calculation facilities on floating point numbers with __arbitrary precision__ provided by **GNU MP** and **GNU MPFR** libraries
 - uses that so cool **reverse polish notation**.
 
@@ -30,7 +30,7 @@ help    this help message
 
 ## Quick examples
 
-### Easy calculation with **stacked results**
+### Calculation with **stacked results**
 
 ```rpn
 rpn> 1 2 +
@@ -91,19 +91,19 @@ Provided loop keywords **for|start..next|step**, **do..until**, **while..repeat*
 
 ### command line
 
-**rpn** is a cli interface with an **interactive editor** with autocompletion provided by [linenoise-ng](https://github.com/arangodb/linenoise-ng).
+**rpn** is a cli interface with an **interactive editor** with autocompletion.
 
 Autocompletion works like those in Linux shells, with keys \<tab\>, Ctrl-R \<search pattern\> etc.
 
 ## entry
 
 - **reals** can be entered in decimal, binary, hexadecimal or arbitrary base from 2 to 62.
-  - Binaries (base 2) are entered as `0b<number>` or `0B<number>`.
-  - Hexadecimals (base 16) are entered as `0x<number>` or `0X<number>`.
-  - Arbitrary base numbers are entered as `<base>b<number>`.
-  - Representation can be individualy changed with keywords `dec`, `bin`, `hex` and `<n> base`.
+  - Binaries (base 2) are entered as `0b<number>` or `0B<number>`, ex: `0b1110110`
+  - Hexadecimals (base 16) are entered as `0x<number>` or `0X<number>`, ex: `0xcafe`
+  - Arbitrary base numbers are entered as `<base>b<number>`, ex: `5b14330`
+  - Representation can be individually changed with keywords `dec`, `bin`, `hex` and `<n> base`.
 
-ex:
+Ex:
 
 ```rpn
 rpn> 5.6 0xaabb 0b1101 7b1252
@@ -121,7 +121,7 @@ rpn> 7b1252 dec
 ### general
 
 | keyword           | description                             |
-|-------------------|-----------------------------------------|
+| ----------------- | --------------------------------------- |
 | `help` `h` `?`    | this help message                       |
 | `quit` `q` `exit` | quit software                           |
 | `version`         | show rpn version                        |
@@ -131,7 +131,7 @@ rpn> 7b1252 dec
 ### usual operations - real and complex
 
 | keyword     | description                                                      |
-|-------------|------------------------------------------------------------------|
+| ----------- | ---------------------------------------------------------------- |
 | `+`         | addition                                                         |
 | `-`         | substraction                                                     |
 | `neg` `chs` | negation                                                         |
@@ -148,12 +148,21 @@ rpn> 7b1252 dec
 | `base`      | arbitrary base representation                                    |
 | `sign`      | sign of a real, unary vector in the same direction for a complex |
 
+### bitwise operations
+
+| operator | description              |
+| -------- | ------------------------ |
+| &        | bitwise and              |
+| \|       | bitwise or               |
+| ^        | bitwize xor              |
+| ~        | bitwise not (complement) |
+
 ### operations on reals
 
 | keyword | description                                     |
-|---------|-------------------------------------------------|
+| ------- | ----------------------------------------------- |
 | `%`     | purcent                                         |
-| `%CH`   | inverse purcent                                 |
+| `%ch`   | inverse purcent                                 |
 | `mod`   | modulo                                          |
 | `fact`  | n! for integer n or Gamma(x+1) for fractional x |
 | `mant`  | mantissa of a real number                       |
@@ -168,7 +177,7 @@ rpn> 7b1252 dec
 ### operations on complexes
 
 | keyword | description                      |
-|---------|----------------------------------|
+| ------- | -------------------------------- |
 | `re`    | complex real part                |
 | `im`    | complex imaginary part           |
 | `conj`  | complex conjugate                |
@@ -180,21 +189,23 @@ rpn> 7b1252 dec
 
 ### mode
 
-| keyword   | description                                                                                                                        |
-|-----------|------------------------------------------------------------------------------------------------------------------------------------|
-| `std`     | standard floating numbers representation. ex: `std`                                                                                |
-| `fix`     | fixed point representation. ex: `6 fix`                                                                                            |
-| `sci`     | scientific floating point representation. ex: `20 sci`                                                                             |
-| `prec`    | set float precision in bits. ex: `256 prec`                                                                                        |
-| `round`   | set float rounding mode. Authorized values are:                                                                                    |
-|           | `"nearest (even)", "toward zero", "toward +inf", "toward -inf", "away from zero", "faithful rounding", "nearest (away from zero)"` |
-| `default` | set float representation and precision to default                                                                                  |
-| `type`    | show type of stack first entry                                                                                                     |
+| keyword   | description                                            |
+| --------- | ------------------------------------------------------ |
+| `std`     | standard floating numbers representation. ex: `std`    |
+| `fix`     | fixed point representation. ex: `6 fix`                |
+| `sci`     | scientific floating point representation. ex: `20 sci` |
+| `prec`    | set float precision in bits. ex: `256 prec`            |
+| `default` | set float representation and precision to default      |
+| `type`    | show type of stack first entry                         |
+
+`std`, `fix`, `sci` are display-mode only, and act on all stack levels.
+
+`prec` acts on the numbers entered subsequently.
 
 ### test
 
 | keyword | description                    |
-|---------|--------------------------------|
+| ------- | ------------------------------ |
 | `>`     | binary operator >              |
 | `>=`    | binary operator >=             |
 | `<`     | binary operator <              |
@@ -209,27 +220,27 @@ rpn> 7b1252 dec
 
 ### stack
 
-| keyword       | description                                                     |
-|---------------|-----------------------------------------------------------------|
-| `swap`        | swap 2 first stack entries                                      |
-| `drop`        | drop first stack entry                                          |
-| `drop2`       | drop 2 first stack entries                                      |
-| `dropn`       | drop n first stack entries                                      |
-| `del` `erase` | drop all stack entries                                          |
-| `rot`         | rotate 3 first stack entries                                    |
-| `dup`         | duplicate first stack entry                                     |
-| `dup2`        | duplicate 2 first stack entries                                 |
-| `dupn`        | duplicate n first stack entries                                 |
-| `pick`        | push a copy of  the given stack level onto the stack            |
-| `depth`       | give stack depth                                                |
-| `roll`        | move a stack entry to the top of the stack                      |
-| `rolld`       | move the element on top of the stack to a higher stack position |
-| `over`        | push a copy of the element in stack level 2 onto the stack      |
+| keyword               | description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `swap`                | swap 2 first stack entries                                      |
+| `drop`                | drop first stack entry                                          |
+| `drop2`               | drop 2 first stack entries                                      |
+| `dropn`               | drop n first stack entries                                      |
+| `del` `erase` `clear` | drop all stack entries                                          |
+| `rot`                 | rotate 3 first stack entries                                    |
+| `dup`                 | duplicate first stack entry                                     |
+| `dup2`                | duplicate 2 first stack entries                                 |
+| `dupn`                | duplicate n first stack entries                                 |
+| `pick`                | push a copy of  the given stack level onto the stack            |
+| `depth`               | give stack depth                                                |
+| `roll`                | move a stack entry to the top of the stack                      |
+| `rolld`               | move the element on top of the stack to a higher stack position |
+| `over`                | push a copy of the element in stack level 2 onto the stack      |
 
 ### string
 
 | keyword | description                                                                              |
-|---------|------------------------------------------------------------------------------------------|
+| ------- | ---------------------------------------------------------------------------------------- |
 | `->str` | convert an object into a string                                                          |
 | `str->` | convert a string into an object                                                          |
 | `chr`   | convert ASCII character code in stack level 1 into a string                              |
@@ -241,7 +252,7 @@ rpn> 7b1252 dec
 ### branch
 
 | keyword  | description                                                                                           |
-|----------|-------------------------------------------------------------------------------------------------------|
+| -------- | ----------------------------------------------------------------------------------------------------- |
 | `if`     | `(test-instruction) if then (true-instructions) else (false-instructions) end`                        |
 | `then`   | used with if                                                                                          |
 | `else`   | used with if                                                                                          |
@@ -260,7 +271,7 @@ rpn> 7b1252 dec
 ### store
 
 | keyword | description                                                     |
-|---------|-----------------------------------------------------------------|
+| ------- | --------------------------------------------------------------- |
 | `sto`   | store a variable. ex: ```1 'name' sto```                        |
 | `rcl`   | recall a variable. ex: ```'name' rcl```                         |
 | `purge` | delete a variable. ex: ```'name' purge```                       |
@@ -277,14 +288,14 @@ rpn> 7b1252 dec
 ### program
 
 | keyword | description                                                                 |
-|---------|-----------------------------------------------------------------------------|
+| ------- | --------------------------------------------------------------------------- |
 | `eval`  | evaluate (run) a program, or recall a variable. ex: `'my_prog' eval`        |
 | `->`    | load program local variables. ex: `<< -> n m << 0 n m for i i + next >> >>` |
 
 ### trig on reals and complexes
 
 | keyword | description                |
-|---------|----------------------------|
+| ------- | -------------------------- |
 | `pi`    | pi constant                |
 | `sin`   | sinus                      |
 | `asin`  | arg sinus                  |
@@ -298,7 +309,7 @@ rpn> 7b1252 dec
 ### logs on reals and complexes
 
 | keyword          | description                                   |
-|------------------|-----------------------------------------------|
+| ---------------- | --------------------------------------------- |
 | `e`              | Euler constant                                |
 | `ln` `log`       | logarithm base e                              |
 | `lnp1`           | ln(1+x) which is useful when x is close to 0  |

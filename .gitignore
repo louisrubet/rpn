@@ -1,32 +1,19 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# Rust build output
+/target/
 
-# Libraries
-*.lib
-*.a
+# Cargo lock for libraries (keep for binaries)
+# Cargo.lock
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Tools workfiles
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 *~
-.scannerwork/*
-*bw-output*/*
-.vscode/*
-build/*
-debug/*
-release/*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local settings
+.claude/settings.local.json

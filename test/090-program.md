@@ -6,9 +6,11 @@
 
 `<< 'one' >>`
 
--> stack size should be 1
+`« 'one' »`
 
--> stack should be « 'one' »
+-> stack size should be 2
+
+-> stack should be « 'one' », « 'one' »
 
 `del`
 
@@ -16,9 +18,11 @@
 
 `<< 'one' 2`
 
--> stack size should be 1
+`« 'one' 2`
 
--> stack should be « 'one' 2 »
+-> stack size should be 2
+
+-> stack should be « 'one' 2 », « 'one' 2 »
 
 `del`
 
@@ -26,9 +30,11 @@
 
 `<<`
 
--> stack size should be 1
+`«`
 
--> stack should be «  »
+-> stack size should be 2
+
+-> stack should be «  », «  »
 
 `del`
 
@@ -36,9 +42,11 @@
 
 `<< << << <<`
 
--> stack size should be 1
+`« « « «`
 
--> stack should be « « « «  » » » »
+-> stack size should be 2
+
+-> stack should be « « « «  » » » », « « « «  » » » »
 
 `del`
 
@@ -46,9 +54,30 @@
 
 `<< -> n << n 2 * >> >>`
 
--> stack size should be 1
+`« -> n « n 2 * » »`
 
--> stack should be « -> n « n 2 * » »
+-> stack size should be 2
+
+-> stack should be « -> n « n 2 * » », « -> n « n 2 * » »
+
+`del`
+
+## spaces in program entry
+
+`<<->n<<1`
+`<< ->n<<1`
+`<<-> n<<1`
+`<<->n <<1`
+`<<->n<< 1`
+`<< ->n<<1`
+`<< -> n<<1`
+`<< ->n <<1`
+`<< ->n<< 1`
+`<<-> n <<1`
+`<<-> n<< 1`
+`<<->n << 1`
+
+-> stack should be « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » », « -> n « 1 » »
 
 `del`
 
@@ -138,5 +167,13 @@ eval
 `123 'n' sto 2 << -> n << n sq << -> n << "n is " n ->str + >> >> >> eval >> eval`
 
 -> stack should be "n is 4"
+
+`del`
+
+## local variables separation (3)
+
+`123 'n' sto 2 << -> n << n sq << -> n << "n is " n ->str + >> >> >> eval >> eval n`
+
+-> stack should be "n is 4", 123
 
 `del`

@@ -166,7 +166,7 @@
 
 `3 re`
 
--> error should be 3
+-> stack should be 3
 
 `del`
 
@@ -188,15 +188,15 @@
 
 ## im (2)
 
-`3 re`
+`3 im`
 
--> error should be 3
+-> stack should be 0
 
 `del`
 
 ## im (3)
 
-`re`
+`im`
 
 -> error should be 2
 
@@ -476,43 +476,43 @@
 
 `del`
 
-## ^ (1)
+## pow (1)
 
 `6 fix`
 
-`(1,2) 2 ^`
+`(1,2) 2 pow`
 
 -> stack should be (-3.000000,4.000000)
 
 `del`
 
-## ^ (2)
+## pow (2)
 
-`(1,2) 4 ^`
+`(1,2) 4 pow`
 
 -> stack should be (-7.000000,-24.000000)
 
 `del`
 
-## ^ (3)
+## pow (3)
 
-`-3 .2 ^`
+`-3 .2 pow`
 
 -> stack should be (1.007818,0.732222)
 
 `del`
 
-## ^ (4)
+## pow (4)
 
-`-3 (1,2) ^`
+`-3 (1,2) pow`
 
 -> stack should be (0.003284,-0.004539)
 
 `del`
 
-## ^ (5)
+## pow (5)
 
-`(1,2) (1,2) ^`
+`(1,2) (1,2) pow`
 
 -> stack should be (-0.222517,0.100709)
 
@@ -533,3 +533,5 @@
 -> stack should be (0.000000,1.732051)
 
 `del`
+
+`default`
