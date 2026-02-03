@@ -8,31 +8,50 @@ Reverse Polish Notation CLI calculator with arbitrary precision
 git clone https://github.com/louisrubet/rpn
 cd rpn
 cargo build --release
-./target/release/rpn
+cargo install --path .
 ```
+
+## Features
+
+- **Arbitrary precision** via MPFR
+- **Full arithmetic and scientific functions**
+- **Bitwise operations**
+- **Number bases** 2-62 (bin, hex, etc.)
+- **Complex numbers** with full arithmetic
+- **Programs** as first-class objects
+- **Control flow**: if/then/else, for/next, while/repeat, do/until
+- **Variables** with three-level scoping
+
+Complete manual in [MANUAL.md](MANUAL.md)
 
 ## Quick Start
 
-Interactive:
+Interactive
 
 ```bash
 $ rpn
 rpn> 2 3 + dup *
-1> 25
+25
 
 rpn> sqrt
-1> 5
+5
 
 rpn> pi 2 / sin
+2> 5
 1> 1
 
 rpn> 255 hex
+3> 5
+2> 1
 1> 0xff
 
-rpn> quit
+rpn> del
+rpn> 0b110111 0b101011 &
+0b100011
+
 ```
 
-Or from command line:
+From command line
 
 ```bash
 rpn "2 10 pow"          # 1024
@@ -40,34 +59,23 @@ rpn "0xFF 1 +"          # 0x100
 rpn "(1,2) (3,4) +"     # (4,6)
 ```
 
-## Features
-
-- **Arbitrary precision** via MPFR
-- **Number bases** 2-62 (bin, hex, etc.)
-- **Complex numbers** with full arithmetic
-- **Programs** as first-class objects
-- **Control flow**: if/then/else, for/next, while/repeat, do/until
-- **Variables** with three-level scoping
-
-Complete manual [here in MANUAL.md](MANUAL.md)
-
 ## Operations
 
-| Category   | Commands                                                                                                       |
-| ---------- | -------------------------------------------------------------------------------------------------------------- |
-| Arithmetic | `+` `-` `*` `/` `^` `neg` `inv` `sqrt` `sq` `abs` `mod` `%` `fact` `floor` `ceil` `ip` `fp` `min` `max` `sign` |
-| Bitwise    | `&` `\|` `^` `~`                                                                                               |
-| Stack      | `swap` `dup` `drop` `rot` `roll` `pick` `depth` `over` `dup2` `dupn` `drop2` `dropn` `erase`                   |
-| Compare    | `>` `>=` `<` `<=` `==` `!=` `and` `or` `xor` `not`                                                             |
-| Trig       | `sin` `cos` `tan` `asin` `acos` `atan` `atan2` `d->r` `r->d` `pi`                                              |
-| Hyperbolic | `sinh` `cosh` `tanh` `asinh` `acosh` `atanh`                                                                   |
-| Logs       | `ln` `exp` `log10` `alog10` `log2` `alog2` `logn` `alogn` `e`                                                  |
-| Complex    | `re` `im` `arg` `conj` `c->r` `r->c` `p->r` `r->p`                                                             |
-| String     | `->str` `str->` `chr` `num` `size` `pos` `sub`                                                                 |
-| Variables  | `sto` `rcl` `purge` `sto+` `sto-` `sto*` `sto/` `sneg` `sinv` `vars` `clusr`                                   |
-| Control    | `if` `then` `else` `end` `ift` `ifte` `for` `next` `step` `while` `repeat` `do` `until` `start`                |
-| Display    | `std` `fix` `sci` `prec` `hex` `dec` `bin` `base`                                                              |
-| Misc       | `eval` `type` `default` `help` `quit` `version` `uname`                                                        |
+| Category   | Commands                                                                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Arithmetic | `+` `-` `*` `/` `^` `pow` `neg` `chs` `inv` `sqrt` `sq` `abs` `mod` `%` `%ch` `%CH` `fact` `mant` `xpon` `floor` `ceil` `ip` `fp` `min` `max` `sign` |
+| Bitwise    | `&` `\|` `^` `~`                                                                                                                                     |
+| Stack      | `swap` `dup` `drop` `pop` `rot` `roll` `rolld` `pick` `depth` `over` `dup2` `dupn` `drop2` `dropn` `erase` `del` `clear` `edit`                      |
+| Compare    | `>` `>=` `<` `<=` `==` `!=` `and` `or` `xor` `not` `same`                                                                                            |
+| Trig       | `sin` `cos` `tan` `asin` `acos` `atan` `atan2` `d->r` `r->d` `pi`                                                                                    |
+| Hyperbolic | `sinh` `cosh` `tanh` `asinh` `acosh` `atanh`                                                                                                         |
+| Logs       | `ln` `log` `lnp1` `exp` `expm` `log10` `alog10` `exp10` `log2` `alog2` `exp2` `logn` `alogn` `e`                                                     |
+| Complex    | `re` `im` `arg` `conj` `c->r` `r->c` `p->r` `r->p`                                                                                                   |
+| String     | `->str` `str->` `chr` `num` `size` `pos` `sub` `endl`                                                                                                |
+| Variables  | `sto` `rcl` `purge` `sto+` `sto-` `sto*` `sto/` `sneg` `stoneg` `sinv` `stoinv` `vars` `clusr`                                                       |
+| Control    | `if` `then` `else` `end` `ift` `ifte` `for` `next` `step` `while` `repeat` `do` `until` `start`                                                      |
+| Display    | `std` `fix` `sci` `prec` `hex` `dec` `bin` `base`                                                                                                    |
+| Misc       | `eval` `test` `type` `default` `error` `strerror` `date` `time` `ticks` `history` `help` `h` `?` `quit` `q` `exit` `version` `uname`                 |
 
 ## Examples
 

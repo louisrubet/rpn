@@ -16,14 +16,14 @@ pub fn quit(_ctx: &mut Context) -> Result<()> {
 /// Help: help, h, ?
 pub fn help(ctx: &mut Context) -> Result<()> {
     // Color codes
-    const R: &str = "\x1b[0m";      // Reset
-    const T: &str = "\x1b[1;37m";   // Title: bold white
-    const K: &str = "\x1b[33m";     // Keyword: yellow
-    const O: &str = "\x1b[1m";      // Operator: bold
-    const N: &str = "\x1b[36m";     // Number: cyan
-    const S: &str = "\x1b[32m";     // String: green
-    const Y: &str = "\x1b[35m";     // Symbol: magenta
-    const P: &str = "\x1b[34m";     // Program: blue
+    const R: &str = "\x1b[0m"; // Reset
+    const T: &str = "\x1b[1;37m"; // Title: bold white
+    const K: &str = "\x1b[33m"; // Keyword: yellow
+    const O: &str = "\x1b[1m"; // Operator: bold
+    const N: &str = "\x1b[36m"; // Number: cyan
+    const S: &str = "\x1b[32m"; // String: green
+    const Y: &str = "\x1b[35m"; // Symbol: magenta
+    const P: &str = "\x1b[34m"; // Program: blue
 
     println!(
         "\n\x1b[1mrpn\x1b[0m v{} - Reverse Polish Notation Calculator",
@@ -128,6 +128,7 @@ pub fn help(ctx: &mut Context) -> Result<()> {
     println!("  {K}size{R}                    String length");
     println!("  {K}pos{R}                     Find substring index");
     println!("  {K}sub{R}                     Extract substring");
+    println!("  {K}endl{R}                     End-of-line string");
 
     // Control flow
     println!("\n{T}CONTROL FLOW{R}");
@@ -286,6 +287,12 @@ pub fn precision(ctx: &mut Context) -> Result<()> {
     };
 
     ctx.config.precision_bits = bits;
+
+    // In std mode, also update displayed digits to match precision
+    if ctx.config.mode == DisplayMode::Std {
+        ctx.config.digits = ((bits as f64) * 0.30102999566398119).floor() as i32;
+    }
+
     Ok(())
 }
 
