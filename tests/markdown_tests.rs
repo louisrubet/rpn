@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Integration tests using markdown test files
 
-use rpn_rust::test_framework;
+use rpnrs::test_framework;
 use std::path::PathBuf;
 
 fn test_dir() -> PathBuf {

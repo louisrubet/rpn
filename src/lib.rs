@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-//! # rpn-rust
+//! # rpn
 //!
 //! A modern Reverse Polish Notation (RPN) calculator with arbitrary precision arithmetic.
 //!
@@ -16,7 +16,7 @@
 //! ## Quick Start
 //!
 //! ```no_run
-//! use rpn_rust::{Context, program};
+//! use rpnrs::{Context, program};
 //!
 //! let mut ctx = Context::new();
 //!
@@ -44,7 +44,7 @@
 //! ## Example: Custom Calculator
 //!
 //! ```no_run
-//! use rpn_rust::{Context, program};
+//! use rpnrs::{Context, program};
 //!
 //! fn calculate(expression: &str) -> Result<String, Box<dyn std::error::Error>> {
 //!     let mut ctx = Context::new();

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Reverse Polish Notation Calculator
 
-use rpn_rust::{program, repl, Context};
+use rpnrs::{program, repl, Context};
 use std::env;
 
 fn main() {
@@ -31,11 +31,11 @@ fn main() {
                     }
                 }
             }
-            Err(rpn_rust::Error::Goodbye) => {
+            Err(rpnrs::Error::Goodbye) => {
                 // Clean exit on quit/exit command
                 std::process::exit(0);
             }
-            Err(rpn_rust::Error::Edit(_)) => {
+            Err(rpnrs::Error::Edit(_)) => {
                 // Edit command not supported in command-line mode
                 eprintln!("Error: 'edit' command only works in interactive mode");
                 std::process::exit(1);

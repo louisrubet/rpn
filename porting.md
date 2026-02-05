@@ -14,28 +14,45 @@ n non-compatibility
     12.34 hex -> display should be 0xc
     dec -> display should be 12.34
 
-| Category | Done | Evolution                                                                                                                    |
-| -------- | ---- | ---------------------------------------------------------------------------------------------------------------------------- |
-| +        | x    | now Rust-zested                                                                                                              |
-| +        | x    | syntax coloring                                                                                                              |
-| +        | x    | new commands `error` and `strerror` giving the last error encountered (integer and string), works like errno                 |
-| +        | x    | new bitwise operators `& \| ^ ~`                                                                                             |
-| +        | x    | new command `%ch` duplicated from `%CH` (still available but hidden)                                                         |
-| +        | x    | history now stored in more standard "$XDG_DATA_HOME/rpn/history" instead of ~/.rpn_history                                   |
-| +        | x    | Command `test` can take a symbol as argument                                                                                 |
-| n        | x    | operation representation inheritance                                                                                         |
-| n        | x    | `^` now designates bitwise xor and is not a short term for `pow` anymore                                                     |
-| n        | x    | `-0` as output does not exist anymore, see ancient test                                                                      |
-| n        | x    | `prec` command minimum value is now 2 instead of 0                                                                           |
-| n        | x    | command `round` is removed                                                                                                   |
-| n        | x    | `hex` power input are removed, like former 0x10p3                                                                            |
-| n        | x    | command `->str` on variable names now parses out character '                                                                 |
-| d        | x    | `test` command debugged                                                                                                      |
-| d        | x    | `im` and `re` now work on reals                                                                                              |
+| Category | Done | Evolution                                                                                                    |
+| -------- | ---- | ------------------------------------------------------------------------------------------------------------ |
+| +        | x    | now written in Rust                                                                                          |
+| +        | x    | syntax coloring                                                                                              |
+| +        | x    | new commands `error` and `strerror` giving the last error encountered (integer and string), works like errno |
+| +        | x    | new bitwise operators `& \| ^ ~`                                                                             |
+| +        | x    | new command `%ch` duplicated from `%CH` (still available but hidden)                                         |
+| +        | x    | history now stored in more standard "$XDG_DATA_HOME/rpn/history" instead of ~/.rpn_history                   |
+| +        | x    | Command `test` can take a symbol as argument                                                                 |
+| n        | x    | operation representation inheritance                                                                         |
+| n        | x    | `^` now designates bitwise xor and is not a short term for `pow` anymore                                     |
+| n        | x    | `-0` as output does not exist anymore                                                                        |
+| n        | x    | `prec` command minimum value is now 2 instead of 0                                                           |
+| n        | x    | command `round` is removed                                                                                   |
+| n        | x    | `hex` power input are removed, like former 0x10p3                                                            |
+| n        | x    | command `->str` on variable names now parses out character '                                                 |
+| d        | x    | `test` command debugged                                                                                      |
+| d        | x    | `im` and `re` now work on reals                                                                              |
+
+closed due to obsolescence
+
+prospective?
 | +        |      | new command `run`                                                                                                            |
 | +        |      | Add help on commands, ex: `help sto+`                                                                                        |
-| +        |      | new command `store` for storing the variables                                                                                |
+| +        |      | new command `store` for storing the variables (`store_path_add`, `store_path_clear`?), or variables persistance?                                        |
 | +        |      | arithmetic and bitwise operators `+ - * / % & ^ ~` can stick to the right of inputted numbers like `1 2+` instead of `1 2 +` |
+| +        |      | '_' as digit separator                                                                                                       |
+| +        |      | Local decimal separator and numbers representation                                                                           |
+| +        |      | Usual units conversions                                                                                                      |
+| +        |      | bitwise operators shift `sl` and `sr`                                                                        |
+| n        |      | r-> and p-> should take and give reals from complexes                                                        |
+
+New REAL commands hms-> ->hms hms+ hms- date+
+Autocompletion should propose variables
+port to Windows (+ deployment) (think about $XDG_DATA_HOME/rpn/history)
+vector, matrix
+Manage terminal codes or commands, TBD [clear, colors, etc]
+printf
+shell commands
 
 ## tests
 
