@@ -1,3 +1,5 @@
+# This project is obsolete and has been replaced by [rpnx](https://github.com/louisrubet/rpnx)
+
 # **rpn** - **R**everse **P**olish **N**otation CLI calculator  [![License: LGPLv3](https://www.gnu.org/graphics/lgplv3-88x31.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
 ### A math functional language using reverse (postfix) polish notation
